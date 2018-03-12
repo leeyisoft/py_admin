@@ -1,0 +1,7 @@
+*.pyc
+local.py
+requirements.txt
+*.pem
+py3
+logs/*.log
+*.log.*
