@@ -34,8 +34,11 @@ import random
 import datetime
 import threading
 from math import ceil
+
 from sqlalchemy import engine_from_config
-from sqlalchemy.orm import scoped_session, sessionmaker, Query
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Query
 from sqlalchemy.engine import url
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
@@ -47,8 +50,8 @@ from ..logger import SysLogger
 from ..settings_manager import settings
 from ..exception import ConfigError
 from ..storage import storage
-from ..encrypter import aes_decrypt
 from ..utils import utc_to_timezone
+from ..utils.encrypter import aes_decrypt
 
 
 __all__ = [
@@ -259,16 +262,20 @@ class Model(MetaBaseModel):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def as_dict(self):
+    def as_dict(self, filds=[]):
         items = {}
         for column in self.__table__.columns:
             val = getattr(self, column.name)
+            val = '' if val is None else val
             if isinstance(val, datetime.datetime):
                 if settings.DB_DATETIME_IS_UTC:
                     val = utc_to_timezone(val)
                 val = str(val)
-
-            items[column.name] = val
+            if type(filds)==list and len(filds)>0:
+                if column.name in filds:
+                    items[column.name] = val
+            else :
+                items[column.name] = val
         return items
 
 

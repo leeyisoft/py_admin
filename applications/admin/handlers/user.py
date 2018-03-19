@@ -4,38 +4,63 @@
 
 [description]
 """
-from applications.core.encrypter import RSAEncrypter
+
+import json
+import tornado
+
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-
-from applications.core.models import Config
-from applications.core.models import User
-from applications.core.models import UserGroup
-from applications.core.models import UserGroupMap
-
 from applications.core.cache import sys_config
-from applications.core.handler import ApiHandler
-from applications.core.utils import required_login
+from applications.core.decorators import required_permissions
 from applications.core.utils import utc_to_timezone
+from applications.core.utils.encrypter import RSAEncrypter
+from applications.core.utils.hasher import make_password
 
-from applications.admin.handlers.common import BaseHandler
+from applications.core.handler import BaseHandler
+
+from applications.admin.models.system import User
+from applications.admin.models.system import Role
+from applications.admin.models.system import AdminMenu
 
 
 class UserHandler(BaseHandler):
     """docstring for Passport"""
-    @required_login
+    @tornado.web.authenticated
+    @required_permissions('admin:user:index')
     def get(self, *args, **kwargs):
         """后台首页
         """
-        args = {
-            'menus': self.admin_menus(),
+        # return self.show('<script type="text/javascript">alert(1)</script>')
+        params = {
         }
-        self.render('user/index.html', **args)
+        self.render('user/index.html', **params)
 
+    @tornado.web.authenticated
+    @required_permissions('admin:user:delete')
+    def delete(self, *args, **kwargs):
+        """删除用户
+        """
+        # return self.show('<script type="text/javascript">alert(1)</script>')
+        uuid = self.get_argument('uuid', None)
 
-class UserListHandler(BaseHandler, ApiHandler):
+        User.Q.filter(User.uuid==uuid).delete()
+        User.session.commit()
+        return self.success()
+
+class UserUnlockedHandler(BaseHandler):
+    @tornado.web.authenticated
+    @required_permissions('admin:user:unlocked')
+    def post(self, *args, **kwargs):
+        password = self.get_argument('password', None)
+        if not password:
+            return self.error('请输入密码')
+
+        return self.success()
+
+class UserListHandler(BaseHandler):
     """docstring for Passport"""
-    @required_login
+    @tornado.web.authenticated
+    @required_permissions('admin:user:index')
     def get(self, *args, **kwargs):
         limit = self.get_argument('limit', 10)
         page = self.get_argument('page', 1)
@@ -46,213 +71,174 @@ class UserListHandler(BaseHandler, ApiHandler):
         total = pagelist_obj.total
         page = pagelist_obj.page
         items = pagelist_obj.items
-        # print('items : ', items)
 
-        args = {
+        params = {
             'count': total,
             'uri': self.request.uri,
             'path': self.request.path,
             'data': [user.as_dict() for user in items],
         }
-        return self.success(**args)
+        return self.success(**params)
 
-class UserSaveHandler(BaseHandler, ApiHandler):
+class UserAddHandler(BaseHandler):
     """docstring for Passport"""
-    @required_login
+    @tornado.web.authenticated
+    @required_permissions('admin:user:add')
     def get(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
-        user = User.Q.filter(User.uuid==uuid).first()
-        groups = UserGroup.Q.filter(UserGroup.deleted==0).filter(UserGroup.status==1).all()
+        role_id = '6b0642103a1749949a07f4139574ead9'
+        menu_list = AdminMenu.children(status=1)
+        user = User(status=1, role_id=role_id)
 
-        # user.group_id = User.group_id(user)
-        print('user ', user.group_id)
-        args = {
+        data_info = user.as_dict()
+        try:
+            data_info['permission'] = json.loads(user.permission)
+        except Exception as e:
+            data_info['permission'] = []
+
+        params = {
             'user': user,
-            'groups': groups
+            'role_option': Role.option_html(role_id),
+            'menu_list': menu_list,
+            'data_info': data_info,
+            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+            'xsrf_token': self.xsrf_token,
         }
-        self.render('user/save.html', **args)
+        self.render('user/add.html', **params)
 
-    @required_login
+    @tornado.web.authenticated
+    @required_permissions('admin:user:add')
     def post(self, *args, **kwargs):
-        group_id = self.get_argument('group_id', None)
-        uuid = self.get_argument('uuid', None)
+        role_id = self.get_argument('role_id', None)
         username = self.get_argument('username', None)
+        password = self.get_argument('password', None)
+        rsa_encrypt = self.get_argument('rsa_encrypt', None)
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
-        status = self.get_argument('status', 0)
+        status = self.get_argument('status', 1)
+        permission = self.get_body_arguments('permission')
+
         if not username:
             return self.error('用户名不能为空')
-        # if not email and not is_email(email):
-        #     return self.error('Email格式不正确')
-        # if not mobile and not is_mobile(mobile):
-        #     return self.error('电话号码不能为空')
+        if not password:
+            return self.error('密码不能为空')
 
-        if uuid:
-            res = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+        if username:
+            res = User.Q.filter(User.username==username).count()
             if res>0:
                 return self.error('用户名已被占用')
 
-            if mobile:
-                res = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
-                if res>0:
-                    return self.error('电话号码已被占用')
-            if email:
-                res = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
-                if res>0:
-                    return self.error('Email已被占用')
+        if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
+            private_key = sys_config('sys_login_rsa_priv_key')
+            password = RSAEncrypter.decrypt(password, private_key)
 
-            user = {
-                'username':username,
-            }
-            if mobile:
-                user['mobile'] = mobile
-            if email:
-                user['email'] = email
-            user['status'] = status
-            User.Q.filter(User.uuid==uuid).update(user)
+        params = {
+            'username': username,
+            'password': make_password(password),
+            'status': status,
+        }
+        if role_id:
+            params['role_id'] = role_id
+        if mobile:
+            params['mobile'] = mobile
+            res = User.Q.filter(User.mobile==mobile).count()
+            if res>0:
+                return self.error('电话号码已被占用')
+        if email:
+            params['email'] = email
+            res = User.Q.filter(User.email==email).count()
+            if res>0:
+                return self.error('Email已被占用')
 
-            ugmap = UserGroupMap(user_id=uuid, group_id=group_id)
-            UserGroupMap.session.merge(ugmap)
-        else:
-            if username:
-                res = User.Q.filter(User.username==username).count()
-                if res>0:
-                    return self.error('用户名已被占用')
-
-            params = {
-                'username': username,
-            }
-            if mobile:
-                params['mobile'] = mobile
-                res = User.Q.filter(User.mobile==mobile).count()
-                if res>0:
-                    return self.error('电话号码已被占用')
-            if email:
-                params['email'] = email
-                res = User.Q.filter(User.email==email).count()
-                if res>0:
-                    return self.error('Email已被占用')
-            user = User(**params)
-            User.session.add(user)
-            # 为了输出
-            user = user.as_dict()
+        user = User(**params)
+        User.session.add(user)
+        # 为了输出
+        user = user.as_dict()
         User.session.commit()
 
         return self.success(data=user)
 
-class GroupHandler(BaseHandler):
+class UserEditHandler(BaseHandler):
     """docstring for Passport"""
-    @required_login
-    def get(self, *args, **kwargs):
-        args = {
-            'menus': self.admin_menus(),
-        }
-        self.render('user/group.html', **args)
-
-
-class GroupListHandler(BaseHandler, ApiHandler):
-    """用户组列表"""
-    @required_login
-    def get(self, *args, **kwargs):
-        limit = self.get_argument('limit', 10)
-        page = self.get_argument('page', 1)
-        pagelist_obj = UserGroup.Q.filter().paginate(page=page, per_page=limit)
-        if pagelist_obj is None:
-            return self.error('暂无数据')
-
-        total = pagelist_obj.total
-        page = pagelist_obj.page
-        items = pagelist_obj.items
-
-        args = {
-            'count': total,
-            'uri': self.request.uri,
-            'path': self.request.path,
-            'data': [group.as_dict() for group in items],
-        }
-        return self.success(**args)
-
-class GroupSaveHandler(BaseHandler, ApiHandler):
-    """用户组增删查改功能"""
-    @required_login
+    @tornado.web.authenticated
+    @required_permissions('admin:user:edit')
     def get(self, *args, **kwargs):
         uuid = self.get_argument('uuid', None)
-        group = UserGroup.Q.filter(UserGroup.uuid==uuid).first()
-        args = {
-            'group': group,
+
+        menu_list = AdminMenu.children(status=1)
+        user = User.Q.filter(User.uuid==uuid).first()
+
+        role_id = user.role_id
+
+        data_info = user.as_dict()
+        try:
+            data_info['permission'] = json.loads(user.permission)
+        except Exception as e:
+            data_info['permission'] = []
+
+        params = {
+            'user': user,
+            'role_option': Role.option_html(role_id),
+            'menu_list': menu_list,
+            'data_info': data_info,
+            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+            'xsrf_token': self.xsrf_token,
         }
-        self.render('user/group_save.html', **args)
+        self.render('user/edit.html', **params)
 
-
-    @required_login
+    @tornado.web.authenticated
+    @required_permissions('admin:user:edit')
     def post(self, *args, **kwargs):
-        groupname = self.get_argument('groupname', None)
-        uuid = self.get_argument('uuid', None)
+        role_id = self.get_argument('role_id', None, strip=True)
+        uuid = self.get_argument('uuid', None, strip=True)
+        username = self.get_argument('username', None, strip=True)
+        password = self.get_argument('password', None, strip=True)
+        rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        email = self.get_argument('email', None, strip=True)
+        mobile = self.get_argument('mobile', None, strip=True)
         status = self.get_argument('status', 0)
-        if not groupname:
-            return self.error('分组名称不能为空')
+        permission = self.get_body_arguments('permission[]', strip=True)
 
-        if uuid:
-            group = {
-                'groupname':groupname,
-            }
-            group['status'] = status
-            UserGroup.Q.filter(UserGroup.uuid==uuid).update(group)
+        email = None if email=='None' else email
+        mobile = None if mobile=='None' else mobile
 
-
-        else:
-            group = UserGroup(groupname=groupname)
-            UserGroup.session.add(group)
-        UserGroup.session.commit()
-        return self.success()
-
-    @required_login
-    def delete(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
         if not uuid:
-            return self.error('非法操作')
+            return self.error('用户ID不能为空')
 
-        group = {
-            'deleted':1,
+        user = {
+            'status': status,
         }
-        UserGroup.Q.filter(UserGroup.uuid==uuid).update(group)
-        UserGroup.session.commit()
-        return self.success()
 
+        if username:
+            user['username'] = username
+            res = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+            if res>0:
+                return self.error('用户名已被占用')
+        if password:
+            if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
+                private_key = sys_config('sys_login_rsa_priv_key')
+                password = RSAEncrypter.decrypt(password, private_key)
+            user['password'] = make_password(password)
 
-class GroupAccreditHandler(BaseHandler, ApiHandler):
-    """用户组授权功能"""
-    @required_login
-    def get(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
-        if not uuid:
-            return self.error('非法操作')
+        if mobile:
+            user['mobile'] = mobile
+            res = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
+            if res>0:
+                return self.error('电话号码已被占用')
+        if email:
+            user['email'] = email
+            res = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
+            if res>0:
+                return self.error('Email已被占用')
 
-        group = UserGroup.Q.filter(UserGroup.uuid==uuid).first()
-        group.permission = group.permission.split(',') if group.permission else []
+        if permission:
+            user['permission'] = json.dumps(permission)
 
-        from applications.acl import accredit
-        from applications.acl import acl_nodes
-        # return self.success(data=accredit(acl_nodes))
-        args = {
-            'group': group,
-            'accredit_items': accredit(acl_nodes)
-        }
-        self.render('user/group_accredit.html', **args)
+        if role_id:
+            user['role_id'] = role_id
 
+        User.Q.filter(User.uuid==uuid).update(user)
+        User.session.commit()
 
-    @required_login
-    def post(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
-        permission = self.get_argument('permission', '')
-        if not uuid:
-            return self.error('非法操作')
-        # print(type(permission), permission)
-        group = {
-            'permission': permission,
-        }
-        UserGroup.Q.filter(UserGroup.uuid==uuid).update(group)
-        UserGroup.session.commit()
-        return self.success()
-
-
+        return self.success(data=user)

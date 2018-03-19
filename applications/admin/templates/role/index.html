@@ -1,0 +1,215 @@
+{% extends "../base.html" %}
+
+{% block title %} {% end %}
+{% block css %} {% end %}
+{% block body %}
+<div class="layui-body">
+    <div class="layui-btn-group topToolbar">
+        <a class="layui-btn layui-btn-primary" data-type="add">
+            <i class="layui-icon">&#xe608;</i>添加
+        </a>
+        <a data-href="/admin/role/delete" class="layui-btn layui-btn-primary">
+            <i class="layui-icon">&#xe640;</i>删除
+        </a>
+    </div>
+
+    <table class="layui-table" lay-data="{height: 'full-88', cellMinWidth: 80, page: true, id:'role_list_table', limit:30, url:'/admin/role/list'}" lay-filter="role_list">
+        <thead>
+            <tr>
+                <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
+                <th lay-data="{field:'uuid', width:278, fixed: true}">UUID</th>
+                <th lay-data="{field:'rolename', width:200, sort: true}">角色名称</th>
+                <th lay-data="{field:'sort', width:80, sort: true}">排序</th>
+                <th lay-data="{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}" templet="#switchStatus">状态</th>
+                <th lay-data="{field:'utc_created_at', width:180, sort: true, fixed: 'right'}">添加时间</th>
+                <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#role_list_bar'}"></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+{% end %}
+
+
+{% block javascript %}
+<script type="text/html" id="role_list_bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" title="查看">
+        <i class="layui-icon">&#xe705;</i>
+    </a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑">
+        <i class="layui-icon">&#xe642;</i>
+    </a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" title="删除">
+        <i class="layui-icon">&#xe640;</i>
+    </a>
+</script>
+
+<script type="text/html" id="switchStatus">
+    <input type="checkbox" name="status" value="{{!d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" {{!d.status == 1 ? 'checked' : ''}}>
+</script>
+
+<script type="text/javascript">
+var edit_curent_obj = {}
+
+var edit_success = function(data) {
+    if (edit_curent_obj) {
+        edit_curent_obj.update({
+            rolename: data.rolename,
+            sort: data.sort,
+            status: data.status,
+        })
+        if (status_html[data.status]) {
+            var td = edit_curent_obj.tr.children('td[data-field="status"]')
+            td.html(status_html[data.status])
+        }
+    }
+}
+
+layui.use(['table','form'], function() {
+    var table = layui.table
+    var form = layui.form
+
+    //监听表格复选框选择
+    table.on('checkbox(role_list)', function(obj) {
+        console.log(obj)
+    })
+    //监听工具条
+    table.on('tool(role_list)', function(obj) {
+        var data = obj.data;
+        switch(obj.event) {
+            case 'edit':
+                edit_curent_obj = obj
+                edit(data)
+                break;
+            case 'del':
+                layer.confirm('删除之后无法恢复，您确定要删除吗？', function(index) {
+                    del(data.uuid, obj, index)
+                });
+                break;
+        }
+    })
+
+    var $ = layui.$, active = {
+        add: function() {
+            parent.layer.open({
+                type: 1,
+                title: ['添加角色', 'background-color: #00bb9d;text-align:center;font-size:18px;color:#fff;'],
+                shadeClose: true,
+                shade: false,
+                maxmin: false,
+                area: ['400px', '300px'],
+                content: '<div style="padding: 15px;">\
+                            <form class="layui-form" action="/admin/role/add" method="post">\
+                                {% raw xsrf_form_html() %} \
+                                <div class="layui-form-item">\
+                                    <label class="layui-form-label">角色名称</label>\
+                                    <div class="layui-input-block">\
+                                        <input type="text" name="rolename" lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">\
+                                    </div>\
+                                </div>\
+                                <div class="layui-form-item">\
+                                    <div class="layui-input-block">\
+                                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>\
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>\
+                                    </div>\
+                                </div>\
+                            </form>\
+                        </div>',
+                end: function() {
+                    layer.closeAll()
+                }
+            })
+        }
+        ,getCheckLength: function() { //获取选中数目
+            var checkStatus = table.checkStatus('role_list_table')
+            ,data = checkStatus.data;
+            layer.msg('选中了：'+ data.length + ' 个');
+        }
+        ,isAll: function() { //验证是否全选
+            var checkStatus = table.checkStatus('role_list_table');
+            layer.msg(checkStatus.isAll ? '全选': '未全选')
+        }
+    }
+
+    $('.topToolbar .layui-btn').on('click', function() {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    })
+
+    // 编辑
+    var edit = function(data) {
+        layer.open({
+            type: 2,
+            title: ['编辑角色', 'background-color: #00bb9d;text-align:center;font-size:18px;color:#fff;'],
+            shadeClose: true,
+            shade: false,
+            maxmin: false,
+            area: ['800px', '600px'],
+            content: '/admin/role/edit?uuid=' + data.uuid
+        })
+    }
+    // 删除
+    var del = function(uuid, obj, index) {
+        var tourl = '/admin/role/delete'
+        $.ajax({
+            type: 'DELETE',
+            url: tourl,
+            data: {uuid: uuid, _xsrf: getCookie("_xsrf")},
+            dataType: 'json',
+            success: function(data) {
+                obj.del();
+                layer.close(index);
+                if (data.code==0) {
+                    layer.msg('{{ _('操作成功') }}')
+                } else if(data.msg) {
+                    layer.msg(data.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                setTimeout(function(){
+                    window.parent.layer.closeAll()
+                }, 2000)
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+    }
+
+    form.on('switch(status)', function(){
+        var status = this.checked ? 1 : 0
+        var uuid = $(this).parent().parent().parent().children('td[data-field="uuid"]').children('div').html()
+
+        var params = {uuid: uuid, status:status, }
+        params['_xsrf'] = getCookie("_xsrf")
+
+        $.ajax({
+            type: "POST",
+            url: '/admin/role/edit',
+            data: params,
+            success: function(res) {
+                if (res.code==0) {
+                    console.log('success')
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+    })
+})
+</script>
+{% end %}

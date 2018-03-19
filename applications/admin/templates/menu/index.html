@@ -1,0 +1,410 @@
+{% extends "../base.html" %}
+
+{% block title %} {% end %}
+
+{% block body %}
+<div class="layui-body">
+    <div class="layui-tab" lay-filter="menu_tab">
+        <ul class="layui-tab-title">
+            {%set tab_key=1 %}
+            {% for tab in tab_data %}
+            <li class="{% if tab_key==1 %}layui-this{% end %}" lay-id="{{ tab_key }}">{{ tab['title'] }}</li>
+            {%set tab_key+=1 %}
+            {% end %}
+        </ul>
+
+        <div class="layui-tab-content">
+            {%set k = 1 %}
+            {% for v in menu_list %}
+                <div class="layui-tab-item layui-form menu-dl {% if k==1 %}layui-show{% end %}">
+                <form class="page-list-form">
+                    <div class="page-toolbar">
+                        <div class="layui-btn-group fl">
+                            <a href="/admin/menu/add?parent_id={{ v['uuid'] }}" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添加子菜单</a>
+                            <a data-href="/admin/menu/edit?status=1" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-qiyong"></i>启用</a>
+                            <a data-href="/admin/menu/edit?status=0" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-jinyong1"></i>禁用</a>
+                            <a data-href="#" data-href="/admin/menu/delete" class="layui-btn layui-btn-primary j-page-btns confirm"><i class="aicon ai-jinyong"></i>删除</a>
+                            <a href="/admin/menu/export" class="layui-btn layui-btn-primary"><i class="aicon ai-daochu"></i>导出</a>
+                        </div>
+                    </div>
+                    <dl class="menu-dl1 menu-hd mt10">
+                        <dt>菜单名称</dt>
+                        <dd>
+                            <span class="hd">排序</span>
+                            <span class="hd2">状态</span>
+                            <span class="hd3">操作</span>
+                        </dd>
+                    </dl>
+                    {%set kk = 1 %}
+                    {% for vv in v['children'] %}
+                    <dl class="menu-dl1">
+                        <dt>
+                            <input type="checkbox" name="ids" value="{{ vv['uuid'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vv['title'] }}">
+                            <div class="layui-form-checkbox" lay-skin="primary">
+                                <span>{{ vv['title'] }}</span>
+                                <i class="layui-icon">&#xe626;</i>
+                            </div>
+                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vv['sort'] }}" data-value="{{ vv['sort'] }}" data-href="/admin/menu/sort?ids={{ vv['uuid'] }}">
+                            <input type="checkbox" name="status" value="{{ vv['status'] }}" {% if vv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vv['uuid'] }}">
+                            <div class="layui-form-switch">
+                                <em>
+                                {% if vv['status']==1 %}启用{% else %}禁用{% end %}
+                                </em>
+                                <i></i>
+                            </div>
+                            <div class="menu-btns">
+                                <a href="/admin/menu/edit?uuid={{ vv['uuid'] }}&menu_tab={{ k }}" title="编辑">
+                                    <i class="layui-icon">&#xe642;</i>
+                                </a>
+                                <a href="/admin/menu/add?parent_id={{ vv['uuid'] }}" title="添加子菜单">
+                                    <i class="layui-icon">&#xe654;</i>
+                                </a>
+                                <a href="#" data-href="/admin/menu/delete?ids={{ vv['uuid'] }}" class="j-dl-del" title="删除">
+                                    <i class="layui-icon">&#xe640;</i></a>
+                            </div>
+                        </dt>
+                        <dd>
+                            {%set kk+=1 %}
+                            {% if len(vv.get('children', []))>0 %}
+                                {% for vvv in vv['children'] %}
+                                    {% if vvv['title']=='预留占位' %}
+                                    {%set continue %}
+                                    {% end%}
+                                    {%set kk+=1 %}
+                                    <dl class="menu-dl2">
+                                        <dt>
+                                            <input type="checkbox" name="ids[{{ kk }}]" value="{{ vvv['uuid'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vvv['title'] }}"><div class="layui-form-checkbox" lay-skin="primary"><span>{{ vvv['title'] }}</span><i class="layui-icon">&#xe626;</i></div>
+                                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vvv['sort'] }}" data-value="{{ vvv['sort'] }}" data-href="/admin/menu/sort?ids={{ vvv['uuid'] }}">
+                                            <input type="checkbox" name="status" value="{{ vvv['status'] }}" {% if vvv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vvv['uuid'] }}">
+                                            <div class="layui-form-switch">
+                                                <em>
+                                                {% if vvv['status']==1 %}启用{% else %}禁用{% end %}
+                                                </em>
+                                                <i></i>
+                                            </div>
+                                            <div class="menu-btns">
+                                                <a href="/admin/menu/edit?uuid={{ vvv['uuid'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
+                                                <a href="/admin/menu/add?parent_id={{ vvv['uuid'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
+                                                <a href="#" data-href="/admin/menu/delete?uuid={{ vvv['uuid'] }}" class="j-dl-del" title="删除"><i class="layui-icon">&#xe640;</i></a>
+                                                {% if vvv['path']=='/admin/plugins/run' %}
+                                                <a href="/admin/menu/export?uid{{ vvv['uuid'] }}" title="导出菜单"><i class="layui-icon" style="font-weight:bolder;">&#xe601;</i></a>
+                                                {% end %}
+                                            </div>
+                                        </dt>
+                                        {%set kk+=1 %}
+                                        {% for vvvv in vvv['children'] %}
+                                        {%set kk+=1 %}
+                                        <dd>
+                                            <input type="checkbox" name="ids[{{ kk }}]" value="{{ vvvv['uuid'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vvvv['title'] }}"><div class="layui-form-checkbox" lay-skin="primary"><span>{{ vvvv['title'] }}</span><i class="layui-icon">&#xe626;</i></div>
+                                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vvvv['sort'] }}" data-value="{{ vvvv['sort'] }}" data-href="/admin/menu/sort?ids={{ vvvv['uuid'] }}">
+                                            <input type="checkbox" name="status" value="{{ vvvv['status'] }}" {% if vvvv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vvvv['uuid'] }}">
+                                            <div class="layui-form-switch">
+                                                <em>
+                                                {% if vvvv['status']==1 %}启用{% else %}禁用{% end %}
+                                                </em>
+                                                <i></i>
+                                            </div>
+                                            <div class="menu-btns">
+                                                <a href="/admin/menu/edit?uuid={{ vvvv['uuid'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
+                                                <a href="/admin/menu/add?parent_id={{ vvvv['uuid'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
+                                                <a href="#" data-href="/admin/menu/delete?ids={{ vvvv['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
+                                            </div>
+                                        </dd>
+                                        {% end %}
+                                    </dl>
+                                {% end %}
+                            {% end %}
+                        </dd>
+                    </dl>
+                    {% end %}
+                </form>
+                </div>
+                {%set k += 1 %}
+            {% end %}
+            <div class="layui-tab-item layui-form menu-dl">
+                <form class="page-list-form">
+                    <div class="page-toolbar">
+                        <div class="layui-btn-group fl">
+                            <a href="/admin/menu/add?parent_id=0" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添子菜单</a>
+                        </div>
+                    </div>
+                    <dl class="menu-dl1 menu-hd mt10">
+                        <dt>模块名称</dt>
+                        <dd>
+                            <span class="hd">排序</span>
+                            <span class="hd2">状态</span>
+                            <span class="hd3">操作</span>
+                        </dd>
+                    </dl>
+                    {%set k = 1 %}
+                    {% for v in menu_list %}
+                    <dl class="menu-dl1">
+                        <dt>
+                            <input type="checkbox" name="ids[{{ k }}]" class="checkbox-ids" value="{{ v['uuid'] }}" lay-skin="primary" title="{{ v['title'] }}">
+                            <div class="layui-form-checkbox" lay-skin="primary">
+                                <span>{{ v['title'] }}</span>
+                                <i class="layui-icon">&#xe626;</i>
+                            </div>
+                            <input type="text" class="layui-input j-ajax-input menu-sort" name="sort[{{ k }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ v['sort'] }}" data-value="{{ v['sort'] }}" data-href="/admin/menu/sort?ids={{ v['uuid'] }}">
+
+                            <input type="checkbox" name="status" value="{{ v['status'] }}" {% if v['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ v['uuid'] }}" >
+                            <div class="layui-form-switch">
+                                <em>
+                                {% if v['status']==1 %}启用{% else %}禁用{% end %}
+                                </em>
+                                <i></i>
+                            </div>
+                            <div class="menu-btns">
+                                <a href="/admin/menu/edit?uuid={{ v['uuid'] }}&menu_tab=5" title="编辑">
+                                    <i class="layui-icon">&#xe642;</i>
+                                </a>
+                                <a href="#" data-href="/admin/menu/delete?ids={{ v['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
+                            </div>
+                        </dt>
+                    </dl>
+                    {% end %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}
+
+{% block javascript %}
+<script type="text/javascript">
+layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
+    var $ = layui.jquery,element = layui.element, layer = layui.layer, form = layui.form
+
+    var layid = location.hash.replace(/^#menu_tab=/, '');
+    element.tabChange('menu_tab', layid);
+
+    // 监听状态设置开关
+    form.on('switch(switchStatus)', function(data) {
+        var that = $(this), status = this.checked ? 1 : 0
+        if (!that.attr('data-href')) {
+            layer.msg('{{ _('请设置href参数') }}')
+            return false
+        }
+
+        $.get(that.attr('data-href'), {val:status}, function(res) {
+            if (res.code != 0) {
+                // that.trigger('click')
+                layer.msg(res.msg)
+            }
+        })
+    })
+
+    // TR数据行删除
+    $('.j-dl-del').click(function() {
+        var that = $(this)
+        var href = !that.attr('data-href') ? that.attr('href') : that.attr('data-href')
+        layer.confirm('删除之后无法恢复，您确定要删除吗？', {title:false, closeBtn:0}, function(index){
+            if (!href) {
+                layer.msg('{{ _('请设置href参数') }}')
+                return false
+            }
+            $.ajax({
+                type: 'DELETE',
+                url: href,
+                data: {_xsrf: getCookie("_xsrf")},
+                dataType: 'json',
+                success: function(data) {
+                    that.parent().parent().parent().remove()
+                    if (data.code==0) {
+                        layer.msg('{{ _('操作成功') }}')
+                    } else if(data.msg) {
+                        layer.msg(data.msg)
+                    } else {
+                        layer.msg('{{ _('未知错误') }}')
+                    }
+                    setTimeout(function(){
+                        layer.close(index)
+                    }, 2000)
+                },
+                error: function(xhr){
+                    // console.log(xhr.responseJSON)
+                    if (xhr.responseJSON && xhr.responseJSON.msg) {
+                        layer.msg(xhr.responseJSON.msg)
+                    } else {
+                        layer.msg('{{ _('未知错误') }}')
+                    }
+                }
+            })
+            layer.close(index)
+        })
+        return false
+    })
+
+    /*iframe弹窗*/
+    $('.j-iframe-pop').click(function(){
+        var that = $(this),
+            _url = that.attr('href'),
+            _title = that.attr('title'),
+            _width = that.attr('width') ? that.attr('width') : 750,
+            _height = that.attr('height') ? that.attr('height') : 500
+        if (!_url) {
+            layer.msg('{{ _('请设置href参数') }}')
+            return false
+        }
+        layer.open({type:2, title:_title, content:_url, area: [_width+'px', _height+'px']})
+        return false
+    })
+
+
+    /* 监听表单提交 */
+    form.on('submit(formSubmit)', function(data) {
+        var _form = ''
+        if ($(this).attr('data-form')) {
+            _form = $($(this).attr('data-form'))
+        } else {
+            _form = $(this).parents('form')
+        }
+        // CKEditor专用
+        if (typeof(CKEDITOR) != 'undefined') {
+            for (instance in CKEDITOR.instances) {
+                CKEDITOR.instances[instance].updateElement()
+            }
+        }
+        layer.msg('数据提交中...',{time:500000})
+        $.ajax({
+            type: "POST",
+            url: _form.attr('action'),
+            data: _form.serialize(),
+            success: function(res) {
+                layer.msg(res.msg, {},function() {
+                    if (res.code == 0) {
+                        if (typeof(res.url) != 'undefined' && res.url != null && res.url != '') {
+                            location.href = res.url
+                        } else {
+                            location.reload()
+                        }
+                    }
+                })
+            }
+        })
+        return false
+    })
+
+    /* ajax请求操作 */
+    $(document).on('click', '.j-ajax', function() {
+        var that = $(this),
+            href = !that.attr('data-href') ? that.attr('href') : that.attr('data-href'),
+            refresh = !that.attr('refresh') ? 'yes' : that.attr('refresh')
+        if (!href) {
+            layer.msg('{{ _('请设置href参数') }}')
+            return false
+        }
+
+        if (!that.attr('confirm')) {
+            layer.msg('数据提交中...', {time:500000})
+            $.get(href, {}, function(res) {
+                layer.msg(res.msg, {}, function() {
+                    if (refresh == 'yes') {
+                        if (typeof(res.url) != 'undefined' && res.url != null && res.url != '') {
+                            location.href = res.url
+                        } else {
+                            location.reload()
+                        }
+                    }
+                })
+            })
+            layer.close()
+        } else {
+            layer.confirm(that.attr('confirm'), {title:false, closeBtn:0}, function(index){
+                layer.msg('数据提交中...', {time:500000})
+                $.get(href, {}, function(res) {
+                    layer.msg(res.msg, {}, function() {
+                        if (refresh == 'yes') {
+                            if (typeof(res.url) != 'undefined' && res.url != null && res.url != '') {
+                                location.href = res.url
+                            } else {
+                                location.reload()
+                            }
+                        }
+                    })
+                })
+                layer.close(index)
+            })
+        }
+        return false
+    })
+
+    /* 数据列表input编辑自动选中ids */
+    $('.j-auto-checked').blur(function(){
+        var that = $(this)
+        if(that.attr('data-value') != that.val()) {
+            that.parents('tr').find('input[name="ids[]"]').attr("checked", true)
+        }else{
+            that.parents('tr').find('input[name="ids[]"]').attr("checked", false)
+        }
+        form.render('checkbox')
+    })
+
+    /* 用ajax方式更新input*/
+    $('.j-ajax-input').focusout(function(){
+        var that = $(this), _val = that.val()
+        if (_val == '') return false
+        if (that.attr('data-value') == _val) return false
+        if (!that.attr('data-href')) {
+            layer.msg('{{ _('请设置href参数') }}')
+            return false
+        }
+        $.post(that.attr('data-href'), {val:_val, _xsrf: getCookie("_xsrf")}, function(res) {
+            if (res.code == 0) {
+                that.attr('data-value', _val)
+            }
+            layer.msg(res.msg)
+        })
+    })
+
+    /* 小提示 */
+    $('.tooltip').hover(function() {
+        var that = $(this)
+        that.find('i').show()
+    }, function() {
+        var that = $(this)
+        that.find('i').hide()
+    })
+
+    /* 列表按钮组 */
+    $('.j-page-btns').click(function(){
+        var that = $(this),
+            code = function(that) {
+                var href = that.attr('href') ? that.attr('href') : that.attr('data-href')
+                if (!href) {
+                    layer.msg('{{ _('请设置href参数') }}')
+                    return false
+                }
+                if ($('.checkbox-ids:checked').length <= 0) {
+                    layer.msg('请选择要操作的数据')
+                    return false
+                }
+                if (that.parents('form')[0]) {
+                    var query = that.parents('form').serialize()
+                } else {
+                    var query = $('#pageListForm').serialize()
+                }
+                layer.msg('数据提交中...',{time:500000})
+                $.post(href, query, function(res) {
+                    layer.msg(res.msg, {}, function(){
+                        if (res.code != 0) {
+                            location.reload()
+                        }
+                    })
+                })
+            }
+        if (that.hasClass('confirm')) {
+            var tips = that.attr('tips') ? that.attr('tips') : '您确定要执行此操作吗？'
+            layer.confirm(tips, {title:false, closeBtn:0}, function(index){
+                code(that)
+                layer.close(index)
+            })
+        } else {
+           code(that)
+        }
+        return false
+    })
+    exports('global', {})
+})
+</script>
+{% end %}

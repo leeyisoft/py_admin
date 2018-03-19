@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% end %}</title>
+    <meta name="renderer" content="webkit">
+    {% raw xsrf_form_html() %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{{ static_url("js/layui/css/layui.css") }}">
+    <link rel="stylesheet" href="{{ static_url("admin/css/style.css") }}">
+    <style type="text/css">
+        .layui-body {
+            left: auto!important; right:auto;
+            width: 100%; height: 100%;
+            float: left;
+            background: #fff;
+            padding-top: 1em;
+        }
+        .layui-form-label {
+            float: left;
+            display: block;
+            padding: 0.5em 1em;
+            width: 4em;
+            font-weight: 400;
+            line-height: 1em;
+            text-align: right;
+        }
+        .layui-input-block {
+            float: left;
+            text-align: left;
+            margin-left: 1em;
+        }
+    </style>
+    {% block css %}{% end %}
+</head>
+<body>
+    {% block header %}{% end %}
+    {% block body %}{% end %}
+    {% block footer %}{% end %}
+</body>
+</html>
+<script src="{{ static_url("js/layui/layui.js") }}" charset="utf-8"></script>
+<script src="{{ static_url("admin/js/global.js") }}" charset="utf-8"></script>
+{% block javascript %}{% end %}

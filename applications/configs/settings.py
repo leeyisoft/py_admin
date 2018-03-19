@@ -10,7 +10,21 @@ xsrf_cookies = True
 login_pwd_rsa_encrypt = True
 default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
 
-XHEADERS = True
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+
+STATIC_PATH = os.path.join(ROOT_PATH, 'applications/statics')
+TEMPLATE_PATH = os.path.join(ROOT_PATH, 'applications/admin/templates')
+print('STATIC_PATH: ', STATIC_PATH)
+print('TEMPLATE_PATH: ', TEMPLATE_PATH)
+
+xheaders = True
+
+# Super Admin
+SUPER_ADMIN = [
+    'de713937f2e3487ebe54b8863bb1a1b8', # admin uid
+    'de713937f2e3487ebe54b8863bb1a1b7', #
+]
 
 # tornado全局配置
 TORNADO_CONF = {
@@ -18,8 +32,8 @@ TORNADO_CONF = {
     'login_url': '/admin/login',
     'cookie_secret': cookie_secret,
     # 'ui_modules': ui_modules,
-    'template_path': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'admin/templates'),
-    'static_path': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'statics'),
+    'template_path': TEMPLATE_PATH,
+    'static_path': STATIC_PATH,
     # 安全起见，可以定期生成新的cookie 秘钥，生成方法：
     # base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)
 }
@@ -29,7 +43,6 @@ TORNADO_CONF = {
 # ###########
 MIDDLEWARE_CLASSES = (
     'applications.core.middleware.accesslog.AccessLogMiddleware',
-    'applications.core.middleware.session.SessionMiddleware',
     'applications.core.middleware.dbalchemy.DBAlchemyMiddleware',
     # 'torngas.httpmodule.httpmodule.HttpModuleMiddleware',
 )
@@ -61,6 +74,7 @@ CACHES = {
         'LOCATION': '127.0.0.1:6379',
         'OPTIONS': {
             'DB': 3,
+            'PASSWORD': 'abc123456',
             'PARSER_CLASS': 'redis.connection.DefaultParser',
             'POOL_KWARGS': {
                 'socket_timeout': 2,
@@ -70,6 +84,21 @@ CACHES = {
         }
     },
 
+}
+
+IPV4_ONLY = True
+
+#开启session支持
+SESSION = {
+    'session_cache_alias': 'default_redis',  #'session_loccache',对应cache配置
+    'session_name': 'nkzpg9NKBpKS2iaK',
+    'cookie_domain': '',
+    'cookie_path': '/',
+    'expires': 86400,  # 24 * 60 * 60, # 24 hours in seconds,0代表浏览器会话过期
+    'ignore_change_ip': False,
+    'httponly': True,
+    'secret_key': 'fLjUfxqXtfNoIldA0A0J',
+    'session_version': 'v0.1.0'
 }
 
 LANGUAGE_CODE = 'zh-hans'
@@ -85,7 +114,7 @@ TRANSLATIONS_CONF = {
     'locale_default': 'zh_CN',
     'use_accept_language': True
 }
-
+print('TRANSLATIONS_CONF: ', TRANSLATIONS_CONF)
 
 # 白名单未开启，如需使用，请用元祖列出白名单ip
 WHITELIST = False
@@ -95,25 +124,43 @@ WHITELIST = False
 # '127.0.0.2',
 # )
 
-#tornado日志功能配置
+# tornado日志功能配置
+# Logging中有
+# NOTSET < DEBUG < INFO < WARNING < ERROR < CRITICAL这几种级别，
+# 日志会记录设置级别以上的日志
+# when  时间  按照哪种时间单位滚动（可选s-按秒，m-按分钟，h-按小时，d-按天，w0-w6-按指定的星期几，midnight-在午夜）
 LOGGING_DIR = 'logs/'
+
+#其中name为getlogger指定的名字
+DEFAULT_FORMAT = '%(color)s[%(levelname)s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
+standard_format = '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]' \
+                  '[%(levelname)s][%(message)s]'
 LOGGING = (
     {
         'name': 'tornado',
-        'level': 'INFO',
-        'log_to_stderr': False,
-        'when': 'midnight',
+        'level': 'DEBUG',
+        'log_to_stderr': True,
+        'when': 'w0',
         'interval': 1,
+        'formatter': standard_format,
         'filename': 'tornado.log'
     },
     {
-        'name': 'torngas.tracelog',
+        'name': 'tornado.debug.log',
+        'level': 'DEBUG',
+        'log_to_stderr': True,
+        'when': 'midnight',
+        'interval': 1,
+        'filename': 'tornado_debug_log.log'
+    },
+    {
+        'name': 'torngas.errorlog',
         'level': 'ERROR',
-        'log_to_stderr': False,
+        'log_to_stderr': True,
         'when': 'midnight',
         'interval': 1,
         'formatter': '%(message)s',
-        'filename': 'torngas_trace_log.log'
+        'filename': 'torngas_error_log.log'
     },
     {
         'name': 'torngas.accesslog',
@@ -121,35 +168,18 @@ LOGGING = (
         'log_to_stderr': True,
         'when': 'midnight',
         'interval': 1,
-        'formatter': '%(message)s',
+        'formatter': '%(levelname)s %(message)s',
         'filename': 'torngas_access_log.log'
     },
     {
         'name': 'torngas.infolog',
         'level': 'INFO',
-        'log_to_stderr': False,
+        'log_to_stderr': True,
         'when': 'midnight',
         'interval': 1,
         'filename': 'torngas_info_log.log'
     }
 )
-
-IPV4_ONLY = True
-
-
-#开启session支持
-SESSION = {
-    'session_cache_alias': 'default_redis',  # 'session_loccache',对应cache配置
-    'session_name': '__TORNADOID',
-    'cookie_domain': '',
-    'cookie_path': '/',
-    'expires': 86400,  # 24 * 60 * 60, # 24 hours in seconds,0代表浏览器会话过期
-    'ignore_change_ip': False,
-    'httponly': True,
-    'secure': True,
-    'secret_key': 'fLjUfxqXtfNoIldA0A0J',
-    'session_version': 'v0.1.0'
-}
 
 
 #配置模版引擎
@@ -221,6 +251,11 @@ SQLALCHEMY_CONFIGURATION = {
     'sqlalchemy.poolclass': 'QueuePool'  # 手动指定连接池类
 }
 
+PASSWORD_HASHERS = [
+    # 第一个元素为默认加密方式
+    'applications.core.utils.hasher.PBKDF2PasswordHasher',
+    'applications.core.utils.hasher.PBKDF2SHA1PasswordHasher',
+]
 # 配置文件优先级 product > local > test > dev
 try:
     from .dev import *

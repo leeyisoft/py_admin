@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>管理控制台 -  Powered by {:config('system.name')}</title>
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<link rel="stylesheet" href="{{ static_url("js/layui/css/layui.css") }}">
+<link rel="stylesheet" href="{{ static_url("admin/css/style.css") }}">
+<link rel="stylesheet" href="{{ static_url("fonts/typicons/min.css") }}">
+<link rel="stylesheet" href="{{ static_url("fonts/font-awesome/min.css") }}">
+<style type="text/css">
+    .hs-iframe{width:100%;height:100%;}
+    .layui-tab{position:absolute;left:0;top:0;height:100%;width:100%;z-index:10;margin:0;border:none;overflow:hidden;}
+    .layui-tab-content{padding:0 0 0 10px;height:100%;}
+    .layui-tab-item{height:100%;}
+    .footer{position:fixed;left:0;bottom:0;z-index:998;}
+</style>
+</head>
+<body>
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header" style="z-index:999!important;">
+        <div class="fl header-logo">管理控制台</div>
+        <div class="fl header-fold"><a href="javascript:;" title="打开/关闭左侧导航" class="aicon ai-caidan" id="foldSwitch"></a></div>
+        <ul class="layui-nav fl nobg main-nav">
+            {% for menu in _admin_menu %}
+                {% if _admin_menu_parents['parent_id']==menu['uuid'] %}
+                <li class="layui-nav-item layui-this">
+                {% else %}
+                <li class="layui-nav-item">
+                {% end %}
+                <a href="javascript:;">{{ _(menu['title']) }}</a></li>
+            {% end %}
+        </ul>
+        <ul class="layui-nav fr nobg head-info" lay-filter="">
+            <li class="layui-nav-item">
+                <a href="javascript:void(0);">{{ current_user.get('username') }}&nbsp;&nbsp;</a>
+                <dl class="layui-nav-child">
+                    <dd><a data-id="00" href="{:url('admin/user/info')}" class="admin-nav-item"><span style="color:#333">个人设置</span></a></dd>
+                    <dd><a href="{:url('admin/user/iframe?val=0')}" class="j-ajax" refresh="yes">默认布局</a></dd>
+                    <dd><a href="/admin/logout">退出登陆</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="__ROOT_DIR__" target="_blank">前台</a></li>
+            <li class="layui-nav-item"><a href="{:url('admin/index/clear')}" class="j-ajax" refresh="yes">清缓存</a></li>
+            <li class="layui-nav-item"><a href="javascript:void(0);" id="lockScreen">锁屏</a></li>
+        </ul>
+    </div>
+    <div class="layui-side layui-bg-black" id="switchNav">
+        <div class="layui-side-scroll">
+            {% for v in _admin_menu %}
+            {% if _admin_menu_parents['parent_id']==v['uuid'] %}
+            <ul class="layui-nav layui-nav-tree">
+            {% else %}
+            <ul class="layui-nav layui-nav-tree" style="display:none;">
+            {% end %}
+                {% set kk = 1 %}
+                {% for vv in v['children'] %}
+                <li class="layui-nav-item {% if kk == 1 %}layui-nav-itemed{% end %}">
+                    <a href="javascript:;"><i class="{{ vv['icon'] }}"></i>{{ vv['title'] }}<span class="layui-nav-more"></span></a>
+                    <dl class="layui-nav-child">
+                        {% if vv['title']=='快捷菜单' %}
+                            <dd>
+                                <a class="admin-nav-item" data-id="0" href="{:url('admin/index/welcome')}">
+                                    <i class="layui-icon">&#xe68e;</i> 后台首页
+                                </a>
+                            </dd>
+                            {% for vvv in vv['children'] %}
+                            <dd><a class="admin-nav-item" data-id="{{ vvv['uuid'] }}" href="{{ vvv['path'] }}?{{ vvv['param'] }}"><i class="{{ vvv['icon'] }}"></i> {{ vvv['title'] }}</a><i data-href="/admin/menu/del?ids={{ vvv['uuid'] }}" class="layui-icon j-del-menu">&#xe640;</i></dd>
+                            {% end %}
+                        {% else %}
+                            {% for vvv in vv['children'] %}
+                            <dd><a class="admin-nav-item" data-id="{{ vvv['uuid'] }}" href="{% if vvv['path'][0:4]!='http' %}{{vvv['path']}}?{{vvv['param']}}{% else %}{{ vvv['path'] }}{% end %}"><i class="{{ vvv['icon'] }}"></i> {{ vvv['title'] }}</a></dd>
+                            {% end %}
+                        {% end %}
+                    </dl>
+                    {% set kk +=1 %}
+                </li>
+                {% end %}
+            </ul>
+            {% end %}
+        </div>
+    </div>
+    <div class="layui-body" id="switchBody">
+        <div class="layui-tab layui-tab-card" lay-filter="hisiTab" lay-allowClose="true">
+            <ul class="layui-tab-title">
+                <li lay-id="0" class="layui-this">
+                    <i class="layui-icon">&#xe68e;</i> 后台首页
+                </li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <iframe lay-id="0" src="/admin/welcome" width="100%" height="100%" frameborder="0" scrolling="yes" class="hs-iframe"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-footer footer">
+        <span class="fl">Powered by <a href="{:config('system.url')}" target="_blank">{:config('system.name')}</a> v{:config('system.version')}</span>
+        <span class="fr"> © 2017-2018 <a href="{:config('system.url')}" target="_blank">{:config('system.copyright')}</a> All Rights Reserved.</span>
+    </div>
+</div>
+<script src="{{ static_url("js/layui/layui.js") }}" charset="utf-8"></script>
+<script src="{{ static_url("admin/js/global.js") }}" charset="utf-8"></script>
+<script type="text/javascript">
+layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
+    var $ = layui.jquery, element = layui.element, layer = layui.layer, form = layui.form;
+
+    var lockscreen = function() {
+        document.oncontextmenu=new Function("event.returnValue=false;");
+        document.onselectstart=new Function("event.returnValue=false;");
+        layer.open({
+            title: false,
+            type: 1,
+            content: '<div class="lock-screen"><input type="password" id="unlockedPwd" class="layui-input" placeholder="请输入登录密码解锁..." autocomplete="off"><button id="unlocked" class="layui-btn">解锁</button><div id="unlockTips"></div></div>',
+            closeBtn: 0,
+            shade: 0.95,
+            offset: '350px'
+        });
+
+        $('#unlocked').click(function() {
+            var pwd = $('#unlockedPwd').val();
+            if (pwd == '') {
+                return false;
+            }
+            $.post('/admin/user/unlocked', {password:pwd, _xsrf: getCookie("_xsrf")}, function(res) {
+                if (res.code == 0) {
+                    window.sessionStorage.setItem("lockscreen", false);
+                    layer.closeAll();
+                } else {
+                    $('#unlockTips').html(res.msg);
+                    setTimeout(function(){
+                        $('#unlockTips').html('');
+                    }, 3000);
+                }
+            });
+        });
+    }
+    /* 锁屏 */
+    $('#lockScreen').click(function () {
+        window.sessionStorage.setItem("lockscreen", true);
+        lockscreen();
+    })
+    if(window.sessionStorage.getItem("lockscreen") == "true"){
+        lockscreen();
+    }
+
+    /* 导航高亮标记 */
+    $('.admin-nav-item').click(function() {
+        window.localStorage.setItem("adminNavTag", $(this).attr('href'));
+    });
+    if (window.localStorage.getItem("adminNavTag")) {
+        $('#switchNav a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed');
+    }
+    if (typeof(LAYUI_OFFSET) == 'undefined') {
+        layer.config({offset:'60px'});
+    } else {
+        layer.config({offset:LAYUI_OFFSET+'px'});
+    }
+    /* 打开/关闭左侧导航 */
+    $('#foldSwitch').click(function(){
+        var that = $(this);
+        if (!that.hasClass('close')) {
+            that.addClass('close');
+            $('#switchNav').animate({width:'52px'}, 100).addClass('close').hover(function() {
+                if (that.hasClass('close')) {
+                    $(this).animate({width:'200px'}, 300);
+                    $('#switchNav .fold-mark').removeClass('fold-mark');
+                    $('a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed');
+                }
+            },function() {
+                if (that.hasClass('close')) {
+                    $(this).animate({width:'52px'}, 300);
+                    $('#switchNav .layui-nav-item').addClass('fold-mark').removeClass('layui-nav-itemed');
+                }
+            });
+            $('#switchBody,.footer').animate({left:'52px'}, 100);
+            $('#switchNav .layui-nav-item').addClass('fold-mark').removeClass('layui-nav-itemed');
+        } else {
+            $('a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed');
+            that.removeClass('close');
+            $('#switchNav').animate({width:'200px'}, 100).removeClass('close');
+            $('#switchBody,.footer').animate({left:'200px'}, 100);
+            $('#switchNav .fold-mark').removeClass('fold-mark');
+        }
+    });
+
+    /* 导航菜单切换 */
+    $('.main-nav a').click(function () {
+        var that = $(this), i = $('.main-nav a').index(this);
+        $('.layui-nav-tree').hide().eq(i).show();
+    });
+
+    /* 操作提示 */
+    $('.help-tips').click(function(){
+        layer.tips($(this).attr('data-title'), this, {
+            tips: [3, '#009688'],
+            time: 5000
+        });
+        return false;
+    });
+
+    /* 全屏控制 */
+    $('#fullscreen-btn').click(function(){
+        var that = $(this);
+        if (!that.hasClass('ai-quanping')) {
+            $('#switchBody').css({'z-index':1000});
+            $('#switchNav').css({'z-index':900});
+            that.addClass('ai-quanping').removeClass('ai-quanping1').parents('.page-body').addClass('fullscreen');
+            $('.page-tab-content').css({'min-height':($(window).height()-63)+'px'});
+        } else {
+            $('#switchBody').css({'z-index':998});
+            $('#switchNav').css({'z-index':1000});
+            that.addClass('ai-quanping1').removeClass('ai-quanping').parents('.page-body').removeClass('fullscreen');
+            $('.page-tab-content').css({'min-height':'auto'});
+        }
+    });
+
+    var tab = {
+            add: function(title, url, id) {
+                $('.layui-tab-content').height($(window).height() - 120);
+                element.tabAdd('hisiTab', {
+                    title: '<i class="layui-icon j-ajax" data-href="/admin/menu/quick?id='+id+'">&#xe600;&nbsp;</i>'+title,
+                    content: '<iframe width="100%" height="100%" lay-id="'+id+'" frameborder="0" src="'+url+'" scrolling="yes" class="x-iframe"></iframe>',
+                    id: id
+                });
+            }, change: function(id) {
+              element.tabChange('hisiTab', id);
+            }
+        };
+    $('.admin-nav-item').click(function(event) {
+        var that = $(this);
+        if ($('iframe[src="'+that.attr('href')+'"]')[0]) {
+            tab.change(that.attr('data-id'));
+            event.stopPropagation();
+            return false;
+        }
+        if ($('iframe').length == 10) {
+            layer.msg('最多可打开10个标签页');
+            return false;
+        }
+        that.css({color:'#fff'});
+        tab.add(that.text(), that.attr('href'), that.attr('data-id'));
+        tab.change(that.attr('data-id'));
+        event.stopPropagation();
+        return false;
+    });
+    $(document).on('click', '.layui-tab-close', function() {
+        $('.layui-nav-child a[data-id="'+$(this).parent('li').attr('lay-id')+'"]').css({color:'rgba(255,255,255,.7)'});
+    });
+
+    window.onresize = function(){
+        $('.layui-tab-content').height($(window).height() - 120);
+    }
+})
+</script>
+</body>
+</html>

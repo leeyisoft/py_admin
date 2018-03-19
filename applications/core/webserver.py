@@ -43,7 +43,7 @@ class Server(object):
         """
         httpserver = sys.modules["tornado.httpserver"]
         try:
-            xhs = settings.XHEADERS
+            xhs = settings.xheaders
         except:
             xhs = True
 
@@ -119,7 +119,6 @@ class Server(object):
 
     def load_urls(self):
         urls = []
-        urls = import_object('applications.acl.urls')
         if settings.INSTALLED_APPS:
             for app_name in settings.INSTALLED_APPS:
                 app_urls = import_object('applications.%s.urls.urls' % app_name)
@@ -129,7 +128,6 @@ class Server(object):
 
         # 过滤重复元素
         self.urls = list(set(urls))
-        # print('self.urls ', self.urls)
         return self.urls
 
     def load_httpserver(self, sockets=None, **kwargs):
@@ -217,8 +215,13 @@ class Server(object):
             logger = logging.getLogger(log['name'])
             logger.propagate = 0
             enable_pretty_logging(options=opt, logger=logger)
-            map(lambda h: h.setFormatter(LogFormatter(fmt=log.get("formatter", LogFormatter.DEFAULT_FORMAT),
-                                                      color=settings.DEBUG)), logger.handlers)
+
+            map(lambda h: h.setFormatter(
+                LogFormatter(
+                    fmt=log.get("formatter", settings.standard_format),
+                    color=settings.DEBUG
+                )
+            ), logger.handlers)
 
     def define(self, options=options):
         """

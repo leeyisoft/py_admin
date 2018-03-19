@@ -11,7 +11,7 @@ from tornado import template
 
 
 class UncaughtExceptionMixin(object):
-    def get_error_html(self, status_code, **kwargs):
+    def _get_error_html(self, status_code, **kwargs):
 
         def get_snippet(fp, target_line, num_lines):
             if fp.endswith('.html'):
@@ -80,4 +80,4 @@ class UncaughtExceptionMixin(object):
             exc_info = kwargs.pop('exc_info')
             kwargs['exception'] = exc_info[1]
 
-        return self.finish(self.get_error_html(status_code, **kwargs))
+        return self.finish(self._get_error_html(status_code, **kwargs))

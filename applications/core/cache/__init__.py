@@ -8,12 +8,12 @@ from tornado.ioloop import PeriodicCallback
 
 from ..exception import ConfigError
 from ..settings_manager import settings
-from ..models import Config
 
 from .backends.base import InvalidCacheBackendError
 from .backends.base import CacheKeyWarning
 from .backends.base import BaseCache
 
+from applications.admin.models.system import Config
 
 BACKENDS = {
     'memcached': 'memcached',

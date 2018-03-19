@@ -1,7 +1,11 @@
 *.pyc
+*.bak
 local.py
 requirements.txt
 *.pem
 py3
 logs/*.log
 *.log.*
+node_modules
+.idea
+*.php

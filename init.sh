@@ -8,12 +8,13 @@ source py3/bin/activate
 
 # mysqlclient
 echo "
-tornado>=4.5.3
+tornado>=5.0.2
 sqlalchemy
 mysqlclient
 rsa
 pycrypto
 pytz
 redis
+pillow
 " > requirements.txt
 pip install -r requirements.txt

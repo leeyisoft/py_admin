@@ -4,25 +4,50 @@
 
 [description]
 """
+import tornado
 
-from applications.core.encrypter import RSAEncrypter
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
+# from applications.core.exception import Http404
+# from applications.core.cache import sys_config
 
-from applications.core.cache import sys_config
-from applications.core.models import Config
-from applications.core.models import User
-from applications.core.utils import required_login
+from applications.core.handler import BaseHandler
 
-from applications.admin.handlers.common import BaseHandler
+from applications.admin.models.system import AdminMenu
 
+from applications.core.utils.hasher import make_password
 
-class DashboardHandler(BaseHandler):
-    @required_login
+class MainHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self, *args, **kwargs):
         """后台首页
         """
-        items = {
-            'menus': self.admin_menus(),
+        c_menu = AdminMenu.info(path=self.request.path)
+        if not c_menu:
+            msg = '节点不存在或者已禁用！'
+            return self.error(code=404, msg=msg);
+
+        _bread_crumbs = AdminMenu.brand_crumbs(c_menu['uuid'])
+        _admin_menu_parents = _bread_crumbs[0] if len(_bread_crumbs) else {'parent_id':'1'}
+        _admin_menu = AdminMenu.main_menu()
+
+        params = {
+            '_admin_menu': _admin_menu,
+            '_admin_menu_parents': _admin_menu_parents,
+            '_bread_crumbs': _bread_crumbs,
+            'current_user': self.current_user,
         }
-        self.render('dashboard/index.html', **items)
+        self.render('dashboard/main.html', **params)
+
+class WelcomeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, *args, **kwargs):
+        """后台首页
+        """
+
+        # menu = AdminMenu.main_menu()
+        # print('menu ', menu)
+        # self.show('abc')
+        params = {
+        }
+        self.render('dashboard/welcome.html', **params)

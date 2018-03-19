@@ -41,7 +41,7 @@ def ping_db(conn_, ping_inteval):
 
 class DBAlchemyMiddleware(object):
     def process_init(self, application):
-        SysLogger.info("DBAlchemyMiddleware/process_init/1")
+        # SysLogger.info("DBAlchemyMiddleware/process_init/1")
         if settings.PING_DB:
             connection_event()
             # 定时ping数据库，防止mysql go away，定时检测防丢

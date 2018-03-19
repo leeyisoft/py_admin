@@ -1,0 +1,122 @@
+{% extends "../base.html" %}
+
+{% block title %}后台管理登陆{% end %}
+{% block css %}
+    <style type="text/css">
+        body{background-color:#f5f5f5;}
+        .login-head{position:fixed;left:0;top:0;width:80%;height:6em;line-height:6em;background:#000;padding:0 10%;}
+        .login-head h1{color:#fff;font-size:2em;font-weight:600}
+        .login-box{margin:18em auto 0;width:40em;background-color:#fff;padding:1.5em 3em;border-radius:1em;box-shadow: .5em .5em 1.5em #999;}
+        .login-box .layui-input{font-size:1.0em;font-weight:400}
+        .login-box input[name="password"]{letter-spacing:.6em;font-weight:800}
+        .login-box .layui-btn{width:100%;}
+        .login-box .copyright{text-align:center;height:4em;line-height:4em;font-size:1em;color:#ccc}
+        .login-box .copyright a{color:#ccc;}
+        .layui-input-block {
+            margin-left: 11em;
+            width: 80%;
+            left: -0.1em;
+            margin-top:-2.7em;
+        }
+    </style>
+{% end %}
+{% block body %}
+<div class="login-head">
+    <h1>
+        {{ _("Sign in") }}
+    </h1>
+</div>
+<div class="login-box">
+    <form action="" method="post" class="layui-form layui-form-pane">
+        {% raw xsrf_form_html() %}
+        <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>管理后台登陆</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登陆账号</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" class="layui-input" lay-verify="username" placeholder="请输入登陆账号" autofocus="autofocus" value="admin">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登陆密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" class="layui-input" lay-verify="password" placeholder="******" value="admin888">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">安全验证</label>
+            <div class="layui-input-inline" style="width:12em;">
+                <input type="text" name="code" class="layui-input">
+            </div>
+            <img id="code" src="/admin/captcha.png" style="width: 11.5em; cursor: pointer;" />
+        </div>
+        <input type="submit" value="登陆" lay-submit="" lay-filter="formLogin" class="layui-btn">
+    </form>
+    <div class="copyright">
+        © 2017-2018 <a href="#" target="_blank">XXX</a> All Rights Reserved.
+    </div>
+</div>
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url("js/jsencrypt.js") }}" charset="utf-8"></script>
+<script type="text/javascript">
+var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
+
+layui.define('form', function() {
+    var $ = layui.jquery, layer = layui.layer, form = layui.form
+
+    // 表单验证
+    form.verify({
+        username : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '用户名必须2到40位字母、数字组合或汉字'],
+        password : [/(.+){8,40}$/, '密码必须8到40位'],
+        number : [/^[0-9]*$/, '必须输入数字啊']
+    })
+
+    form.on('submit(formLogin)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+
+        // Encrypt with the public key...
+        var encrypt = new JSEncrypt()
+        encrypt.setPublicKey(public_key)
+
+        var ciphertext = encrypt.encrypt(obj.field.password)
+        obj.field.password = ciphertext
+
+        $.ajax({
+            type: "POST",
+            url: obj.form.action,
+            data: obj.field,
+            success: function(res) {
+                if (res.code==0) {
+                    location.href = res.tourl ? res.tourl : '/admin/main'
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                    $(":input[name='username']").focus()
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                    setTimeout(function(){
+                        // location.reload()
+                    }, 3000)
+                }
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+        return false;
+    })
+
+    $("#code").on('click', function () {
+        $(this).attr('src', '/admin/captcha.png?t=' + Math.random())
+    })
+})
+</script>
+{% end %}

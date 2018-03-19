@@ -1,25 +1,85 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-common handler,webhandler,apihandler
-要获得torngas的中间件等特性需继承这些handler
+base handler
+要获得中间件等特性需继承BaseHandler
 """
-import json
-import functools
+
 import tornado.locale
 import tornado.web
 
-from tornado import stack_context
+from tornado.escape import xhtml_escape
+from tornado.escape import json_encode
+from tornado.escape import json_decode
 
 from .settings_manager import settings
 from .mixins.exception import UncaughtExceptionMixin
-from .exception import HttpBadRequestError, Http404
+from .exception import Http404
+from .exception import HttpBadRequestError
 from .cache import close_caches
-from .utils import ThreadlocalLikeRequestContext
 
 
 class _HandlerPatch(tornado.web.RequestHandler):
-    # pass
+    user_session_key = 'e35196e55a3e4014bd262d456947acb5'
+
+    def get_format(self, params_name="format"):
+        format = self.get_argument(params_name, None)
+        if not format:
+            accept = self.request.headers.get('Accept')
+            try:
+                format = accept.split(',')[0].split('/')[1]
+                format = 'json' if format=='*' else format
+            except Exception as e:
+                format = 'json'
+        return format.lower() or 'json'
+
+    def get_current_user(self):
+        user = self.get_secure_cookie(self.user_session_key)
+        if user is None:
+            return None
+        try:
+            user = str(user, encoding='utf-8')
+            user = user.replace('\'', '"')
+            user = json_decode(user)
+            return user
+        except Exception as e:
+            raise e
+
+    def _return(self, msg, code=0, **args):
+        resp_str = ''
+        requ_format = self.get_format()
+        if requ_format in ['json', 'jsonp']:
+            self.set_header('Content-Type', 'application/json; charset=UTF-8')
+            data_dict = {
+                'code': code,
+                'msg': msg,
+            }
+            data_dict.update(args)
+            resp_str = json_encode(data_dict)
+            if requ_format=='jsonp':
+                callback = self.get_argument('callback', 'callback')
+                resp_str = '%s(%s)' % (callback, resp_str)
+        else:
+            self.set_header('Content-Type', 'text/html; charset=UTF-8')
+
+            resp_str = msg if args.get('xhtml_escape', True) is False else xhtml_escape(msg)
+
+        self.write(resp_str)
+        self.finish()
+        return
+
+    def error(self, msg='error', code=990000):
+        code = int(code) if str(code).isdigit() else 990000
+        self.set_status(code, msg)
+        return self._return(msg, code)
+
+    def success(self, msg='success', **args):
+        self.set_status(200, msg)
+        return self._return(msg, code=0, **args)
+
+    def show(self, data, **args):
+        return self._return(data, **args)
+
     def get_user_locale(self):
         if settings.TRANSLATIONS_CONF.use_accept_language:
             return None
@@ -32,53 +92,13 @@ class _HandlerPatch(tornado.web.RequestHandler):
         except:
             pass
 
-    def _execute(self, transforms, *args, **kwargs):
-        current_context = {'request': self.request}
-        return super(_HandlerPatch, self)._execute(transforms, *args, **kwargs)
-        # with stack_context.StackContext(functools.partial(ThreadlocalLikeRequestContext, **current_context)):
-        #     return super(_HandlerPatch, self)._execute(transforms, *args, **kwargs)
-
-
-class WebHandler(UncaughtExceptionMixin, _HandlerPatch):
+class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
     def create_template_loader(self, template_path):
         loader = self.application.tmpl
         if loader is None:
-            return super(WebHandler, self).create_template_loader(template_path)
+            return super(BaseHandler, self).create_template_loader(template_path)
         else:
             return loader(template_path)
-
-
-class ApiHandler(UncaughtExceptionMixin, _HandlerPatch):
-    def get_format(self, params_name="format"):
-        format = self.get_argument(params_name, None)
-        if not format:
-            accept = self.request.headers.get('Accept')
-            if accept:
-                if 'javascript' in accept.lower():
-                    format = 'jsonp'
-                else:
-                    format = 'json'
-        else:
-            format = format.lower()
-        return format or 'json'
-
-    def write_api(self, obj=None, nofail=False, ensure_ascii=True, fmt=None):
-        if not obj:
-            obj = {}
-        if not fmt:
-            fmt = self.get_format()
-
-        if fmt == 'json':
-            self.set_header("Content-Type", "application/json; charset=UTF-8")
-            self.write(json.dumps(obj, ensure_ascii=ensure_ascii))
-        elif fmt == 'jsonp':
-            self.set_header("Content-Type", "application/javascript")
-            callback = self.get_argument('callback', 'callback')
-            self.write('%s(%s);' % (callback, json.dumps(obj, ensure_ascii=ensure_ascii)))
-        elif nofail:
-            self.write(obj)
-        else:
-            raise HttpBadRequestError('Unknown response format requested: %s' % format)
 
 
 class ErrorHandler(UncaughtExceptionMixin, _HandlerPatch):
@@ -91,7 +111,6 @@ class ErrorHandler(UncaughtExceptionMixin, _HandlerPatch):
 
 
 if settings.MIDDLEWARE_CLASSES:
-    from .mixins.miiddleware import MiddlewareHandlerMixin
+    from .mixins.middleware import MiddlewareHandlerMixin
 
-    WebHandler.__bases__ = (MiddlewareHandlerMixin,) + WebHandler.__bases__
-    ApiHandler.__bases__ = (MiddlewareHandlerMixin,) + ApiHandler.__bases__
+    BaseHandler.__bases__ = (MiddlewareHandlerMixin,) + BaseHandler.__bases__
