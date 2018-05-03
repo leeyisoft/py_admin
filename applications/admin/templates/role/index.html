@@ -149,10 +149,10 @@ layui.use(['table','form'], function() {
     }
     // 删除
     var del = function(uuid, obj, index) {
-        var tourl = '/admin/role/delete'
+        var next = '/admin/role/delete'
         $.ajax({
             type: 'DELETE',
-            url: tourl,
+            url: next,
             data: {uuid: uuid, _xsrf: getCookie("_xsrf")},
             dataType: 'json',
             success: function(data) {

@@ -23,16 +23,19 @@ valid_code_key = 'f782d88f80e84779ab754accce47a62c'
 class LoginHandler(BaseHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
+        next = self.get_argument('next', '')
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'xsrf_token': self.xsrf_token,
+            'next': next,
             'message': '',
         }
         self.render('passport/login.html', **params)
 
     def post(self, *args, **kwargs):
         username = self.get_argument('username')
+        next = self.get_argument('next', '')
         password = self.get_argument('password', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
 
@@ -56,7 +59,8 @@ class LoginHandler(BaseHandler):
 
         self.clear_cookie(valid_code_key)
 
-        return self.success()
+
+        return self.success(next=next)
 
 class LogoutHandler(BaseHandler):
     """docstring for Passport"""

@@ -91,7 +91,7 @@ layui.define('form', function() {
             data: obj.field,
             success: function(res) {
                 if (res.code==0) {
-                    location.href = res.tourl ? res.tourl : '/admin/main'
+                    location.href = res.next ? res.next : '/admin/main'
                 } else if(res.msg) {
                     layer.msg(res.msg)
                     $(":input[name='username']").focus()
