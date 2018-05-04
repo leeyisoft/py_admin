@@ -10,7 +10,6 @@ import tornado.web
 
 from tornado.escape import xhtml_escape
 from tornado.escape import json_encode
-from tornado.escape import json_decode
 
 from .settings_manager import settings
 from .mixins.exception import UncaughtExceptionMixin
@@ -20,7 +19,6 @@ from .cache import close_caches
 
 
 class _HandlerPatch(tornado.web.RequestHandler):
-    user_session_key = 'e35196e55a3e4014bd262d456947acb5'
 
     def get_format(self, params_name="format"):
         format = self.get_argument(params_name, None)
@@ -32,18 +30,6 @@ class _HandlerPatch(tornado.web.RequestHandler):
             except Exception as e:
                 format = 'json'
         return format.lower() or 'json'
-
-    def get_current_user(self):
-        user = self.get_secure_cookie(self.user_session_key)
-        if user is None:
-            return None
-        try:
-            user = str(user, encoding='utf-8')
-            user = user.replace('\'', '"')
-            user = json_decode(user)
-            return user
-        except Exception as e:
-            raise e
 
     def _return(self, msg, code=0, **args):
         resp_str = ''
@@ -99,7 +85,6 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
             return super(BaseHandler, self).create_template_loader(template_path)
         else:
             return loader(template_path)
-
 
 class ErrorHandler(UncaughtExceptionMixin, _HandlerPatch):
     def initialize(self, *args, **kwargs):

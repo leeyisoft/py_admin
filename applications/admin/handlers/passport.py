@@ -13,14 +13,14 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 
-from applications.core.handler import BaseHandler
-
 from applications.admin.models.system import User
+
+from .common import CommonHandler
 
 
 valid_code_key = 'f782d88f80e84779ab754accce47a62c'
 
-class LoginHandler(BaseHandler):
+class LoginHandler(CommonHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
         next = self.get_argument('next', '')
@@ -62,7 +62,7 @@ class LoginHandler(BaseHandler):
 
         return self.success(next=next)
 
-class LogoutHandler(BaseHandler):
+class LogoutHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
@@ -70,7 +70,7 @@ class LogoutHandler(BaseHandler):
         self.redirect("/admin/login.html")
 
 
-class CaptchaHandler(BaseHandler):
+class CaptchaHandler(CommonHandler):
     def get(self, *args, **kwargs):
         import io
         from applications.core.utils.image import create_validate_code

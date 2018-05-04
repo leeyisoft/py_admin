@@ -12,18 +12,17 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
-from applications.core.utils import utc_to_timezone
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import make_password
-
-from applications.core.handler import BaseHandler
 
 from applications.admin.models.system import User
 from applications.admin.models.system import Role
 from applications.admin.models.system import AdminMenu
 
+from .common import CommonHandler
 
-class UserHandler(BaseHandler):
+
+class UserHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     @required_permissions('admin:user:index')
@@ -47,7 +46,7 @@ class UserHandler(BaseHandler):
         User.session.commit()
         return self.success()
 
-class UserUnlockedHandler(BaseHandler):
+class UserUnlockedHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:user:unlocked')
     def post(self, *args, **kwargs):
@@ -57,7 +56,7 @@ class UserUnlockedHandler(BaseHandler):
 
         return self.success()
 
-class UserListHandler(BaseHandler):
+class UserListHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     @required_permissions('admin:user:index')
@@ -80,7 +79,7 @@ class UserListHandler(BaseHandler):
         }
         return self.success(**params)
 
-class UserAddHandler(BaseHandler):
+class UserAddHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     @required_permissions('admin:user:add')
@@ -158,7 +157,7 @@ class UserAddHandler(BaseHandler):
 
         return self.success(data=user)
 
-class UserEditHandler(BaseHandler):
+class UserEditHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     @required_permissions('admin:user:edit')

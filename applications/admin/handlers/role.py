@@ -12,14 +12,14 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
-from applications.core.utils import utc_to_timezone
-
-from applications.core.handler import BaseHandler
 
 from applications.admin.models.system import Role
 from applications.admin.models.system import AdminMenu
 
-class RoleHandler(BaseHandler):
+from .common import CommonHandler
+
+
+class RoleHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     @required_permissions('admin:role:index')
@@ -42,7 +42,7 @@ class RoleHandler(BaseHandler):
         Role.session.commit()
         return self.success()
 
-class RoleListHandler(BaseHandler):
+class RoleListHandler(CommonHandler):
     """用户组列表"""
     @tornado.web.authenticated
     @required_permissions('admin:role:index')
@@ -65,7 +65,7 @@ class RoleListHandler(BaseHandler):
         }
         return self.success(**params)
 
-class RoleAddHandler(BaseHandler):
+class RoleAddHandler(CommonHandler):
     """用户组添加功能"""
 
     @tornado.web.authenticated
@@ -90,7 +90,7 @@ class RoleAddHandler(BaseHandler):
         Role.session.commit()
         return self.success()
 
-class RoleEditHandler(BaseHandler):
+class RoleEditHandler(CommonHandler):
     """用户组增删查改功能"""
     @tornado.web.authenticated
     @required_permissions('admin:role:edit')

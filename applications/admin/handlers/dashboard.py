@@ -8,16 +8,14 @@ import tornado
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-# from applications.core.exception import Http404
-# from applications.core.cache import sys_config
-
-from applications.core.handler import BaseHandler
+from applications.core.utils.hasher import make_password
 
 from applications.admin.models.system import AdminMenu
 
-from applications.core.utils.hasher import make_password
+from .common import CommonHandler
 
-class MainHandler(BaseHandler):
+
+class MainHandler(CommonHandler):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         """后台首页
@@ -39,7 +37,7 @@ class MainHandler(BaseHandler):
         }
         self.render('dashboard/main.html', **params)
 
-class WelcomeHandler(BaseHandler):
+class WelcomeHandler(CommonHandler):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         """后台首页

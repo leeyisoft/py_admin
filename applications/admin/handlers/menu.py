@@ -12,12 +12,12 @@ from applications.core.logger.client import SysLogger
 from applications.core.utils import utc_to_timezone
 from applications.core.decorators import required_permissions
 
-from applications.core.handler import BaseHandler
-
 from applications.admin.models.system import AdminMenu
 
+from .common import CommonHandler
 
-class MenuHandler(BaseHandler):
+
+class MenuHandler(CommonHandler):
     """docstring for AdminMenu"""
     @tornado.web.authenticated
     @required_permissions('admin:menu:index')
@@ -42,7 +42,7 @@ class MenuHandler(BaseHandler):
         return self.success()
 
 
-class MenuEditHandler(BaseHandler):
+class MenuEditHandler(CommonHandler):
     """docstring for AdminMenu"""
     @tornado.web.authenticated
     @required_permissions('admin:menu:edit')
@@ -64,7 +64,7 @@ class MenuEditHandler(BaseHandler):
             pass
 
 
-class MenuAddHandler(BaseHandler):
+class MenuAddHandler(CommonHandler):
     """docstring for AdminMenu"""
     @tornado.web.authenticated
     @required_permissions('admin:menu:add')
@@ -81,7 +81,7 @@ class MenuAddHandler(BaseHandler):
         }
         self.render('menu/add.html', **params)
 
-class MenuSortHandler(BaseHandler):
+class MenuSortHandler(CommonHandler):
     """docstring for AdminMenu"""
     @tornado.web.authenticated
     @required_permissions('admin:menu:sort')
@@ -95,7 +95,7 @@ class MenuSortHandler(BaseHandler):
         AdminMenu.session.commit()
         return self.success(data=menu)
 
-class MenuStatusHandler(BaseHandler):
+class MenuStatusHandler(CommonHandler):
     """docstring for AdminMenu"""
     @tornado.web.authenticated
     @required_permissions('admin:menu:status')

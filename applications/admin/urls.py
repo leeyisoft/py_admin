@@ -5,7 +5,6 @@ from .handlers import dashboard
 from .handlers import passport
 from .handlers import user
 from .handlers import role
-from .handlers import system
 from .handlers import menu
 
 # 其他 URL 通过 acl 获取
