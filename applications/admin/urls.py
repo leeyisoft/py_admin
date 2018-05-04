@@ -6,6 +6,7 @@ from .handlers import passport
 from .handlers import user
 from .handlers import role
 from .handlers import menu
+from .handlers import config
 
 # 其他 URL 通过 acl 获取
 urls = [
@@ -17,6 +18,13 @@ urls = [
     # dashboard
     (r"/admin/main/?(.html)?", dashboard.MainHandler),
     (r"/admin/welcome/?(.html)?", dashboard.WelcomeHandler),
+
+    # config
+    (r"/admin/config/index?(.html)?", config.ConfigHandler),
+    (r"/admin/config/list/?(.html)?", config.ConfigListHandler),
+    (r"/admin/config/delete?(.html)?", config.ConfigHandler),
+    (r"/admin/config/add?(.html)?", config.ConfigAddHandler),
+    (r"/admin/config/edit?(.html)?", config.ConfigEditHandler),
 
     # menu
     (r"/admin/menu/index?(.html)?", menu.MenuHandler),

@@ -23,6 +23,9 @@ body{background-color:#fff;}
 .w400{width:400px!important;}
 .w500{width:500px!important;}
 .w600{width:600px!important;}
+.w700{width:700px!important;}
+.w800{width:800px!important;}
+.minH40{min-height: 40px !important;}
 .mcolor{color:#5c90d2;}
 .mcolor2{color:#009688;}
 .hide{display:none;}

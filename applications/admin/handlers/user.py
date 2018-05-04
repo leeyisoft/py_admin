@@ -187,15 +187,15 @@ class UserEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:user:edit')
     def post(self, *args, **kwargs):
-        role_id = self.get_argument('role_id', None, strip=True)
-        uuid = self.get_argument('uuid', None, strip=True)
-        username = self.get_argument('username', None, strip=True)
-        password = self.get_argument('password', None, strip=True)
+        role_id = self.get_argument('role_id', None)
+        uuid = self.get_argument('uuid', None)
+        username = self.get_argument('username', None)
+        password = self.get_argument('password', None)
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
-        email = self.get_argument('email', None, strip=True)
-        mobile = self.get_argument('mobile', None, strip=True)
+        email = self.get_argument('email', None)
+        mobile = self.get_argument('mobile', None)
         status = self.get_argument('status', 0)
-        permission = self.get_body_arguments('permission[]', strip=True)
+        permission = self.get_body_arguments('permission[]')
 
         email = None if email=='None' else email
         mobile = None if mobile=='None' else mobile

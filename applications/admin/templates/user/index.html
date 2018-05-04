@@ -56,7 +56,7 @@
 </script>
 
 <script type="text/javascript">
-var edit_curent_obj = {}
+var edit_curent_obj = false
 
 var edit_success = function(data) {
     if (edit_curent_obj) {
@@ -70,6 +70,8 @@ var edit_success = function(data) {
             var td = edit_curent_obj.tr.children('td[data-field="status"]')
             td.html(status_html[data.status])
         }
+    } else {
+        window.location.reload()
     }
 }
 

@@ -49,8 +49,8 @@ class RoleListHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:role:index')
     def get(self, *args, **kwargs):
-        limit = self.get_argument('limit', 10, strip=True)
-        page = self.get_argument('page', 1, strip=True)
+        limit = self.get_argument('limit', 10)
+        page = self.get_argument('page', 1)
         pagelist_obj = Role.Q.filter().paginate(page=page, per_page=limit)
         if pagelist_obj is None:
             return self.error('暂无数据')
@@ -73,9 +73,9 @@ class RoleAddHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:role:add')
     def post(self, *args, **kwargs):
-        rolename = self.get_argument('rolename', None, strip=True)
-        uuid = self.get_argument('uuid', None, strip=True)
-        status = self.get_argument('status', 1, strip=True)
+        rolename = self.get_argument('rolename', None)
+        uuid = self.get_argument('uuid', None)
+        status = self.get_argument('status', 1)
         if not rolename:
             return self.error('分组名称不能为空')
 
@@ -97,7 +97,7 @@ class RoleEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:role:edit')
     def get(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None, strip=True)
+        uuid = self.get_argument('uuid', None)
         role = Role.Q.filter(Role.uuid==uuid).first()
 
         menu_list = AdminMenu.children(status=1)
@@ -118,11 +118,11 @@ class RoleEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:role:edit')
     def post(self, *args, **kwargs):
-        rolename = self.get_argument('rolename', None, strip=True)
-        uuid = self.get_argument('uuid', None, strip=True)
-        sort = self.get_argument('sort', None, strip=True)
-        status = self.get_argument('status', 0, strip=True)
-        permission = self.get_body_arguments('permission[]', strip=True)
+        rolename = self.get_argument('rolename', None)
+        uuid = self.get_argument('uuid', None)
+        sort = self.get_argument('sort', None)
+        status = self.get_argument('status', 0)
+        permission = self.get_body_arguments('permission[]')
 
         role = {
             'status': status,
