@@ -31,6 +31,9 @@ class CommonHandler(BaseHandler):
         except Exception as e:
             raise e
 
+    def get_template_path(self):
+        return 'applications/admin/templates'
+
 class MessageHandler(BaseHandler):
     """docstring for Passport"""
     @tornado.web.authenticated

@@ -14,9 +14,6 @@ if __name__ == "__main__":
     root_path = os.getcwd()
     sys.path.insert(0, root_path)
 
-    template_path = os.path.join(root_path, "applications/admin/templates")
-    define('template_path', default=template_path, help='run on the given template_path', type=str)
-
     try:
         run()
     except KeyboardInterrupt:
