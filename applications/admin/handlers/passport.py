@@ -53,7 +53,7 @@ class LoginHandler(CommonHandler):
             return self.error('用户被“禁用”，请联系客服')
 
         # The cookie library only accepts type str, in both python 2 and 3
-        user_fileds = ['uuid', 'username']
+        user_fileds = ['uuid', 'username', 'role_id']
         user_str = str(user.as_dict(user_fileds))
         self.set_secure_cookie(self.user_session_key, user_str, expires_days=1)
 

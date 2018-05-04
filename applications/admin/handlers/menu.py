@@ -22,7 +22,12 @@ class MenuHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:menu:index')
     def get(self, *args, **kwargs):
-        menu_list = AdminMenu.children()
+        if not self.super_role():
+            user_id = user_id = self.current_user.get('uuid')
+        else:
+            user_id = False
+
+        menu_list = AdminMenu.children(user_id=user_id)
         tab_data = []
         for menu in menu_list:
             tab_data.append({'title': menu.get('title')})
@@ -32,13 +37,28 @@ class MenuHandler(CommonHandler):
             'menu_list': menu_list,
             'tab_data': tab_data,
         }
-        print('request ', self.request)
+        # print('tab_data ', tab_data)
         self.render('menu/index.html', **params)
 
     """docstring for AdminMenu"""
     @tornado.web.authenticated
     @required_permissions('admin:menu:delete')
     def delete(self, *args, **kwargs):
+        """删除菜单
+        """
+        uuid = self.get_argument('uuid', None)
+        menu_tab = self.get_argument('menu_tab', None)
+
+        menu = AdminMenu.Q.filter(AdminMenu.uuid==uuid).first()
+        if (not self.super_role()) and menu.system==1:
+            return self.error('系统菜单，无法删除')
+
+        count = AdminMenu.Q.filter(AdminMenu.parent_id==uuid).count()
+        if count>0:
+            return self.error('请先删除子菜单')
+
+        AdminMenu.Q.filter(AdminMenu.uuid==uuid).delete()
+        AdminMenu.session.commit()
         return self.success()
 
 
@@ -47,7 +67,6 @@ class MenuEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:menu:edit')
     def get(self, *args, **kwargs):
-        # print('AdminMenu', dir(AdminMenu))
         uuid = self.get_argument('uuid', None)
         if not uuid:
             return self.error('UUID为空')
@@ -55,41 +74,11 @@ class MenuEditHandler(CommonHandler):
         data_info = AdminMenu.info(uuid)
 
         params = {
-            'menu_option': self._menu_option(uuid),
+            'menu_option': AdminMenu.menu_option(uuid),
             'menu_tab': self.get_argument('menu_tab', 1),
             'data_info': data_info,
         }
         self.render('menu/edit.html', **params)
-
-    def _menu_option(self, uuid=''):
-        #
-        menus = AdminMenu.main_menu()
-        if not len(menus)>0:
-            return ''
-        option1 = '<option level="1" value="%s" %s>— %s</option>'
-        option2 = '<option level="2" value="%s" %s>—— %s</option>'
-        option3 = '<option level="3" value="%s" %s>——— %s</option>'
-        html = ''
-        for menu in menus:
-            selected = 'selected' if uuid==menu.get('uuid', '') else ''
-            title1 = menu.get('title', '')
-            children1 = menu.get('children', [])
-            html += option1 % (menu.get('uuid', ''), selected, title1)
-            if not len(children1)>0:
-                continue
-            for menu2 in children1:
-                selected2 = 'selected' if uuid==menu2.get('uuid', '') else ''
-                title2 = menu2.get('title', '')
-                html += option2 % (menu2.get('uuid', ''), selected2, title2)
-                children2 = menu.get('children', [])
-                if not len(children2)>0:
-                    continue
-                for menu3 in children2:
-                    selected3 = 'selected' if uuid==menu3.get('uuid', '') else ''
-                    title3 = menu3.get('title', '')
-                    html += option3 % (menu3.get('uuid', ''), selected3, title3)
-
-        return html
 
     @tornado.web.authenticated
     @required_permissions('admin:role:edit')
@@ -99,16 +88,20 @@ class MenuEditHandler(CommonHandler):
         if not uuid:
             return self.error('UUID为空')
 
-        menu = self.params()
+        params = self.params()
+        try:
+            params.pop('uuid')
+            params.pop('user_id')
+            params.pop('menu_tab')
+            params.pop('_xsrf')
+        except Exception as e:
+            pass
 
-        menu.pop('menu_tab')
-        menu.pop('_xsrf')
-
-        path = menu.get('path', None)
+        path = params.get('path', None)
         if path[0:4]!='http' and path[0:1]!='/':
-            menu['path'] = '/' + path
+            params['path'] = '/' + path
 
-        AdminMenu.Q.filter(AdminMenu.uuid==uuid).update(menu)
+        AdminMenu.Q.filter(AdminMenu.uuid==uuid).update(params)
         AdminMenu.session.commit()
         self.redirect('/admin/menu/index?#menu_tab=%s'%menu_tab)
 
@@ -118,17 +111,45 @@ class MenuAddHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:menu:add')
     def get(self, *args, **kwargs):
-        menu_list = AdminMenu.children()
-        tab_data = []
-        for menu in menu_list:
-            tab_data.append({'title': menu.get('title')})
+        parent_id = self.get_argument('parent_id', None)
+        uuid = ''
+        menu = AdminMenu(parent_id=parent_id)
+        data_info = menu.as_dict()
 
-        tab_data.append({'title': '模块排序'})
         params = {
-            'menu_list': menu_list,
-            'tab_data': tab_data,
+            'menu_option': AdminMenu.menu_option(uuid),
+            'menu_tab': self.get_argument('menu_tab', 1),
+            'data_info': data_info,
         }
-        self.render('menu/add.html', **params)
+        self.render('menu/edit.html', **params)
+
+    @tornado.web.authenticated
+    @required_permissions('admin:role:add')
+    def post(self, *args, **kwargs):
+        menu_tab = self.get_argument('menu_tab', 1)
+        params = self.params()
+        try:
+            params.pop('uuid')
+            params.pop('user_id')
+            params.pop('menu_tab')
+            params.pop('_xsrf')
+        except Exception as e:
+            pass
+
+        path = params.get('path', None)
+        if path[0:4]!='http' and path[0:1]!='/':
+            params['path'] = '/' + path
+
+        user_id = self.current_user.get('uuid')
+        role_id = self.current_user.get('role_id')
+        if not self.super_role():
+            params['user_id'] = user_id
+
+        menu = AdminMenu(**params)
+        AdminMenu.session.add(menu)
+        AdminMenu.session.commit()
+
+        self.redirect('/admin/menu/index?#menu_tab=%s'%menu_tab)
 
 
 class MenuSortHandler(CommonHandler):

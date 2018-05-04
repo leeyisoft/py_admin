@@ -37,7 +37,7 @@
             <label class="layui-form-label">所属菜单</label>
             <div class="layui-input-inline">
                 <select name="parent_id" class="field-parent_id" type="select" lay-filter="parent_id">
-                    <option value="0" level="0">顶级菜单</option>
+                    <option value="top" level="0">顶级菜单</option>
                     {% raw menu_option %}
                 </select>
             </div>
@@ -85,7 +85,7 @@
                 <input type="radio" class="field-system" name="system" value="0" title="否" checked>
             </div>
             <div class="layui-form-mid layui-word-aux">
-                设置为系统菜单后，无法删除
+                设置为系统菜单后，无法删除（超级管理员除外）
             </div>
         </div>
         <div class="layui-form-item">

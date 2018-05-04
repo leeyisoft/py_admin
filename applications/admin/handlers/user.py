@@ -151,11 +151,9 @@ class UserAddHandler(CommonHandler):
 
         user = User(**params)
         User.session.add(user)
-        # 为了输出
-        user = user.as_dict()
         User.session.commit()
 
-        return self.success(data=user)
+        return self.success(data=user.as_dict())
 
 class UserEditHandler(CommonHandler):
     """docstring for Passport"""

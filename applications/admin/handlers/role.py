@@ -35,8 +35,10 @@ class RoleHandler(CommonHandler):
         """
         uuid = self.get_argument('uuid', None)
 
-        if uuid=='6b0642103a1749949a07f4139574ead9':
-            return self.error('默认角色不允许删除')
+        # 超级管理员角色 默认角色
+        user_role_li = [settings.SUPER_ROLE_ID,'6b0642103a1749949a07f4139574ead9']
+        if uuid in user_role_li:
+            return self.error('角色不允许删除')
 
         Role.Q.filter(Role.uuid==uuid).delete()
         Role.session.commit()

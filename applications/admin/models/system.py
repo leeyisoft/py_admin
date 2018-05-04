@@ -135,16 +135,16 @@ class AdminMenu(BaseModel):
     __tablename__ = 'sys_admin_menu'
 
     uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
-    user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'), nullable=False)
-    parent_id = Column(String(32), nullable=False)
+    user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'), nullable=False, default='')
+    parent_id = Column(String(32), nullable=False, default='top')
     code = Column(String(64), nullable=True)
     title = Column(String(20), nullable=False)
     icon = Column(String(20), nullable=False)
     path = Column(String(200), nullable=False)
     param = Column(String(200), nullable=False)
-    target = Column(String(20), nullable=False)
+    target = Column(String(20), nullable=False, default='_self')
     nav = Column(Integer, nullable=False)
-    sort = Column(Integer, nullable=False)
+    sort = Column(Integer, nullable=False, default=20)
     system = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
     utc_created_at = Column(TIMESTAMP, default=datetimezone)
@@ -198,7 +198,7 @@ class AdminMenu(BaseModel):
         """
         menu = []
         row = cls.info(uuid=uuid)
-        if row['parent_id']!='' and row['parent_id']!='0':
+        if row['parent_id']!='' and row['parent_id']!='top':
             menu.append(row)
             child = cls.brand_crumbs(row['parent_id'])
             if len(child):
@@ -207,7 +207,7 @@ class AdminMenu(BaseModel):
 
 
     @classmethod
-    def main_menu(cls, parent_id='0', level=0):
+    def main_menu(cls, parent_id='top', status=1, level=0):
         """获取后台主菜单(一级 > 二级 > 三级)
             后台顶部和左侧使用
 
@@ -221,7 +221,8 @@ class AdminMenu(BaseModel):
         if not len(trees):
             filds = ['uuid', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon']
             query = cls.session.query(AdminMenu)
-            query = query.filter(AdminMenu.status == 1)
+            if status is not None:
+                query = query.filter(AdminMenu.status == status)
             query = query.filter(AdminMenu.nav == 1)
             rows = query.order_by(AdminMenu.sort.asc()).all()
             # print('query.statement: ', query.statement)
@@ -238,21 +239,22 @@ class AdminMenu(BaseModel):
                 #     unset($data[$k]);
                 #     continue;
                 # }
-                row['children'] = cls.main_menu(row.get('uuid'), level+1)
+                row['children'] = cls.main_menu(row.get('uuid'), status, level+1)
                 trees.append(row)
 
         return trees
 
 
     @staticmethod
-    def children(parent_id='0', status=None, level=0):
+    def children(parent_id='top', status=None, level=0, user_id=''):
         """获取指定节点下的所有子节点(不含快捷收藏的菜单)
         """
         trees = []
         if not len(trees):
             filds = ['uuid', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon', 'sort', 'status']
             query = AdminMenu.session.query(AdminMenu)
-            query = query.filter(AdminMenu.user_id == '0')
+            if user_id:
+                query = query.filter(AdminMenu.user_id == user_id)
             query = query.filter(AdminMenu.parent_id == parent_id)
             if status in [1,0]:
                 query = query.filter(AdminMenu.status == status)
@@ -272,4 +274,35 @@ class AdminMenu(BaseModel):
                 trees.append(row)
 
         return trees
+
+    @staticmethod
+    def menu_option(uuid=''):
+        #
+        menus = AdminMenu.main_menu(status=None)
+        if not len(menus)>0:
+            return ''
+        option1 = '<option level="1" value="%s" %s>— %s</option>'
+        option2 = '<option level="2" value="%s" %s>—— %s</option>'
+        option3 = '<option level="3" value="%s" %s>——— %s</option>'
+        html = ''
+        for menu in menus:
+            selected = 'selected' if uuid==menu.get('uuid', '') else ''
+            title1 = menu.get('title', '')
+            children1 = menu.get('children', [])
+            html += option1 % (menu.get('uuid', ''), selected, title1)
+            if not len(children1)>0:
+                continue
+            for menu2 in children1:
+                selected2 = 'selected' if uuid==menu2.get('uuid', '') else ''
+                title2 = menu2.get('title', '')
+                html += option2 % (menu2.get('uuid', ''), selected2, title2)
+                children2 = menu.get('children', [])
+                if not len(children2)>0:
+                    continue
+                for menu3 in children2:
+                    selected3 = 'selected' if uuid==menu3.get('uuid', '') else ''
+                    title3 = menu3.get('title', '')
+                    html += option3 % (menu3.get('uuid', ''), selected3, title3)
+
+        return html
 

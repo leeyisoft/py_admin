@@ -31,6 +31,11 @@ class CommonHandler(BaseHandler):
         except Exception as e:
             raise e
 
+    def super_role(self):
+        user_id = self.current_user.get('uuid')
+        role_id = self.current_user.get('role_id')
+        return True if (user_id in settings.SUPER_ADMIN) or (role_id==settings.SUPER_ROLE_ID) else False
+
     def get_template_path(self):
         return 'applications/admin/templates'
 

@@ -59,7 +59,7 @@
                                 <a href="/admin/menu/add?parent_id={{ vv['uuid'] }}" title="添加子菜单">
                                     <i class="layui-icon">&#xe654;</i>
                                 </a>
-                                <a href="#" data-href="/admin/menu/delete?ids={{ vv['uuid'] }}" class="j-dl-del" title="删除">
+                                <a href="#" data-href="/admin/menu/delete?uuid={{ vv['uuid'] }}" class="j-dl-del" title="删除">
                                     <i class="layui-icon">&#xe640;</i></a>
                             </div>
                         </dt>
@@ -107,7 +107,7 @@
                                             <div class="menu-btns">
                                                 <a href="/admin/menu/edit?uuid={{ vvvv['uuid'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
                                                 <a href="/admin/menu/add?parent_id={{ vvvv['uuid'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
-                                                <a href="#" data-href="/admin/menu/delete?ids={{ vvvv['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
+                                                <a href="#" data-href="/admin/menu/delete?uuid={{ vvvv['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
                                             </div>
                                         </dd>
                                         {% end %}
@@ -125,7 +125,7 @@
                 <form class="page-list-form">
                     <div class="page-toolbar">
                         <div class="layui-btn-group fl">
-                            <a href="/admin/menu/add?parent_id=0" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添子菜单</a>
+                            <a href="/admin/menu/add?parent_id=top" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添加顶层菜单</a>
                         </div>
                     </div>
                     <dl class="menu-dl1 menu-hd mt10">
@@ -155,10 +155,10 @@
                                 <i></i>
                             </div>
                             <div class="menu-btns">
-                                <a href="/admin/menu/edit?uuid={{ v['uuid'] }}&menu_tab=5" title="编辑">
+                                <a href="/admin/menu/edit?uuid={{ v['uuid'] }}&menu_tab={{ len(menu_list)+1 }}" title="编辑">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
-                                <a href="#" data-href="/admin/menu/delete?ids={{ v['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
+                                <a href="#" data-href="/admin/menu/delete?uuid={{ v['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
                             </div>
                         </dt>
                     </dl>
@@ -178,8 +178,8 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     var element = layui.element
     var layer = layui.layer
 
-    var layid = location.hash.replace(/^#menu_tab=/, '');
-    element.tabChange('menu_tab', layid);
+    var menu_tab = location.hash.replace(/^#menu_tab=/, '');
+    element.tabChange('menu_tab', menu_tab);
 
     // 监听状态设置开关
     form.on('switch(switchStatus)', function(data) {
@@ -196,6 +196,22 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             }
         })
     })
+    /* 用ajax方式更新input*/
+    $('.j-ajax-input').focusout(function(){
+        var that = $(this), _val = that.val()
+        if (_val == '') return false
+        if (that.attr('data-value') == _val) return false
+        if (!that.attr('data-href')) {
+            layer.msg('{{ _('请设置href参数') }}')
+            return false
+        }
+        $.post(that.attr('data-href'), {val:_val, _xsrf: getCookie("_xsrf")}, function(res) {
+            if (res.code == 0) {
+                that.attr('data-value', _val)
+            }
+            layer.msg(res.msg)
+        })
+    })
 
     // TR数据行删除
     $('.j-dl-del').click(function() {
@@ -209,7 +225,7 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             $.ajax({
                 type: 'DELETE',
                 url: href,
-                data: {_xsrf: getCookie("_xsrf")},
+                data: {menu_tab:menu_tab, _xsrf: getCookie("_xsrf")},
                 dataType: 'json',
                 success: function(data) {
                     that.parent().parent().parent().remove()

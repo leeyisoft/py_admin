@@ -32,6 +32,7 @@ class _HandlerPatch(tornado.web.RequestHandler):
         return format.lower() or 'json'
 
     def _return(self, msg, code=0, **args):
+        msg = '%s' % msg
         resp_str = ''
         requ_format = self.get_format()
         if requ_format in ['json', 'jsonp']:

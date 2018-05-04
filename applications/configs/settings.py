@@ -25,6 +25,8 @@ SUPER_ADMIN = [
     'de713937f2e3487ebe54b8863bb1a1b8', # admin uid
     'de713937f2e3487ebe54b8863bb1a1b7', #
 ]
+# 超级管理员角色ID
+SUPER_ROLE_ID = '960245d0d12540918825ecd42553fd39'
 
 # tornado全局配置
 TORNADO_CONF = {
