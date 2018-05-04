@@ -84,23 +84,21 @@ class MenuEditHandler(CommonHandler):
     @required_permissions('admin:role:edit')
     def post(self, *args, **kwargs):
         uuid = self.get_argument('uuid', None)
-        menu_tab = self.get_argument('menu_tab', None)
+        menu_tab = self.get_argument('menu_tab', 1)
         if not uuid:
             return self.error('UUID为空')
 
         params = self.params()
-        try:
-            params.pop('uuid')
-            params.pop('user_id')
-            params.pop('menu_tab')
-            params.pop('_xsrf')
-        except Exception as e:
-            pass
+        params.pop('uuid', None)
+        params.pop('user_id', None)
+        params.pop('menu_tab', None)
+        params.pop('_xsrf', None)
 
         path = params.get('path', None)
         if path[0:4]!='http' and path[0:1]!='/':
             params['path'] = '/' + path
 
+        # print('params ', type(params), params)
         AdminMenu.Q.filter(AdminMenu.uuid==uuid).update(params)
         AdminMenu.session.commit()
         self.redirect('/admin/menu/index?#menu_tab=%s'%menu_tab)
@@ -127,14 +125,12 @@ class MenuAddHandler(CommonHandler):
     @required_permissions('admin:role:add')
     def post(self, *args, **kwargs):
         menu_tab = self.get_argument('menu_tab', 1)
+
         params = self.params()
-        try:
-            params.pop('uuid')
-            params.pop('user_id')
-            params.pop('menu_tab')
-            params.pop('_xsrf')
-        except Exception as e:
-            pass
+        params.pop('uuid', None)
+        params.pop('user_id', None)
+        params.pop('menu_tab', None)
+        params.pop('_xsrf', None)
 
         path = params.get('path', None)
         if path[0:4]!='http' and path[0:1]!='/':
