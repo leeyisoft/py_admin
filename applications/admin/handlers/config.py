@@ -12,6 +12,7 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
+from applications.core.utils import str_to_datetime
 
 from applications.admin.models.system import Config
 from applications.admin.models.system import AdminMenu
@@ -143,8 +144,13 @@ class ConfigEditHandler(CommonHandler):
             if res>0:
                 return self.error('名称已被占用')
 
+        config = Config.Q.filter(Config.key==old_key).first()
+        if config:
+            params = {**config.as_dict(), **params}
+            params['utc_created_at'] = str_to_datetime(params['utc_created_at'], 'UTC')
+
         Config.Q.filter(Config.key==old_key).delete()
-        config = Config(**params)
-        Config.session.add(config)
+        Config.session.add(Config(**params))
         Config.session.commit()
+        params.pop('utc_created_at', None)
         return self.success(data=params)

@@ -35,7 +35,7 @@ class Config(BaseModel):
     key = Column(String(40), primary_key=True, nullable=False)
     value = Column(String(80), nullable=False)
     title = Column(String(40), nullable=False)
-    remark = Column(String(128), nullable=False)
+    remark = Column(String(128), nullable=False, default='')
     sort = Column(Integer, nullable=False, default=20)
     system = Column(Integer, nullable=False, default=0)
     # 状态:( 0 禁用；1 启用, 默认1)

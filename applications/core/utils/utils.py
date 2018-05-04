@@ -4,6 +4,7 @@
 import sys
 import pytz
 import datetime
+import dateutil.parser
 import hashlib
 import hmac
 import random
@@ -29,7 +30,7 @@ def is_protected_type(obj):
     """
     return isinstance(obj, _PROTECTED_TYPES)
 
-def datetimezone(dt=None,timezone='UTC'):
+def datetimezone(dt=None, timezone='UTC'):
     """带时区的时间
 
     获取“带时区的时间”，例如 2018-02-27 10:13:02.087558+08:00
@@ -47,6 +48,12 @@ def datetimezone(dt=None,timezone='UTC'):
         return datetime.datetime.now(tz)
     else:
         return dt.astimezone(tz)
+
+def str_to_datetime(str_dt, to_tz='UTC'):
+    """字符串格式的时间转换为datetime格式的时间
+    """
+    dt = dateutil.parser.parse(str_dt)
+    return datetimezone(dt, to_tz)
 
 def utc_to_timezone(dt, timezone=None):
     """[summary]
