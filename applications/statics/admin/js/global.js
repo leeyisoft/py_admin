@@ -12,6 +12,9 @@ function getCookie(name) {
 
 layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     var form = layui.form
+    var $ = layui.jquery
+    var element = layui.element
+    var layer = layui.layer
     /* 全选 */
     form.on('checkbox(allChoose)', function(data) {
         var child = $(data.elem).parents('table').find('tbody input.checkbox-ids');
@@ -19,5 +22,20 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             item.checked = data.elem.checked;
         });
         form.render('checkbox');
+    })
+
+    /*iframe弹窗*/
+    $('.j-iframe-pop').click(function(){
+        var that = $(this),
+            _url = that.attr('href'),
+            _title = that.attr('title'),
+            _width = that.attr('width') ? that.attr('width') : 750,
+            _height = that.attr('height') ? that.attr('height') : 500
+        if (!_url) {
+            layer.msg('请设置href参数')
+            return false
+        }
+        layer.open({type:2, title:_title, content:_url, area: [_width+'px', _height+'px']})
+        return false
     })
 })

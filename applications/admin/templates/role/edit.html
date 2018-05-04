@@ -89,7 +89,7 @@
 {% block javascript %}
 <script type="text/javascript">
 
-var formData = {% raw data_info %};
+var formData = {% raw data_info %}
 
 layui.use(['form'], function() {
     var $ = layui.jquery, form = layui.form
@@ -99,16 +99,16 @@ layui.use(['form'], function() {
         /* 自动选中父节点 */
         var check_parent = function (id) {
             var self = $('.role-list-form input[value="'+id+'"]')
-            var pid = self.attr('data-pid') || '';
+            var pid = self.attr('data-pid') || ''
             self.prop('checked', true)
             if (pid == '') {
-                return false;
+                return false
             }
             check_parent(pid)
-        };
+        }
         /* 自动选中子节点 */
         child.each(function(index, item) {
-            item.checked = data.elem.checked;
+            item.checked = data.elem.checked
         })
         check_parent($(data.elem).attr('data-pid'))
         form.render('checkbox')
@@ -134,7 +134,7 @@ layui.use(['form'], function() {
         var permission = []
         $("input:checkbox[name='permission']:checked").each(function() {
             permission.push($(this).val())
-        });
+        })
         obj.field.permission = permission
 
         $.ajax({
@@ -145,8 +145,8 @@ layui.use(['form'], function() {
                 if (res.code==0) {
                     layer.msg('更新成功', {icon: 1, time: 2000}, function(){
                         parent.edit_success(res.data)
-                        var index = parent.layer.getFrameIndex(window.name);
-                        parent.layer.close(index);
+                        var index = parent.layer.getFrameIndex(window.name)
+                        parent.layer.close(index)
                     })
                 } else if(res.msg) {
                     layer.msg(res.msg)
@@ -164,7 +164,7 @@ layui.use(['form'], function() {
                 }
             }
         })
-        return false;
+        return false
     })
 })
 </script>

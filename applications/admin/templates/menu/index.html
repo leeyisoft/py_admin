@@ -173,7 +173,10 @@
 {% block javascript %}
 <script type="text/javascript">
 layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
-    var $ = layui.jquery,element = layui.element, layer = layui.layer, form = layui.form
+    var form = layui.form
+    var $ = layui.jquery
+    var element = layui.element
+    var layer = layui.layer
 
     var layid = location.hash.replace(/^#menu_tab=/, '');
     element.tabChange('menu_tab', layid);
@@ -234,177 +237,16 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         })
         return false
     })
-
-    /*iframe弹窗*/
-    $('.j-iframe-pop').click(function(){
-        var that = $(this),
-            _url = that.attr('href'),
-            _title = that.attr('title'),
-            _width = that.attr('width') ? that.attr('width') : 750,
-            _height = that.attr('height') ? that.attr('height') : 500
-        if (!_url) {
-            layer.msg('{{ _('请设置href参数') }}')
-            return false
-        }
-        layer.open({type:2, title:_title, content:_url, area: [_width+'px', _height+'px']})
-        return false
+    $('.menu-dl1 dt').mouseover(function() {
+        $(this).css("background-color","#e6e6e6")
+    }).mouseout(function(){
+        $(this).css("background-color","#ffffff")
     })
-
-
-    /* 监听表单提交 */
-    form.on('submit(formSubmit)', function(data) {
-        var _form = ''
-        if ($(this).attr('data-form')) {
-            _form = $($(this).attr('data-form'))
-        } else {
-            _form = $(this).parents('form')
-        }
-        // CKEditor专用
-        if (typeof(CKEDITOR) != 'undefined') {
-            for (instance in CKEDITOR.instances) {
-                CKEDITOR.instances[instance].updateElement()
-            }
-        }
-        layer.msg('数据提交中...',{time:500000})
-        $.ajax({
-            type: "POST",
-            url: _form.attr('action'),
-            data: _form.serialize(),
-            success: function(res) {
-                layer.msg(res.msg, {},function() {
-                    if (res.code == 0) {
-                        if (typeof(res.url) != 'undefined' && res.url != null && res.url != '') {
-                            location.href = res.url
-                        } else {
-                            location.reload()
-                        }
-                    }
-                })
-            }
-        })
-        return false
+    $('.menu-dl2').mouseover(function() {
+        $(this).css("background-color","#e6e6e6")
+    }).mouseout(function(){
+        $(this).css("background-color","#ffffff")
     })
-
-    /* ajax请求操作 */
-    $(document).on('click', '.j-ajax', function() {
-        var that = $(this),
-            href = !that.attr('data-href') ? that.attr('href') : that.attr('data-href'),
-            refresh = !that.attr('refresh') ? 'yes' : that.attr('refresh')
-        if (!href) {
-            layer.msg('{{ _('请设置href参数') }}')
-            return false
-        }
-
-        if (!that.attr('confirm')) {
-            layer.msg('数据提交中...', {time:500000})
-            $.get(href, {}, function(res) {
-                layer.msg(res.msg, {}, function() {
-                    if (refresh == 'yes') {
-                        if (typeof(res.url) != 'undefined' && res.url != null && res.url != '') {
-                            location.href = res.url
-                        } else {
-                            location.reload()
-                        }
-                    }
-                })
-            })
-            layer.close()
-        } else {
-            layer.confirm(that.attr('confirm'), {title:false, closeBtn:0}, function(index){
-                layer.msg('数据提交中...', {time:500000})
-                $.get(href, {}, function(res) {
-                    layer.msg(res.msg, {}, function() {
-                        if (refresh == 'yes') {
-                            if (typeof(res.url) != 'undefined' && res.url != null && res.url != '') {
-                                location.href = res.url
-                            } else {
-                                location.reload()
-                            }
-                        }
-                    })
-                })
-                layer.close(index)
-            })
-        }
-        return false
-    })
-
-    /* 数据列表input编辑自动选中ids */
-    $('.j-auto-checked').blur(function(){
-        var that = $(this)
-        if(that.attr('data-value') != that.val()) {
-            that.parents('tr').find('input[name="ids[]"]').attr("checked", true)
-        }else{
-            that.parents('tr').find('input[name="ids[]"]').attr("checked", false)
-        }
-        form.render('checkbox')
-    })
-
-    /* 用ajax方式更新input*/
-    $('.j-ajax-input').focusout(function(){
-        var that = $(this), _val = that.val()
-        if (_val == '') return false
-        if (that.attr('data-value') == _val) return false
-        if (!that.attr('data-href')) {
-            layer.msg('{{ _('请设置href参数') }}')
-            return false
-        }
-        $.post(that.attr('data-href'), {val:_val, _xsrf: getCookie("_xsrf")}, function(res) {
-            if (res.code == 0) {
-                that.attr('data-value', _val)
-            }
-            layer.msg(res.msg)
-        })
-    })
-
-    /* 小提示 */
-    $('.tooltip').hover(function() {
-        var that = $(this)
-        that.find('i').show()
-    }, function() {
-        var that = $(this)
-        that.find('i').hide()
-    })
-
-    /* 列表按钮组 */
-    $('.j-page-btns').click(function(){
-        var that = $(this),
-            code = function(that) {
-                var href = that.attr('href') ? that.attr('href') : that.attr('data-href')
-                if (!href) {
-                    layer.msg('{{ _('请设置href参数') }}')
-                    return false
-                }
-                if ($('.checkbox-ids:checked').length <= 0) {
-                    layer.msg('请选择要操作的数据')
-                    return false
-                }
-                if (that.parents('form')[0]) {
-                    var query = that.parents('form').serialize()
-                } else {
-                    var query = $('#pageListForm').serialize()
-                }
-                layer.msg('数据提交中...',{time:500000})
-                $.post(href, query, function(res) {
-                    layer.msg(res.msg, {}, function(){
-                        if (res.code != 0) {
-                            location.reload()
-                        }
-                    })
-                })
-            }
-        if (that.hasClass('confirm')) {
-            var tips = that.attr('tips') ? that.attr('tips') : '您确定要执行此操作吗？'
-            layer.confirm(tips, {title:false, closeBtn:0}, function(index){
-                code(that)
-                layer.close(index)
-            })
-        } else {
-           code(that)
-        }
-        return false
-    })
-    exports('global', {})
 })
 </script>
 {% end %}

@@ -145,6 +145,7 @@ class AdminMenu(BaseModel):
     target = Column(String(20), nullable=False)
     nav = Column(Integer, nullable=False)
     sort = Column(Integer, nullable=False)
+    system = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
     utc_created_at = Column(TIMESTAMP, default=datetimezone)
 

@@ -25,6 +25,7 @@ urls = [
     (r"/admin/menu/edit?(.html)?", menu.MenuEditHandler),
     (r"/admin/menu/sort?(.html)?", menu.MenuSortHandler),
     (r"/admin/menu/status?(.html)?", menu.MenuStatusHandler),
+    (r"/admin/menu/icon?(.html)?", menu.MenuIconHandler),
 
     # user
     (r"/admin/user/index/?(.html)?", user.UserHandler),

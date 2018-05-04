@@ -86,6 +86,9 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
         else:
             return loader(template_path)
 
+    def params(self):
+        return dict((k, self.get_argument(k) ) for k, _ in self.request.arguments.items())
+
 class ErrorHandler(UncaughtExceptionMixin, _HandlerPatch):
     def initialize(self, *args, **kwargs):
         pass

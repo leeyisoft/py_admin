@@ -5,24 +5,14 @@
 {% block body %}
 <div class="layui-body">
     <form class="layui-form layui-form-pane" action="{{ request.uri }}" method="post" id="editForm">
+        {% raw xsrf_form_html() %}
+        <input type="hidden" class="field-uuid" name="uuid">
         <div class="layui-collapse page-tips">
             <div class="layui-colla-item">
                 <h2 class="layui-colla-title">温馨提示</h2>
                 <div class="layui-colla-content">
                     <p>后台权限验证采用白名单方式，而白名单数据均来源于系统菜单。请严格按照系统要求填写菜单链接和扩展参数。</p>
                 </div>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">所属菜单</label>
-            <div class="layui-input-inline">
-                <select name="pid" class="field-pid" type="select" lay-filter="pid">
-                    <option value="0" level="0">顶级菜单</option>
-                    {$menu_option}
-                </select>
-            </div>
-            <div class="layui-form-mid layui-word-aux">
-                尽量选择与所属模块一致的菜单，根据 “[ ]” 里面的内容判断
             </div>
         </div>
         <div class="layui-form-item">
@@ -35,20 +25,41 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">授权编码</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input field-code" name="code" lay-verify="required" autocomplete="off" placeholder="请输入授权编码">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                必填，参考格式：模块名/控制器名/方法名，例：admin:index:index，请留意大小写
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属菜单</label>
+            <div class="layui-input-inline">
+                <select name="parent_id" class="field-parent_id" type="select" lay-filter="parent_id">
+                    <option value="0" level="0">顶级菜单</option>
+                    {% raw menu_option %}
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                尽量选择与所属模块一致的菜单，根据 “[ ]” 里面的内容判断
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">图标设置</label>
             <div class="layui-input-inline">
                 <input type="text" class="layui-input field-icon" id="input-icon" name="icon" lay-verify="" autocomplete="off" placeholder="可自定义或使用系统图标">
             </div>
-            <i class="{if condition="isset($data_info['icon'])"}{$data_info['icon']}{/if}" id="form-icon-preview"></i>
-            <a href="{:url('publics/icon?input=input-icon&show=form-icon-preview')}" title="选择图标" class="layui-btn layui-btn-primary j-iframe-pop fl">选择图标</a>
+            <i class="{{ data_info.get('icon', '') }}" id="form-icon-preview"></i>
+            <a href="/admin/menu/icon?input=input-icon&show=form-icon-preview" title="选择图标" class="layui-btn layui-btn-primary j-iframe-pop fl">选择图标</a>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">菜单链接</label>
             <div class="layui-input-inline">
-                <input type="text" class="layui-input field-url" name="url" lay-verify="required" autocomplete="off" placeholder="请严格按照参考格式填写">
+                <input type="text" class="layui-input field-path" name="path" lay-verify="required" autocomplete="off" placeholder="请严格按照参考格式填写">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                必填，参考格式：模块名/控制器名/方法名，例：admin/index/index，<span class="red">请留意大小写</span>
+                必填，参考格式：/模块名/控制器名/方法名，例：/admin/index/index，<span class="red">请留意大小写</span>
             </div>
         </div>
         <div class="layui-form-item">
@@ -87,7 +98,6 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <input type="hidden" class="field-id" name="id">
                 <button type="submit" class="layui-btn" lay-submit="" lay-filter="formSubmit">提交</button>
                 <a href="/admin/menu/index?#menu_tab={{ menu_tab }}" class="layui-btn layui-btn-primary ml10">
                     <i class="aicon ai-fanhui"></i>返回
@@ -96,4 +106,17 @@
         </div>
     </form>
 </div>
+{% end %}
+{% block javascript %}
+<script type="text/javascript">
+var formData = {% raw data_info %}
+layui.use(['form'], function() {
+    var $ = layui.jquery, form = layui.form
+    if (formData) {
+        $('.ass-level').val(parseInt($('.field-parent_id option:selected').attr('level'))+1)
+    }
+});
+</script>
+
+<script src="{{ static_url("admin/js/footer.js") }}" charset="utf-8"></script>
 {% end %}
