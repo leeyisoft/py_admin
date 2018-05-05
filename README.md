@@ -1,9 +1,9 @@
 [TOC]
 
-特别声明：
-> 本软件参考 https://github.com/mqingyn/torngas 很多地方“参考”了torngas的，支持Python3.6
+基于Tornado的web mvc框架。参考了torngas（torngas大量参考和借鉴了Django的设计模式），形成一套基于tornado的Django like应用层开发框架。tornado 建议使用5.0.2及以上版本
 
-基于Tornado的web mvc框架。大量参考和借鉴了Django的设计模式，形成一套基于tornado的Django like应用层开发框架。tornado 建议使用5.0以上版本
+特别声明：
+> 本软件很多地方“参考”了[torngas](https://github.com/mqingyn/torngas)，在MacBookPro下采用 Python3.6+MySQL5.7开发；因为torngas没有更新了（最后一次提交在2016年9月份，参考的时候它也不支持Python3），所以就自己开始“造轮子”了。
 
 # 开发约定
 * 数据库密码经过AES加密，没有明文存储，进过AES加密的密码，格式 aes::: + ciphertext；
@@ -11,6 +11,31 @@
 * 数据库表的主键统一用uuid(32位)
 * 其他约定遵从[Python风格规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/)、[Python 编码规范](http://liyangliang.me/posts/2015/08/simple-python-style-guide/)
 
+# 环境依赖
+* 本人在在MacBookPro下采用 Python3.6+MySQL5.7开发，应该可以所以操作系统化下面跑起来
+* 不打算支持Python3.6以下的Python环境了，会跟随tornado或Python升级代码
+* 操作数据库的ORM框架为 SQLAlchemy1.2.7（SQLAlchemy包括用于SQLite，Postgresql，MySQL，Oracle，MS-SQL，Firebird，Sybase等的语言），如果要用其他数据库，本软件应该要做少许的调整
+* 下列Python依赖会保持最新版本
+
+```
+» pip list
+Package         Version
+--------------- -------
+mysqlclient     1.3.12
+Pillow          5.1.0
+pip             10.0.1
+pyasn1          0.4.2
+pycrypto        2.6.1
+python-dateutil 2.7.2
+pytz            2018.4
+redis           2.10.6
+rsa             3.4.2
+setuptools      39.1.0
+six             1.11.0
+SQLAlchemy      1.2.7
+tornado         5.0.2
+wheel           0.31.0
+```
 
 # 项目启动
 ```
