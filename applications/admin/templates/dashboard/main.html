@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>管理控制台 -  Powered by {:config('system.name')}</title>
+<title>管理控制台 -  Powered by {{ sys_config('system.name') }}</title>
 <meta http-equiv="Access-Control-Allow-Origin" content="*">
 <link rel="stylesheet" href="{{ static_url("js/layui/css/layui.css") }}">
 <link rel="stylesheet" href="{{ static_url("admin/css/style.css") }}">
@@ -35,13 +35,12 @@
             <li class="layui-nav-item">
                 <a href="javascript:void(0);">{{ current_user.get('username') }}&nbsp;&nbsp;</a>
                 <dl class="layui-nav-child">
-                    <dd><a data-id="00" href="{:url('admin/user/info')}" class="admin-nav-item"><span style="color:#333">个人设置</span></a></dd>
-                    <dd><a href="{:url('admin/user/iframe?val=0')}" class="j-ajax" refresh="yes">默认布局</a></dd>
+                    <dd><a data-id="00" href="/admin/user/info" class="admin-nav-item"><span style="color:#333">个人设置</span></a></dd>
                     <dd><a href="/admin/logout">退出登陆</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="__ROOT_DIR__" target="_blank">前台</a></li>
-            <li class="layui-nav-item"><a href="{:url('admin/index/clear')}" class="j-ajax" refresh="yes">清缓存</a></li>
+            <li class="layui-nav-item"><a href="{{ sys_config('home_url') }}" target="_blank">前台</a></li>
+            <li class="layui-nav-item"><a href="/admin/index/clear" class="j-ajax" refresh="yes">清缓存</a></li>
             <li class="layui-nav-item"><a href="javascript:void(0);" id="lockScreen">锁屏</a></li>
         </ul>
     </div>
@@ -60,7 +59,7 @@
                     <dl class="layui-nav-child">
                         {% if vv['title']=='快捷菜单' %}
                             <dd>
-                                <a class="admin-nav-item" data-id="0" href="{:url('admin/index/welcome')}">
+                                <a class="admin-nav-item" data-id="0" href="/admin/welcome">
                                     <i class="layui-icon">&#xe68e;</i> 后台首页
                                 </a>
                             </dd>
@@ -95,8 +94,8 @@
         </div>
     </div>
     <div class="layui-footer footer">
-        <span class="fl">Powered by <a href="{:config('system.url')}" target="_blank">{:config('system.name')}</a> v{:config('system.version')}</span>
-        <span class="fr"> © 2017-2018 <a href="{:config('system.url')}" target="_blank">{:config('system.copyright')}</a> All Rights Reserved.</span>
+        <span class="fl">Powered by <a href="{{ sys_config('system.url') }}" target="_blank">{{ sys_config('system.name') }}</a> {{ sys_config('system.version') }}</span>
+        <span class="fr"> © 2018-2050 <a href="{{ sys_config('system.url') }}" target="_blank">{{ sys_config('system.copyright') }}</a> All Rights Reserved.</span>
     </div>
 </div>
 <script src="{{ static_url("js/layui/layui.js") }}" charset="utf-8"></script>
@@ -122,7 +121,7 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             if (pwd == '') {
                 return false;
             }
-            $.post('/admin/user/unlocked', {password:pwd, _xsrf: getCookie("_xsrf")}, function(res) {
+            $.post('/admin/user/unlocked', {password:pwd, _xsrf: get_xsrf()}, function(res) {
                 if (res.code == 0) {
                     window.sessionStorage.setItem("lockscreen", false);
                     layer.closeAll();

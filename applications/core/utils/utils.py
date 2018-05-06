@@ -30,49 +30,54 @@ def is_protected_type(obj):
     """
     return isinstance(obj, _PROTECTED_TYPES)
 
-def datetimezone(dt=None, timezone='UTC'):
-    """带时区的时间
+def utc_now():
+    """获取当前UTC时间
 
-    获取“带时区的时间”，例如 2018-02-27 10:13:02.087558+08:00
-
-    Keyword Arguments:
-        dt {datetime.datetime} -- 要转换的时间 (default: {None})
-        timezone {str} -- 时区 (default: {'UTC'})
+    [description]
 
     Returns:
-        datetime -- 如果参数默认，返回带时区的当前时间
-        datetime -- 如果参数dt不默认，返回timezone指定时区的时间
+        datetime.datetime -- [description]
     """
-    tz = pytz.timezone(timezone)
-    if dt is None:
-        return datetime.datetime.now(tz)
-    else:
-        return dt.astimezone(tz)
+    tz = pytz.timezone('UTC')
+    return datetime.datetime.now(tz)
 
 def str_to_datetime(str_dt, to_tz='UTC'):
     """字符串格式的时间转换为datetime格式的时间
-    """
-    dt = dateutil.parser.parse(str_dt)
-    return datetimezone(dt, to_tz)
 
-def utc_to_timezone(dt, timezone=None):
-    """[summary]
-
-    把UTC时间转换成特定时间的时间
+    [description]
 
     Arguments:
-        dt {datetime.datetime} -- UTC时间 例如 例如 2018-02-27 02:13:02.087558+08:00
+        str_dt {str} -- 字符串格式的时间， 例如 2018-02-27 02:13:02.087558+08:00 or 2018-02-27
 
     Keyword Arguments:
-        timezone {str} -- 指定的时区 (default: {None})
+        to_tz {str} -- [description] (default: {'UTC'})
 
     Returns:
-        datetime.datetime -- 指定时区的时间 例如 例如 2018-02-27 10:13:02.087558+08:00
+        [datetime.datetime] -- [description]
+    """
+
+    tz = pytz.timezone(to_tz)
+    dt = dateutil.parser.parse(str_dt)
+    return dt.astimezone(tz)
+
+def dt_to_timezone(dt, to_tz=None):
+    """[summary]
+
+    把datetime时间转换成特定时间的时间
+
+    Arguments:
+        dt {datetime.datetime} -- 时间 例如 2018-02-27 02:13:02.087558+08:00
+
+    Keyword Arguments:
+        to_tz {str} -- 指定的时区 (default: {None})
+
+    Returns:
+        datetime.datetime -- 指定时区的时间 例如 2018-02-27 10:13:02.087558+08:00
     """
     if not isinstance(dt, datetime.datetime):
         return dt
-    timezone = timezone if timezone else settings.TIME_ZONE
-    tz = pytz.timezone(timezone)
+    to_tz = to_tz if to_tz else settings.TIME_ZONE
+    tz = pytz.timezone(to_tz)
     dt = dt.replace(tzinfo=pytz.utc)
     return dt.astimezone(tz)
 

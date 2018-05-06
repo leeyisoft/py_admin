@@ -11,7 +11,6 @@ from tornado.escape import json_decode
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-from applications.core.utils import utc_to_timezone
 from applications.core.decorators import required_permissions
 
 from applications.core.handler import BaseHandler

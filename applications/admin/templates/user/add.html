@@ -9,8 +9,6 @@
 {% block javascript %}
 <script src="{{ static_url("js/jsencrypt.js") }}" charset="utf-8"></script>
 <script type="text/javascript">
-var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
-var formData = {% raw data_info %};
 layui.use(['form'], function() {
     var $ = layui.jquery, form = layui.form
 
@@ -51,12 +49,13 @@ layui.use(['form'], function() {
     form.on('submit(formSubmit)', function(obj) {
         layer.msg('数据提交中...',{time:50000})
 
-        // Encrypt with the public key...
-        var encrypt = new JSEncrypt()
-        encrypt.setPublicKey(public_key)
-
-        var ciphertext = encrypt.encrypt(obj.field.password)
-        obj.field.password = ciphertext
+        if (rsa_encrypt=='1' && obj.field.password) {
+            // Encrypt with the public key...
+            var encrypt = new JSEncrypt()
+            encrypt.setPublicKey(public_key)
+            var ciphertext = encrypt.encrypt(obj.field.password)
+            obj.field.password = ciphertext
+        }
 
         var permission = []
         $("input:checkbox[name='permission']:checked").each(function() {

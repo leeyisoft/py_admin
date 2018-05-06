@@ -23,10 +23,10 @@
         <thead>
             <tr>
                 <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
-                <th lay-data="{field:'uuid', width:278, fixed: true}">UUID</th>
-                <th lay-data="{field:'username', width:80, sort: true}">用户名</th>
-                <th lay-data="{field:'email', width:80, sort: true}">Email</th>
-                <th lay-data="{field:'mobile', width:80, sort: true}">电话</th>
+                <th lay-data="{field:'uuid', width:120, fixed: true}">UUID</th>
+                <th lay-data="{field:'username', width:120, sort: true}">用户名</th>
+                <th lay-data="{field:'mobile', width:120, sort: true}">电话</th>
+                <th lay-data="{field:'email', width:160, sort: true}">Email</th>
                 <th lay-data="{field:'utc_last_login_at', width:180, sort: true}">最后登录</th>
                 <th lay-data="{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}">状态</th>
                 <th lay-data="{field:'utc_created_at', width:180, sort: true, fixed: 'right'}">添加时间</th>
@@ -151,7 +151,7 @@ layui.use(['table','form'], function() {
         $.ajax({
             type: 'DELETE',
             url: next,
-            data: {uuid: uuid, _xsrf: getCookie("_xsrf")},
+            data: {uuid: uuid, _xsrf: get_xsrf()},
             dataType: 'json',
             success: function(data) {
                 obj.del();
@@ -183,7 +183,7 @@ layui.use(['table','form'], function() {
         var uuid = $(this).parent().parent().parent().children('td[data-field="uuid"]').children('div').html()
 
         var params = {uuid: uuid, status:status, }
-        params['_xsrf'] = getCookie("_xsrf")
+        params['_xsrf'] = get_xsrf()
 
         $.ajax({
             type: "POST",

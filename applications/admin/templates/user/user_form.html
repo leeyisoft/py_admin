@@ -99,3 +99,8 @@
         <button type="reset" class="layui-btn layui-btn-primary">重置</button>
     </div>
 </form>
+<script type="text/javascript">
+var rsa_encrypt = '{{ rsa_encrypt }}'
+var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
+var formData = {% raw data_info %};
+</script>

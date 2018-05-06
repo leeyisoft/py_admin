@@ -42,6 +42,7 @@ urls = [
     (r"/admin/user/add/?(.html)?", user.UserAddHandler),
     (r"/admin/user/edit/?(.html)?", user.UserEditHandler),
     (r"/admin/user/unlocked/?(.html)?", user.UserUnlockedHandler),
+    (r"/admin/user/info/?(.html)?", user.UserInfoHandler),
 
     # user_role
     (r"/admin/role/index/?(.html)?", role.RoleHandler),

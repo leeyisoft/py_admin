@@ -9,6 +9,8 @@ import tornado
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.utils.hasher import make_password
+from applications.core.cache import sys_config
+from applications.core.decorators import required_permissions
 
 from applications.admin.models.system import AdminMenu
 
@@ -34,15 +36,16 @@ class MainHandler(CommonHandler):
             '_admin_menu_parents': _admin_menu_parents,
             '_bread_crumbs': _bread_crumbs,
             'current_user': self.current_user,
+            'sys_config': sys_config,
         }
         self.render('dashboard/main.html', **params)
 
 class WelcomeHandler(CommonHandler):
     @tornado.web.authenticated
+    @required_permissions('admin:welcome')
     def get(self, *args, **kwargs):
         """后台首页
         """
-
         # menu = AdminMenu.main_menu()
         # print('menu ', menu)
         # self.show('abc')

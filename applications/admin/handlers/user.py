@@ -168,6 +168,7 @@ class UserEditHandler(CommonHandler):
         role_id = user.role_id
 
         data_info = user.as_dict()
+        # SysLogger.debug(data_info)
         try:
             data_info['permission'] = json.loads(user.permission)
         except Exception as e:
@@ -234,6 +235,62 @@ class UserEditHandler(CommonHandler):
 
         if role_id:
             user['role_id'] = role_id
+
+        User.Q.filter(User.uuid==uuid).update(user)
+        User.session.commit()
+
+        return self.success(data=user)
+
+class UserInfoHandler(CommonHandler):
+    """docstring for Passport"""
+    @tornado.web.authenticated
+    @required_permissions('admin:user:info')
+    def get(self, *args, **kwargs):
+        uuid = self.current_user.get('uuid', None)
+        user = User.Q.filter(User.uuid==uuid).first()
+        data_info = user.as_dict()
+        params = {
+            'user': user,
+            'data_info': data_info,
+            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+        }
+        self.render('user/info.html', **params)
+
+    @tornado.web.authenticated
+    @required_permissions('admin:user:info')
+    def post(self, *args, **kwargs):
+        username = self.get_argument('username', None)
+        password = self.get_argument('password', None)
+        rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        email = self.get_argument('email', None)
+        mobile = self.get_argument('mobile', None)
+
+        uuid = self.current_user.get('uuid', None)
+        user = {}
+
+        if username:
+            user['username'] = username
+            res = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+            if res>0:
+                return self.error('用户名已被占用')
+        if password:
+            if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
+                private_key = sys_config('sys_login_rsa_priv_key')
+                password = RSAEncrypter.decrypt(password, private_key)
+            user['password'] = make_password(password)
+
+        if mobile:
+            user['mobile'] = mobile
+            res = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
+            if res>0:
+                return self.error('电话号码已被占用')
+        if email:
+            user['email'] = email
+            res = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
+            if res>0:
+                return self.error('Email已被占用')
+
 
         User.Q.filter(User.uuid==uuid).update(user)
         User.session.commit()

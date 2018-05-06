@@ -137,7 +137,7 @@ layui.use(['table','form'], function() {
         $.ajax({
             type: 'DELETE',
             url: next,
-            data: {key: key, _xsrf: getCookie("_xsrf")},
+            data: {key: key, _xsrf: get_xsrf()},
             dataType: 'json',
             success: function(data) {
                 obj.del();
@@ -153,12 +153,12 @@ layui.use(['table','form'], function() {
                     window.parent.layer.closeAll()
                 }, 2000)
             },
-            error: function(xhr){
-                // console.log(xhr.responseJSON)
+            error: function(xhr) {
+                // console.log(xhr.status)
                 if (xhr.responseJSON && xhr.responseJSON.msg) {
                     layer.msg(xhr.responseJSON.msg)
                 } else {
-                    layer.msg('{{ _('未知错误') }}')
+                    layer.msg('{{ _('未知错误') }}.')
                 }
             }
         })
@@ -169,7 +169,7 @@ layui.use(['table','form'], function() {
         var key = $(this).parent().parent().parent().children('td[data-field="key"]').children('div').html()
 
         var params = {key:key, old_key:key, status:status, }
-        params['_xsrf'] = getCookie("_xsrf")
+        params['_xsrf'] = get_xsrf()
 
         $.ajax({
             type: "POST",

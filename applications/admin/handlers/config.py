@@ -116,7 +116,8 @@ class ConfigEditHandler(CommonHandler):
     def get(self, *args, **kwargs):
         key = self.get_argument('key', None)
         config = Config.Q.filter(Config.key==key).first()
-
+        if config is None:
+            return self.error('不存在的数据')
         data_info = config.as_dict()
         params = {
             'config': config,

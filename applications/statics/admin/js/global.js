@@ -5,9 +5,8 @@ var status_html = {
     '0':'<div class="layui-table-cell laytable-cell-1-status"><input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" checked=""><div class="layui-unselect layui-form-switch" lay-skin="_switch"><em>禁用</em><i></i></div></div>',
 }
 
-function getCookie(name) {
-    var r = document.cookie.match("\\b"+name+"=([^:]*)\\b");
-    return r ? r[1] : undefined;
+function get_xsrf() {
+    return layui.jquery("input[name='_xsrf']").val();
 }
 
 layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {

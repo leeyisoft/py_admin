@@ -7,7 +7,7 @@ import json
 from applications.core.settings_manager import settings
 
 from applications.core.db.dbalchemy import Model
-from applications.core.utils import datetimezone
+from applications.core.utils import utc_now
 from applications.core.logger.client import SysLogger
 
 from sqlalchemy.types import Integer
@@ -18,7 +18,7 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
 
-from applications.core.utils import utc_to_timezone
+from applications.core.utils import dt_to_timezone
 from applications.core.utils import uuid32
 
 class BaseModel(Model):
@@ -40,11 +40,11 @@ class Config(BaseModel):
     system = Column(Integer, nullable=False, default=0)
     # 状态:( 0 禁用；1 启用, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_created_at = Column(TIMESTAMP, default=datetimezone)
+    utc_created_at = Column(TIMESTAMP, default=utc_now)
 
     @property
     def created_at(self):
-        return utc_to_timezone(self.utc_created_at)
+        return dt_to_timezone(self.utc_created_at)
 
 
 class Role(BaseModel):
@@ -59,11 +59,11 @@ class Role(BaseModel):
     sort = Column(Integer, nullable=False, default=20)
     # 状态:( 0 禁用；1 启用, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_created_at = Column(TIMESTAMP, default=datetimezone)
+    utc_created_at = Column(TIMESTAMP, default=utc_now)
 
     @property
     def created_at(self):
-        return utc_to_timezone(self.utc_created_at)
+        return dt_to_timezone(self.utc_created_at)
 
     @classmethod
     def option_html(cls, role_id=None):
@@ -102,15 +102,15 @@ class User(BaseModel):
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
     utc_last_login_at = Column(TIMESTAMP, nullable=True)
-    utc_created_at = Column(TIMESTAMP, default=datetimezone)
+    utc_created_at = Column(TIMESTAMP, default=utc_now)
 
     @property
     def last_login_at(self):
-        return utc_to_timezone(self.utc_last_login_at)
+        return dt_to_timezone(self.utc_last_login_at)
 
     @property
     def created_at(self):
-        return utc_to_timezone(self.utc_created_at)
+        return dt_to_timezone(self.utc_created_at)
 
     @property
     def role_permission(self):
@@ -150,12 +150,12 @@ class AdminMenu(BaseModel):
     sort = Column(Integer, nullable=False, default=20)
     system = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
-    utc_created_at = Column(TIMESTAMP, default=datetimezone)
+    utc_created_at = Column(TIMESTAMP, default=utc_now)
 
 
     @property
     def created_at(self):
-        return utc_to_timezone(self.utc_created_at)
+        return dt_to_timezone(self.utc_created_at)
 
     @classmethod
     def info(cls, uuid=None, path=None):

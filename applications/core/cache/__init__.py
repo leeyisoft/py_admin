@@ -141,4 +141,4 @@ def sys_config(key):
     cache_key = 'conf:%s' % key
     query = "select `value` from `sys_config` where `status`=1 and `key`='%s';" % key;
     value = Config.session.execute(query).scalar()
-    return value
+    return value if value is not None else ''

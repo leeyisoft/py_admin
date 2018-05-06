@@ -205,7 +205,7 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             layer.msg('{{ _('请设置href参数') }}')
             return false
         }
-        $.post(that.attr('data-href'), {val:_val, _xsrf: getCookie("_xsrf")}, function(res) {
+        $.post(that.attr('data-href'), {val:_val, _xsrf: get_xsrf()}, function(res) {
             if (res.code == 0) {
                 that.attr('data-value', _val)
             }
@@ -225,7 +225,7 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             $.ajax({
                 type: 'DELETE',
                 url: href,
-                data: {menu_tab:menu_tab, _xsrf: getCookie("_xsrf")},
+                data: {menu_tab:menu_tab, _xsrf: get_xsrf()},
                 dataType: 'json',
                 success: function(data) {
                     that.parent().parent().parent().remove()

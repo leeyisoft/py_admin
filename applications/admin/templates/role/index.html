@@ -155,7 +155,7 @@ layui.use(['table','form'], function() {
         $.ajax({
             type: 'DELETE',
             url: next,
-            data: {uuid: uuid, _xsrf: getCookie("_xsrf")},
+            data: {uuid: uuid, _xsrf: get_xsrf()},
             dataType: 'json',
             success: function(data) {
                 obj.del();
@@ -187,7 +187,7 @@ layui.use(['table','form'], function() {
         var uuid = $(this).parent().parent().parent().children('td[data-field="uuid"]').children('div').html()
 
         var params = {uuid: uuid, status:status, }
-        params['_xsrf'] = getCookie("_xsrf")
+        params['_xsrf'] = get_xsrf()
 
         $.ajax({
             type: "POST",

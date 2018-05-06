@@ -50,7 +50,7 @@ from ..logger import SysLogger
 from ..settings_manager import settings
 from ..exception import ConfigError
 from ..storage import storage
-from ..utils import utc_to_timezone
+from ..utils import dt_to_timezone
 from ..utils.encrypter import aes_decrypt
 
 
@@ -269,7 +269,7 @@ class Model(MetaBaseModel):
             val = '' if val is None else val
             if isinstance(val, datetime.datetime):
                 if settings.DB_DATETIME_IS_UTC:
-                    val = utc_to_timezone(val)
+                    val = dt_to_timezone(val)
                 val = str(val)
             if type(filds)==list and len(filds)>0:
                 if column.name in filds:
