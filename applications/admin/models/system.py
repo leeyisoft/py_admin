@@ -131,6 +131,23 @@ class User(BaseModel):
         return []
 
 
+class UserLoginLog(BaseModel):
+    """
+    user model
+    """
+    __tablename__ = 'sys_admin_user_login_log'
+
+    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'))
+    ip = Column(String(40), nullable=False)
+    client = Column(String(20), nullable=True)
+    utc_created_at = Column(TIMESTAMP, default=utc_now)
+
+    @property
+    def created_at(self):
+        return dt_to_timezone(self.utc_created_at)
+
+
 class AdminMenu(BaseModel):
     """
     user group map model

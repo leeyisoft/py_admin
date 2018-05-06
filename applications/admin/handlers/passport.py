@@ -14,6 +14,7 @@ from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 
 from applications.admin.models.system import User
+from applications.admin.models.system import UserLoginLog
 
 from .common import CommonHandler
 
@@ -56,6 +57,15 @@ class LoginHandler(CommonHandler):
         user_fileds = ['uuid', 'username', 'role_id']
         user_str = str(user.as_dict(user_fileds))
         self.set_secure_cookie(self.user_session_key, user_str, expires_days=1)
+
+        params = {
+            'user_id': user.uuid,
+            'client': 'web',
+            'ip': self.request.remote_ip,
+        }
+        log = UserLoginLog(**params)
+        UserLoginLog.session.add(log)
+        UserLoginLog.session.commit()
 
         self.clear_cookie(valid_code_key)
 
