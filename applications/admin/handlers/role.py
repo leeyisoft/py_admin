@@ -79,8 +79,8 @@ class RoleAddHandler(CommonHandler):
         if not rolename:
             return self.error('分组名称不能为空')
 
-        res = Role.Q.filter(Role.rolename==rolename).count()
-        if res>0:
+        count = Role.Q.filter(Role.rolename==rolename).count()
+        if count>0:
             return self.error('名称已被占用')
 
         role = {
@@ -130,8 +130,8 @@ class RoleEditHandler(CommonHandler):
 
         if rolename:
             role['rolename'] = rolename
-            res = Role.Q.filter(Role.uuid!=uuid).filter(Role.rolename==rolename).count()
-            if res>0:
+            count = Role.Q.filter(Role.uuid!=uuid).filter(Role.rolename==rolename).count()
+            if count>0:
                 return self.error('名称已被占用')
 
         if sort:

@@ -97,11 +97,11 @@ class ConfigAddHandler(CommonHandler):
         if not title:
             return self.error('分组名称不能为空')
 
-        res = Config.Q.filter(Config.key==key).count()
-        if res>0:
+        count = Config.Q.filter(Config.key==key).count()
+        if count>0:
             return self.error('KEY已被占用')
-        res = Config.Q.filter(Config.title==title).count()
-        if res>0:
+        count = Config.Q.filter(Config.title==title).count()
+        if count>0:
             return self.error('名称已被占用')
 
         config = Config(**params)
@@ -137,12 +137,12 @@ class ConfigEditHandler(CommonHandler):
         params.pop('old_key', None)
         params.pop('_xsrf', None)
 
-        res = Config.Q.filter(Config.key!=old_key).filter(Config.key==key).count()
-        if res>0:
+        count = Config.Q.filter(Config.key!=old_key).filter(Config.key==key).count()
+        if count>0:
             return self.error('KEY已被占用')
         if title:
-            res = Config.Q.filter(Config.key!=old_key).filter(Config.title==title).count()
-            if res>0:
+            count = Config.Q.filter(Config.key!=old_key).filter(Config.title==title).count()
+            if count>0:
                 return self.error('名称已被占用')
 
         config = Config.Q.filter(Config.key==old_key).first()

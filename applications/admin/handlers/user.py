@@ -123,8 +123,8 @@ class UserAddHandler(CommonHandler):
             return self.error('密码不能为空')
 
         if username:
-            res = User.Q.filter(User.username==username).count()
-            if res>0:
+            count = User.Q.filter(User.username==username).count()
+            if count>0:
                 return self.error('用户名已被占用')
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
@@ -140,13 +140,13 @@ class UserAddHandler(CommonHandler):
             params['role_id'] = role_id
         if mobile:
             params['mobile'] = mobile
-            res = User.Q.filter(User.mobile==mobile).count()
-            if res>0:
+            count = User.Q.filter(User.mobile==mobile).count()
+            if count>0:
                 return self.error('电话号码已被占用')
         if email:
             params['email'] = email
-            res = User.Q.filter(User.email==email).count()
-            if res>0:
+            count = User.Q.filter(User.email==email).count()
+            if count>0:
                 return self.error('Email已被占用')
 
         user = User(**params)
@@ -210,8 +210,8 @@ class UserEditHandler(CommonHandler):
 
         if username:
             user['username'] = username
-            res = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
-            if res>0:
+            count = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+            if count>0:
                 return self.error('用户名已被占用')
         if password:
             if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
@@ -221,13 +221,13 @@ class UserEditHandler(CommonHandler):
 
         if mobile:
             user['mobile'] = mobile
-            res = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
-            if res>0:
+            count = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
+            if count>0:
                 return self.error('电话号码已被占用')
         if email:
             user['email'] = email
-            res = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
-            if res>0:
+            count = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
+            if count>0:
                 return self.error('Email已被占用')
 
         if permission:
@@ -271,8 +271,8 @@ class UserInfoHandler(CommonHandler):
 
         if username:
             user['username'] = username
-            res = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
-            if res>0:
+            count = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+            if count>0:
                 return self.error('用户名已被占用')
         if password:
             if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
@@ -282,13 +282,13 @@ class UserInfoHandler(CommonHandler):
 
         if mobile:
             user['mobile'] = mobile
-            res = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
-            if res>0:
+            count = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
+            if count>0:
                 return self.error('电话号码已被占用')
         if email:
             user['email'] = email
-            res = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
-            if res>0:
+            count = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
+            if count>0:
                 return self.error('Email已被占用')
 
 
