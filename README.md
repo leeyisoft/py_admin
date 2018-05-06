@@ -6,6 +6,7 @@
 > 本软件很多地方“参考”了[torngas](https://github.com/mqingyn/torngas)，在MacBookPro下采用 Python3.6+MySQL5.7开发；因为torngas没有更新了（最后一次提交在2016年9月份，参考的时候它也不支持Python3），所以就自己开始“造轮子”了。
 
 # 开发约定
+* 在第一个发布版本之前的“数据库结构、数据变动”，不会给出相应update的SQL语句（如有需要、或者其他建议，欢迎留言）
 * 数据库密码经过AES加密，没有明文存储，进过AES加密的密码，格式 aes::: + ciphertext；
 * 数据库和时间相关的字段统一使用datetime(6)数据类型，通过Python3取UTC时间
 * 数据库表的主键统一用uuid(32位)

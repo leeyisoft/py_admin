@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2018-05-04 08:44:06 +0000
+# Generation Time: 2018-05-06 02:05:26 +0000
 # ************************************************************
 
 
@@ -76,7 +76,7 @@ VALUES
 	('100','','97','admin:language:del','删除语言包','','/admin/language/del','','_self',100,1,0,1,NULL),
 	('101','','97','admin:language:sort','排序设置','','/admin/language/sort','','_self',100,1,0,1,NULL),
 	('102','','97','admin:language:status','状态设置','','/admin/language/status','','_self',100,1,0,1,NULL),
-	('105','','4','admin:index:welcome','欢迎页面','','/admin/index/welcome','','_self',4,1,0,1,NULL),
+	('105','','4','admin:welcome','欢迎页面','','/admin/welcome','','_self',4,1,1,1,NULL),
 	('106','','4','admin:user:iframe','布局切换','','/admin/user/iframe','','_self',1,1,0,1,NULL),
 	('107','','15','admin:log:del','删除日志','','/admin/log/del','table=admin_log','_self',100,1,0,1,NULL),
 	('108','','15','admin:log:clear','清空日志','','/admin/log/clear','','_self',100,1,0,1,NULL),
@@ -98,7 +98,7 @@ VALUES
 	('146','','145','warehousing:instorageapply:edit','编辑入库单','','/warehousing/instorageapply/edit','','_self',0,0,1,1,NULL),
 	('147','','132','warhousing:customer','客户管理','typcn typcn-arrow-down-thick','/warhousing/customer','','_self',0,0,1,1,NULL),
 	('148','','147','warehousing:customer:index','客户信息','','/warehousing/customer/index','','_self',0,0,1,0,NULL),
-	('15','','6','admin:log:index','系统日志','aicon ai-xitongrizhi-tiaoshi','/admin/log/index','','_self',8,1,1,1,NULL),
+	('15','','6','admin:log:index','系统日志','aicon ai-xitongrizhi-tiaoshi','/admin/log/index','','_self',8,1,1,0,NULL),
 	('150','','148','warehousing:customer:edit','编辑客户信息','','/warehousing/customer/edit','','_self',0,0,1,1,NULL),
 	('16','','6','admin:annex:index','附件管理','','/admin/annex/index','','_self',7,1,0,1,NULL),
 	('17','','8','admin:module:index','模块管理','','/admin/module/index','','_self',1,1,1,1,NULL),
@@ -255,9 +255,9 @@ LOCK TABLES `sys_admin_user` WRITE;
 
 INSERT INTO `sys_admin_user` (`uuid`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `utc_last_login_at`, `status`, `utc_created_at`)
 VALUES
-	('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces2',NULL,NULL,'[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:index:welcome\"]',0,NULL,1,'2018-05-02 03:43:38.918080'),
-	('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi',NULL,NULL,'[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:index:welcome\", \"admin:system\", \"admin:system:function\", \"admin:system:setting\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\", \"admin:extend\", \"admin:module:index\", \"admin:plugins:admin\", \"admin:hook:index\", \"admin:upgrade:index\", \"warehousing:index\", \"warhousing:customer\", \"warehousing:instorage:admin\", \"warehousing:instorageapply:index\", \"warehousing:instorage:index\", \"warehousing:outstorage:admin\", \"warehousing:outstorage:index\", \"warehousing:storage:admin\", \"warehousing:storage:index\", \"warehousing:voucher:admin\", \"warehousing:voucher:index\"]',NULL,NULL,1,'2018-02-28 09:15:10.012341'),
-	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$NP4LtrgwwP14HqMl$ISbZV4pRsfGaI9ZY0r7rx50D5Ya5aFFyPh12xKZWVVA=','admin','','','[]',NULL,'2018-02-28 09:15:10.012341',1,'2018-02-28 09:15:10.012341');
+	('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces33','121111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,1,'2018-05-02 03:43:38.918080'),
+	('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi','13692177080','leeyisoft@qq.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:system\", \"admin:system:function\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\"]',NULL,NULL,1,'2018-02-28 09:15:10.012341'),
+	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$NP4LtrgwwP14HqMl$ISbZV4pRsfGaI9ZY0r7rx50D5Ya5aFFyPh12xKZWVVA=','admin','','admin@admin.com','[]',NULL,'2018-02-28 09:15:10.012341',1,'2018-02-28 09:15:10.012341');
 
 /*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -271,13 +271,21 @@ DROP TABLE IF EXISTS `sys_admin_user_login_log`;
 CREATE TABLE `sys_admin_user_login_log` (
   `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
   `user_id` varchar(32) NOT NULL DEFAULT '' COMMENT '用户唯一标识',
-  `login_at` datetime(6) DEFAULT NULL COMMENT '登录UTC时间',
   `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='后台用户登录日志';
 
+LOCK TABLES `sys_admin_user_login_log` WRITE;
+/*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
+
+INSERT INTO `sys_admin_user_login_log` (`uuid`, `user_id`, `ip`, `client`, `utc_created_at`)
+VALUES
+	('4cee9538213c40668c808f4a3fed7a11','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-06 01:55:50.015216');
+
+/*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table sys_config
@@ -288,7 +296,10 @@ DROP TABLE IF EXISTS `sys_config`;
 CREATE TABLE `sys_config` (
   `key` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
   `value` text,
+  `title` varchar(40) DEFAULT NULL COMMENT '标题',
+  `sort` int(10) DEFAULT NULL,
   `remark` varchar(128) NOT NULL,
+  `system` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为系统配置，系统配置不可删除',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:(0 无效, 1正常, 默认1)',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`key`)
@@ -297,13 +308,14 @@ CREATE TABLE `sys_config` (
 LOCK TABLES `sys_config` WRITE;
 /*!40000 ALTER TABLE `sys_config` DISABLE KEYS */;
 
-INSERT INTO `sys_config` (`key`, `value`, `remark`, `status`, `utc_created_at`)
+INSERT INTO `sys_config` (`key`, `value`, `title`, `sort`, `remark`, `system`, `status`, `utc_created_at`)
 VALUES
-	('login_pwd_rsa_encrypt','1','系统登录开启RSA加密',1,'2018-02-27 12:21:28.000000'),
-	('sys_login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----\n','系统登录RSA加密公钥',1,'2018-02-27 06:34:50.196969'),
-	('sys_login_rsa_priv_key','-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQDxKL1RrEcd4szM8Df4HqsJdOvKrSQO7BBvBVsvXKfpWrM+8XGL\n1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr1dWoBVabqDFZgZ2awB7iTk4k\n/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO/xtHnso3I6penSvRawIDAQAB\nAoGAQKctalIHlumRAnh8aNa///8KoAGfIykCluEWuzHaCmO4nm1YhaaUyQadiW91\na6iM0YgL4e+7MhskaXnrurJKRAweJP49OHz2JbLwyE7N7FWlY++1RVwWE32645CT\nt8hkAyFBBBR0J1by8HdGnPa69sJ6wwBYoh3SeCM8R92cfsECQQD+TbbYV/lw9KQD\nju+18bWpAyQeMBdx11OfgN3fBkRwrl9M0DHzwFKwDY7zFxPuYKD5I39wNeSbYYHJ\n9my6/JybAkEA8sST9CmwLgCoRwciUdxH4hOW8uAdGC9T2VYSo/BbO/geF09c+Ggx\nSoyEFIoAUMDC53Yj4dXgks0gnwWygRyjcQJBAN/P59+qNbgLJ5qWHzTDYX05bX1A\nGDIyL7/Ou/bAXlXJscg55+y+VEfr9ubNZdZDpwj+C/fnBqcV/xOP1QwQrYcCQQC+\ncO0rxaQ6gjN//J20n9wYAowQnTTVqxLY1Ies6Tl40swwNwbUq0+3joFyZ0uWDZEX\n5/qAB7qzDo1/kgWU+TVRAkAwAdK+p5ippKmp2efsdqRjb/71n+EX9adpo/Wh5Ece\nVp+MQkKMwNsQCkEthc/jEv4eG/urmWkLxaISAJRNegN2\n-----END RSA PRIVATE KEY-----\n','系统登录RSA加密私钥',1,'2018-02-27 06:34:50.196969'),
-	('front_end_title','前端标题','前端标题',1,'2018-02-27 06:34:50.196969'),
-	('super_admin','de713937f2e3487ebe54b8863bb1a1b8,','超级管理员列表,多个使用半角逗号分隔',1,'2018-03-15 17:43:26.000000');
+	('login_pwd_rsa_encrypt','1','登录密码使用RSA算法加密',1,'系统登录开启RSA加密',1,1,'2018-02-27 12:21:28.000000'),
+	('sys_login_rsa_priv_key','-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQDxKL1RrEcd4szM8Df4HqsJdOvKrSQO7BBvBVsvXKfpWrM+8XGL\n1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr1dWoBVabqDFZgZ2awB7iTk4k\n/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO/xtHnso3I6penSvRawIDAQAB\nAoGAQKctalIHlumRAnh8aNa///8KoAGfIykCluEWuzHaCmO4nm1YhaaUyQadiW91\na6iM0YgL4e+7MhskaXnrurJKRAweJP49OHz2JbLwyE7N7FWlY++1RVwWE32645CT\nt8hkAyFBBBR0J1by8HdGnPa69sJ6wwBYoh3SeCM8R92cfsECQQD+TbbYV/lw9KQD\nju+18bWpAyQeMBdx11OfgN3fBkRwrl9M0DHzwFKwDY7zFxPuYKD5I39wNeSbYYHJ\n9my6/JybAkEA8sST9CmwLgCoRwciUdxH4hOW8uAdGC9T2VYSo/BbO/geF09c+Ggx\nSoyEFIoAUMDC53Yj4dXgks0gnwWygRyjcQJBAN/P59+qNbgLJ5qWHzTDYX05bX1A\nGDIyL7/Ou/bAXlXJscg55+y+VEfr9ubNZdZDpwj+C/fnBqcV/xOP1QwQrYcCQQC+\ncO0rxaQ6gjN//J20n9wYAowQnTTVqxLY1Ies6Tl40swwNwbUq0+3joFyZ0uWDZEX\n5/qAB7qzDo1/kgWU+TVRAkAwAdK+p5ippKmp2efsdqRjb/71n+EX9adpo/Wh5Ece\nVp+MQkKMwNsQCkEthc/jEv4eG/urmWkLxaISAJRNegN2\n-----END RSA PRIVATE KEY-----','登录RSA算法加密私钥',3,'',1,1,'2018-05-04 15:19:45.205311'),
+	('home_url','default','前台网站',20,'',1,1,'2018-05-04 16:05:59.184771'),
+	('sys_login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----','登录RSA算法加密公钥',2,'系统登录RSA加密公钥',1,1,'2018-02-27 06:34:50.196969'),
+	('system.name','LeeSoft','系统名称',20,'',1,1,'2018-05-06 00:56:16.890503'),
+	('system.version','vsn1.0.1','软件版本',20,'',1,1,'2018-05-06 00:57:44.192517');
 
 /*!40000 ALTER TABLE `sys_config` ENABLE KEYS */;
 UNLOCK TABLES;
