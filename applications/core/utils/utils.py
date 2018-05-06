@@ -9,6 +9,7 @@ import hashlib
 import hmac
 import random
 import uuid
+import re
 
 from decimal import Decimal
 
@@ -261,3 +262,11 @@ def pbkdf2(password, salt, iterations, dklen=0, digest=None):
 def constant_time_compare(val1, val2):
     """Return True if the two strings are equal, False otherwise."""
     return hmac.compare_digest(force_bytes(val1), force_bytes(val2))
+
+def is_email(email):
+    regex = r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-Z]{1,13}\.[a-zA-Z\.]{1,7}$'
+    return True if re.match(regex, email) else False
+
+def is_mobile(mobile):
+    regex = r'^1[0-9]{10}$'
+    return True if re.match(regex, mobile) else False
