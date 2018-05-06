@@ -46,7 +46,7 @@ sh ./init.sh
 // 激活Python3虚拟环境
 source py3/bin/activate
 // 启动项目
-python admin.py
+python server.py
 ```
 
 # init db
