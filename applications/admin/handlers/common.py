@@ -11,7 +11,7 @@ from tornado.escape import json_decode
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-from applications.core.decorators import required_permissions
+from applications.core.cache import sys_config
 
 from applications.core.handler import BaseHandler
 
@@ -38,14 +38,28 @@ class CommonHandler(BaseHandler):
     def get_template_path(self):
         return 'applications/admin/templates'
 
-class MessageHandler(BaseHandler):
-    """docstring for Passport"""
-    @tornado.web.authenticated
-    def get(self, *args, **kwargs):
-        pass
 
-class EmailHandler(BaseHandler):
-    """docstring for Passport"""
-    @tornado.web.authenticated
-    def get(self, *args, **kwargs):
-        pass
+    def get_template_namespace(self):
+        """Returns a dictionary to be used as the default template namespace.
+
+        May be overridden by subclasses to add or modify values.
+
+        The results of this method will be combined with additional
+        defaults in the `tornado.template` module and keyword arguments
+        to `render` or `render_string`.
+        """
+        namespace = dict(
+            sys_config=sys_config,
+
+            handler=self,
+            request=self.request,
+            current_user=self.current_user,
+            locale=self.locale,
+            _=self.locale.translate,
+            pgettext=self.locale.pgettext,
+            static_url=self.static_url,
+            xsrf_form_html=self.xsrf_form_html,
+            reverse_url=self.reverse_url
+        )
+        namespace.update(self.ui)
+        return namespace
