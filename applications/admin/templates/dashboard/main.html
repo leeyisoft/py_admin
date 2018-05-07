@@ -99,10 +99,13 @@
     </div>
 </div>
 <script src="{{ static_url('js/layui/layui.js') }}" charset="utf-8"></script>
-<script src="{{ static_url('admin/js/global.js') }}" charset="utf-8"></script>
+<script src="{{ static_url('js/global.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
-    var $ = layui.jquery, element = layui.element, layer = layui.layer, form = layui.form;
+    var $ = layui.jquery
+    var element = layui.element
+    var layer = layui.layer
+    var form = layui.form
 
     var lockscreen = function() {
         document.oncontextmenu=new Function("event.returnValue=false;");

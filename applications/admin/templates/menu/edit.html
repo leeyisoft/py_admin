@@ -110,6 +110,7 @@
 {% block javascript %}
 <script type="text/javascript">
 var formData = {% raw data_info %}
+set_form_data(formData)
 layui.use(['form'], function() {
     var $ = layui.jquery, form = layui.form
     if (formData) {
@@ -117,5 +118,4 @@ layui.use(['form'], function() {
     }
 });
 </script>
-<script src="{{ static_url('admin/js/footer.js') }}" charset="utf-8"></script>
 {% end %}
