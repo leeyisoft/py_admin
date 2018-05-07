@@ -10,13 +10,20 @@ xsrf_cookies = True
 login_pwd_rsa_encrypt = True
 default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
 
-ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+# 163邮箱信息
+email = {
+    'smtp_sever': 'smtp.163.com',
+    'smtp_port': 25,
+    'from_name': 'LeeyiSoft',
+    'from_addr': 'leeyisoft@163.com',
+    # 授权码
+    'auth_code': '',
+}
 
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 STATIC_PATH = os.path.join(ROOT_PATH, 'applications/statics')
 TEMPLATE_PATH = os.path.join(ROOT_PATH, 'applications/admin/templates')
-print('STATIC_PATH: ', STATIC_PATH)
-print('TEMPLATE_PATH: ', TEMPLATE_PATH)
 
 xheaders = True
 
@@ -266,7 +273,7 @@ except ImportError:
 
 
 try:
-    from .local import *
+    from .test import *
 except ImportError:
     pass
 
