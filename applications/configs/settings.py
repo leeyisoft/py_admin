@@ -221,6 +221,7 @@ DATABASE_CONNECTION = {
                 'ROLE': 'master',
                 'DRIVER': 'mysql+mysqldb',
                 'UID': 'root',
+                # 进过AES加密的密码，格式 aes::: + ciphertext
                 'PASSWD': '',
                 'HOST': '',
                 'PORT': 3306,
@@ -231,6 +232,7 @@ DATABASE_CONNECTION = {
                 'ROLE': 'slave',
                 'DRIVER': 'mysql+mysqldb',
                 'UID': 'root',
+                # 进过AES加密的密码，格式 aes::: + ciphertext
                 'PASSWD': '',
                 'HOST': '',
                 'PORT': 3306,
