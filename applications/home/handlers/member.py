@@ -4,10 +4,10 @@
 
 [description]
 """
-
 import json
 import tornado
 import time
+import datetime
 
 from tornado.escape import json_decode
 
@@ -21,14 +21,13 @@ from applications.core.utils.hasher import make_password
 from applications.core.utils import is_email
 from applications.core.utils import sendmail
 from applications.core.utils import uuid32
+from applications.core.utils import local_now
 
 from ..models.system import Member
-from ..models.system import MemberEmailActivateLog
+from ..models.system import MemberOperationLog
 
 from .common import CommonHandler
 
-
-activate_email_token_key = 'c17a6633e5e64f00bfc93534cae80a2b'
 
 class IndexHandler(CommonHandler):
     """docstring for Passport"""
@@ -149,7 +148,6 @@ class ResetPasswordHandler(CommonHandler):
 
 
 class ActivateHandler(CommonHandler):
-
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
@@ -157,22 +155,23 @@ class ActivateHandler(CommonHandler):
         """
         user_id = self.current_user.get('uuid')
         token = self.get_argument('token', None)
-        token2 = self.get_secure_cookie(activate_email_token_key)
+        token2 = self.get_secure_cookie(self.token_key)
         if token and token2:
             token2 = str(token2, encoding='utf-8')
             token2 = token2.replace('\'', '"')
             token2 = json_decode(token2)
-            email = token2.get('email', '')
-            if not Member.check_email_activated(user_id, email) and token2.get('token', '')==token:
+            account = token2.get('account', '')
+            if not Member.check_email_activated(user_id, account) and token2.get('token', '')==token:
                 # 激活用户Email
                 params = {
                     'user_id': user_id,
-                    'email': email,
+                    'account': account,
+                    'action': 'activate_email',
                     'ip': self.request.remote_ip,
-                    'client': 'web'
+                    'client': 'web',
                 }
-                MemberEmailActivateLog.activated_email(params)
-                self.clear_cookie(activate_email_token_key)
+                MemberOperationLog.add_log(params)
+                self.clear_cookie(self.token_key)
 
         member = Member.Q.filter(Member.uuid==user_id).first()
         params = {
@@ -182,6 +181,7 @@ class ActivateHandler(CommonHandler):
 
 
 class SendmailHandler(CommonHandler):
+    @tornado.web.authenticated
     def activate_email(self, email):
         """激活邮箱发送邮件功能
         """
@@ -194,34 +194,88 @@ class SendmailHandler(CommonHandler):
         if member.email_activated:
             return self.error('已经激活了，请不要重复操作')
 
-        token = self.get_secure_cookie(activate_email_token_key)
+        token = self.get_secure_cookie(self.token_key)
         if token:
             return self.error('邮件已发送，10分钟后重试')
 
         subject = '[%s]激活邮件' % sys_config('site_name')
         token = uuid32()
-        activate_url = sys_config('site_url') + '/member/activate.html?token=' + token
-        params = {'username': member.username, 'activate_url': activate_url}
-        tmpl = 'common/activate_email_content.html'
+        action_url = sys_config('site_url') + '/member/activate.html?token=' + token
+
+        localnow = local_now() + datetime.timedelta(minutes=10)
+        params = {
+            'username': member.username,
+            'expires': str(localnow),
+            'action_url': action_url,
+            'action_tips': '立即激活邮箱',
+        }
+        tmpl = 'common/email_content.html'
         content = self.render_string(tmpl, **params)
         # print('content', content)
         sendmail({'to_addr': email, 'subject':subject, 'content': content})
+        save = {
+            'token':token,
+            'account': email,
+            'username': member.username,
+            'action':'email_reset_pwd',
+        }
+        expires = time.mktime(localnow.timetuple())
+        self.set_secure_cookie(self.token_key, str(save), expires=expires)
+        return self.success()
 
-        expires = time.time() + 600
-        save = {'token':token, 'email': email}
-        self.set_secure_cookie(activate_email_token_key, str(save), expires=expires)
+    def email_reset_pwd(self, email):
+        """使用Email充值密码发送邮件功能
+        """
+        if not is_email(email):
+            return self.error('Email格式不正确')
 
-    @tornado.web.authenticated
+        token = self.get_secure_cookie(self.token_key)
+        if token:
+            return self.error('邮件已发送，30分钟后重试')
+
+        member = Member.Q.filter(Member.email==email).first()
+        if member is None:
+            return self.error('账户没有注册')
+        if member.status==0:
+            return self.error('账户被禁用')
+
+        subject = '[%s]找回密码' % sys_config('site_name')
+        token = uuid32()
+        action_url = sys_config('site_url') + '/passport/forget.html?token=' + token
+
+        localnow = local_now() + datetime.timedelta(minutes=30)
+        params = {
+            'username': member.username,
+            'expires': str(localnow),
+            'action_url': action_url,
+            'action_tips': '立即重置密码',
+        }
+        tmpl = 'common/email_content.html'
+        content = self.render_string(tmpl, **params)
+        # print('content', content)
+        sendmail({'to_addr': email, 'subject':subject, 'content': content})
+        save = {
+            'token':token,
+            'account': email,
+            'username': member.username,
+            'action':'email_reset_pwd',
+        }
+        expires = time.mktime(localnow.timetuple())
+        self.set_secure_cookie(self.token_key, str(save), expires=expires)
+        return self.success()
+
     def post(self, *args, **kwargs):
         """激活邮箱“写入数据库、发送邮件”
         """
-        email = self.get_argument('email', '')
-        send_type = self.get_argument('type', '')
-        if send_type=='activate_email':
-            return self.activate_email(email)
+        account = self.get_argument('account', '')
+        action = self.get_argument('action', '')
+        vercode = self.get_argument('vercode', '')
+        if action=='activate_email':
+            return self.activate_email(account)
+        elif action=='email_reset_pwd':
+            return self.email_reset_pwd(account)
         else:
             return self.error('未定义的操作')
-        return self.success()
 
 class MessageHandler(CommonHandler):
     """docstring for Passport"""

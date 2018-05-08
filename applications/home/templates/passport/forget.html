@@ -12,21 +12,54 @@
         <div class="layui-tab layui-tab-brief" lay-filter="user">
             <ul class="layui-tab-title">
                 <li><a href="login.html">登入</a></li>
-                <li class="layui-this">找回密码<!--重置密码--></li>
+                {% if reset_pwd=='1' %}
+                <li class="layui-this">找回密码</li>
+                {% else %}
+                <li class="layui-this">重置密码</li>
+                {% end %}
             </ul>
             <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
                 <div class="layui-tab-item layui-show">
                     <!-- 重置密码 -->
-                    <!--
-                    <div class="fly-msg">{ d.username}}，请重置您的密码</div>
+                    {% if reset_pwd=='1' %}
+                    <div class="layui-form layui-form-pane">
+                        <form method="post">
+                            {% raw xsrf_form_html() %}
+                            <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
+                            <input type="hidden" name="action" value="email_reset_pwd">
+                            <div class="layui-form-item">
+                                <label for="L_email" class="layui-form-label">邮箱</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_account" name="account" required lay-verify="email" autocomplete="off" class="layui-input" value="">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_vercode" class="layui-form-label">人类验证</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input" value="">
+                                </div>
+                                <div class="layui-form-mid">
+                                    <span style="color: #c00;">d.vercode </span>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" alert="1" lay-filter="emailSubmit1" lay-submit>提交</button>
+                            </div>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="fly-msg">{{ username }}，请重置您的密码</div>
                     <div class="layui-form layui-form-pane"  style="margin-top: 30px;">
-                        <form action="/user/repass" method="post">
+                        <form action="" method="post">
+                            {% raw xsrf_form_html() %}
+                            <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
+                            <input type="hidden" name="token" value="{{ token }}">
                             <div class="layui-form-item">
                                 <label for="L_pass" class="layui-form-label">密码</label>
                                 <div class="layui-input-inline">
-                                    <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                                    <input type="password" id="L_password" name="password" required lay-verify="password" autocomplete="off" class="layui-input">
                                 </div>
-                                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+                                <div class="layui-form-mid layui-word-aux">8到40个任意字符</div>
                             </div>
                             <div class="layui-form-item">
                                 <label for="L_repass" class="layui-form-label">确认密码</label>
@@ -44,49 +77,17 @@
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <input type="hidden" name="username" value="{ d.username}}">
-                                <input type="hidden" name="email" value="{ d.email}}">
-                                <button class="layui-btn" alert="1" lay-filter="*" lay-submit>提交</button>
+                                <button class="layui-btn" alert="1" lay-filter="formSubmit2" lay-submit>提交</button>
                             </div>
                         </form>
                     </div>
-
-
                     <div class="fly-error">该重置密码链接已失效，请重新校验您的信息</div>
                     <div class="fly-error">非法链接，请重新校验您的信息</div>
-                    -->
-
-                    <div class="layui-form layui-form-pane">
-                        <form method="post">
-                            {% raw xsrf_form_html() %}
-                            <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
-                            <div class="layui-form-item">
-                                <label for="L_email" class="layui-form-label">邮箱</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" id="L_email" name="email" required lay-verify="required" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label for="L_vercode" class="layui-form-label">人类验证</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
-                                </div>
-                                <div class="layui-form-mid">
-                                    <span style="color: #c00;">d.vercode </span>
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <button class="layui-btn" alert="1" lay-filter="formSubmit" lay-submit>提交</button>
-                            </div>
-                        </form>
-                    </div>
-
+                    {% end %}
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>
 {% include ../common/footer.html %}
 
@@ -106,24 +107,19 @@ layui.use(['form'], function() {
         password : [/(.+){8,40}$/, '8到40个任意字符'],
         number : [/^[0-9]*$/, '必须输入数字啊']
     })
-    form.on('submit(formSubmit)', function(obj) {
+    {% if reset_pwd=='1' %}
+    form.on('submit(emailSubmit1)', function(obj) {
         layer.msg('数据提交中...',{time:50000})
 
-        if (rsa_encrypt=='1') {
-            // Encrypt with the public key...
-            var encrypt = new JSEncrypt()
-            encrypt.setPublicKey(public_key)
-            var ciphertext = encrypt.encrypt(obj.field.password)
-            obj.field.password = ciphertext
-        }
+        var url = '/member/sendmail'
 
         $.ajax({
             type: "POST",
-            url: obj.form.action,
+            url: url,
             data: obj.field,
             success: function(res) {
                 if (res.code==0) {
-                    location.href = res.next ? res.next : '/member/index'
+                    layer.msg('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。', {icon: 1, time: 2000})
                 } else if(res.msg) {
                     layer.msg(res.msg)
                     $(":input[name='username']").focus()
@@ -145,6 +141,57 @@ layui.use(['form'], function() {
         })
         return false;
     })
+    {% else %}
+    form.on('submit(formSubmit2)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+        if (obj.field.password!=obj.field.repass) {
+            layer.msg('{{ _('两次输入的密码不一致，请重新输入') }}')
+            $(":input[name='password']").focus()
+            return false
+        }
+        if (rsa_encrypt=='1') {
+            // Encrypt with the public key...
+            var encrypt = new JSEncrypt()
+            encrypt.setPublicKey(public_key)
+            var ciphertext = encrypt.encrypt(obj.field.password)
+            obj.field.password = ciphertext
+
+            var ciphertext2 = encrypt.encrypt(obj.field.repass)
+            obj.field.repass = ciphertext2
+        }
+        // console.log(obj.field, obj.form.action)
+        // return false
+        $.ajax({
+            type: "POST",
+            url: obj.form.action,
+            data: obj.field,
+            success: function(res) {
+                if (res.code==0) {
+                    layer.msg('修改成功，请登录', {icon: 1, time: 2000}, function() {
+                        location.href = res.next ? res.next : '/passport/login'
+                    })
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                    $(":input[name='username']").focus()
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                    setTimeout(function(){
+                        location.reload()
+                    }, 3000)
+                }
+            },
+            error: function(xhr){
+                console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+        return false;
+    })
+    {% end %}
 })
 </script>
 {% end %}

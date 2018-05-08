@@ -26,15 +26,18 @@ class BaseModel(Model):
     __abstract__ = True
     __connection_name__ = 'default'
 
-class MemberEmailActivateLog(BaseModel):
+class MemberOperationLog(BaseModel):
     """
     user model
     """
-    __tablename__ = 'sys_member_email_activate_log'
+    __tablename__ = 'sys_member_operation_log'
 
     uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
     user_id = Column(String(32), ForeignKey('sys_member.uuid'))
-    email = Column(String(80), nullable=False)
+    # 用户账号： email or mobile or username
+    account = Column(String(80), nullable=False)
+    # 会员操作类型： email_reset_pwd mobile_reset_pwd username_reset_pwd activate_email
+    action = Column(String(20), nullable=False)
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
     utc_created_at = Column(TIMESTAMP, default=utc_now)
@@ -44,7 +47,7 @@ class MemberEmailActivateLog(BaseModel):
         return dt_to_timezone(self.utc_created_at)
 
     @staticmethod
-    def activated_email(params):
+    def add_log(params):
         """激活邮件
 
         [description]
@@ -52,9 +55,9 @@ class MemberEmailActivateLog(BaseModel):
         Arguments:
             params {[type]} -- [description]
         """
-        log = MemberEmailActivateLog(**params)
-        MemberEmailActivateLog.session.add(log)
-        MemberEmailActivateLog.session.commit()
+        log = MemberOperationLog(**params)
+        MemberOperationLog.session.add(log)
+        MemberOperationLog.session.commit()
 
 class MemberLoginLog(BaseModel):
     """
@@ -115,8 +118,8 @@ class Member(BaseModel):
 
     @staticmethod
     def check_email_activated(user_id, email):
-        query = "select count(*) from sys_member_email_activate_log where user_id='%s' and email='%s'" % (user_id, email)
-        print("query: ", query)
+        query = "select count(*) from sys_member_operation_log where user_id='%s' and account='%s' and action='activate_email'" % (user_id, email)
+        # print("query: ", query)
         value = Member.session.execute(query).scalar()
         return True if value>0 else False
 

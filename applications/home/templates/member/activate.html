@@ -100,7 +100,7 @@ layui.use(['form'], function() {
     {% else %}
     var sendmail = function(email) {
         var url = '/member/sendmail'
-        var params = {email: email, type: 'activate_email'}
+        var params = {account: email, action: 'activate_email'}
         params['_xsrf'] = get_xsrf()
         $.ajax({
             type: "POST",
@@ -108,7 +108,7 @@ layui.use(['form'], function() {
             data: params,
             success: function(res) {
                 if (res.code==0) {
-                    layer.msg('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。')
+                    layer.msg('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。', {icon: 1, time: 2000})
                 } else if(res.msg) {
                     layer.msg(res.msg)
                 } else {

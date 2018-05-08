@@ -4,19 +4,27 @@
 
 [description]
 """
-
+import json
 import tornado
+import time
+import datetime
+
+from tornado.escape import json_decode
 
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import check_password
 from applications.core.utils.hasher import make_password
 from applications.core.utils import is_email
+from applications.core.utils import sendmail
+from applications.core.utils import uuid32
+from applications.core.utils import local_now
 from applications.core.utils import is_mobile
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 
 from ..models.system import Member
+from ..models.system import MemberOperationLog
 
 from .common import CommonHandler
 
@@ -140,67 +148,93 @@ class RegisterHandler(CommonHandler):
 class ForgetHandler(CommonHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
-        next = self.get_argument('next', '')
-        # self.show('home/login')
+
+        token = self.get_argument('token', None)
+        token2 = self.get_secure_cookie(self.token_key)
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+            'token': token,
             'xsrf_token': self.xsrf_token,
-            'next': next,
-            'message': '',
+            'reset_pwd': '1',
         }
+        # print("token2: ", token2)
+        if token and token2:
+            token2 = str(token2, encoding='utf-8')
+            token2 = token2.replace('\'', '"')
+            token2 = json_decode(token2)
+
+            action = token2.get('action', '')
+            account = token2.get('account', '')
+            if token2.get('token', '')==token:
+                params['reset_pwd'] = '2'
+                params['username'] = token2.get('username', '')
         self.render('passport/forget.html', **params)
 
     def post(self, *args, **kwargs):
-        email = self.get_argument('email', None)
-        mobile = self.get_argument('mobile', None)
-        username = self.get_argument('username', None)
+        """重置密码
+        """
+        token = self.get_argument('token', None)
         next = self.get_argument('next', '')
         password = self.get_argument('password', None)
         repass = self.get_argument('repass', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+
+        token2 = self.get_secure_cookie(self.token_key)
+        if not(token and token2):
+            return self.error('Token不存在或已经过期')
+
+        token2 = str(token2, encoding='utf-8')
+        token2 = token2.replace('\'', '"')
+        token2 = json_decode(token2)
+
+        action = token2.get('action', '')
+        account = token2.get('account', '')
+        # print('token2 ', token2.get('token', ''), token)
+        if token2.get('token', '')!=token:
+            return self.error('Token不匹配')
+
+        if not password:
+            return self.error('新密码不能为空')
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
             private_key = sys_config('sys_login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
             repass = RSAEncrypter.decrypt(repass, private_key)
 
-        if not username:
-            return self.error('用户名不能为空')
-
-        if not password:
-            return self.error('密码不能为空')
-
         if repass!=password:
             msg = '两次输入的密码不一致，请重新输入'
             msg = "%s, %s" %(password, repass)
             return self.error(msg)
 
-        count = Member.Q.filter(Member.username==username).count()
-        if count>0:
-            return self.error('用户名已被占用')
+        member = None
+        if action=='email_reset_pwd':
+            member = Member.Q.filter(Member.email==account).first()
+        else:
+            return self.error('不支持的action')
 
+        if member is None:
+            return self.error('用户不存在')
+
+        if int(member.status)==0:
+            return self.error('用户被“禁用”，请联系客服')
+        user_id = member.uuid
         params = {
-            'username': username,
             'password': make_password(password),
-            'status': 1,
         }
-        if email:
-            params['email'] = email
-            count = Member.Q.filter(Member.email==email).count()
-            if count>0:
-                return self.error('Email已被占用')
-        if mobile:
-            params['mobile'] = mobile
-            count = Member.Q.filter(User.mobile==mobile).count()
-            if count>0:
-                return self.error('电话号码已被占用')
-
-        member = Member(**params)
-        Member.session.update(member)
+        Member.Q.filter(Member.uuid==user_id).update(params)
         Member.session.commit()
 
-        Member.login_success(member, self)
+        params = {
+            'user_id': user_id,
+            'account': account,
+            'action': 'email_reset_pwd',
+            'ip': self.request.remote_ip,
+            'client': 'web',
+        }
+        MemberOperationLog.add_log(params)
+
+        self.clear_cookie(self.token_key)
         return self.success(next=next)
 
 

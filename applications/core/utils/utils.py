@@ -25,21 +25,26 @@ def uuid32():
 
 def is_protected_type(obj):
     """Determine if the object instance is of a protected type.
-
     Objects of protected types are preserved as-is when passed to
     force_text(strings_only=True).
     """
     return isinstance(obj, _PROTECTED_TYPES)
 
+def local_now():
+    """获取附带tzinfo的当前时间
+    Returns:
+        datetime.datetime -- 例如 datetime.datetime(2018, 5, 8, 11, 50, 50, 627882, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:00:00 STD>)
+    """
+    tz = pytz.timezone(settings.TIME_ZONE)
+    return datetime.datetime.now(tz)
+
 def utc_now():
     """获取当前UTC时间
-
-    [description]
-
     Returns:
-        datetime.datetime -- [description]
+        datetime.datetime -- 例如 datetime.datetime(2018, 5, 8, 3, 50, 50, 356945, tzinfo=<UTC>)
     """
-    return datetime.datetime.utcnow()
+    tz = pytz.timezone('UTC')
+    return datetime.datetime.now(tz)
 
 def str_to_datetime(str_dt, to_tz='UTC'):
     """字符串格式的时间转换为datetime格式的时间
@@ -62,15 +67,11 @@ def str_to_datetime(str_dt, to_tz='UTC'):
 
 def dt_to_timezone(dt, to_tz=None):
     """[summary]
-
     把datetime时间转换成特定时间的时间
-
     Arguments:
         dt {datetime.datetime} -- 时间 例如 2018-02-27 02:13:02.087558+08:00
-
     Keyword Arguments:
         to_tz {str} -- 指定的时区 (default: {None})
-
     Returns:
         datetime.datetime -- 指定时区的时间 例如 2018-02-27 10:13:02.087558+08:00
     """

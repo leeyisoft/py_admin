@@ -17,6 +17,7 @@ from applications.core.handler import BaseHandler
 
 class CommonHandler(BaseHandler):
     user_session_key = 'ba561cfa32694a83883791db60d26135'
+    token_key = 'c17a6633e5e64f00bfc93534cae80a2b'
     def get_current_user(self):
         user = self.get_secure_cookie(self.user_session_key)
         if user is None:
