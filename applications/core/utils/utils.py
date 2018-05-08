@@ -39,8 +39,7 @@ def utc_now():
     Returns:
         datetime.datetime -- [description]
     """
-    tz = pytz.timezone('UTC')
-    return datetime.datetime.now(tz)
+    return datetime.datetime.utcnow()
 
 def str_to_datetime(str_dt, to_tz='UTC'):
     """字符串格式的时间转换为datetime格式的时间

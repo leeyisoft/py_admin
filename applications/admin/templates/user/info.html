@@ -54,8 +54,8 @@ layui.use(['form'], function() {
 
     // 表单验证
     form.verify({
-        username : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '用户名必须2到40位字母、数字组合或汉字'],
-        // password : [/(.+){8,40}$/, '密码必须8到40位'],
+        username : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '用户名必须2到40位字母、数字、汉字组合'],
+        // password : [/(.+){8,40}$/, '8到40个任意字符'],
         number : [/^[0-9]*$/, '必须输入数字啊']
     })
     form.on('submit(formSubmit)', function(obj) {
