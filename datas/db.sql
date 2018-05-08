@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2018-05-08 01:42:04 +0000
+# Generation Time: 2018-05-08 01:53:33 +0000
 # ************************************************************
 
 
@@ -210,7 +210,7 @@ CREATE TABLE `sys_admin_role` (
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`uuid`),
-  UNIQUE KEY `uq_name` (`rolename`)
+  UNIQUE KEY `uk_rolename` (`rolename`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='后台用户角色表';
 
 LOCK TABLES `sys_admin_role` WRITE;

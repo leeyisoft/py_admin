@@ -1,0 +1,140 @@
+{% extends "../base.html" %}
+
+{% block title %} {% end %}
+{% block css %}
+
+{% end %}
+{% block body %}
+
+{% include ../common/header.html %}
+<div class="layui-container fly-marginTop">
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title">
+                <li><a href="login.html">登入</a></li>
+                <li class="layui-this">注册</li>
+            </ul>
+            <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form layui-form-pane">
+                        <form method="post">
+                            {% raw xsrf_form_html() %}
+                            <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
+                            <div class="layui-form-item">
+                                <label for="L_email" class="layui-form-label">邮箱</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_username" class="layui-form-label">用户名</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_username" name="username" required lay-verify="username" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_pass" class="layui-form-label">密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="L_password" name="password" required lay-verify="password" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">8到40个字符</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_repass" class="layui-form-label">确认密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_vercode" class="layui-form-label">人类验证</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid">
+                                    <span style="color: #c00;">d.vercode</span>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-filter="formSubmit" lay-submit>立即注册</button>
+                            </div>
+                            <div class="layui-form-item fly-form-app">
+                                <span>或者直接使用社交账号快捷注册</span>
+                                <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
+                                <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% include ../common/footer.html %}
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url('js/jsencrypt.js') }}" charset="utf-8"></script>
+<script type="text/javascript">
+var rsa_encrypt = '{{ rsa_encrypt }}'
+var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
+layui.use(['form'], function() {
+    var $ = layui.jquery, form = layui.form
+
+    // 表单验证
+    form.verify({
+        username : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '用户名必须2到40位字母、数字、汉字组合'],
+        password : [/(.+){8,40}$/, '8到40个任意字符'],
+        number : [/^[0-9]*$/, '必须输入数字啊']
+    })
+    form.on('submit(formSubmit)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+        if (obj.field.password!=obj.field.repass) {
+            layer.msg('{{ _('两次输入的密码不一致，请重新输入') }}')
+            $(":input[name='password']").focus()
+            return false
+        }
+        if (rsa_encrypt=='1') {
+            // Encrypt with the public key...
+            var encrypt = new JSEncrypt()
+            encrypt.setPublicKey(public_key)
+
+            var ciphertext = encrypt.encrypt(obj.field.password)
+            obj.field.password = ciphertext
+
+            var ciphertext2 = encrypt.encrypt(obj.field.repass)
+            obj.field.repass = ciphertext2
+        }
+
+        $.ajax({
+            type: "POST",
+            url: obj.form.action,
+            data: obj.field,
+            success: function(res) {
+                if (res.code==0) {
+                    location.href = res.next ? res.next : '/member/index'
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                    $(":input[name='username']").focus()
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                    setTimeout(function(){
+                        location.reload()
+                    }, 3000)
+                }
+            },
+            error: function(xhr){
+                console.log(xhr)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}.')
+                }
+            }
+        })
+        return false;
+    })
+})
+</script>
+{% end %}

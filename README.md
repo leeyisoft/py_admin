@@ -66,6 +66,8 @@ flush privileges;
 * UI 使用 [layui-v2.2.6](https://www.layui.com)
 * 其他特性继承自 tornado
 
+* 前端 注册、登录、修改资料、激活Email、修改密码、通过Email找回密码、上传头像、绑定手机号码、绑定多个Email、绑定微信、绑定支付宝、人类验证、找回密码、系统消息、用户等级
+
 ## todo fetures
 * 后台用户登录日志功能
 * 多次登录失败账户锁定功能
@@ -73,6 +75,11 @@ flush privileges;
 * 锁屏功能
 * 清理缓存功能
 *
+
+# FAQ
+## 为什么要用 datetime(6) ？
+因为表的主键uuid没有“顺序”，有时候需要自然排序，所以，就把datetime设计为了datetime(6)了，这样就有了自然顺序了；而且，附带了更精准的时间。
+
 
 # 目录说明
 ```
