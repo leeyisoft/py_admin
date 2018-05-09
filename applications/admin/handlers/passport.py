@@ -16,7 +16,6 @@ from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 
 from ..models import User
-from ..models import UserLoginLog
 
 from .common import CommonHandler
 
@@ -55,21 +54,7 @@ class LoginHandler(CommonHandler):
         if int(user.status)==0:
             return self.error('用户被“禁用”，请联系客服')
 
-        # The cookie library only accepts type str, in both python 2 and 3
-        user_fileds = ['uuid', 'username', 'role_id']
-        user_str = str(user.as_dict(user_fileds))
-        self.set_secure_cookie(self.user_session_key, user_str, expires_days=1)
-
-        params = {
-            'uuid': Func.uuid32(),
-            'user_id': user.uuid,
-            'client': 'web',
-            'ip': self.request.remote_ip,
-        }
-        log = UserLoginLog(**params)
-        UserLoginLog.session.add(log)
-        UserLoginLog.session.commit()
-
+        User.login_success(user, self)
         self.clear_cookie(valid_code_key)
 
 
@@ -79,7 +64,7 @@ class LogoutHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        self.clear_cookie(self.user_session_key)
+        self.clear_cookie(self.session_key)
         self.redirect("/admin/login.html")
 
 

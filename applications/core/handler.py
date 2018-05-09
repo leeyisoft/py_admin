@@ -16,6 +16,7 @@ from .mixins.exception import UncaughtExceptionMixin
 from .exception import Http404
 from .exception import HttpBadRequestError
 from .cache import close_caches
+from .cache import sys_config
 
 
 class _HandlerPatch(tornado.web.RequestHandler):
@@ -89,6 +90,32 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
 
     def params(self):
         return dict((k, self.get_argument(k) ) for k, _ in self.request.arguments.items())
+
+    def get_template_namespace(self):
+        """Returns a dictionary to be used as the default template namespace.
+
+        May be overridden by subclasses to add or modify values.
+
+        The results of this method will be combined with additional
+        defaults in the `tornado.template` module and keyword arguments
+        to `render` or `render_string`.
+        """
+        namespace = dict(
+            sys_config=sys_config,
+
+            handler=self,
+            request=self.request,
+            current_user=self.current_user,
+            locale=self.locale,
+            _=self.locale.translate,
+            pgettext=self.locale.pgettext,
+            static_url=self.static_url,
+            xsrf_form_html=self.xsrf_form_html,
+            reverse_url=self.reverse_url
+        )
+        if self.ui:
+            namespace.update(self.ui)
+        return namespace
 
 class ErrorHandler(UncaughtExceptionMixin, _HandlerPatch):
     def initialize(self, *args, **kwargs):

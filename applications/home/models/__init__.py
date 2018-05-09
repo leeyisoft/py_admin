@@ -117,13 +117,13 @@ class Member(BaseModel):
 
     @staticmethod
     def login_success(member, handler):
-        user_fileds = ['uuid', 'username', 'avatar']
-        user_str = str(member.as_dict(user_fileds))
-        handler.set_secure_cookie(handler.user_session_key, user_str, expires_days=1)
+        # 设置登录用户cookiex信息
+        handler.set_curent_user(member)
 
         user_id = member.uuid
+        login_count = member.login_count if member.login_count else 0
         params = {
-            'login_count': member.login_count+1,
+            'login_count': login_count+1,
             'utc_last_login_at': Func.utc_now(),
             'last_login_ip': handler.request.remote_ip,
         }

@@ -114,6 +114,10 @@ class SetHandler(CommonHandler):
         Member.Q.filter(Member.uuid==uuid).update(params)
         Member.session.commit()
 
+        # 设置登录用户cookie信息
+        member = Member.Q.filter(Member.uuid==uuid).first()
+        self.set_curent_user(member)
+
         return self.success()
 
 

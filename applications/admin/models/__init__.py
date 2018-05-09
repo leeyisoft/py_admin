@@ -71,6 +71,8 @@ class User(BaseModel):
     mobile = Column(String(11), nullable=True)
     email = Column(String(80), nullable=True)
     permission = Column(Text, default='')
+    login_count = Column(Integer, nullable=False, default=0)
+    last_login_ip = Column(String(128), nullable=False, default='')
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
     utc_last_login_at = Column(TIMESTAMP, nullable=True)
@@ -102,6 +104,30 @@ class User(BaseModel):
             raise e
         return []
 
+    @staticmethod
+    def login_success(user, handler):
+        # 设置登录用户cookie信息
+        handler.set_curent_user(user)
+
+        user_id = user.uuid
+        login_count = user.login_count if user.login_count else 0
+        params = {
+            'login_count': login_count + 1,
+            'utc_last_login_at': Func.utc_now(),
+            'last_login_ip': handler.request.remote_ip,
+        }
+        User.Q.filter(User.uuid==user_id).update(params)
+
+        params = {
+            'uuid': Func.uuid32(),
+            'user_id': user.uuid,
+            'client': 'web',
+            'ip': handler.request.remote_ip,
+        }
+        log = UserLoginLog(**params)
+        UserLoginLog.session.add(log)
+        UserLoginLog.session.commit()
+        return True
 
 class UserLoginLog(BaseModel):
     """
