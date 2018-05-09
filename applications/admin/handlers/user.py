@@ -15,9 +15,9 @@ from applications.core.decorators import required_permissions
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import make_password
 
-from applications.admin.models.system import User
-from applications.admin.models.system import Role
-from applications.admin.models.system import AdminMenu
+from ..models import User
+from ..models import Role
+from ..models import AdminMenu
 
 from .common import CommonHandler
 

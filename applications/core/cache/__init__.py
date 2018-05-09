@@ -13,7 +13,7 @@ from .backends.base import InvalidCacheBackendError
 from .backends.base import CacheKeyWarning
 from .backends.base import BaseCache
 
-from applications.admin.models.system import Config
+from applications.core.db.dbalchemy import Config
 
 BACKENDS = {
     'memcached': 'memcached',

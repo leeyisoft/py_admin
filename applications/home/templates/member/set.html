@@ -111,7 +111,11 @@
                                 <button type="button" class="layui-btn upload-img" id="avatar">
                                     <i class="layui-icon">&#xe67c;</i>上传头像
                                 </button>
-                                <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+                                {% if member.avatar!='' %}
+                                <img src="{{ static_url(member.avatar) }}">
+                                {% else %}
+                                <img src="{{ static_url('image/default_avatar.jpg') }}"">
+                                {% end %}
                                 <span class="loading"></span>
                             </div>
                         </div>
@@ -298,11 +302,12 @@ layui.use(['form', 'upload', 'element'], function() {
         }
         ,done: function(res){
             if(res.code == 0){
-                // $.post('/user/set/', {
-                //     avatar: res.url
-                // }, function(res){
-                //     location.reload()
-                // })
+                $.post('/member/set/', {
+                    avatar: res.data.path_file,
+                    _xsrf: get_xsrf(),
+                }, function(res){
+                    location.reload()
+                })
             } else {
                 layer.msg(res.msg, {icon: 5})
             }

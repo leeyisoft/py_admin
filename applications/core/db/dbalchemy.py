@@ -53,6 +53,13 @@ from ..storage import storage
 from ..utils import Func
 from ..utils.encrypter import aes_decrypt
 
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
+from sqlalchemy.types import Text
+from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import Column
+from sqlalchemy import ForeignKey
+from sqlalchemy import PrimaryKeyConstraint
 
 __all__ = [
     'MetaBaseModel',
@@ -520,3 +527,49 @@ class Pagination(object):
                     yield None
             yield num
             last = num
+
+
+class BaseModel(Model):
+    __abstract__ = True
+    __connection_name__ = 'default'
+
+class Config(BaseModel):
+    """
+    sys_config model
+    """
+    __tablename__ = 'sys_config'
+
+    key = Column(String(40), primary_key=True, nullable=False)
+    value = Column(String(80), nullable=False)
+    title = Column(String(40), nullable=False)
+    remark = Column(String(128), nullable=False, default='')
+    sort = Column(Integer, nullable=False, default=20)
+    system = Column(Integer, nullable=False, default=0)
+    # 状态:( 0 禁用；1 启用, 默认1)
+    status = Column(Integer, nullable=False, default=1)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+
+    @property
+    def created_at(self):
+        return Func.dt_to_timezone(self.utc_created_at)
+
+class Attach(BaseModel):
+    """
+    user model
+    """
+    __tablename__ = 'sys_attach'
+
+    file_md5 = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    file_ext = Column(String(20), nullable=False)
+    file_size = Column(Integer, nullable=False)
+    file_mimetype = Column(String(40), nullable=False)
+    origin_name = Column(String(80), nullable=False)
+    path_file = Column(String(200), nullable=False)
+    user_id = Column(String(32), ForeignKey('sys_member.uuid'))
+    ip = Column(String(40), nullable=False)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+
+    @property
+    def created_at(self):
+        return Func.dt_to_timezone(self.utc_created_at)
+

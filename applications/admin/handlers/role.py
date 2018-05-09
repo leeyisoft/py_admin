@@ -13,8 +13,8 @@ from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
 
-from applications.admin.models.system import Role
-from applications.admin.models.system import AdminMenu
+from ..models import Role
+from ..models import AdminMenu
 
 from .common import CommonHandler
 

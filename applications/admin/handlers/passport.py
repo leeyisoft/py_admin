@@ -15,8 +15,8 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 
-from applications.admin.models.system import User
-from applications.admin.models.system import UserLoginLog
+from ..models import User
+from ..models import UserLoginLog
 
 from .common import CommonHandler
 

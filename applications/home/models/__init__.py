@@ -8,7 +8,7 @@ from applications.core.settings_manager import settings
 
 from applications.core.logger.client import SysLogger
 from applications.core.utils import Func
-from applications.core.db.dbalchemy import Model
+from applications.core.db.dbalchemy import BaseModel
 
 from sqlalchemy.types import Integer
 from sqlalchemy.types import String
@@ -17,11 +17,6 @@ from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
-
-
-class BaseModel(Model):
-    __abstract__ = True
-    __connection_name__ = 'default'
 
 class MemberOperationLog(BaseModel):
     """
@@ -122,7 +117,7 @@ class Member(BaseModel):
 
     @staticmethod
     def login_success(member, handler):
-        user_fileds = ['uuid', 'username']
+        user_fileds = ['uuid', 'username', 'avatar']
         user_str = str(member.as_dict(user_fileds))
         handler.set_secure_cookie(handler.user_session_key, user_str, expires_days=1)
 
@@ -136,6 +131,7 @@ class Member(BaseModel):
 
         # 写登录日志
         params2 = {
+            'uuid': Func.uuid32(),
             'user_id': user_id,
             'client': 'web',
             'ip': handler.request.remote_ip,

@@ -4,6 +4,7 @@
 
 [description]
 """
+import os
 import json
 import tornado
 import time
@@ -23,8 +24,8 @@ from applications.core.utils import Func
 from applications.core.utils import FileUtil
 from applications.core.utils import Uploader
 
-from ..models.system import Member
-from ..models.system import MemberOperationLog
+from ..models import Member
+from ..models import MemberOperationLog
 
 from .common import CommonHandler
 
@@ -73,13 +74,12 @@ class SetHandler(CommonHandler):
         username = self.get_argument('username', None)
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
-        sex = self.get_argument('sex', 'HIDE')
-        sign = self.get_argument('sign', '')
+        avatar = self.get_argument('avatar', None)
+        sex = self.get_argument('sex', None)
+        sign = self.get_argument('sign', None)
 
-        params = {
-            'sex': sex,
-            'sign': sign,
-        }
+        params = {}
+
         if username:
             params['username'] = username
             count = Member.Q.filter(Member.uuid!=uuid).filter(Member.username==username).count()
@@ -96,6 +96,20 @@ class SetHandler(CommonHandler):
             count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==email).count()
             if count>0:
                 return self.error('Email已被占用')
+
+        if sex:
+            params['sex'] = sex
+        if sign:
+            params['sign'] = sign
+        if avatar:
+            params['avatar'] = avatar
+            member = Member.Q.filter(Member.uuid==uuid).first()
+            old_avatar = settings.STATIC_PATH + '/' + member.avatar
+            try:
+                if avatar!=member.avatar:
+                    os.remove(old_avatar)
+            except Exception as e:
+                pass
 
         Member.Q.filter(Member.uuid==uuid).update(params)
         Member.session.commit()
@@ -169,25 +183,22 @@ class UploadAvatorHandler(CommonHandler):
         for img in imgfile:
             print('img', type(img))
             # 对文件进行重命名
-            param = Uploader.upload_img(img)
-            return self.success(data=param)
-            # print("param: ", param)
-            # SysLogger.debug(str(param))
-            # SysLogger.debug(img)
-        # member = Member.Q.filter(Member.uuid==user_id).first()
+            file_ext = FileUtil.file_ext(img['filename'])
+            path = 'avator/'
+            save_name = '%s.%s' %(user_id, file_ext)
+            try:
+                param = Uploader.upload_img(img, save_name, path, {
+                    'user_id': user_id,
+                    'ip': self.request.remote_ip,
+                })
+                return self.success(data=param)
+            except Exception as e:
+                if settings.debug:
+                    raise e
+                SysLogger.error(e)
+                return self.error('上传头像失败')
 
-        # if int(member.status)==0:
-        #     return self.error('用户被“禁用”，请联系客服')
-        # if check_password(nowpass, member.password) is not True:
-        #     return self.error('当前密码错误')
-
-        # params = {
-        #     'password': make_password(password),
-        #     'status': 1,
-        # }
-        # Member.Q.filter(Member.uuid==user_id).update(params)
-        # Member.session.commit()
-        return self.success(next=next)
+        return self.error('参数错误')
 
 class ActivateHandler(CommonHandler):
     """docstring for Passport"""

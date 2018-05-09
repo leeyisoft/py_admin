@@ -57,6 +57,9 @@ GRANT ALL PRIVILEGES ON db_py_admin.* TO 'user_py_admin'@'%' IDENTIFIED BY 'eb26
 flush privileges;
 ```
 # features
+* 后台配置添加
+* 后台用户角色管理
+* 基于角色的权限功能，后台用户管理
 * 登录密码经过RSA加密，后台可配置是否开启该功能，后台可设置公钥私钥；
 * 用户密码使用“ PBKDF2 + HMAC + SHA256”加密存储；
 * 数据库密码经过AES加密，没有明文存储，进过AES加密的密码，格式 aes::: + ciphertext；

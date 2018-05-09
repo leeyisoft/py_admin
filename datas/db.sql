@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2018-05-08 08:08:32 +0000
+# Generation Time: 2018-05-09 09:19:00 +0000
 # ************************************************************
 
 
@@ -189,7 +189,7 @@ VALUES
 	('94','','17','admin:module:theme','主题管理','','/admin/module/theme','','_self',8,1,1,1,NULL),
 	('95','','17','admin:module:setdefaulttheme','设置默认主题','','/admin/module/setdefaulttheme','','_self',9,1,1,1,NULL),
 	('96','','17','admin:module:deltheme','删除主题','','/admin/module/deltheme','','_self',10,1,1,1,NULL),
-	('97','','6','admin:language:index','语言包管理','','/admin/language/index','','_self',11,1,0,1,NULL),
+	('97','','6','admin:language:index','语言包管理','','/admin/language/index','','_self',9,1,0,1,NULL),
 	('98','','97','admin:language:add','添加语言包','','/admin/language/add','','_self',100,1,0,1,NULL),
 	('99','','97','admin:language:edit','修改语言包','','/admin/language/edit','','_self',100,1,0,1,NULL);
 
@@ -218,7 +218,6 @@ LOCK TABLES `sys_admin_role` WRITE;
 
 INSERT INTO `sys_admin_role` (`uuid`, `rolename`, `permission`, `sort`, `status`, `utc_created_at`)
 VALUES
-	('4215728977424fe9bb67b93892c55a54','财务组','[\"admin:main\", \"admin:quick\", \"admin:index:clear\", \"admin:index:index\", \"admin:index:welcome\", \"admin:user:iframe\"]',12,1,'2018-04-17 06:19:33.967168'),
 	('6b0642103a1749949a07f4139574ead9','默认角色','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:index:welcome\"]',20,1,NULL),
 	('79e88acd2ee048dcb03968026d0779e7','风控组','',20,1,'2018-05-02 02:22:47.143951'),
 	('960245d0d12540918825ecd42553fd39','超级管理员','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:index:welcome\", \"warehousing:index\", \"warhousing:customer\", \"warehousing:instorage:admin\", \"warehousing:instorageapply:index\", \"warehousing:instorage:index\", \"warehousing:outstorage:admin\", \"warehousing:outstorage:index\", \"warehousing:storage:admin\", \"warehousing:storage:index\", \"warehousing:voucher:admin\", \"warehousing:voucher:index\", \"admin:system\", \"admin:system:function\", \"admin:system:setting\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\", \"admin:extend\", \"admin:module:index\", \"admin:plugins:admin\", \"admin:hook:index\", \"admin:upgrade:index\", \"admin:develop\", \"admin:develop:lists\", \"admin:develop:edit\"]',1,1,'2018-03-05 07:27:44.537284');
@@ -257,7 +256,7 @@ INSERT INTO `sys_admin_user` (`uuid`, `role_id`, `password`, `username`, `mobile
 VALUES
 	('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces33','121111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,1,'2018-05-02 03:43:38.918080'),
 	('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi','13692177080','leeyisoft@qq.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:system\", \"admin:system:function\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\"]',NULL,NULL,1,'2018-02-28 09:15:10.012341'),
-	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$NP4LtrgwwP14HqMl$ISbZV4pRsfGaI9ZY0r7rx50D5Ya5aFFyPh12xKZWVVA=','admin','13692177081','admin@admin.com','[]',NULL,'2018-02-28 09:15:10.012341',1,'2018-02-28 09:15:10.012341');
+	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',NULL,'2018-02-28 09:15:10.012341',1,'2018-02-28 09:15:10.012341');
 
 /*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -277,17 +276,53 @@ CREATE TABLE `sys_admin_user_login_log` (
   PRIMARY KEY (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='后台用户登录日志';
 
-LOCK TABLES `sys_admin_user_login_log` WRITE;
-/*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
 
-INSERT INTO `sys_admin_user_login_log` (`uuid`, `user_id`, `ip`, `client`, `utc_created_at`)
+
+# Dump of table sys_attach
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sys_attach`;
+
+CREATE TABLE `sys_attach` (
+  `file_md5` varchar(40) NOT NULL DEFAULT '' COMMENT '文件内容md5',
+  `file_ext` varchar(20) NOT NULL DEFAULT '' COMMENT '文件扩展名，例如 png',
+  `file_size` int(10) unsigned NOT NULL COMMENT '文件大小(单位Byte)',
+  `file_mimetype` varchar(40) NOT NULL DEFAULT '' COMMENT '附件类型 application/octet-stream',
+  `origin_name` varchar(80) NOT NULL DEFAULT '' COMMENT '源文件名称',
+  `path_file` varchar(200) NOT NULL DEFAULT '' COMMENT '带路径的文件',
+  `user_id` varchar(32) DEFAULT NULL COMMENT '上传用户ID(member 或者 admin_user 的 uuid)',
+  `ip` varchar(40) NOT NULL DEFAULT '' COMMENT '客服端IP',
+  `utc_created_at` datetime(6) NOT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`file_md5`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统附件表';
+
+LOCK TABLES `sys_attach` WRITE;
+/*!40000 ALTER TABLE `sys_attach` DISABLE KEYS */;
+
+INSERT INTO `sys_attach` (`file_md5`, `file_ext`, `file_size`, `file_mimetype`, `origin_name`, `path_file`, `user_id`, `ip`, `utc_created_at`)
 VALUES
-	('4cee9538213c40668c808f4a3fed7a11','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-06 01:55:50.015216'),
-	('5353ce6977e94a199a2212c0d3fbc6f5','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-06 02:39:40.041596'),
-	('1c8b2f23f53b402295cbe95d929511e2','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-07 01:52:35.343997');
+	('50b450bf60e82bfba035a1bf415e516d','jpeg',16662,'image/jpeg','dahuzi.jpeg','upload/avator/de001cb8f0404944994e14f20bf76a02.jpeg','de001cb8f0404944994e14f20bf76a02','127.0.0.1','2018-05-09 09:14:27.193598'),
+	('fa7721fb3fe09fb82e8bdeff28e2d507','png',58135,'image/png','60848_leeyi.png','upload/avator/de001cb8f0404944994e14f20bf76a02.png','de001cb8f0404944994e14f20bf76a02','127.0.0.1','2018-05-09 09:09:27.682495');
 
-/*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
+/*!40000 ALTER TABLE `sys_attach` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table sys_attach_related
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sys_attach_related`;
+
+CREATE TABLE `sys_attach_related` (
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT '文件内容md5',
+  `file_md5` varchar(40) NOT NULL DEFAULT '' COMMENT '文件内容md5',
+  `related_table` varchar(40) NOT NULL DEFAULT '' COMMENT '关联表全称',
+  `related_id` varchar(32) NOT NULL DEFAULT '' COMMENT '关联表记录主键',
+  `ip` varchar(40) NOT NULL DEFAULT '' COMMENT '客服端IP',
+  `utc_created_at` datetime(6) NOT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`file_md5`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统附件关联表';
+
 
 
 # Dump of table sys_config
@@ -359,8 +394,8 @@ LOCK TABLES `sys_member` WRITE;
 
 INSERT INTO `sys_member` (`uuid`, `level_id`, `password`, `username`, `mobile`, `email`, `exper`, `integral`, `frozen_integral`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `utc_last_login_at`, `status`, `deleted`, `utc_created_at`)
 VALUES
-	('640839e0650a41ce99ab15eb5f2e313e',0,'pbkdf2_sha256$100000$tzi2wKB3O1xArlvK$I5ydygLiVxwCViSWR4JEw0HKDxdvhanW5K6PoukdaYc=','wangli',NULL,'lover@leeyi.net',0,0,0,'HIDE','','',1,'127.0.0.1','2018-05-07 03:28:54.043177',1,0,'2018-05-07 03:28:54.037108'),
-	('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$EJl3cejE4KC0E8ps$pQH18lBcosej85tPJadPqNVx3vREahNGVHIaarMH3Es=','leeyi',NULL,'leeyisoft@qq.com',0,0,0,'HIDE','','AAAa',6,'127.0.0.1','2018-05-08 08:06:10.738134',1,0,'2018-05-07 01:18:45.377346');
+	('640839e0650a41ce99ab15eb5f2e313e',0,'pbkdf2_sha256$100000$tzi2wKB3O1xArlvK$I5ydygLiVxwCViSWR4JEw0HKDxdvhanW5K6PoukdaYc=','wangli',NULL,'lover@leeyi.net',0,0,0,'HIDE','','',2,'127.0.0.1','2018-05-09 08:23:33.410897',1,0,'2018-05-07 03:28:54.037108'),
+	('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$NQha1FL2UTaht56M$ZEBLtlX22D3fQS0zaEdWc0a/19ipKvJIVge7X/J52H0=','leeyi',NULL,'leeyisoft@qq.com',0,0,0,'HIDE','upload/avator/de001cb8f0404944994e14f20bf76a02.jpeg','AAAa',12,'127.0.0.1','2018-05-09 09:16:08.084936',1,0,'2018-05-07 01:18:45.377346');
 
 /*!40000 ALTER TABLE `sys_member` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -379,34 +414,6 @@ CREATE TABLE `sys_member_binding` (
   PRIMARY KEY (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
-# Dump of table sys_member_operation_log
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_member_operation_log`;
-
-CREATE TABLE `sys_member_operation_log` (
-  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
-  `user_id` varchar(32) NOT NULL DEFAULT '' COMMENT '用户唯一标识',
-  `account` varchar(80) NOT NULL DEFAULT '' COMMENT '用户账号： email or mobile or username',
-  `action` varchar(20) DEFAULT NULL COMMENT '会员操作类型： email_reset_pwd mobile_reset_pwd username_reset_pwd activate_email',
-  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
-  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
-  PRIMARY KEY (`uuid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会议操作日志记录表(操作成功的时候插入)';
-
-LOCK TABLES `sys_member_operation_log` WRITE;
-/*!40000 ALTER TABLE `sys_member_operation_log` DISABLE KEYS */;
-
-INSERT INTO `sys_member_operation_log` (`uuid`, `user_id`, `account`, `action`, `ip`, `client`, `utc_created_at`)
-VALUES
-	('04b479cad4f5492e971d9bb4d809abcc','de001cb8f0404944994e14f20bf76a02','leeyisoft@qq.com','email_reset_pwd','127.0.0.1','web','2018-05-08 08:05:46.062721'),
-	('f22d93f8e52a4d3b995dc2fddbd38507','de001cb8f0404944994e14f20bf76a02','leeyisoft@qq.com','activate_email','127.0.0.1','web','2018-05-08 08:07:40.441075');
-
-/*!40000 ALTER TABLE `sys_member_operation_log` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table sys_member_level
@@ -444,22 +451,32 @@ CREATE TABLE `sys_member_login_log` (
   PRIMARY KEY (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会员登录日志';
 
-LOCK TABLES `sys_member_login_log` WRITE;
-/*!40000 ALTER TABLE `sys_member_login_log` DISABLE KEYS */;
 
-INSERT INTO `sys_member_login_log` (`uuid`, `user_id`, `ip`, `client`, `utc_created_at`)
+
+# Dump of table sys_member_operation_log
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sys_member_operation_log`;
+
+CREATE TABLE `sys_member_operation_log` (
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
+  `user_id` varchar(32) NOT NULL DEFAULT '' COMMENT '用户唯一标识',
+  `account` varchar(80) NOT NULL DEFAULT '' COMMENT '用户账号： email or mobile or username',
+  `action` varchar(20) DEFAULT NULL COMMENT '会员操作类型： email_reset_pwd mobile_reset_pwd username_reset_pwd activate_email',
+  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
+  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`uuid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会议操作日志记录表(操作成功的时候插入)';
+
+LOCK TABLES `sys_member_operation_log` WRITE;
+/*!40000 ALTER TABLE `sys_member_operation_log` DISABLE KEYS */;
+
+INSERT INTO `sys_member_operation_log` (`uuid`, `user_id`, `account`, `action`, `ip`, `client`, `utc_created_at`)
 VALUES
-	('90e47e446de441d9b4a5e72da3ab61f7','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-07 02:52:58.592492'),
-	('ae9cb39b7e654034b42b2eaa85a143c1','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-07 02:51:33.708876'),
-	('60d94f0a227b4f399442f2c4e8eee391','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-07 01:18:45.381565'),
-	('f40cbe9c3cfb4927a4d92ee641bc1562','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-07 03:07:00.089833'),
-	('112c977b6fd34982818633384a0f51d2','640839e0650a41ce99ab15eb5f2e313e','127.0.0.1','web','2018-05-07 03:28:54.045167'),
-	('a003271eb11149e2a34f904cd9ebe1bb','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-07 03:56:02.083641'),
-	('394f8441606b4cccb809990c482a2604','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-07 10:17:14.887238'),
-	('920c6374a73547eb98391fae2d21dd28','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-08 07:57:38.106917'),
-	('f0dcd0722231434b99323c003f08108f','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-08 08:06:10.740464');
+	('f76214db86dd4ac1944dfe35f9989721','de001cb8f0404944994e14f20bf76a02','leeyisoft@qq.com','activate_email','127.0.0.1','web','2018-05-09 05:58:59.745225');
 
-/*!40000 ALTER TABLE `sys_member_login_log` ENABLE KEYS */;
+/*!40000 ALTER TABLE `sys_member_operation_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
 

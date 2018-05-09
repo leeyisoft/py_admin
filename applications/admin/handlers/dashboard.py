@@ -11,7 +11,7 @@ from applications.core.logger.client import SysLogger
 from applications.core.utils.hasher import make_password
 from applications.core.decorators import required_permissions
 
-from applications.admin.models.system import AdminMenu
+from ..models import AdminMenu
 
 from .common import CommonHandler
 

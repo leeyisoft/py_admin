@@ -7,7 +7,7 @@ from tornado.util import import_object
 def required_permissions(*dargs, **dkargs):
     """权限控制装饰器
     """
-    User = import_object('applications.admin.models.system.User')
+    User = import_object('applications.admin.models.User')
     SUPER_ADMIN = import_object('applications.configs.settings.SUPER_ADMIN')
     def wrapper(method):
         # @functools.wraps(method)

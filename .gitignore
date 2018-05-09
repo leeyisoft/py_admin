@@ -10,3 +10,4 @@ node_modules
 .idea
 *.php
 upload/avator
+applications/statics/upload/avator

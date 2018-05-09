@@ -20,8 +20,8 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 
-from ..models.system import Member
-from ..models.system import MemberOperationLog
+from ..models import Member
+from ..models import MemberOperationLog
 
 from .common import CommonHandler
 
