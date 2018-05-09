@@ -4,7 +4,6 @@
 
 [description]
 """
-import os
 import json
 import tornado
 import time
@@ -56,8 +55,8 @@ class SetHandler(CommonHandler):
     def get(self, *args, **kwargs):
         """Home首页
         """
-        uuid = self.current_user.get('uuid')
-        member = Member.Q.filter(Member.uuid==uuid).first()
+        user_id = self.current_user.get('uuid')
+        member = Member.Q.filter(Member.uuid==user_id).first()
         data_info = member.as_dict()
         params = {
             'member': member,
@@ -70,30 +69,31 @@ class SetHandler(CommonHandler):
 
     @tornado.web.authenticated
     def post(self, *args, **kwargs):
-        uuid = self.current_user.get('uuid')
+        user_id = self.current_user.get('uuid')
         username = self.get_argument('username', None)
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
-        avatar = self.get_argument('avatar', None)
         sex = self.get_argument('sex', None)
         sign = self.get_argument('sign', None)
+        avatar = self.get_argument('avatar', None)
+        file_md5 = self.get_argument('file_md5', None)
 
         params = {}
 
         if username:
             params['username'] = username
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.username==username).count()
+            count = Member.Q.filter(Member.uuid!=user_id).filter(Member.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
 
         if mobile:
             params['mobile'] = mobile
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==mobile).count()
+            count = Member.Q.filter(Member.uuid!=user_id).filter(Member.mobile==mobile).count()
             if count>0:
                 return self.error('电话号码已被占用')
         if email:
             params['email'] = email
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==email).count()
+            count = Member.Q.filter(Member.uuid!=user_id).filter(Member.email==email).count()
             if count>0:
                 return self.error('Email已被占用')
 
@@ -101,21 +101,29 @@ class SetHandler(CommonHandler):
             params['sex'] = sex
         if sign:
             params['sign'] = sign
-        if avatar:
-            params['avatar'] = avatar
-            member = Member.Q.filter(Member.uuid==uuid).first()
-            old_avatar = settings.STATIC_PATH + '/' + member.avatar
-            try:
-                if avatar!=member.avatar:
-                    os.remove(old_avatar)
-            except Exception as e:
-                pass
 
-        Member.Q.filter(Member.uuid==uuid).update(params)
+        if avatar and file_md5:
+            params['avatar'] = avatar
+            member = Member.Q.filter(Member.uuid==user_id).first()
+
+            if avatar!=member.avatar:
+                Member.remove_avator(user_id, member.avatar)
+
+            query = "REPLACE INTO `sys_attach_related` (`uuid`, `file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
+            q_param = (
+                Func.uuid32(),
+                file_md5,
+                'sys_member',
+                user_id,
+                self.request.remote_ip,
+                str(Func.utc_now())[0:-6],
+            )
+            Member.session.execute(query % q_param)
+        Member.Q.filter(Member.uuid==user_id).update(params)
         Member.session.commit()
 
         # 设置登录用户cookie信息
-        member = Member.Q.filter(Member.uuid==uuid).first()
+        member = Member.Q.filter(Member.uuid==user_id).first()
         self.set_curent_user(member)
 
         return self.success()
@@ -245,8 +253,8 @@ class SendmailHandler(CommonHandler):
         if not Func.is_email(email):
             return self.error('Email格式不正确')
 
-        uuid = self.current_user.get('uuid')
-        member = Member.Q.filter(Member.uuid==uuid).first()
+        user_id = self.current_user.get('uuid')
+        member = Member.Q.filter(Member.uuid==user_id).first()
 
         if member.email_activated:
             return self.error('已经激活了，请不要重复操作')

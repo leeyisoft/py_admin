@@ -3,6 +3,7 @@
 import datetime
 import uuid
 import json
+import os
 
 from applications.core.settings_manager import settings
 
@@ -140,3 +141,21 @@ class Member(BaseModel):
         MemberLoginLog.session.add(log)
 
         MemberLoginLog.session.commit()
+
+    @staticmethod
+    def remove_avator(user_id, mavatar):
+        try:
+            query = "SELECT `file_md5` FROM `sys_attach_related` WHERE `related_table`='sys_member' and `related_id`='%s';" % (user_id)
+            old_file_md5 = Member.session.execute(query).scalar()
+            if old_file_md5:
+                pass
+                delq = "DELETE FROM `sys_attach_related` WHERE `file_md5`='%s';"
+                Member.session.execute(delq % old_file_md5)
+                delq = "DELETE FROM `sys_attach` WHERE `file_md5`='%s';"
+                Member.session.execute(delq % old_file_md5)
+                old_avatar = settings.STATIC_PATH + '/' + mavatar
+                os.remove(old_avatar)
+        except Exception as e:
+            raise e
+        return True
+
