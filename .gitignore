@@ -9,3 +9,4 @@ logs/*.log
 node_modules
 .idea
 *.php
+upload/avator

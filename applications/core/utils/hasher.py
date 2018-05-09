@@ -10,9 +10,8 @@ import base64
 
 from tornado.util import import_object
 
-from .utils import get_random_string
-from .utils import pbkdf2
-from .utils import constant_time_compare
+from .string import String
+from .func import Func
 
 from applications.core.settings_manager import settings
 
@@ -21,7 +20,7 @@ UNUSABLE_PASSWORD_PREFIX = '!'  # This will never be a valid encoded hash
 UNUSABLE_PASSWORD_SUFFIX_LENGTH = 40  # number of random chars to add after UNUSABLE_PASSWORD_PREFIX
 
 
-def is_password_usable(encoded):
+def _is_password_usable(encoded):
     if encoded is None or encoded.startswith(UNUSABLE_PASSWORD_PREFIX):
         return False
     try:
@@ -39,7 +38,7 @@ def check_password(password, encoded, setter=None, preferred='default'):
     If setter is specified, it'll be called when you need to
     regenerate the password.
     """
-    if password is None or not is_password_usable(encoded):
+    if password is None or not _is_password_usable(encoded):
         return False
 
     preferred = get_hasher(preferred)
@@ -71,7 +70,7 @@ def make_password(password, salt=None, hasher='default'):
     access to staff or superuser accounts. See ticket #20079 for more info.
     """
     if password is None:
-        return UNUSABLE_PASSWORD_PREFIX + get_random_string(UNUSABLE_PASSWORD_SUFFIX_LENGTH)
+        return UNUSABLE_PASSWORD_PREFIX + String.get_random_string(UNUSABLE_PASSWORD_SUFFIX_LENGTH)
     hasher = get_hasher(hasher)
 
     if not salt:
@@ -181,7 +180,7 @@ class BasePasswordHasher:
 
     def salt(self):
         """Generate a cryptographically secure nonce salt in ASCII."""
-        return get_random_string(16)
+        return String.get_random_string(16)
 
     def verify(self, password, encoded):
         """Check if the given password is correct."""
@@ -238,7 +237,7 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
         assert salt and '$' not in salt
         if not iterations:
             iterations = self.iterations
-        hash = pbkdf2(password, salt, iterations, digest=self.digest)
+        hash = Func.pbkdf2(password, salt, iterations, digest=self.digest)
         hash = base64.b64encode(hash).decode('utf-8').strip()
         return "%s$%d$%s$%s" % (self.algorithm, iterations, salt, hash)
 
@@ -246,7 +245,7 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
         algorithm, iterations, salt, hash = encoded.split('$', 3)
         assert algorithm == self.algorithm
         encoded_2 = self.encode(password, salt, int(iterations))
-        return constant_time_compare(encoded, encoded_2)
+        return Func.constant_time_compare(encoded, encoded_2)
 
     def safe_summary(self, encoded):
         algorithm, iterations, salt, hash = encoded.split('$', 3)

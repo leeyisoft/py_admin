@@ -18,10 +18,10 @@ from applications.core.decorators import required_permissions
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import check_password
 from applications.core.utils.hasher import make_password
-from applications.core.utils import is_email
-from applications.core.utils import sendmail
-from applications.core.utils import uuid32
-from applications.core.utils import local_now
+
+from applications.core.utils import Func
+from applications.core.utils import FileUtil
+from applications.core.utils import Uploader
 
 from ..models.system import Member
 from ..models.system import MemberOperationLog
@@ -104,6 +104,7 @@ class SetHandler(CommonHandler):
 
 
 class ResetPasswordHandler(CommonHandler):
+    @tornado.web.authenticated
     def post(self, *args, **kwargs):
         """重置密码
         """
@@ -146,6 +147,47 @@ class ResetPasswordHandler(CommonHandler):
         Member.session.commit()
         return self.success(next=next)
 
+class UploadAvatorHandler(CommonHandler):
+    @tornado.web.authenticated
+    def post(self, *args, **kwargs):
+        """上传头像
+        """
+        user_id = self.current_user.get('uuid')
+        next = self.get_argument('next', '')
+        imgfile = self.request.files.get('file')
+
+        # 判断上传文件大小
+        size = int(self.request.headers.get('Content-Length'))
+        if (size/1024)>80:
+            return self.error('文件大小不能够超过80KB')
+
+        # PIL 是 python中对图片进行操作的模块, 感兴趣可以去看一下
+        from PIL import Image
+        import io
+        import os
+        # print('imgfile', type(imgfile))
+        for img in imgfile:
+            print('img', type(img))
+            # 对文件进行重命名
+            param = Uploader.upload_img(img)
+            return self.success(data=param)
+            # print("param: ", param)
+            # SysLogger.debug(str(param))
+            # SysLogger.debug(img)
+        # member = Member.Q.filter(Member.uuid==user_id).first()
+
+        # if int(member.status)==0:
+        #     return self.error('用户被“禁用”，请联系客服')
+        # if check_password(nowpass, member.password) is not True:
+        #     return self.error('当前密码错误')
+
+        # params = {
+        #     'password': make_password(password),
+        #     'status': 1,
+        # }
+        # Member.Q.filter(Member.uuid==user_id).update(params)
+        # Member.session.commit()
+        return self.success(next=next)
 
 class ActivateHandler(CommonHandler):
     """docstring for Passport"""
@@ -185,7 +227,7 @@ class SendmailHandler(CommonHandler):
     def activate_email(self, email):
         """激活邮箱发送邮件功能
         """
-        if not is_email(email):
+        if not Func.is_email(email):
             return self.error('Email格式不正确')
 
         uuid = self.current_user.get('uuid')
@@ -199,10 +241,10 @@ class SendmailHandler(CommonHandler):
             return self.error('邮件已发送，10分钟后重试')
 
         subject = '[%s]激活邮件' % sys_config('site_name')
-        token = uuid32()
+        token = Func.uuid32()
         action_url = sys_config('site_url') + '/member/activate.html?token=' + token
 
-        localnow = local_now() + datetime.timedelta(minutes=10)
+        localnow = Func.local_now() + datetime.timedelta(minutes=10)
         params = {
             'username': member.username,
             'expires': str(localnow),
@@ -212,7 +254,7 @@ class SendmailHandler(CommonHandler):
         tmpl = 'common/email_content.html'
         content = self.render_string(tmpl, **params)
         # print('content', content)
-        sendmail({'to_addr': email, 'subject':subject, 'content': content})
+        Func.sendmail({'to_addr': email, 'subject':subject, 'content': content})
         save = {
             'token':token,
             'account': email,
@@ -226,7 +268,7 @@ class SendmailHandler(CommonHandler):
     def email_reset_pwd(self, email):
         """使用Email充值密码发送邮件功能
         """
-        if not is_email(email):
+        if not Func.is_email(email):
             return self.error('Email格式不正确')
 
         token = self.get_secure_cookie(self.token_key)
@@ -240,10 +282,10 @@ class SendmailHandler(CommonHandler):
             return self.error('账户被禁用')
 
         subject = '[%s]找回密码' % sys_config('site_name')
-        token = uuid32()
+        token = Func.uuid32()
         action_url = sys_config('site_url') + '/passport/forget.html?token=' + token
 
-        localnow = local_now() + datetime.timedelta(minutes=30)
+        localnow = Func.local_now() + datetime.timedelta(minutes=30)
         params = {
             'username': member.username,
             'expires': str(localnow),
@@ -253,7 +295,7 @@ class SendmailHandler(CommonHandler):
         tmpl = 'common/email_content.html'
         content = self.render_string(tmpl, **params)
         # print('content', content)
-        sendmail({'to_addr': email, 'subject':subject, 'content': content})
+        Func.sendmail({'to_addr': email, 'subject':subject, 'content': content})
         save = {
             'token':token,
             'account': email,

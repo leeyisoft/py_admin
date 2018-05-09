@@ -9,6 +9,8 @@ import tornado
 
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import check_password
+from applications.core.utils.hasher import make_password
+from applications.core.utils import Func
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
@@ -59,6 +61,7 @@ class LoginHandler(CommonHandler):
         self.set_secure_cookie(self.user_session_key, user_str, expires_days=1)
 
         params = {
+            'uuid': Func.uuid32(),
             'user_id': user.uuid,
             'client': 'web',
             'ip': self.request.remote_ip,

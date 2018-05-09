@@ -19,6 +19,9 @@ def _format_addr(s):
 
 # sendmail({'to_addr':'leeyisoft@qq.com', 'subject':'ly test subject', 'content': 'abc'})
 def sendmail(params):
+    """发送Email，支持HTML格式内容，支持定义发送者名称，定义邮件主题
+    """
+    to_name = params.get('to_name', '')
     to_addr = params.get('to_addr', None)
     subject = params.get('subject', None)
     content = params.get('content', None)
@@ -33,7 +36,7 @@ def sendmail(params):
 
     msg = email.mime.multipart.MIMEMultipart()
     msg['from'] = _format_addr('%s <%s>' % (from_name, from_addr))
-    msg['to'] = to_addr
+    msg['to'] = _format_addr('%s <%s>' % (to_name, to_addr))
     msg['subject'] = subject
     msg['date'] = time.strftime("%a,%d %b %Y %H:%M:%S %z")
     htm = email.mime.text.MIMEText(content, 'html','utf-8')

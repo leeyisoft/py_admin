@@ -5,6 +5,7 @@
 {% block body %}
 <form class="layui-form" action="{{ request.uri }}" method="post" id="editForm">
     {% raw xsrf_form_html() %}
+    <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
     <div class="page-form">
         <div class="layui-form-item">
             <label class="layui-form-label">用户名</label>
@@ -60,7 +61,6 @@ layui.use(['form'], function() {
     })
     form.on('submit(formSubmit)', function(obj) {
         layer.msg('数据提交中...',{time:50000})
-
         if (rsa_encrypt=='1' && obj.field.password) {
             // Encrypt with the public key...
             var encrypt = new JSEncrypt()

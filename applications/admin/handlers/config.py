@@ -12,7 +12,7 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
-from applications.core.utils import str_to_datetime
+from applications.core.utils import Func
 
 from applications.admin.models.system import Config
 from applications.admin.models.system import AdminMenu
@@ -148,7 +148,7 @@ class ConfigEditHandler(CommonHandler):
         config = Config.Q.filter(Config.key==old_key).first()
         if config:
             params = {**config.as_dict(), **params}
-            params['utc_created_at'] = str_to_datetime(params['utc_created_at'], 'UTC')
+            params['utc_created_at'] = Func.str_to_datetime(params['utc_created_at'], 'UTC')
 
         Config.Q.filter(Config.key==old_key).delete()
         Config.session.add(Config(**params))

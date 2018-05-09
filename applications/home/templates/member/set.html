@@ -48,8 +48,8 @@
 
 
     <div class="fly-panel fly-panel-user" pad20>
-        <div class="layui-tab layui-tab-brief" lay-filter="user">
-            <ul class="layui-tab-title" id="LAY_mine">
+        <div class="layui-tab layui-tab-brief" lay-filter="base_tab">
+            <ul class="layui-tab-title">
                 <li class="layui-this" lay-id="info">我的资料</li>
                 <li lay-id="avatar">头像</li>
                 <li lay-id="pass">密码</li>
@@ -85,12 +85,14 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="layui-form-item">
+                        <!--
+                        <div class="layui-form-item">
                             <label for="L_city" class="layui-form-label">城市</label>
                             <div class="layui-input-inline">
                                 <input type="text" id="L_city" name="city" autocomplete="off" value="" class="layui-input field-city">
                             </div>
-                        </div> -->
+                        </div>
+                        -->
                         <div class="layui-form-item layui-form-text">
                             <label for="L_sign" class="layui-form-label">签名</label>
                             <div class="layui-input-block">
@@ -105,8 +107,8 @@
                     <div class="layui-form layui-form-pane layui-tab-item">
                         <div class="layui-form-item">
                             <div class="avatar-add">
-                                <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过50KB</p>
-                                <button type="button" class="layui-btn upload-img">
+                                <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过80KB</p>
+                                <button type="button" class="layui-btn upload-img" id="avatar">
                                     <i class="layui-icon">&#xe67c;</i>上传头像
                                 </button>
                                 <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
@@ -182,9 +184,22 @@ var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
 var formData = {% raw data_info %}
 set_form_data(formData)
 
-layui.use(['form'], function() {
-    var $ = layui.jquery, form = layui.form
+layui.use(['form', 'upload', 'element'], function() {
+    var $ = layui.jquery
+    var form = layui.form
+    var upload = layui.upload
+    var element = layui.element
 
+    //显示当前tab
+    if(location.hash){
+        element.tabChange('base_tab', location.hash.replace(/^#/, ''));
+    }
+    element.on('tab(base_tab)', function(){
+        var othis = $(this), layid = othis.attr('lay-id')
+        if(layid){
+            location.hash = layid
+        }
+    })
     // 表单验证
     form.verify({
         username : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '用户名必须2到40位字母、数字、汉字组合'],
@@ -270,6 +285,32 @@ layui.use(['form'], function() {
             }
         })
         return false
+    })
+
+    upload.render({
+        elem: '#avatar'
+        ,url: '/member/upload/avator'
+        ,size: 80 //限制文件大小，单位 KB
+        ,exts: 'png|jpg|jpeg|gif' //只允许上传压缩文件
+        ,data: {_xsrf: get_xsrf()}
+        ,before: function(){
+            $('.avatar-add').find('.loading').show()
+        }
+        ,done: function(res){
+            if(res.code == 0){
+                // $.post('/user/set/', {
+                //     avatar: res.url
+                // }, function(res){
+                //     location.reload()
+                // })
+            } else {
+                layer.msg(res.msg, {icon: 5})
+            }
+            $('.avatar-add').find('.loading').hide()
+        }
+        ,error: function(){
+            $('.avatar-add').find('.loading').hide()
+        }
     })
 })
 

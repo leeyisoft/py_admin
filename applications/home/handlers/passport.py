@@ -14,11 +14,8 @@ from tornado.escape import json_decode
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import check_password
 from applications.core.utils.hasher import make_password
-from applications.core.utils import is_email
-from applications.core.utils import sendmail
-from applications.core.utils import uuid32
-from applications.core.utils import local_now
-from applications.core.utils import is_mobile
+from applications.core.utils import Func
+
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
@@ -57,9 +54,9 @@ class LoginHandler(CommonHandler):
         if not account:
             return self.error('账号不能够为空')
 
-        if is_mobile(account):
+        if Func.is_mobile(account):
             member = Member.Q.filter(Member.mobile==account).first()
-        elif is_email(account):
+        elif Func.is_email(account):
             member = Member.Q.filter(Member.email==account).first()
         else:
             member = Member.Q.filter(Member.username==account).first()

@@ -6,9 +6,9 @@ import json
 
 from applications.core.settings_manager import settings
 
-from applications.core.db.dbalchemy import Model
-from applications.core.utils import utc_now
 from applications.core.logger.client import SysLogger
+from applications.core.utils import Func
+from applications.core.db.dbalchemy import Model
 
 from sqlalchemy.types import Integer
 from sqlalchemy.types import String
@@ -18,9 +18,6 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
 
-from applications.core.utils import dt_to_timezone
-from applications.core.utils import utc_now
-from applications.core.utils import uuid32
 
 class BaseModel(Model):
     __abstract__ = True
@@ -32,7 +29,7 @@ class MemberOperationLog(BaseModel):
     """
     __tablename__ = 'sys_member_operation_log'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     user_id = Column(String(32), ForeignKey('sys_member.uuid'))
     # 用户账号： email or mobile or username
     account = Column(String(80), nullable=False)
@@ -40,11 +37,11 @@ class MemberOperationLog(BaseModel):
     action = Column(String(20), nullable=False)
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
     @staticmethod
     def add_log(params):
@@ -65,15 +62,15 @@ class MemberLoginLog(BaseModel):
     """
     __tablename__ = 'sys_member_login_log'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     user_id = Column(String(32), ForeignKey('sys_member.uuid'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
 class Member(BaseModel):
     """
@@ -81,7 +78,7 @@ class Member(BaseModel):
     """
     __tablename__ = 'sys_member'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     password = Column(String(128), nullable=False, default='')
     username = Column(String(40), nullable=False)
     mobile = Column(String(11), nullable=True)
@@ -102,15 +99,15 @@ class Member(BaseModel):
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
     utc_last_login_at = Column(TIMESTAMP, nullable=True)
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def last_login_at(self):
-        return dt_to_timezone(self.utc_last_login_at)
+        return Func.dt_to_timezone(self.utc_last_login_at)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
     @property
     def email_activated(self):
@@ -132,7 +129,7 @@ class Member(BaseModel):
         user_id = member.uuid
         params = {
             'login_count': member.login_count+1,
-            'utc_last_login_at': utc_now(),
+            'utc_last_login_at': Func.utc_now(),
             'last_login_ip': handler.request.remote_ip,
         }
         Member.Q.filter(Member.uuid==user_id).update(params)

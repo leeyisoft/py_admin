@@ -7,7 +7,6 @@ import json
 from applications.core.settings_manager import settings
 
 from applications.core.db.dbalchemy import Model
-from applications.core.utils import utc_now
 from applications.core.logger.client import SysLogger
 
 from sqlalchemy.types import Integer
@@ -18,8 +17,7 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
 
-from applications.core.utils import dt_to_timezone
-from applications.core.utils import uuid32
+from applications.core.utils import Func
 
 class BaseModel(Model):
     __abstract__ = True
@@ -40,11 +38,11 @@ class Config(BaseModel):
     system = Column(Integer, nullable=False, default=0)
     # 状态:( 0 禁用；1 启用, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
 
 class Role(BaseModel):
@@ -53,17 +51,17 @@ class Role(BaseModel):
     """
     __tablename__ = 'sys_admin_role'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     rolename = Column(String(40), nullable=False)
     permission = Column(Text, default='')
     sort = Column(Integer, nullable=False, default=20)
     # 状态:( 0 禁用；1 启用, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
     @classmethod
     def option_html(cls, role_id=None):
@@ -92,7 +90,7 @@ class User(BaseModel):
     """
     __tablename__ = 'sys_admin_user'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     role_id = Column(String(32), ForeignKey('sys_admin_role.uuid'))
     password = Column(String(128), nullable=False, default='')
     username = Column(String(40), nullable=False)
@@ -102,15 +100,15 @@ class User(BaseModel):
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
     utc_last_login_at = Column(TIMESTAMP, nullable=True)
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def last_login_at(self):
-        return dt_to_timezone(self.utc_last_login_at)
+        return Func.dt_to_timezone(self.utc_last_login_at)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
     @property
     def role_permission(self):
@@ -137,15 +135,15 @@ class UserLoginLog(BaseModel):
     """
     __tablename__ = 'sys_admin_user_login_log'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True)
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
 
 class AdminMenu(BaseModel):
@@ -154,7 +152,7 @@ class AdminMenu(BaseModel):
     """
     __tablename__ = 'sys_admin_menu'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=uuid32())
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
     user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'), nullable=False, default='')
     parent_id = Column(String(32), nullable=False, default='top')
     code = Column(String(64), nullable=True)
@@ -167,12 +165,12 @@ class AdminMenu(BaseModel):
     sort = Column(Integer, nullable=False, default=20)
     system = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
-    utc_created_at = Column(TIMESTAMP, default=utc_now)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
 
     @property
     def created_at(self):
-        return dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.utc_created_at)
 
     @classmethod
     def info(cls, uuid=None, path=None):
