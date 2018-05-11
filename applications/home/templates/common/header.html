@@ -24,7 +24,7 @@
                     {% if current_user.get('avatar', '')!='' %}
                     <img src="{{ static_url(current_user.get('avatar', '')) }}">
                     {% else %}
-                    <img src="{{ static_url('image/default_avatar.jpg') }}"">
+                    <img src="{{ static_url('image/default_avatar.jpg') }}">
                     {% end %}
                 </a>
                 <dl class="layui-nav-child">
