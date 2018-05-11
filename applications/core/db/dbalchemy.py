@@ -565,7 +565,7 @@ class Attach(BaseModel):
     file_mimetype = Column(String(40), nullable=False)
     origin_name = Column(String(80), nullable=False)
     path_file = Column(String(200), nullable=False)
-    user_id = Column(String(32), ForeignKey('sys_member.uuid'))
+    user_id = Column(String(32), ForeignKey('member.uuid'))
     ip = Column(String(40), nullable=False)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 

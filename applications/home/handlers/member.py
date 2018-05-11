@@ -113,7 +113,7 @@ class SetHandler(CommonHandler):
             q_param = (
                 Func.uuid32(),
                 file_md5,
-                'sys_member',
+                'member',
                 user_id,
                 self.request.remote_ip,
                 str(Func.utc_now())[0:-6],
