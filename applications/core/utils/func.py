@@ -4,6 +4,7 @@
 import sys
 import pytz
 import datetime
+import time
 import dateutil.parser
 import hashlib
 import hmac
@@ -56,7 +57,7 @@ class Func():
 
     @staticmethod
     def unix_time():
-        return int(time.mktime(datetime.now().timetuple()))
+        return int(time.mktime(datetime.datetime.now().timetuple()))
 
     @staticmethod
     def md5(val):
