@@ -123,6 +123,7 @@ class RegisterHandler(CommonHandler):
             'username': username,
             'password': make_password(password),
             'status': 1,
+            'avatar': 'image/default_avatar.jpg',
         }
         if email:
             params['email'] = email

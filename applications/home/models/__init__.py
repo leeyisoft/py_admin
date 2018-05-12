@@ -82,8 +82,8 @@ class Member(BaseModel):
     level_id = Column(Integer, nullable=False, default=0)
     # 经验值
     experience = Column(Integer, nullable=False, default=0)
-    # 性别 man woman hide
-    sex = Column(String(10), nullable=False, default='HIDE')
+    # 性别(男 male ，女 female 隐藏 hide)
+    sex = Column(String(10), nullable=False, default='hide')
     # 头像
     avatar = Column(String(255), nullable=True, default='')
     # 签名
@@ -170,7 +170,7 @@ class Member(BaseModel):
         return f_g_li
 
     @staticmethod
-    def login_success(member, handler):
+    def login_success(member, handler, client='web'):
         # 设置登录用户cookiex信息
         handler.set_curent_user(member)
 
@@ -187,7 +187,7 @@ class Member(BaseModel):
         params2 = {
             'uuid': Func.uuid32(),
             'user_id': user_id,
-            'client': 'web',
+            'client': client,
             'ip': handler.request.remote_ip,
         }
         log = MemberLoginLog(**params2)

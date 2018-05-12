@@ -17,6 +17,5 @@ class IndexHandler(CommonHandler):
         """首页
         """
         params = {
-            'current_user': self.current_user,
         }
         self.render('index/index.html', **params)
