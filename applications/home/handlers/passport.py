@@ -224,6 +224,7 @@ class ForgetHandler(CommonHandler):
         Member.session.commit()
 
         params = {
+            'uuid': Func.uuid32(),
             'user_id': user_id,
             'account': account,
             'action': 'email_reset_pwd',
