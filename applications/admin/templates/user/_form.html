@@ -103,5 +103,8 @@
 var rsa_encrypt = '{{ rsa_encrypt }}'
 var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
 var formData = {% raw data_info %}
-set_form_data(formData)
+
+$( document ).ready(function() {
+    set_form_data(formData)
+});
 </script>

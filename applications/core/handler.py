@@ -56,10 +56,10 @@ class _HandlerPatch(tornado.web.RequestHandler):
         self.finish()
         return
 
-    def error(self, msg='error', code=990000):
+    def error(self, msg='error', code=990000, **args):
         code = int(code) if str(code).isdigit() else 990000
         self.set_status(code, msg)
-        return self._return(msg, code)
+        return self._return(msg, code, **args)
 
     def success(self, msg='success', **args):
         self.set_status(200, msg)

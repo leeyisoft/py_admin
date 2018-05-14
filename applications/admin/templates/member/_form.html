@@ -1,0 +1,64 @@
+<form class="layui-form" action="{{ request.uri }}" method="post" id="editForm">
+    {% raw xsrf_form_html() %}
+    <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}"/>
+    <input type="hidden" class="field-uuid" name="uuid" value="">
+
+    <div class="layui-tab-item layui-show">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input field-username" name="username" value="" lay-verify="required" autocomplete="off" placeholder="请输入用户名">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登陆密码</label>
+            <div class="layui-input-block">
+                <input type="password" class="layui-input" name="password" lay-verify="password" autocomplete="off" placeholder="******">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input field-email" name="email" value="" lay-verify="" autocomplete="off" placeholder="请输入邮箱地址">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系手机</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input field-mobile" name="mobile" value="" lay-verify="" autocomplete="off" placeholder="请输入手机号码">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" class="field-sex" name="sex" value="male" title="男">
+                <input type="radio" class="field-sex" name="sex" value="female" title="女" checked>
+                <input type="radio" class="field-sex" name="sex" value="hide" title="保密" checked>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">签名</label>
+            <div class="layui-input-block">
+              <textarea name="sign" class="field-sign" placeholder="请输会员签名" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" {% if member.status==1 %}checked{% end %}>
+            </div>
+        </div>
+    </div>
+    <div style="position:fixed; bottom:0; background: #fff; width: 100%; height: 3.2em; text-align: center;">
+        <button type="submit" class="layui-btn" lay-submit="" lay-filter="formSubmit">提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+</form>
+<script type="text/javascript">
+var rsa_encrypt = '{{ rsa_encrypt }}'
+var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
+var formData = {% raw data_info %}
+$( document ).ready(function() {
+    set_form_data(formData)
+});
+</script>

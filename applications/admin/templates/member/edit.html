@@ -3,7 +3,9 @@
 {% block title %} {% end %}
 {% block css %} {% end %}
 {% block body %}
+    <div class="layui-body">
     {% include _form.html %}
+    </div>
  {% end %}
 
 {% block javascript %}
@@ -11,34 +13,6 @@
 <script type="text/javascript">
 layui.use(['form'], function() {
     var $ = layui.jquery, form = layui.form
-
-    form.on('checkbox(userPermission)', function(data) {
-        var child = $(data.elem).parent('dt').siblings('dd').find('input')
-        /* 自动选中父节点 */
-        var check_parent = function (id) {
-            var self = $('.role-list-form input[value="'+id+'"]')
-            var pid = self.attr('data-pid') || '';
-            self.prop('checked', true)
-            if (pid == '') {
-                return false;
-            }
-            check_parent(pid)
-        };
-        /* 自动选中子节点 */
-        child.each(function(index, item) {
-            item.checked = data.elem.checked;
-        })
-        check_parent($(data.elem).attr('data-pid'))
-        form.render('checkbox')
-    })
-
-    /* 权限赋值 */
-    if (formData) {
-        for(var i in formData['permission']) {
-            $('.role-list-form input[value="'+formData['permission'][i]+'"]').prop('checked', true)
-        }
-        form.render('checkbox')
-    }
 
     // 表单验证
     form.verify({
@@ -56,12 +30,6 @@ layui.use(['form'], function() {
             var ciphertext = encrypt.encrypt(obj.field.password)
             obj.field.password = ciphertext
         }
-
-        var permission = []
-        $("input:checkbox[name='permission']:checked").each(function() {
-            permission.push($(this).val())
-        });
-        obj.field.permission = permission
 
         $.ajax({
             type: "POST",
@@ -82,7 +50,7 @@ layui.use(['form'], function() {
                 }
             },
             error: function(xhr){
-                console.log(xhr.responseJSON)
+                // console.log(xhr.responseJSON)
                 if (xhr.responseJSON && xhr.responseJSON.msg) {
                     layer.msg(xhr.responseJSON.msg)
                 } else {

@@ -29,7 +29,6 @@ class LoginHandler(CommonHandler):
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-            'xsrf_token': self.xsrf_token,
             'next': next,
             'message': '',
         }

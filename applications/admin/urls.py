@@ -3,6 +3,7 @@
 
 from .handlers import dashboard
 from .handlers import passport
+from .handlers import member
 from .handlers import user
 from .handlers import role
 from .handlers import menu
@@ -50,4 +51,12 @@ urls = [
     (r"/admin/role/list/?(.html)?", role.RoleListHandler),
     (r"/admin/role/add/?(.html)?", role.RoleAddHandler),
     (r"/admin/role/edit/?(.html)?", role.RoleEditHandler),
+
+
+    # member
+    (r"/admin/member/index/?(.html)?", member.MemberHandler),
+    (r"/admin/member/delete/?(.html)?", member.MemberHandler),
+    (r"/admin/member/list/?(.html)?", member.MemberListHandler),
+    (r"/admin/member/add/?(.html)?", member.MemberAddHandler),
+    (r"/admin/member/edit/?(.html)?", member.MemberEditHandler),
 ]

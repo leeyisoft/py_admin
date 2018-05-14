@@ -19,6 +19,9 @@ from sqlalchemy import PrimaryKeyConstraint
 
 from applications.core.utils import Func
 
+from applications.home.models import Member
+
+
 class Role(BaseModel):
     """
     user model

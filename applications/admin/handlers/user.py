@@ -101,7 +101,6 @@ class UserAddHandler(CommonHandler):
             'data_info': data_info,
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-            'xsrf_token': self.xsrf_token,
         }
         self.render('user/add.html', **params)
 
@@ -181,7 +180,6 @@ class UserEditHandler(CommonHandler):
             'data_info': data_info,
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-            'xsrf_token': self.xsrf_token,
         }
         self.render('user/edit.html', **params)
 

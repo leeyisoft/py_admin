@@ -84,7 +84,6 @@ class RegisterHandler(CommonHandler):
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-            'xsrf_token': self.xsrf_token,
             'next': next,
             'message': '',
         }
@@ -153,7 +152,6 @@ class ForgetHandler(CommonHandler):
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'token': token,
-            'xsrf_token': self.xsrf_token,
             'reset_pwd': '1',
         }
         # print("token2: ", token2)
