@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2018-05-12 02:03:34 +0000
+# Generation Time: 2018-05-14 06:09:23 +0000
 # ************************************************************
 
 
@@ -53,10 +53,11 @@ LOCK TABLES `member` WRITE;
 
 INSERT INTO `member` (`uuid`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `utc_last_login_at`, `status`, `deleted`, `utc_created_at`)
 VALUES
+	('341e4a4aeb904bf489dd190a08ac6994',0,'','leeyi3','','',0,'female','','ddc33',1,'127.0.0.1','2018-05-14 04:08:23.564640',1,0,'2018-05-14 04:08:12.563632'),
 	('640839e0650a41ce99ab15eb5f2e313e',0,'pbkdf2_sha256$100000$tzi2wKB3O1xArlvK$I5ydygLiVxwCViSWR4JEw0HKDxdvhanW5K6PoukdaYc=','wangli',NULL,'lover@leeyi.net',0,'hide','upload/avator/640839e0650a41ce99ab15eb5f2e313e.jpeg','',5,'127.0.0.1','2018-05-11 06:40:56.614628',1,0,'2018-05-07 03:28:54.037108'),
-	('b28dbefd6202431dab8318b085fc9a6d',0,'pbkdf2_sha256$100000$K6kDPaRoACRqnvim$zkzJxzo0w93LkEWM/dVbQ0Bt1qMnQgS59QwvAfs1ejc=','陈小春',NULL,'lover2@leeyi.net',0,'hide','','',1,'127.0.0.1','2018-05-11 02:36:38.247701',1,0,'2018-05-11 02:36:38.225088'),
+	('b28dbefd6202431dab8318b085fc9a6d',0,'','陈小春',NULL,'lover3@leeyi.net',0,'female','','aa我是陈小春，我为自己代言',1,'127.0.0.1','2018-05-11 02:36:38.247701',1,0,'2018-05-11 02:36:38.225088'),
 	('be6a28c1db244372bc0b0169f6bca997',0,'pbkdf2_sha256$100000$Q33CKQh0HOnvVFta$P/Bm2IV/uaZmhWykA+pHWvezIPxlh4ntAg38mKPrags=','leeyi2',NULL,'leeyi@leeyi.net',0,'hide','image/default_avatar.jpg','',2,'127.0.0.1','2018-05-12 01:03:46.562667',1,0,'2018-05-12 01:02:00.106862'),
-	('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$NQha1FL2UTaht56M$ZEBLtlX22D3fQS0zaEdWc0a/19ipKvJIVge7X/J52H0=','leeyi',NULL,'leeyisoft@qq.com',0,'hide','upload/avator/de001cb8f0404944994e14f20bf76a02.png','AAAa',18,'127.0.0.1','2018-05-12 00:41:06.056331',1,0,'2018-05-07 01:18:45.377346');
+	('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$4SwIkvDGAvseWQeh$gS88lHTg+mztrQCqTymj5SBnZzZeSCNPKLoq2pt6qzE=','leeyi',NULL,'leeyisoft@qq.com',0,'hide','upload/avator/de001cb8f0404944994e14f20bf76a02.png','AAAa',23,'192.168.31.100','2018-05-14 02:01:54.380313',1,0,'2018-05-07 01:18:45.377346');
 
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -183,15 +184,6 @@ CREATE TABLE `member_operation_log` (
   PRIMARY KEY (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会议操作日志记录表(操作成功的时候插入)';
 
-LOCK TABLES `member_operation_log` WRITE;
-/*!40000 ALTER TABLE `member_operation_log` DISABLE KEYS */;
-
-INSERT INTO `member_operation_log` (`uuid`, `user_id`, `account`, `action`, `ip`, `client`, `utc_created_at`)
-VALUES
-	('f76214db86dd4ac1944dfe35f9989721','de001cb8f0404944994e14f20bf76a02','leeyisoft@qq.com','activate_email','127.0.0.1','web','2018-05-09 05:58:59.745225');
-
-/*!40000 ALTER TABLE `member_operation_log` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table sys_address
@@ -276,13 +268,10 @@ VALUES
 	('150','','148','warehousing:customer:edit','编辑客户信息','','/warehousing/customer/edit','','_self',0,0,1,1,NULL),
 	('16','','6','admin:annex:index','附件管理','','/admin/annex/index','','_self',7,1,0,1,NULL),
 	('17','','8','admin:module:index','模块管理','','/admin/module/index','','_self',1,1,1,1,NULL),
-	('18','','8','admin:plugins:admin','插件管理','aicon ai-chajianguanli','/admin/plugins/index','','_self',2,1,1,1,NULL),
 	('19','','8','admin:hook:index','钩子管理','','/admin/hook/index','','_self',3,1,1,1,NULL),
 	('2','','top','admin:system','系统','','/admin/system','','_self',10,1,1,1,NULL),
-	('20','','7','admin:member:level','会员等级','aicon ai-huiyuandengji','/admin/member/level','','_self',1,1,1,1,NULL),
+	('20','','7','admin:member:level','会员等级','aicon ai-huiyuandengji','/admin/member/level','','_self',1,1,1,0,NULL),
 	('21','','7','admin:member:index','会员列表','aicon ai-huiyuanliebiao','/admin/member/index','','_self',2,1,1,1,NULL),
-	('22','','9','admin:develop:lists','[示例]列表模板','','/admin/develop/lists','','_self',1,1,1,1,NULL),
-	('23','','9','admin:develop:edit','[示例]编辑模板','','/admin/develop/edit','','_self',2,1,1,1,NULL),
 	('24','','4','admin:index:index','后台首页','','/admin/index/index','','_self',2,1,0,1,NULL),
 	('25','','4','admin:index:clear','清空缓存','','/admin/index/clear','','_self',5,1,0,1,NULL),
 	('26','','12','admin:menu:add','添加菜单','','/admin/menu/add','','_self',1,1,1,1,NULL),
@@ -303,14 +292,6 @@ VALUES
 	('4','','1','admin:quick','快捷菜单','fa fa-motorcycle','/admin/quick','','_self',1,1,1,1,NULL),
 	('40','','14','admin:user:status2','状态设置','','/admin/user/status','','_self',4,1,1,1,NULL),
 	('41','','14','admin:user:info','个人信息设置','','/admin/user/info','','_self',5,1,1,1,NULL),
-	('42','','18','admin:plugins:install','安装插件','','/admin/plugins/install','','_self',1,1,1,1,NULL),
-	('43','','18','admin:plugins:uninstall','卸载插件','','/admin/plugins/uninstall','','_self',2,1,1,1,NULL),
-	('44','','18','admin:plugins:del','删除插件','','/admin/plugins/del','','_self',3,1,1,1,NULL),
-	('45','','18','admin:plugins:status','状态设置','','/admin/plugins/status','','_self',4,1,1,1,NULL),
-	('46','','18','admin:plugins:design','设计插件','','/admin/plugins/design','','_self',5,1,1,1,NULL),
-	('47','','18','admin:plugins:run','运行插件','','/admin/plugins/run','','_self',6,1,1,1,NULL),
-	('48','','18','admin:plugins:update','更新插件','','/admin/plugins/update','','_self',7,1,1,1,NULL),
-	('49','','18','admin:plugins:setting','插件配置','','/admin/plugins/setting','','_self',8,1,1,1,NULL),
 	('5','','3','admin:plugins:index','插件列表','aicon ai-shezhi','/admin/plugins','','_self',0,1,1,1,NULL),
 	('50','','19','admin:hook:add','添加钩子','','/admin/hook/add','','_self',1,1,1,1,NULL),
 	('51','','19','admin:hook:edit','修改钩子','','/admin/hook/edit','','_self',2,1,1,1,NULL),
@@ -355,11 +336,9 @@ VALUES
 	('87','','84','admin:database:optimize','优化数据库','','/admin/database/optimize','','_self',0,1,1,1,NULL),
 	('88','','84','admin:database:del','删除备份','','/admin/database/del','','_self',0,1,1,1,NULL),
 	('89','','84','admin:database:repair','修复数据库','','/admin/database/repair','','_self',0,1,1,1,NULL),
-	('9','','2','admin:develop','开发专用','aicon ai-shezhi','/admin/develop','','_self',4,1,1,0,NULL),
 	('90','','21','admin:member:setdefault','设置默认等级','','/admin/member/setdefault','','_self',0,1,1,1,NULL),
 	('91','','10','admin:system:db','数据库配置','','/admin/system/index','group=databases','_self',5,1,1,1,NULL),
 	('92','','17','admin:module:package','模块打包','','/admin/module/package','','_self',7,1,1,1,NULL),
-	('93','','18','admin:plugins:package','插件打包','','/admin/plugins/package','','_self',0,1,1,1,NULL),
 	('94','','17','admin:module:theme','主题管理','','/admin/module/theme','','_self',8,1,1,1,NULL),
 	('95','','17','admin:module:setdefaulttheme','设置默认主题','','/admin/module/setdefaulttheme','','_self',9,1,1,1,NULL),
 	('96','','17','admin:module:deltheme','删除主题','','/admin/module/deltheme','','_self',10,1,1,1,NULL),
@@ -429,9 +408,9 @@ LOCK TABLES `sys_admin_user` WRITE;
 
 INSERT INTO `sys_admin_user` (`uuid`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `utc_last_login_at`, `status`, `utc_created_at`)
 VALUES
-	('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces33','121111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,NULL,1,'2018-05-02 03:43:38.918080'),
+	('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces31','131111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,NULL,1,'2018-05-02 03:43:38.918080'),
 	('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi','13692177080','leeyisoft@qq.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:system\", \"admin:system:function\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\"]',NULL,NULL,NULL,1,'2018-02-28 09:15:10.012341'),
-	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',2,'127.0.0.1','2018-05-11 04:03:59.034876',1,'2018-02-28 09:15:10.012341');
+	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',4,'127.0.0.1','2018-05-14 02:35:22.994889',1,'2018-02-28 09:15:10.012341');
 
 /*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
