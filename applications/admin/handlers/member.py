@@ -169,14 +169,24 @@ class MemberEditHandler(CommonHandler):
             count = Member.Q.filter(Member.uuid!=uuid).filter(Member.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
-        if Func.is_mobile(params.get('mobile', '')):
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==params['mobile']).count()
-            if count>0:
-                return self.error('电话号码已被占用')
-        if Func.is_email(params.get('email', '')):
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==params['email']).count()
-            if count>0:
-                return self.error('Email已被占用')
+
+        mobile = params.get('mobile', None)
+        params.pop('mobile', None)
+        if mobile:
+            params['password'] = mobile
+            if Func.is_mobile(mobile):
+                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==params['mobile']).count()
+                if count>0:
+                    return self.error('电话号码已被占用')
+
+        email = params.get('email', None)
+        params.pop('email', None)
+        if email:
+            params['email'] = email
+            if Func.is_email(email):
+                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==params['email']).count()
+                if count>0:
+                    return self.error('Email已被占用')
 
         password = params.get('password', None)
         if password:
