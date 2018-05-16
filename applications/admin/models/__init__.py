@@ -50,7 +50,6 @@ class Role(BaseModel):
         for row in rows:
             selected = 'selected' if role_id==row.uuid else ''
             option_str += '<option value="%s" %s>%s</option>' % (row.uuid, selected, row.rolename)
-
         # SysLogger.debug('option_str: %s' % option_str)
         return option_str
 
@@ -59,7 +58,6 @@ class Role(BaseModel):
         query = cls.session.query('permission')
         query = query.filter(Role.uuid == role_id)
         return query.scalar()
-
 
 class User(BaseModel):
     """
@@ -148,7 +146,6 @@ class UserLoginLog(BaseModel):
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
 
-
 class AdminMenu(BaseModel):
     """
     user group map model
@@ -169,7 +166,6 @@ class AdminMenu(BaseModel):
     system = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
-
 
     @property
     def created_at(self):
@@ -202,7 +198,6 @@ class AdminMenu(BaseModel):
         row = query.first()
         row = row.as_dict() if row else None
         # SysLogger.debug(query.statement)
-
         return row
 
     @classmethod
@@ -252,7 +247,7 @@ class AdminMenu(BaseModel):
                 if row.get('parent_id')!=parent_id:
                     continue
 
-                if level==3:
+                if level==5:
                     return trees
 
                 # 过滤没访问权限的节点
@@ -262,7 +257,6 @@ class AdminMenu(BaseModel):
                 # }
                 row['children'] = cls.main_menu(row.get('uuid'), status, level+1)
                 trees.append(row)
-
         return trees
 
 
@@ -282,7 +276,7 @@ class AdminMenu(BaseModel):
             rows = query.order_by(AdminMenu.sort.asc()).all()
             data = []
             for row in rows:
-                if level==3:
+                if level==5:
                     return trees
                 row = row.as_dict(filds)
 
@@ -293,7 +287,6 @@ class AdminMenu(BaseModel):
                 # }
                 row['children'] = AdminMenu.children(row.get('uuid'), status, level+1)
                 trees.append(row)
-
         return trees
 
     @staticmethod
@@ -310,20 +303,18 @@ class AdminMenu(BaseModel):
             selected = 'selected' if uuid==menu.get('uuid', '') else ''
             title1 = menu.get('title', '')
             children1 = menu.get('children', [])
-            html += option1 % (menu.get('uuid', ''), selected, title1)
             if not len(children1)>0:
                 continue
+            html += option1 % (menu.get('uuid', ''), selected, title1)
             for menu2 in children1:
                 selected2 = 'selected' if uuid==menu2.get('uuid', '') else ''
                 title2 = menu2.get('title', '')
-                html += option2 % (menu2.get('uuid', ''), selected2, title2)
-                children2 = menu.get('children', [])
+                children2 = menu2.get('children', [])
                 if not len(children2)>0:
                     continue
+                html += option2 % (menu2.get('uuid', ''), selected2, title2)
                 for menu3 in children2:
                     selected3 = 'selected' if uuid==menu3.get('uuid', '') else ''
                     title3 = menu3.get('title', '')
                     html += option3 % (menu3.get('uuid', ''), selected3, title3)
-
         return html
-
