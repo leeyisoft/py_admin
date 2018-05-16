@@ -10,7 +10,7 @@ from PIL import Image
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-from applications.core.db.dbalchemy import Attach
+from applications.core.models import Attach
 
 class Uploader():
     @staticmethod

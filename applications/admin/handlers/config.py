@@ -13,7 +13,7 @@ from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
 from applications.core.utils import Func
-from applications.core.db.dbalchemy import Config
+from applications.core.models import Config
 
 from ..models import AdminMenu
 

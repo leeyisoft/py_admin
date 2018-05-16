@@ -9,7 +9,7 @@ from applications.core.settings_manager import settings
 
 from applications.core.logger.client import SysLogger
 from applications.core.utils import Func
-from applications.core.db.dbalchemy import BaseModel
+from applications.core.models import BaseModel
 
 from sqlalchemy.types import Integer
 from sqlalchemy.types import String
