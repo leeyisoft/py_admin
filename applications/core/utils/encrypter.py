@@ -70,12 +70,12 @@ class AESEncrypter(object):
 
 
 def aes_decrypt(ciphertext, secret=None):
-    secret = settings.default_aes_secret if secret is None else secret
+    secret = secret if secret else settings.default_aes_secret
     cipher = AESEncrypter(secret)
     return cipher.decrypt(ciphertext[6:]) if ciphertext[0:6]=='aes:::' else ciphertext
 
 def aes_encrypt(plaintext, secret=None):
-    secret = settings.default_aes_secret if secret is None else secret
+    secret = secret if secret else settings.default_aes_secret
     cipher = AESEncrypter(secret)
     encrypted = cipher.encrypt(plaintext)
     return 'aes:::%s' % encrypted

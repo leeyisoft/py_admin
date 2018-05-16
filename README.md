@@ -45,6 +45,9 @@ git clone https://gitee.com/leeyi/py_admin.git py_admin && cd py_admin
 sh ./init.sh
 // 激活Python3虚拟环境
 source py3/bin/activate
+// 配置本地开发环境变量，然后启动
+cp applications/configs/dev.py applications/configs/local.py
+
 // 启动项目
 python server.py
 ```
