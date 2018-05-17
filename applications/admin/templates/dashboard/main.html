@@ -218,21 +218,29 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     });
 
     var tab = {
-            add: function(title, url, id) {
-                $('.layui-tab-content').height($(window).height() - 120);
-                element.tabAdd('hisiTab', {
-                    title: '<i class="layui-icon j-ajax" data-href="/admin/menu/quick?id='+id+'">&#xe600;&nbsp;</i>'+title,
-                    content: '<iframe width="100%" height="100%" lay-id="'+id+'" frameborder="0" src="'+url+'" scrolling="yes" class="x-iframe"></iframe>',
-                    id: id
-                });
-            }, change: function(id) {
-              element.tabChange('hisiTab', id);
+        add: function(title, url, id, icon) {
+            $('.layui-tab-content').height($(window).height() - 120);
+            var icon_html = '<i class="layui-icon j-ajax" data-href="'+ url +'">&#xe600;&nbsp;</i>'
+            if ($(icon).attr('class')) {
+                icon_html = '<i class="'+ $(icon).attr('class') +'" data-href="'+ url +'">'+ $(icon).text() +'</i>'
             }
-        };
+            element.tabAdd('hisiTab', {
+                title: icon_html+title,
+                content: '<iframe width="100%" height="100%" lay-id="'+id+'" frameborder="0" src="'+url+'" scrolling="yes" class="x-iframe"></iframe>',
+                id: id
+            });
+        }, change: function(id) {
+          element.tabChange('hisiTab', id);
+        }
+    };
     $('.admin-nav-item').click(function(event) {
         var that = $(this);
-        if ($('iframe[src="'+that.attr('href')+'"]')[0]) {
-            tab.change(that.attr('data-id'));
+        var data_id = that.attr('data-id')
+        var iframe = $('iframe[src="'+that.attr('href')+'"]')[0]
+        if (iframe) {
+            // 二次点击左侧菜单，刷新内容页面
+            iframe.src = that.attr('href')
+            tab.change(data_id);
             event.stopPropagation();
             return false;
         }
@@ -241,8 +249,9 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             return false;
         }
         that.css({color:'#fff'});
-        tab.add(that.text(), that.attr('href'), that.attr('data-id'));
-        tab.change(that.attr('data-id'));
+        var icon = $(this).children('i')
+        tab.add(that.text(), that.attr('href'), data_id, icon);
+        tab.change(data_id);
         event.stopPropagation();
         return false;
     });
