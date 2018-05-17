@@ -245,7 +245,7 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
         algorithm, iterations, salt, hash = encoded.split('$', 3)
         assert algorithm == self.algorithm
         encoded_2 = self.encode(password, salt, int(iterations))
-        return Func.constant_time_compare(encoded, encoded_2)
+        return String.constant_time_compare(encoded, encoded_2)
 
     def safe_summary(self, encoded):
         algorithm, iterations, salt, hash = encoded.split('$', 3)

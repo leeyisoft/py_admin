@@ -108,6 +108,13 @@ class Member(BaseModel):
     def email_activated(self):
         return self.check_email_activated(self.uuid, self.email)
 
+
+    @staticmethod
+    def get_info(user_id, fields='username,avatar,sign'):
+        query = "select %s from member where uuid='%s'" % (fields, user_id, )
+        info = Member.session.execute(query).first()
+        return dict(info)
+
     @staticmethod
     def check_email_activated(user_id, email):
         query = "select count(*) from member_operation_log where user_id='%s' and account='%s' and action='activate_email'" % (user_id, email)

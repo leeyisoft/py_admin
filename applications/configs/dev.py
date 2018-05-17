@@ -3,6 +3,12 @@
 
 debug = True
 
+INSTALLED_APPS = (
+    'admin',
+    'home',
+    # 'mobile',
+)
+
 # 数据库连接字符串，
 # 元祖，每组为n个数据库连接，有且只有一个master，可配与不配slave
 DATABASE_CONNECTION = {

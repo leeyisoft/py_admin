@@ -3,6 +3,7 @@
 
 import datetime
 import random
+import hmac
 
 from decimal import Decimal
 
@@ -18,6 +19,12 @@ def _is_protected_type(obj):
     return isinstance(obj, _PROTECTED_TYPES)
 
 class String():
+    @staticmethod
+    def constant_time_compare(val1, val2):
+        """Return True if the two strings are equal, False otherwise."""
+        return hmac.compare_digest(String.force_bytes(val1), String.force_bytes(val2))
+
+    @staticmethod
     def safeunicode(obj, encoding='utf-8'):
         r"""s
         Converts any given object to unicode string.
@@ -44,6 +51,7 @@ class String():
         else:
             return str(obj).decode(encoding, 'ignore')
 
+    @staticmethod
     def safestr(obj, encoding='utf-8'):
         r"""
         Converts any given object to utf-8 encoded string.
@@ -64,6 +72,7 @@ class String():
         else:
             return str(obj)
 
+    @staticmethod
     def storify(mapping, *requireds, **defaults):
         """
         Creates a `storage` object from dictionary `mapping`, raising `KeyError` if
@@ -150,6 +159,7 @@ class String():
 
         return stor
 
+    @staticmethod
     def force_bytes(s, encoding='utf-8', strings_only=False, errors='strict'):
         """
         Similar to smart_bytes, except that lazy instances are resolved to
@@ -172,6 +182,7 @@ class String():
         else:
             return s.encode(encoding, errors)
 
+    @staticmethod
     def get_random_string(length=12,
                           allowed_chars='abcdefghijklmnopqrstuvwxyz'
                                         'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):

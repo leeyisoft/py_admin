@@ -12,3 +12,4 @@ node_modules
 upload/avator
 applications/statics/upload/avator
 *.pdf
+remove_bocai_tb.sql

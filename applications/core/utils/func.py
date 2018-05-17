@@ -26,42 +26,23 @@ class Func():
         return sendmail(params);
 
     @staticmethod
-    def md5_signature(key):
-        data = Func.md5(Func.md5(Func.md5(key))) + str(Func.unix_time())
-        return str(base64.b64encode(bytes(data, encoding='utf-8')), encoding='utf-8')
-
-    @staticmethod
-    def md5_verify_signature(key, data):
-        if not settings.OPEN_UPLOAD_SIGIN:
-            return (0, 'not open update signature')
-
-        app_key = Apps.appKey(app_id)
-        if not app_key:
-            return (1, '验签失败')
-        try:
-            data = str(base64.b64decode(bytes(data, encoding='utf-8')), encoding='utf-8')
-            if not data[32:]:
-                return (1, '验签失败')
-
-            begin_time = int(data[32:])
-            now_time = Func.unix_time()
-            if begin_time>now_time:
-                return (1, 'token过期')
-            elif begin_time<(now_time-60):
-                return (1, 'token过期')
-
-            return (0, 'ok') if Func.md5(Func.md5(Func.md5(key)))==data[0:32] else (1, '验签失败')
-        except Exception as e:
-            pass
-        return (1, '验签失败')
-
-    @staticmethod
-    def unix_time():
-        return int(time.mktime(datetime.datetime.now().timetuple()))
-
-    @staticmethod
     def md5(val):
         return hashlib.md5(val.encode('utf-8')).hexdigest()
+
+    @staticmethod
+    def uuid32():
+        return str(uuid.uuid4()).replace('-','')
+
+    @staticmethod
+    def pbkdf2(password, salt, iterations, dklen=0, digest=None):
+        """Return the hash of password using pbkdf2."""
+        if digest is None:
+            digest = hashlib.sha256
+        if not dklen:
+            dklen = None
+        password = String.force_bytes(password)
+        salt = String.force_bytes(salt)
+        return hashlib.pbkdf2_hmac(digest().name, password, salt, iterations, dklen)
 
     @staticmethod
     def is_email(email):
@@ -74,8 +55,8 @@ class Func():
         return True if re.match(regex, mobile) else False
 
     @staticmethod
-    def uuid32():
-        return str(uuid.uuid4()).replace('-','')
+    def unix_time():
+        return int(time.mktime(datetime.datetime.now().timetuple()))
 
     @staticmethod
     def local_now():
@@ -132,22 +113,6 @@ class Func():
         tz = pytz.timezone(to_tz)
         dt = dt.replace(tzinfo=pytz.utc)
         return dt.astimezone(tz)
-
-    @staticmethod
-    def constant_time_compare(val1, val2):
-        """Return True if the two strings are equal, False otherwise."""
-        return hmac.compare_digest(String.force_bytes(val1), String.force_bytes(val2))
-
-    @staticmethod
-    def pbkdf2(password, salt, iterations, dklen=0, digest=None):
-        """Return the hash of password using pbkdf2."""
-        if digest is None:
-            digest = hashlib.sha256
-        if not dklen:
-            dklen = None
-        password = String.force_bytes(password)
-        salt = String.force_bytes(salt)
-        return hashlib.pbkdf2_hmac(digest().name, password, salt, iterations, dklen)
 
     @staticmethod
     def function():

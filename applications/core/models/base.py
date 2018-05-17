@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8  -*-
+import time
 import datetime
 
 from sqlalchemy import Column
@@ -59,6 +60,46 @@ class BaseModel(MetaBaseModel):
             else :
                 items[column.name] = val
         return items
+
+class Sequence(BaseModel):
+    """
+    sys_config model
+    """
+    __tablename__ = 'sys_sequence'
+
+    key = Column(String(40), primary_key=True, nullable=False)
+    value = Column(Integer, nullable=False)
+
+    @staticmethod
+    def insert(key='increment', value=0):
+        seq = Sequence(key=key, value=value)
+        Sequence.session.merge(seq)
+        Sequence.session.commit()
+        return True
+
+    @staticmethod
+    def currval(name='increment'):
+        query = "select currval('%s') " % name
+        # print("query: ", query)
+        return Sequence.session.execute(query).scalar()
+
+    @staticmethod
+    def nextval(name='increment', increment=1):
+        query = "select nextval('%s', %d);" % (name, increment)
+        val = Sequence.session.execute(query).scalar()
+        Sequence.session.commit()
+        if val==0:
+            val = increment
+            Sequence.insert(name, increment)
+        return val
+
+    @staticmethod
+    def order_no(prefix='NO'):
+        """生成格式化的订单号"""
+        con = time.strftime("%y%m%d", time.localtime())
+        sequ_num = Sequence.nextval(prefix)
+        return '%s%s%d' %(prefix, con, sequ_num)
+
 
 class Config(BaseModel):
     """
