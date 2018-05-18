@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2018-05-17 07:30:55 +0000
+# Generation Time: 2018-05-18 09:54:27 +0000
 # ************************************************************
 
 
@@ -39,10 +39,12 @@ CREATE TABLE `member` (
   `login_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '登陆次数',
   `last_login_ip` varchar(40) NOT NULL DEFAULT '' COMMENT '最后登陆IP',
   `utc_last_login_at` datetime(6) DEFAULT NULL COMMENT '最后登录UTC时间',
-  `referrer_id` char(32) DEFAULT NULL COMMENT '推荐人ID，空字符串表示为推荐人',
+  `ref_user_id` char(32) DEFAULT NULL COMMENT '推荐人ID，空字符串表示为推荐人',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '已删除的 1 是 0 否 默认 0',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
+  `register_ip` varchar(40) DEFAULT NULL COMMENT '注册IP',
+  `register_client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
   PRIMARY KEY (`uuid`),
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
@@ -52,13 +54,16 @@ CREATE TABLE `member` (
 LOCK TABLES `member` WRITE;
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
 
-INSERT INTO `member` (`uuid`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `utc_last_login_at`, `referrer_id`, `status`, `deleted`, `utc_created_at`)
+INSERT INTO `member` (`uuid`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `utc_last_login_at`, `ref_user_id`, `status`, `deleted`, `utc_created_at`, `register_ip`, `register_client`)
 VALUES
-	('341e4a4aeb904bf489dd190a08ac6994',0,'','leeyi3','','',0,'female','','ddc33',1,'127.0.0.1','2018-05-14 04:08:23.564640','',1,0,'2018-05-14 04:08:12.563632'),
-	('640839e0650a41ce99ab15eb5f2e313e',0,'','wangli',NULL,'lover@leeyi.net',0,'female','upload/avator/640839e0650a41ce99ab15eb5f2e313e.jpeg','',5,'127.0.0.1','2018-05-11 06:40:56.614628','',1,0,'2018-05-07 03:28:54.037108'),
-	('b28dbefd6202431dab8318b085fc9a6d',0,'','陈小春',NULL,'lover3@leeyi.net',0,'female','','aa我是陈小春，我为自己代言',1,'127.0.0.1','2018-05-11 02:36:38.247701','',1,0,'2018-05-11 02:36:38.225088'),
-	('be6a28c1db244372bc0b0169f6bca997',0,'pbkdf2_sha256$100000$Q33CKQh0HOnvVFta$P/Bm2IV/uaZmhWykA+pHWvezIPxlh4ntAg38mKPrags=','leeyi2',NULL,'leeyi@leeyi.net',0,'hide','image/default_avatar.jpg','',2,'127.0.0.1','2018-05-12 01:03:46.562667','',1,0,'2018-05-12 01:02:00.106862'),
-	('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$4SwIkvDGAvseWQeh$gS88lHTg+mztrQCqTymj5SBnZzZeSCNPKLoq2pt6qzE=','leeyi',NULL,'leeyisoft@qq.com',0,'hide','upload/avator/de001cb8f0404944994e14f20bf76a02.png','AAAa',24,'127.0.0.1','2018-05-15 06:00:01.995184','',1,0,'2018-05-07 01:18:45.377346');
+	('07cd3c82d2f141b49594c9827e4ba042',0,'pbkdf2_sha256$100000$ULGfqskKpc7B1ZEz$sfFuLT0JP71+Wj/Qwuf3BhUgcuX9kAgjV3Iig0hvAqo=','M6',NULL,'ll@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:03:56.684410','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:03:56.662033','192.168.31.100','mobile'),
+	('27b32fab88c84ccd972b21feb09df9c3',0,'pbkdf2_sha256$100000$HoPM1t2mW0uHyUfX$ru2JUjNEeqccfsNjZe17EJzUEPvG2lo5NrljeQnmd9I=','M7',NULL,'lll@leeyi.net',0,'male','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:12:03.292378','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:12:03.261715','192.168.31.100','mobile'),
+	('4ac3533b39db40ed99197c1ce7b8d2b1',0,'pbkdf2_sha256$100000$a6D68FUxaaddI3KM$0DMNC38gAEO2+ST0UmM88vFLQMuOw12d/01Z6Ng2jqk=','me4',NULL,'me4@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-18 04:08:01.521523','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 04:08:01.470958','127.0.0.1','web'),
+	('4e93411afc72498abd5f8ee472c58080',0,'pbkdf2_sha256$100000$8DRUqPZFeAiz1CLz$7YTT3oywzLPf0yyBDYo1q2TLY0XCyoKYE4sqz16/Y6c=','M5',NULL,'llleeyi@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:00:31.335758','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:00:31.291693','192.168.31.100','mobile'),
+	('640839e0650a41ce99ab15eb5f2e313e',0,'','wangli',NULL,'lover@leeyi.net',0,'female','upload/avator/640839e0650a41ce99ab15eb5f2e313e.jpeg','',5,'127.0.0.1','2018-05-11 06:40:56.614628','',1,0,'2018-05-07 03:28:54.037108',NULL,NULL),
+	('8b27c990cd4a43dfbea88ac4daa717ac',0,'pbkdf2_sha256$100000$zsfNqyfXcuoMMFNl$gczja3Xc5bO82trQUQQaWEFgks6C9Cl4VGWRXeQnf1A=','leeyi3',NULL,'me3@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-18 04:04:54.042066','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 04:04:53.981922','127.0.0.1','web'),
+	('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$4SwIkvDGAvseWQeh$gS88lHTg+mztrQCqTymj5SBnZzZeSCNPKLoq2pt6qzE=','leeyi',NULL,'leeyisoft@qq.com',0,'hide','upload/avator/de001cb8f0404944994e14f20bf76a02.png','AAAa',27,'192.168.31.41','2018-05-18 08:39:42.466783','',1,0,'2018-05-07 01:18:45.377346',NULL,NULL),
+	('f1f38e0add7b46f08bc91c6abafd1049',0,'pbkdf2_sha256$100000$Jp8QdY7ThGq98zBE$/10Pn3/IxfYg+va6p5n/Ks2Y/yfdLens/jYAFvQaiF8=','leeyi2',NULL,'me2@leeyi.net',0,'hide','image/default_avatar.jpg','',0,'',NULL,'de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 03:59:36.831971','127.0.0.1','web');
 
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -172,7 +177,15 @@ LOCK TABLES `member_login_log` WRITE;
 
 INSERT INTO `member_login_log` (`uuid`, `user_id`, `ip`, `client`, `utc_created_at`)
 VALUES
-	('d9ecc058f65b47a0acde7a31a44dc30b','de001cb8f0404944994e14f20bf76a02','127.0.0.1','mobile','2018-05-15 06:00:02.007133');
+	('d9ecc058f65b47a0acde7a31a44dc30b','de001cb8f0404944994e14f20bf76a02','127.0.0.1','mobile','2018-05-15 06:00:02.007133'),
+	('d54c96a77aa04c99b47070fd73131b62','de001cb8f0404944994e14f20bf76a02','127.0.0.1','web','2018-05-18 02:21:32.640318'),
+	('65dd6f50bec4484597d310112aaef2f3','8b27c990cd4a43dfbea88ac4daa717ac','127.0.0.1','web','2018-05-18 04:04:54.044358'),
+	('e283c41363b1484c9ea5b82f851bd307','4ac3533b39db40ed99197c1ce7b8d2b1','127.0.0.1','web','2018-05-18 04:08:01.523742'),
+	('a92b88339de24ab2b78d3625f0eb7785','de001cb8f0404944994e14f20bf76a02','192.168.31.41','web','2018-05-18 08:20:22.722461'),
+	('7ffca6522d9d4c15ad76778b3321e553','de001cb8f0404944994e14f20bf76a02','192.168.31.41','web','2018-05-18 08:39:42.469150'),
+	('47f489827be44c8099d057bd1ed518a7','4e93411afc72498abd5f8ee472c58080','192.168.31.100','mobile','2018-05-18 09:00:31.337833'),
+	('f61dad3cc5564958944d12307499f4b6','07cd3c82d2f141b49594c9827e4ba042','192.168.31.100','mobile','2018-05-18 09:03:56.686171'),
+	('744a934229a64300a4905d0b53441cce','27b32fab88c84ccd972b21feb09df9c3','192.168.31.100','mobile','2018-05-18 09:12:03.294109');
 
 /*!40000 ALTER TABLE `member_login_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -410,7 +423,7 @@ INSERT INTO `sys_admin_user` (`uuid`, `role_id`, `password`, `username`, `mobile
 VALUES
 	('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces31','131111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,NULL,1,'2018-05-02 03:43:38.918080'),
 	('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi','13692177080','leeyisoft@qq.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:system\", \"admin:system:function\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\"]',NULL,NULL,NULL,1,'2018-02-28 09:15:10.012341'),
-	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',8,'127.0.0.1','2018-05-16 07:46:37.909910',1,'2018-02-28 09:15:10.012341');
+	('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',9,'192.168.31.41','2018-05-18 08:32:52.655973',1,'2018-02-28 09:15:10.012341');
 
 /*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -430,6 +443,19 @@ CREATE TABLE `sys_admin_user_login_log` (
   PRIMARY KEY (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='后台用户登录日志';
 
+LOCK TABLES `sys_admin_user_login_log` WRITE;
+/*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
+
+INSERT INTO `sys_admin_user_login_log` (`uuid`, `user_id`, `ip`, `client`, `utc_created_at`)
+VALUES
+	('37ec872c39a44eafa0813e2b5cce64c1','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-16 02:19:48.946027'),
+	('6bf98dcfe73a4f30b235e412b7a8185e','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-16 02:21:58.432869'),
+	('0a387c77445b4bb0947c2b97e9f03af7','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-16 02:31:35.800571'),
+	('581efaa4cfa74191aed0a1aba7e067e5','de713937f2e3487ebe54b8863bb1a1b8','127.0.0.1','web','2018-05-16 07:46:37.913066'),
+	('27e7b2503f2d4266a3dd86e23cc7c9ad','de713937f2e3487ebe54b8863bb1a1b8','192.168.31.41','web','2018-05-18 08:32:52.658632');
+
+/*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table sys_attach
@@ -540,8 +566,7 @@ LOCK TABLES `sys_sequence` WRITE;
 
 INSERT INTO `sys_sequence` (`key`, `value`)
 VALUES
-	('increment',141),
-	('no',2);
+	('CP',12);
 
 /*!40000 ALTER TABLE `sys_sequence` ENABLE KEYS */;
 UNLOCK TABLES;

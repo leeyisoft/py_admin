@@ -17,6 +17,8 @@ urls = [
     (r"/admin/captcha/?(.png)?", passport.CaptchaHandler),
 
     # dashboard
+    (r"/admin/?(.html)?", dashboard.MainHandler),
+    (r"/admin/index/?(.html)?", dashboard.MainHandler),
     (r"/admin/main/?(.html)?", dashboard.MainHandler),
     (r"/admin/welcome/?(.html)?", dashboard.WelcomeHandler),
 

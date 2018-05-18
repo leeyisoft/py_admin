@@ -56,29 +56,33 @@ class AESEncrypter(object):
         pad = ord(text[-1])
         return text[:-pad]
 
-    def encrypt( self, raw):
+    def encrypt(self, raw):
         raw = self._pad(raw)
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         encrypted = cipher.encrypt(raw)
         return base64.b64encode(encrypted).decode('utf-8')
 
-    def decrypt( self, enc):
+    def decrypt(self, enc):
         enc = base64.b64decode(enc)
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         decrypted = cipher.decrypt(enc)
         return self._unpad(decrypted.decode('utf-8'))
 
 
-def aes_decrypt(ciphertext, secret=None):
+def aes_decrypt(ciphertext, secret=None, prefix='aes:::'):
     secret = secret if secret else settings.default_aes_secret
     cipher = AESEncrypter(secret)
-    return cipher.decrypt(ciphertext[6:]) if ciphertext[0:6]=='aes:::' else ciphertext
+    prefix_len = len(prefix)
+    if ciphertext[0:prefix_len]==prefix:
+        return cipher.decrypt(ciphertext[prefix_len:])
+    else:
+        return ciphertext
 
-def aes_encrypt(plaintext, secret=None):
+def aes_encrypt(plaintext, secret=None, prefix='aes:::'):
     secret = secret if secret else settings.default_aes_secret
     cipher = AESEncrypter(secret)
     encrypted = cipher.encrypt(plaintext)
-    return 'aes:::%s' % encrypted
+    return '%s%s' % (prefix, encrypted)
 
 if __name__ == "__main__":
     try:

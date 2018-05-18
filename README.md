@@ -13,7 +13,7 @@
 * 其他约定遵从[Python风格规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/)、[Python 编码规范](http://liyangliang.me/posts/2015/08/simple-python-style-guide/)
 
 # 环境依赖
-* 本人在在MacBookPro下采用 Python3.6+MySQL5.7开发，应该可以所以操作系统化下面跑起来
+* 本人在在MacBookPro下采用 Python3.6+MySQL5.7开发，应该可以所以操作系统化下面跑起来 （MySQL5.6.2及以上）
 * 不打算支持Python3.6以下的Python环境了，会跟随tornado或Python升级代码
 * 操作数据库的ORM框架为 SQLAlchemy1.2.7（SQLAlchemy包括用于SQLite，Postgresql，MySQL，Oracle，MS-SQL，Firebird，Sybase等的语言），如果要用其他数据库，本软件应该要做少许的调整
 * 下列Python依赖会保持最新版本

@@ -15,6 +15,8 @@ from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.hasher import check_password
 from applications.core.utils.hasher import make_password
 from applications.core.utils import Func
+from applications.core.utils.encrypter import aes_decrypt
+from applications.core.utils.encrypter import aes_encrypt
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
@@ -32,6 +34,10 @@ class LoginHandler(CommonHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
         next = self.get_argument('next', '')
+        if self.current_user:
+            next = next if next else '/member/index'
+            self.redirect(next)
+
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
@@ -42,8 +48,8 @@ class LoginHandler(CommonHandler):
         self.render('passport/login.html', **params)
 
     def post(self, *args, **kwargs):
-        account = self.get_argument('account', None)
         next = self.get_argument('next', '')
+        account = self.get_argument('account', None)
         password = self.get_argument('password', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
 
@@ -80,23 +86,39 @@ class RegisterHandler(CommonHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
         next = self.get_argument('next', '')
-        # self.show('home/login')
+        referrer = self.get_argument('referrer', '')
+        # print(aes_encrypt('de001cb8f0404944994e14f20bf76a02', prefix=''))
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'next': next,
-            'message': '',
+            'referrer_name': '',
+            'ref_user_id': '',
         }
+
+        if referrer:
+            ref_info = {}
+            try:
+                ref_user_id = aes_decrypt(referrer, prefix='')
+                ref_info = Member.get_info(ref_user_id, 'username')
+                params['referrer_name'] = ref_info.get('username', '')
+                params['ref_user_id'] = ref_user_id
+            except Exception as e:
+                pass
+
+        # self.show('home/login')
         self.render('passport/register.html', **params)
 
     def post(self, *args, **kwargs):
+        next = self.get_argument('next', '')
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
         username = self.get_argument('username', None)
-        next = self.get_argument('next', '')
+        sex = self.get_argument('sex', None)
         password = self.get_argument('password', None)
         repass = self.get_argument('repass', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        ref_user_id = self.get_argument('ref_user_id', '')
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
             private_key = sys_config('sys_login_rsa_priv_key')
@@ -118,11 +140,14 @@ class RegisterHandler(CommonHandler):
         if count>0:
             return self.error('用户名已被占用')
 
+        client = 'web'
         params = {
             'username': username,
             'password': make_password(password),
             'status': 1,
             'avatar': 'image/default_avatar.jpg',
+            'register_ip': self.request.remote_ip,
+            'register_client': client,
         }
         if email:
             params['email'] = email
@@ -134,12 +159,13 @@ class RegisterHandler(CommonHandler):
             count = Member.Q.filter(User.mobile==mobile).count()
             if count>0:
                 return self.error('电话号码已被占用')
+        if sex:
+            params['sex'] = sex
+        if ref_user_id:
+            params['ref_user_id'] = ref_user_id
 
-        member = Member(**params)
-        Member.session.add(member)
-        Member.session.commit()
-
-        Member.login_success(member, self)
+        member = Member.register(params)
+        Member.login_success(member, self, client=client)
         return self.success(next=next)
 
 class ForgetHandler(CommonHandler):

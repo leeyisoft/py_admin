@@ -21,7 +21,12 @@ class MainHandler(CommonHandler):
     def get(self, *args, **kwargs):
         """后台首页
         """
-        c_menu = AdminMenu.info(path=self.request.path)
+        path = self.request.path
+        path_set = ['admin', 'admin/index']
+        if self.request.path.strip('/') in path_set:
+            path = '/admin/main/'
+
+        c_menu = AdminMenu.info(path=path)
         if not c_menu:
             msg = '节点不存在或者已禁用！'
             return self.error(code=404, msg=msg);

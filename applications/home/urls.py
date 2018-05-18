@@ -26,6 +26,7 @@ urls = [
     (r"/member/repass/?(.html)?", member.ResetPasswordHandler),
     (r"/member/upload/avator/?(.html)?", member.UploadAvatorHandler),
     (r"/member/message/?(.html)?", member.MessageHandler),
+    (r"/member/invite/?(.html)?", member.InviteHandler),
     (r"/member/home/?(.html)?", member.HomeHandler),
     (r"/member/unlocked/?(.html)?", member.MemberUnlockedHandler),
 

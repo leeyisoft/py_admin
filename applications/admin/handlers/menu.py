@@ -10,6 +10,7 @@ import tornado
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.decorators import required_permissions
+from applications.core.utils import Func
 
 from ..models import AdminMenu
 
@@ -126,7 +127,7 @@ class MenuAddHandler(CommonHandler):
         menu_tab = self.get_argument('menu_tab', 1)
 
         params = self.params()
-        params.pop('uuid', None)
+        params['uuid'] = Func.uuid32()
         params.pop('user_id', None)
         params.pop('menu_tab', None)
         params.pop('_xsrf', None)

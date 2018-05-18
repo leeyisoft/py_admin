@@ -16,6 +16,7 @@ from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
 from applications.core.utils.encrypter import RSAEncrypter
+from applications.core.utils.encrypter import aes_encrypt
 from applications.core.utils.hasher import check_password
 from applications.core.utils.hasher import make_password
 
@@ -36,6 +37,7 @@ class IndexHandler(CommonHandler):
         """Home首页
         """
         params = {
+            'active': {'index':'layui-this'},
         }
         self.render('member/index.html', **params)
 
@@ -63,6 +65,7 @@ class SetHandler(CommonHandler):
             'data_info': data_info,
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+            'active': {'set':'layui-this'},
         }
         self.render('member/set.html', **params)
 
@@ -241,6 +244,7 @@ class ActivateHandler(CommonHandler):
         member = Member.Q.filter(Member.uuid==user_id).first()
         params = {
             'member': member,
+            'active': {'set':'layui-this'},
         }
         self.render('member/activate.html', **params)
 
@@ -349,8 +353,50 @@ class MessageHandler(CommonHandler):
         """Home首页
         """
         params = {
+            'active': {'message':'layui-this'},
         }
         self.render('member/message.html', **params)
+
+class InviteHandler(CommonHandler):
+    """docstring for Passport"""
+    @tornado.web.authenticated
+    def get(self, *args, **kwargs):
+        """邀请好友
+        """
+        user_id = self.current_user.get('uuid')
+        referrer = aes_encrypt(user_id, prefix='')
+        register_uri = '%s://%s/%s%s' %(
+            self.request.protocol,
+            self.request.host,
+            'passport/reg.html?referrer=',
+            referrer,
+        )
+        register_uri_mobile = register_uri
+        if 'mobile' in settings.INSTALLED_APPS:
+            register_uri_mobile = '%s://%s/%s%s' %(
+                self.request.protocol,
+                self.request.host,
+                'mobile/reg.html?referrer=',
+                referrer,
+            )
+
+        query = Member.Q
+        query = query.filter(Member.ref_user_id==user_id)
+        query = query.filter(Member.status==1)
+        query = query.filter(Member.deleted==0)
+        member_li = query.order_by(Member.utc_created_at.desc()).all()
+
+        from applications.core.utils.image import qrcode_base64_img
+        logo = settings.STATIC_PATH+'/image/logo.png'
+        qrcode_img = qrcode_base64_img(register_uri_mobile, logo)
+
+        params = {
+            'register_uri': register_uri,
+            'qrcode_img': qrcode_img,
+            'member_li': member_li,
+            'active': {'invite':'layui-this'},
+        }
+        self.render('member/invite.html', **params)
 
 class MemberUnlockedHandler(CommonHandler):
     @tornado.web.authenticated

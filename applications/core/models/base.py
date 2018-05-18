@@ -98,7 +98,7 @@ class Sequence(BaseModel):
         """生成格式化的订单号"""
         con = time.strftime("%y%m%d", time.localtime())
         sequ_num = Sequence.nextval(prefix)
-        return '%s%s%d' %(prefix, con, sequ_num)
+        return '%s%s%04d' %(prefix, con, sequ_num)
 
 
 class Config(BaseModel):

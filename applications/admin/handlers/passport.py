@@ -77,7 +77,7 @@ class CaptchaHandler(CommonHandler):
         img, code = create_validate_code(size=(160, 38), font_size=32)
         self.set_secure_cookie(valid_code_key, code, expires_days=1)
         #将图片信息保存到文件流
-        img.save(imgio, 'GIF')
+        img.save(imgio, 'png')
         #返回图片
         self.set_header('Content-Type', 'image/png')
         self.write(imgio.getvalue())

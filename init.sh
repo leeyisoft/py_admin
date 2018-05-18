@@ -13,8 +13,8 @@ sqlalchemy
 rsa
 pycrypto
 pytz
-redis
 pillow
 python-dateutil
+qrcode
 " > requirements.txt
 pip install -r requirements.txt

@@ -15,8 +15,6 @@ from applications.core.decorators import required_permissions
 from applications.core.utils import Func
 from applications.core.models import Config
 
-from ..models import AdminMenu
-
 from .common import CommonHandler
 
 

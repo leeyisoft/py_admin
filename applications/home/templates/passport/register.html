@@ -46,6 +46,15 @@
                                     <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
+                            {% if referrer_name %}
+                            <div class="layui-form-item">
+                                <label for="L_repass" class="layui-form-label">推荐人</label>
+                                <div class="layui-input-inline">
+                                    <input type="input" class="layui-input" value="{{ referrer_name }}" readonly="true">
+                                </div>
+                                <input type="hidden" name="ref_user_id" value="{{ ref_user_id }}">
+                            </div>
+                            {% end %}
                             <div class="layui-form-item">
                                 <label for="L_vercode" class="layui-form-label">人类验证</label>
                                 <div class="layui-input-inline">

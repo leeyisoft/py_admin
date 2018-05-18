@@ -19,6 +19,7 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
 
+
 class MemberOperationLog(BaseModel):
     """
     user model
@@ -89,12 +90,26 @@ class Member(BaseModel):
     # 签名
     sign = Column(String(255), nullable=True, default='')
     login_count = Column(Integer, nullable=False, default=0)
-    last_login_ip = Column(String(128), nullable=False, default='')
+    last_login_ip = Column(String(40), nullable=False, default='')
     deleted = Column(Integer, nullable=False, default=0)
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
     utc_last_login_at = Column(TIMESTAMP, nullable=True)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+    ref_user_id = Column(String(32), default='')
+    register_ip = Column(String(40), nullable=False, default='')
+    # 客户端：web wechat android ios mobile
+    register_client = Column(String(40), nullable=False, default='')
+
+    sex_options = {
+        'hide': '保密',
+        'male': '男',
+        'female': '女',
+    }
+
+    @property
+    def sex_option(self):
+        return self.sex_options.get(self.sex, '保密')
 
     @property
     def last_login_at(self):
@@ -219,7 +234,15 @@ class Member(BaseModel):
             raise e
         return True
 
+    @staticmethod
+    def register(params):
+        user_id = Func.uuid32()
+        params['uuid'] = user_id
+        member = Member(**params)
+        Member.session.add(member)
+        Member.session.commit()
 
+        return member
 
 class MemberFriend(BaseModel):
     """

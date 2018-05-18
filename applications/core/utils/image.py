@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8  -*-
 
-import random
+import io
 import os
+import random
+import qrcode
+import base64
 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageFilter
+
+from qrcode.constants import ERROR_CORRECT_H
 
 from ..settings_manager import settings
 
@@ -116,3 +121,44 @@ def create_validate_code(
         img = img.filter(ImageFilter.EDGE_ENHANCE_MORE) # 滤镜，边界加强（阈值更大）
 
         return img, strs
+
+def _create_qrcode(data, imgFn):
+    qr = qrcode.QRCode(
+        version=1,
+        #设置容错率为最高
+        error_correction=qrcode.ERROR_CORRECT_H,
+        box_size=6,
+        border=2,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image()
+    #设置二维码为彩色
+    img = img.convert("RGBA")
+    icon = Image.open(imgFn)
+    w, h = img.size
+    factor = 4
+    size_w = int(w / factor)
+    size_h = int(h / factor)
+    icon_w, icon_h = icon.size
+    if icon_w > size_w:
+        icon_w = size_w
+    if icon_h > size_h:
+        icon_h = size_h
+    icon = icon.resize((icon_w, icon_h), Image.ANTIALIAS)
+    w = int((w - icon_w) / 2)
+    h = int((h - icon_h) / 2)
+    icon = icon.convert("RGBA")
+    newimg = Image.new("RGBA", (icon_w + 8, icon_h + 8), (255, 255, 255))
+    img.paste(newimg, (w-4, h-4), newimg)
+    img.paste(icon, (w, h), icon)
+    return img
+
+def qrcode_base64_img(data, logo):
+    img = _create_qrcode(data, logo)
+    #创建一个文件流
+    imgio = io.BytesIO()
+    img.save(imgio, 'png')
+    qrcode_img = "data:image/png;base64,%s" % base64.b64encode(imgio.getvalue()).decode('utf-8')
+    return qrcode_img
