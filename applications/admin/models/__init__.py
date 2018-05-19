@@ -291,7 +291,7 @@ class AdminMenu(BaseModel):
 
     @staticmethod
     def menu_option(uuid=''):
-        #
+        """菜单选项"""
         menus = AdminMenu.main_menu(status=None)
         if not len(menus)>0:
             return ''
@@ -303,16 +303,16 @@ class AdminMenu(BaseModel):
             selected = 'selected' if uuid==menu.get('uuid', '') else ''
             title1 = menu.get('title', '')
             children1 = menu.get('children', [])
+            html += option1 % (menu.get('uuid', ''), selected, title1)
             if not len(children1)>0:
                 continue
-            html += option1 % (menu.get('uuid', ''), selected, title1)
             for menu2 in children1:
                 selected2 = 'selected' if uuid==menu2.get('uuid', '') else ''
                 title2 = menu2.get('title', '')
                 children2 = menu2.get('children', [])
+                html += option2 % (menu2.get('uuid', ''), selected2, title2)
                 if not len(children2)>0:
                     continue
-                html += option2 % (menu2.get('uuid', ''), selected2, title2)
                 for menu3 in children2:
                     selected3 = 'selected' if uuid==menu3.get('uuid', '') else ''
                     title3 = menu3.get('title', '')

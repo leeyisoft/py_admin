@@ -132,6 +132,13 @@ class MenuAddHandler(CommonHandler):
         params.pop('menu_tab', None)
         params.pop('_xsrf', None)
 
+        if not params.get('code', None):
+            return self.error('授权码不能够为空')
+
+        count = AdminMenu.Q.filter(AdminMenu.code==params['code']).count()
+        if count>0:
+            return self.error('Code已被占用')
+
         path = params.get('path', None)
         if path[0:4]!='http' and path[0:1]!='/':
             params['path'] = '/' + path
