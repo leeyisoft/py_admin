@@ -2,6 +2,7 @@
 # -*- coding: utf-8  -*-
 import time
 import datetime
+from decimal import Decimal
 
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
@@ -53,6 +54,8 @@ class BaseModel(MetaBaseModel):
             if isinstance(val, datetime.datetime):
                 if settings.DB_DATETIME_IS_UTC:
                     val = Func.dt_to_timezone(val)
+                val = str(val)
+            elif isinstance(val, Decimal):
                 val = str(val)
             if type(filds)==list and len(filds)>0:
                 if column.name in filds:
