@@ -114,8 +114,6 @@ openssl rsa -pubout -in private.pem -out public.pem
         Config.session().merge(conf)
         Config.session.commit()
 
-查询数据用 GET
-添加/修改数据用 POST
-删除数据用 DELETE
+# 生产环境部署
 
-
+https://gitee.com/leeyi/py_admin/wikis/生产环境部署 [参考](datas/production_deploy.md)
