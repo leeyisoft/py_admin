@@ -24,15 +24,20 @@ class CommonHandler(BaseHandler):
             user = str(user, encoding='utf-8')
             user = user.replace('\'', '"')
             user = json_decode(user)
+            avatar = user.get('avatar', None)
+            if avatar:
+                user['avatar'] = self.static_url(user['avatar'])
+            else:
+                user['avatar'] = self.static_url('image/default_avatar.jpg')
             return user
         except Exception as e:
             raise e
 
     def set_curent_user(self, member):
         """设置登录用户cookie信息"""
-        user_fileds = ['uuid', 'username', 'avatar']
-        user_str = str(member.as_dict(user_fileds))
-        self.set_secure_cookie(self.session_key, user_str, expires_days=1)
+        user_fileds = ['uuid', 'username', 'avatar', 'sign']
+        user = member.as_dict(user_fileds)
+        self.set_secure_cookie(self.session_key, str(user), expires_days=1)
 
     def get_login_url(self):
         return '/passport/login'

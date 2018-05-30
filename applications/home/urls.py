@@ -24,7 +24,7 @@ urls = [
     (r"/member/sendmail/?(.html)?", member.SendmailHandler),
     (r"/member/activate/?(.html)?", member.ActivateHandler),
     (r"/member/repass/?(.html)?", member.ResetPasswordHandler),
-    (r"/member/upload/avator/?(.html)?", member.UploadAvatorHandler),
+    (r"/member/upload/?(.html)?", member.UploadHandler),
     (r"/member/message/?(.html)?", member.MessageHandler),
     (r"/member/invite/?(.html)?", member.InviteHandler),
     (r"/member/home/?(.html)?", member.HomeHandler),

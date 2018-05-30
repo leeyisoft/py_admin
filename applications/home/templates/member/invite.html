@@ -14,10 +14,10 @@
         <div class="layui-tab layui-tab-brief" lay-filter="user">
             <ul class="layui-tab-title">
                 <li class="layui-this">
-                    复制链接
+                   二维码分享
                 </li>
                 <li>
-                    二维码分享
+                    我的好友
                 </li>
             </ul>
             <div class="layui-tab-content">
@@ -30,42 +30,36 @@
                             复制
                         </button>
                     </div>
+
+                    <img width="50%" src="{{ qrcode_img }}"/>
                 </div>
                 <div class="layui-tab-item">
-                    <img width="200" src="{{ qrcode_img }}"/>
-                </div>
-            </div>
-            <div class="layui-col-md12">
-                <div class="layui-card">
-                    <div class="layui-card-header">我邀请的好友</div>
-                    <div class="layui-card-body">
-                        <table class="layui-table">
-                            <colgroup>
-                                <col width="150">
-                                <col width="150">
-                                <col width="200">
-                                <col>
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th>名称</th>
-                                    <th>性别</th>
-                                    <th>注册时间</th>
-                                    <th>格言</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in member_li %}
-                                <tr>
-                                    <td>{{ item.username }}</td>
-                                    <td>{{ item.sex_option }}</td>
-                                    <td>{{ item.created_at }}</td>
-                                    <td>{{ item.sign }}</td>
-                                </tr>
-                                {% end %}
-                            </tbody>
-                        </table>
-                    </div>
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="150">
+                            <col width="150">
+                            <col width="200">
+                            <col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>性别</th>
+                                <th>注册时间</th>
+                                <th>格言</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in member_li %}
+                            <tr>
+                                <td>{{ item.username }}</td>
+                                <td>{{ item.sex_option }}</td>
+                                <td>{{ str(item.created_at).split('.')[0] }}</td>
+                                <td>{{ item.sign }}</td>
+                            </tr>
+                            {% end %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

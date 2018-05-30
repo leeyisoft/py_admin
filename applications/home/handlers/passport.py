@@ -164,9 +164,12 @@ class RegisterHandler(CommonHandler):
         if ref_user_id:
             params['ref_user_id'] = ref_user_id
 
-        member = Member.register(params)
-        Member.login_success(member, self, client=client)
-        return self.success(next=next)
+        (code, member) = Member.register(params)
+        if code==0:
+            Member.login_success(member, self, client=client)
+            return self.success(next=next)
+        else:
+            return self.error(member)
 
 class ForgetHandler(CommonHandler):
     """docstring for Passport"""
@@ -266,7 +269,7 @@ class LogoutHandler(CommonHandler):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         self.clear_cookie(self.session_key)
-        self.redirect("/passport/login")
+        self.redirect(self.get_login_url())
 
 class CaptchaHandler(CommonHandler):
     def get(self, *args, **kwargs):

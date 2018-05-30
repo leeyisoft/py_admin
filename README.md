@@ -27,15 +27,15 @@ Pillow          5.1.0
 pip             10.0.1
 pyasn1          0.4.2
 pycrypto        2.6.1
-python-dateutil 2.7.2
+python-dateutil 2.7.3
 pytz            2018.4
-redis           2.10.6
+qrcode          6.0
 rsa             3.4.2
 setuptools      39.1.0
 six             1.11.0
 SQLAlchemy      1.2.7
 tornado         5.0.2
-wheel           0.31.0
+wheel           0.31.1
 ```
 
 # 项目启动
@@ -50,6 +50,9 @@ cp applications/configs/dev.py applications/configs/local.py
 
 // 启动项目
 python server.py
+
+// 指定端口启动项目
+python server.py --port=8080
 ```
 
 # init db
@@ -75,12 +78,12 @@ flush privileges;
 * 前端 注册、登录、修改资料、激活Email、修改密码、通过Email找回密码、上传头像、绑定手机号码、绑定多个Email、绑定微信、绑定支付宝、人类验证、找回密码、系统消息、用户等级
 
 ## todo fetures
-* 后台用户登录日志功能
 * 多次登录失败账户锁定功能
 * 图像验证码验证功能
 * 锁屏功能
+* 缓存功能
 * 清理缓存功能
-*
+* 系统日志调整
 
 # FAQ
 ## 为什么要用 datetime(6) ？

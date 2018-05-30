@@ -21,11 +21,7 @@
                     <cite class="layui-hide-xs">{{ current_user.get('username') }}</cite>
                     <!-- <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
                     <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i> -->
-                    {% if current_user.get('avatar', '')!='' %}
-                    <img src="{{ static_url(current_user.get('avatar', '')) }}">
-                    {% else %}
-                    <img src="{{ static_url('image/default_avatar.jpg') }}">
-                    {% end %}
+                    <img src="{{ current_user.get('avatar', '') }}">
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="/member/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>

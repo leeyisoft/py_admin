@@ -15,6 +15,7 @@ from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
 from applications.core.decorators import required_permissions
+from applications.core.models import Attach
 from applications.core.utils.encrypter import RSAEncrypter
 from applications.core.utils.encrypter import aes_encrypt
 from applications.core.utils.hasher import check_password
@@ -50,6 +51,45 @@ class HomeHandler(CommonHandler):
         params = {
         }
         self.render('member/home.html', **params)
+
+class UploadHandler(CommonHandler):
+    @tornado.web.authenticated
+    def post(self, *args, **kwargs):
+        """上传图片"""
+        user_id = self.current_user.get('uuid')
+
+        next = self.get_argument('next', '')
+        imgfile = self.request.files.get('file')
+        action = self.get_argument('action', None)
+        path = self.get_argument('path', 'default_path')
+
+        if action not in ['alipay', 'wechatpay', 'avatar']:
+            return self.error('不支持的action')
+
+        for img in imgfile:
+            print('img', type(img))
+            # 对文件进行重命名
+            file_ext = FileUtil.file_ext(img['filename'])
+            path = '%s/' % path
+            save_name = img['filename']
+            file_md5 = Func.md5(img['body'])
+            if action=='avatar':
+                save_name = '%s.%s' %(user_id, file_ext)
+            elif action in ['alipay', 'wechatpay']:
+                save_name = '%s_%s.%s' %(user_id, action, file_ext)
+            try:
+                param = Uploader.upload_img(file_md5, img, save_name, path, {
+                    'user_id': user_id,
+                    'ip': self.request.remote_ip,
+                })
+                return self.success(data=param)
+            except Exception as e:
+                if settings.debug:
+                    raise e
+                SysLogger.error(e)
+                return self.error('上传失败')
+
+        return self.error('参数错误')
 
 class SetHandler(CommonHandler):
     """docstring for Passport"""
@@ -110,7 +150,7 @@ class SetHandler(CommonHandler):
             member = Member.Q.filter(Member.uuid==user_id).first()
 
             if avatar!=member.avatar:
-                Member.remove_avator(user_id, member.avatar)
+                Attach.remove_avatar(user_id, member.avatar)
 
             query = "REPLACE INTO `sys_attach_related` (`uuid`, `file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
             q_param = (
@@ -130,7 +170,6 @@ class SetHandler(CommonHandler):
         self.set_curent_user(member)
 
         return self.success()
-
 
 class ResetPasswordHandler(CommonHandler):
     @tornado.web.authenticated
@@ -176,45 +215,6 @@ class ResetPasswordHandler(CommonHandler):
         Member.session.commit()
         return self.success(next=next)
 
-class UploadAvatorHandler(CommonHandler):
-    @tornado.web.authenticated
-    def post(self, *args, **kwargs):
-        """上传头像
-        """
-        user_id = self.current_user.get('uuid')
-        next = self.get_argument('next', '')
-        imgfile = self.request.files.get('file')
-
-        # 判断上传文件大小
-        size = int(self.request.headers.get('Content-Length'))
-        if (size/1024)>80:
-            return self.error('文件大小不能够超过80KB')
-
-        # PIL 是 python中对图片进行操作的模块, 感兴趣可以去看一下
-        from PIL import Image
-        import io
-        import os
-        # print('imgfile', type(imgfile))
-        for img in imgfile:
-            print('img', type(img))
-            # 对文件进行重命名
-            file_ext = FileUtil.file_ext(img['filename'])
-            path = 'avator/'
-            save_name = '%s.%s' %(user_id, file_ext)
-            try:
-                param = Uploader.upload_img(img, save_name, path, {
-                    'user_id': user_id,
-                    'ip': self.request.remote_ip,
-                })
-                return self.success(data=param)
-            except Exception as e:
-                if settings.debug:
-                    raise e
-                SysLogger.error(e)
-                return self.error('上传头像失败')
-
-        return self.error('参数错误')
-
 class ActivateHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
@@ -247,7 +247,6 @@ class ActivateHandler(CommonHandler):
             'active': {'set':'layui-this'},
         }
         self.render('member/activate.html', **params)
-
 
 class SendmailHandler(CommonHandler):
     @tornado.web.authenticated

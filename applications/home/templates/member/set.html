@@ -256,10 +256,14 @@ layui.use(['form', 'upload', 'element'], function() {
 
     upload.render({
         elem: '#avatar'
-        ,url: '/member/upload/avator'
+        ,url: '/member/upload'
         ,size: 80 //限制文件大小，单位 KB
         ,exts: 'png|jpg|jpeg|gif' //只允许上传压缩文件
-        ,data: {_xsrf: get_xsrf()}
+        ,data: {
+                '_xsrf': get_xsrf(),
+                'path': 'avatar',
+                'action': 'avatar',
+        }
         ,before: function(){
             $('.avatar-add').find('.loading').show()
         }

@@ -7,6 +7,7 @@ import json
 from applications.core.settings_manager import settings
 
 from applications.core.models import BaseModel
+from applications.core.models import Sequence
 from applications.core.logger.client import SysLogger
 
 from sqlalchemy.types import Integer

@@ -17,6 +17,7 @@ body{background-color:#fff;}
 .pl50{padding-left:50px;}
 .pb50{padding-bottom:50px;}
 .w50{width:50px!important;}
+.w80{width:80px!important;}
 .w100{width:100px!important;}
 .w200{width:200px!important;}
 .w300{width:300px!important;}
@@ -141,7 +142,7 @@ body{background-color:#fff;}
 .hook-plugins-sort li span{float:left;margin-right:20px;width:150px;height:20px;line-height:22px;}
 /*layui*/
 .layui-layout-admin{min-width:1000px;}
-.layui-form-label{min-width:90px;}
+.layui-form-label{min-width:56px;}
 .layui-tab-title li{padding:0 10px;}
 .page-tips .layui-colla-content{/*color:#999;background-color:#f9f9f9*/}
 .layui-form-mid{font-size:12px!important;}

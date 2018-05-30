@@ -27,7 +27,9 @@ class Func():
 
     @staticmethod
     def md5(val):
-        return hashlib.md5(val.encode('utf-8')).hexdigest()
+        if type(val)!=bytes:
+            val = val.encode('utf-8')
+        return hashlib.md5(val).hexdigest()
 
     @staticmethod
     def uuid32():

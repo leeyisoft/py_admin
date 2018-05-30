@@ -51,10 +51,24 @@ TORNADO_CONF = {
 # 中间件     #
 # ###########
 MIDDLEWARE_CLASSES = (
-    'applications.core.middleware.accesslog.AccessLogMiddleware',
     'applications.core.middleware.dbalchemy.DBAlchemyMiddleware',
+    'applications.core.middleware.AccessLogMiddleware',
+    'applications.core.middleware.PeriodicCallbackMiddleware',
     # 'torngas.httpmodule.httpmodule.HttpModuleMiddleware',
 )
+
+# 定时任务之定期调用，执行定时任务需要首先加载 middleware.PeriodicCallbackMiddleware
+CRONTAB_PeriodicCallback = [
+    (
+        'applications.home.models.Online',
+        'check_online',
+        # 参数必须是一个 dict
+        {'app': 'test'},
+        # 每隔 1800000 毫秒(30分钟)执行一次
+        1800000,
+    ),
+]
+
 INSTALLED_APPS = (
     'admin',
 )
@@ -123,7 +137,6 @@ TRANSLATIONS_CONF = {
     'locale_default': 'zh_CN',
     'use_accept_language': True
 }
-print('TRANSLATIONS_CONF: ', TRANSLATIONS_CONF)
 
 # 白名单未开启，如需使用，请用元祖列出白名单ip
 WHITELIST = False
@@ -287,4 +300,3 @@ try:
     from .product import *
 except ImportError:
     pass
-

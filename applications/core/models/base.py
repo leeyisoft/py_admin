@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8  -*-
+import os
 import time
 import datetime
 from decimal import Decimal
@@ -100,7 +101,8 @@ class Sequence(BaseModel):
     def order_no(prefix='NO'):
         """生成格式化的订单号"""
         con = time.strftime("%y%m%d", time.localtime())
-        sequ_num = Sequence.nextval(prefix)
+        name = '%s%s' % (prefix, con)
+        sequ_num = Sequence.nextval(name=name)
         return '%s%s%04d' %(prefix, con, sequ_num)
 
 
@@ -143,3 +145,37 @@ class Attach(BaseModel):
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
+
+    @staticmethod
+    def remove(file_md5, path_file='', table=''):
+        query = "SELECT count(*) FROM `sys_attach_related` WHERE `file_md5`='%s';" % (file_md5)
+        count = Attach.session.execute(query).scalar()
+        try:
+            if not(count>1):
+                delq = "DELETE FROM `sys_attach_related` WHERE `file_md5`='%s';"
+                Attach.session.execute(delq % (file_md5))
+
+                delq = "DELETE FROM `sys_attach` WHERE `file_md5`='%s';"
+                Attach.session.execute(delq % file_md5)
+
+                path_file2 = settings.STATIC_PATH + '/' + path_file
+                if os.path.isfile(path_file2):
+                    os.remove(path_file2)
+            else:
+                delq = "DELETE FROM `sys_attach_related` WHERE `file_md5`='%s' AND `related_table`='%s';"
+                Attach.session.execute(delq % (file_md5, table))
+        except Exception as e:
+            raise e
+        return True
+
+    @staticmethod
+    def remove_avatar(user_id, mavatar):
+        try:
+            query = "SELECT `file_md5` FROM `sys_attach_related` WHERE `related_table`='member' and `related_id`='%s';" % (user_id)
+            file_md5 = Attach.session.execute(query).scalar()
+            if file_md5:
+                Attach.remove(file_md5, mavatar, 'member')
+        except Exception as e:
+            raise e
+        return True
+

@@ -234,6 +234,8 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         }
     };
     $('.admin-nav-item').click(function(event) {
+        window.layer.closeAll()
+
         var that = $(this);
         var data_id = that.attr('data-id')
         var iframe = $('iframe[src="'+that.attr('href')+'"]')[0]
@@ -244,8 +246,8 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             event.stopPropagation();
             return false;
         }
-        if ($('iframe').length == 10) {
-            layer.msg('最多可打开10个标签页');
+        if ($('iframe').length == 20) {
+            layer.msg('最多可打开20个标签页');
             return false;
         }
         that.css({color:'#fff'});

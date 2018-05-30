@@ -11,10 +11,15 @@ from PIL import Image
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.models import Attach
+from applications.core.utils import Func
 
 class Uploader():
     @staticmethod
-    def upload_img(img, save_name, path, param):
+    def upload_img(file_md5, img, save_name, path, param):
+        attach = Attach.Q.filter(Attach.file_md5==file_md5).first()
+        if attach is not None:
+            return attach.as_dict()
+
         prefix = settings.STATIC_PATH + '/upload/'
         path = prefix + path
         if not os.path.exists(path):
@@ -24,22 +29,11 @@ class Uploader():
         file_ext = FileUtil.file_ext(img['filename'])
 
         with open(path_file, 'wb') as f:
-            # image有多种打开方式，一种是 Image.open('xx.png')
-            # 另一种就是 Image.open(StringIO(buffer))
-            im = Image.open(io.BytesIO(img['body']))
-            # 修改图片大小resize接受两个参数, 第一个是宽高的元组数据,第二个是对图片细节的处理，本文表示抗锯齿
-            # im = im.resize((248, 248), Image.ANTIALIAS)
-            #创建一个文件流
-            imgio = io.BytesIO()
-            im.save(imgio, format=file_ext)
-            # 这是获取io中的内容
-            im_data = imgio.getvalue()
-            f.write(im_data)
+            f.write(img['body'])
 
         path = path_file.replace(settings.STATIC_PATH, '')
         path = path[1:] if path[0:1]=='/' else path
 
-        file_md5 = FileUtil.file_md5(path_file)
         param.update({
             'file_md5': file_md5,
             'file_ext': file_ext,
@@ -48,34 +42,12 @@ class Uploader():
             'origin_name': img['filename'],
             'path_file': path,
         })
-        count = Attach.Q.filter(Attach.file_md5==file_md5).count()
-        if not(count>0):
-            attach = Attach(**param)
-            Attach.session.add(attach)
-            Attach.session.commit()
-
+        attach = Attach(**param)
+        Attach.session.merge(attach)
+        Attach.session.commit()
+        # print('param', param)
         return param
 
-    @staticmethod
-    def upload_file2(file, path):
-        code = 0
-        msg = ''
-
-        if not os.path.exists(path):
-            os.makedirs(path)
-
-        try:
-            file_name = '%s%s' % (str(uuid.uuid4()).replace('-',''), FileUtil.file_ext(file.name))
-            save_file = os.path.join(path, file_name)
-            with open(save_file, 'wb+') as destination:
-                for chunk in file.chunks():
-                    destination.write(chunk)
-            code = 0
-            msg = save_file
-        except Exception as e:
-            code = 1
-            msg = e
-        return (status, msg)
 
 class FileUtil(object):
     """docstring for FileUtil"""
@@ -87,8 +59,7 @@ class FileUtil(object):
     @staticmethod
     def file_md5(fname):
         """
-        from http://stackoverflow.com/quest-
-        ions/3431825/generating-a-md5-checksum-of-a-file
+        from http://stackoverflow.com/questions/3431825/generating-a-md5-checksum-of-a-file
         """
         hash = hashlib.md5()
         with open(fname, "rb") as f:

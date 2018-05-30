@@ -19,7 +19,7 @@ def required_permissions(*dargs, **dkargs):
                 return method(*args, **kargs)
 
             obj = User.Q.filter(User.uuid==user_id).first()
-            if code not in obj.permission:
+            if obj and code not in obj.permission:
                 if code not in obj.role_permission:
                     return self.error('未授权', 401)
             return method(*args, **kargs)
