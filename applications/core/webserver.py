@@ -36,33 +36,12 @@ class Server(object):
         self.httpserver = None
         self.ioloop = ioloop
 
-    def _patch_httpserver(self):
-        """
-        重写httpserver的xheader配置，让gunicorn可以加载xheaders设置
-        :return:
-        """
-        httpserver = sys.modules["tornado.httpserver"]
-        try:
-            xhs = settings.xheaders
-        except:
-            xhs = True
-
-        class MyHTTPServer(httpserver.HTTPServer):
-            def __init__(self, request_callback, xheaders=xhs, **kwargs):
-                super(MyHTTPServer, self).__init__(request_callback,
-                                                        xheaders=xheaders,
-                                                        **kwargs)
-
-        httpserver.HTTPServer = MyHTTPServer
-        sys.modules["tornado.httpserver"] = httpserver
-
     def load_application(self, application=None):
         """
 
         :type application: applications.core.application.Application subclass or instance
         :return:
         """
-        self._patch_httpserver()
         if settings.TRANSLATIONS:
             try:
                 from tornado import locale
@@ -141,6 +120,8 @@ class Server(object):
             else:
                 sockets = bind_sockets(options.port, options.address)
 
+        if not kwargs.get('xheaders', None):
+            kwargs['xheaders'] = settings.xheaders
         http_server = tornado.httpserver.HTTPServer(self.application, **kwargs)
 
         http_server.add_sockets(sockets)
@@ -255,4 +236,3 @@ def run(application=None, sockets=None, **kwargs):
     server = Server()
     server.load_all(application, sockets, **kwargs)
     server.start()
-
