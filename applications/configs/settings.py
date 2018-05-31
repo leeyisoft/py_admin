@@ -54,7 +54,7 @@ MIDDLEWARE_CLASSES = (
     'applications.core.middleware.dbalchemy.DBAlchemyMiddleware',
     'applications.core.middleware.AccessLogMiddleware',
     'applications.core.middleware.PeriodicCallbackMiddleware',
-    # 'torngas.httpmodule.httpmodule.HttpModuleMiddleware',
+    # 'tornado.httpmodule.httpmodule.HttpModuleMiddleware',
 )
 
 # 定时任务之定期调用，执行定时任务需要首先加载 middleware.PeriodicCallbackMiddleware
@@ -148,59 +148,64 @@ WHITELIST = False
 
 # tornado日志功能配置
 # Logging中有
-# NOTSET < DEBUG < INFO < WARNING < ERROR < CRITICAL这几种级别，
+# NOTSET < DEBUG < INFO < WARNING < ERROR < CRITICAL 这几种级别，
 # 日志会记录设置级别以上的日志
 # when  时间  按照哪种时间单位滚动（可选s-按秒，m-按分钟，h-按小时，d-按天，w0-w6-按指定的星期几，midnight-在午夜）
 LOGGING_DIR = 'logs/'
 
 #其中name为getlogger指定的名字
-DEFAULT_FORMAT = '%(color)s[%(levelname)s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
 standard_format = '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]' \
                   '[%(levelname)s][%(message)s]'
 LOGGING = (
     {
-        'name': 'tornado',
-        'level': 'DEBUG',
-        'log_to_stderr': True,
-        'when': 'w0',
-        'interval': 1,
-        'formatter': standard_format,
-        'filename': 'tornado.log'
+        'name': 'access_log',
+        'filename': 'access_log.log'
     },
     {
         'name': 'tornado.debug.log',
         'level': 'DEBUG',
         'log_to_stderr': True,
-        'when': 'midnight',
+        'when': 'w0',
         'interval': 1,
-        'filename': 'tornado_debug_log.log'
+        'formatter': standard_format,
+        'filename': 'error_log.log'
     },
     {
-        'name': 'torngas.errorlog',
+        'name': 'tornado.info.log',
+        'level': 'INFO',
+        'log_to_stderr': True,
+        'when': 'midnight',
+        'interval': 1,
+        'formatter': standard_format,
+        'filename': 'error_log.log'
+    },
+    {
+        'name': 'tornado.warning.log',
+        'level': 'WARNING',
+        'log_to_stderr': True,
+        'when': 'midnight',
+        'interval': 1,
+        'formatter': standard_format,
+        'filename': 'error_log.log'
+    },
+    {
+        'name': 'tornado.error.log',
         'level': 'ERROR',
         'log_to_stderr': True,
         'when': 'midnight',
         'interval': 1,
-        'formatter': '%(message)s',
-        'filename': 'torngas_error_log.log'
+        'formatter': standard_format,
+        'filename': 'error_log.log'
     },
     {
-        'name': 'torngas.accesslog',
-        'level': 'INFO',
+        'name': 'tornado.critical.log',
+        'level': 'CRITICAL',
         'log_to_stderr': True,
         'when': 'midnight',
         'interval': 1,
-        'formatter': '%(levelname)s %(message)s',
-        'filename': 'torngas_access_log.log'
+        'formatter': standard_format,
+        'filename': 'error_log.log'
     },
-    {
-        'name': 'torngas.infolog',
-        'level': 'INFO',
-        'log_to_stderr': True,
-        'when': 'midnight',
-        'interval': 1,
-        'filename': 'torngas_info_log.log'
-    }
 )
 
 
@@ -208,12 +213,12 @@ LOGGING = (
 #引入相应的TemplateLoader即可
 #若使用自带的请给予None
 #支持mako和jinja2
-#mako设置为torngas.template.mako_loader.MakoTemplateLoader
-#jinj2设置为torngas.template.jinja2_loader.Jinja2TemplateLoader
+#mako设置为tornado.template.mako_loader.MakoTemplateLoader
+#jinj2设置为tornado.template.jinja2_loader.Jinja2TemplateLoader
 #初始化参数请参照jinja的Environment或mako的TemplateLookup,不再详细给出
 TEMPLATE_CONFIG = {
     'template_engine': None,
-    #模版路径由torngas.handler中commonhandler重写，无需指定，模版将存在于每个应用的根目录下
+    #模版路径由tornado.handler中commonhandler重写，无需指定，模版将存在于每个应用的根目录下
     'filesystem_checks': True,  #通用选项
     'cache_directory': '../_tmpl_cache',  #模版编译文件目录,通用选项
     'collection_size': 50,  #暂存入内存的模版项，可以提高性能，mako选项,详情见mako文档

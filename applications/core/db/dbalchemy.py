@@ -180,7 +180,6 @@ class _Connector(object):
     _conn = None
 
     def __init__(self, connection_class):
-        SysLogger.debug("debug _Connector/__init__")
         self.class_ = connection_class
 
     @property

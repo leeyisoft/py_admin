@@ -46,7 +46,7 @@ class Role(BaseModel):
         query = cls.session.query(Role)
         query = query.filter(Role.status == 1)
         rows = query.order_by(Role.sort.asc()).all()
-        SysLogger.debug(query.statement)
+        # SysLogger.debug(query.statement)
         option_str = ''
         for row in rows:
             selected = 'selected' if role_id==row.uuid else ''

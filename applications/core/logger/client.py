@@ -5,52 +5,43 @@ import logging
 from functools import partial
 
 
-ACCESS_LOGNAME = 'tornado.accesslog'
-TRACE_LOGNAME = 'tornado.tracelog'
-INFO_LOGNAME = 'tornado.infolog'
-
-
 class _SysLogger(object):
     def __init__(self):
-        self.access_logger = logging.getLogger(ACCESS_LOGNAME)
-        self.trace_logger = logging.getLogger(TRACE_LOGNAME)
-        self.info_logger = logging.getLogger(INFO_LOGNAME)
+        pass
 
     @property
     def debug(self):
         """
         logging debug message
         """
-
-        return partial(self.info_logger.debug)
+        return partial(logging.getLogger('tornado.debug.log').debug)
 
     @property
     def info(self):
         """
         logging info message
         """
-        return partial(self.info_logger.info)
+        return partial(logging.getLogger('tornado.info.log').info)
 
     @property
     def warning(self):
         """
-        logging warn message
+        logging warning message
         """
-        return partial(self.trace_logger.warning)
+        return partial(logging.getLogger('tornado.warning.log').warning)
 
     @property
     def error(self):
         """
         logging error message
         """
-        return partial(self.trace_logger.error)
+        return partial(logging.getLogger('tornado.error.log').error)
 
     @property
-    def exception(self):
+    def critical(self):
         """
-        logging exception message
+        logging critical message
         """
-        return partial(self.trace_logger.exception)
-
+        return partial(logging.getLogger('tornado.critical.log').critical)
 
 SysLogger = syslogger = _SysLogger()

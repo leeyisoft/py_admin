@@ -6,8 +6,9 @@ access log中间件，替换tornado的log_request实现插件式日志输出
 """
 import datetime
 import logging
+import pytz
 
-access_log = logging.getLogger('torngas.accesslog')
+access_log = logging.getLogger('access_log')
 
 
 class AccessLogMiddleware(object):
@@ -15,16 +16,21 @@ class AccessLogMiddleware(object):
         application.settings['log_function'] = self.log
 
     def log(self, handler):
-        message = '%s - - [%s] "%s %s %s" %s %s "%s" "%s" %dms' % (
-            handler.request.remote_ip,
-            datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            handler.request.method,
-            handler.request.uri,
-            handler.request.version,
-            handler.get_status(),
-            handler.request.headers.get("Content-Length", "-"),
-            handler.request.headers.get('Referer', "-"),
-            handler.request.headers.get("User-Agent", "-"),
-            1000.0 * handler.request.request_time()
-        )
+        utc_now = datetime.datetime.now(pytz.timezone('UTC'))
+        message = {
+            'remote_ip': handler.request.remote_ip,
+            'utc_created_at': str(utc_now),
+            'host': handler.request.headers.get('host', ''),
+            'method': handler.request.method,
+            'uri': handler.request.uri,
+            'version': handler.request.version,
+            'status_code': handler.get_status(),
+            'content_length': handler.request.headers.get('Content-Length', ''),
+            'referer': handler.request.headers.get('Referer', ''),
+            'user_agent': handler.request.headers.get('User-Agent', ''),
+            'request_time': 1000.0 * handler.request.request_time(),
+            'uuid': handler.get_argument('uuid', ''),
+            'client': handler.get_argument('client', ''),
+            'token': handler.get_argument('token', ''),
+        }
         access_log.info(message)
