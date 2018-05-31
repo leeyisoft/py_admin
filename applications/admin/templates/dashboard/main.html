@@ -3,22 +3,27 @@
 <head>
 <title>管理控制台 -  Powered by {{ sys_config('system.name') }}</title>
 <meta http-equiv="Access-Control-Allow-Origin" content="*">
+{% raw xsrf_form_html() %}
 <link rel="stylesheet" href="{{ static_url('layui/css/layui.css') }}">
 <link rel="stylesheet" href="{{ static_url('admin/css/style.css') }}">
 <link rel="stylesheet" href="{{ static_url('fonts/typicons/min.css') }}">
 <link rel="stylesheet" href="{{ static_url('fonts/font-awesome/min.css') }}">
+<script src="{{ static_url('js/jquery-3.3.1.min.js') }}" charset="utf-8"></script>
 <style type="text/css">
     .hs-iframe{width:100%;height:100%;}
     .layui-tab{position:absolute;left:0;top:0;height:100%;width:100%;z-index:10;margin:0;border:none;overflow:hidden;}
     .layui-tab-content{padding:0 0 0 10px;height:100%;}
     .layui-tab-item{height:100%;}
+    .layui-body {
+        background: #fff;
+    }
     .footer{position:fixed;left:0;bottom:0;z-index:998;}
 </style>
 </head>
 <body>
 
 <div class="layui-layout layui-layout-admin">
-    <div class="layui-header" style="z-index:999!important;">
+    <div class="layui-header" style="z-index:0!important;">
         <div class="fl header-logo">管理控制台</div>
         <div class="fl header-fold"><a href="javascript:;" title="打开/关闭左侧导航" class="aicon ai-caidan" id="foldSwitch"></a></div>
         <ul class="layui-nav fl nobg main-nav">
@@ -42,6 +47,7 @@
             <li class="layui-nav-item"><a href="{{ sys_config('site_url') }}" target="_blank">前台</a></li>
             <li class="layui-nav-item"><a href="/admin/index/clear" class="j-ajax" refresh="yes">清缓存</a></li>
             <li class="layui-nav-item"><a href="javascript:void(0);" id="lockScreen">锁屏</a></li>
+            <li class="layui-nav-item"><a href="javascript:void(0);" onclick="fullscreen();">全屏</a></li>
         </ul>
     </div>
     <div class="layui-side layui-bg-black" id="switchNav">
@@ -101,6 +107,35 @@
 <script src="{{ static_url('layui/layui.js') }}" charset="utf-8"></script>
 <script src="{{ static_url('js/global.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
+var fullscreen = function() {
+    elem = document.body;
+    if(elem.webkitRequestFullScreen){
+        elem.webkitRequestFullScreen();
+    }else if(elem.mozRequestFullScreen){
+        elem.mozRequestFullScreen();
+    }else if(elem.requestFullScreen){
+        elem.requestFullscreen();
+    }else{
+        //浏览器不支持全屏API或已被禁用
+        layer.msg("浏览器不支持全屏API或已被禁用");
+    }
+}
+var exitFullscreen = function() {
+    var elem = document;
+    if(elem.webkitCancelFullScreen){
+        elem.webkitCancelFullScreen();
+    }else if(elem.mozCancelFullScreen){
+        elem.mozCancelFullScreen();
+    }else if(elem.cancelFullScreen){
+        elem.cancelFullScreen();
+    }else if(elem.exitFullscreen){
+        elem.exitFullscreen();
+    }else{
+        //浏览器不支持全屏API或已被禁用
+        layer.msg("浏览器不支持全屏API或已被禁用");
+    }
+}
+
 layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     var $ = layui.jquery
     var element = layui.element
@@ -120,8 +155,10 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         });
 
         $('#unlocked').click(function() {
-            var pwd = $('#unlockedPwd').val();
+            var pwd_obj = $('#unlockedPwd')
+            var pwd = pwd_obj.val();
             if (pwd == '') {
+                pwd_obj.focus()
                 return false;
             }
             $.post('/admin/user/unlocked', {password:pwd, _xsrf: get_xsrf()}, function(res) {
