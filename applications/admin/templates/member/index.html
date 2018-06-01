@@ -4,6 +4,41 @@
 
 {% block body %}
 <div class="layui-body">
+    <div class="layui-card" id="search_box" style="display: ;">
+        <form class="layui-form layui-card-header" action="/admin/member/list">
+            <div class="layui-inline">
+                <label class="layui-form-label">登录名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">手机</label>
+                <div class="layui-input-block">
+                    <input type="text" name="mobile" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <select name="sex">
+                        {% raw sex_options_html %}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit="" lay-filter="searchSubmit">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
     <!-- 内容主体区域 -->
     <div class="layui-btn-group topToolbar">
         <a class="layui-btn layui-btn-primary" data-type="add">
@@ -18,25 +53,11 @@
         <a data-href="{:url('delUser')}" class="layui-btn layui-btn-primary">
             <i class="layui-icon">&#xe640;</i>删除
         </a>
+        <a class="layui-btn layui-btn-primary" id="show_search_box">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+        </a>
     </div>
-    <table class="layui-table" lay-data="{height: 'full-88', cellMinWidth: 80, page: true, id:'user_list_table', limit:20, url:'/admin/member/list'}" lay-filter="user_list">
-        <thead>
-            <tr>
-                <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
-                <th lay-data="{field:'uuid', width:120, fixed: true}">UUID</th>
-                <th lay-data="{field:'username', width:120, sort: true}">用户名</th>
-                <th lay-data="{field:'mobile', width:120, sort: true}">电话</th>
-                <th lay-data="{field:'email', width:160, sort: true}">Email</th>
-                <th lay-data="{field:'sex', width:40, sort: true}">性别</th>
-                <th lay-data="{field:'login_count', width:60, sort: true}">登录次数</th>
-                <th lay-data="{field:'utc_last_login_at', width:180, sort: true}">最后登录</th>
-                <th lay-data="{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}">状态</th>
-                <th lay-data="{field:'utc_created_at', width:180, sort: true, fixed: 'right'}">添加时间</th>
-                <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#user_list_bar'}"></th>
-            </tr>
-        </thead>
-    </table>
-
+    <table id="user_list" class="layui-table"></table>
 </div>
 {% end %}
 
@@ -210,6 +231,59 @@ layui.use(['table','form'], function() {
                 }
             }
         })
+    })
+
+    var table_load = function(url, data) {
+        where = data
+        where['format'] = 'json'
+        // return false
+        table.render({
+            elem: '#user_list'
+            , where: where
+            , url: url
+                ,cols: [[
+                {field:'uuid', width:80, title: 'ID', sort: true}
+                ,{field:'username', width:80, title: '用户名'}
+                ,{field:'mobile', width:80, title: '手机'}
+                ,{field:'email', width:80, title: '邮箱'}
+                ,{field:'sex_option', width:80, title: '性别', sort: true}
+                ,{field:'login_count', width:80, title: '登录次数', sort: true}
+                ,{field:'sign', title: '签名', minWidth: 150}
+                ,{field:'utc_last_login_at', width:180, title: '最后登录', sort: true}
+                ,{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}
+                ,{field:'utc_created_at', width:135, title: '添加时间', sort: true}
+                ,{fixed: 'right', width:178, align:'center', toolbar: '#user_list_bar'}
+            ]]
+            ,page: true
+            ,done: function(res) {
+                if (res.code==0) {
+                    layer.closeAll()
+                    // layer.msg('操作成功', {icon: 1, time: 2000}, function(){
+                    //     layer.closeAll()
+                    // })
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                return true
+            }
+            , error: function(xhr){
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                return true
+            }
+        })
+        return false
+    }
+    table_load('/admin/member/list', {})
+    form.on('submit(searchSubmit)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+        // console.log('obj.field', obj.field)
+        return table_load(obj.form.action, obj.field)
     })
 });
 

@@ -169,3 +169,17 @@ body{background-color:#fff;}
 .lock-screen input::-moz-placeholder{color:#fff;}
 .lock-screen input:-ms-input-placeholder{color:#fff;}
 .lock-screen button{float:left;margin-left:20px;}
+
+
+.layui-card {
+    line-height: 2rem;
+}
+.layui-card .layui-inline {
+    width: auto;
+}
+.layui-card .layui-inline .layui-form-label {
+    width: 1.4rem !important;
+}
+.layui-card .layui-inline .layui-input-block {
+    width: 6rem !important;
+}

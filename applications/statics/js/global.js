@@ -76,3 +76,9 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         return false
     })
 })
+
+$(document).ready(function(){
+    $('#show_search_box').on('click', function() {
+        $('#search_box').slideToggle("slow")
+    })
+})

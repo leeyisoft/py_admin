@@ -32,6 +32,7 @@ class MemberHandler(CommonHandler):
         """
         # return self.show('<script type="text/javascript">alert(1)</script>')
         params = {
+            'sex_options_html': Member.sex_options_html()
         }
         self.render('member/index.html', **params)
 
@@ -54,19 +55,40 @@ class MemberListHandler(CommonHandler):
     def get(self, *args, **kwargs):
         limit = self.get_argument('limit', 10)
         page = self.get_argument('page', 1)
-        pagelist_obj = Member.Q.filter(Member.deleted==0).paginate(page=page, per_page=limit)
+        username = self.get_argument('username', None)
+        mobile = self.get_argument('mobile', None)
+        email = self.get_argument('email', None)
+        sex = self.get_argument('sex', None)
+
+        query = Member.Q.filter(Member.deleted==0)
+        if username:
+            query = query.filter(Member.username==username)
+        if mobile:
+            query = query.filter(Member.mobile==mobile)
+        if email:
+            query = query.filter(Member.email==email)
+        if sex:
+            query = query.filter(Member.sex==sex)
+
+        pagelist_obj = query.paginate(page=page, per_page=limit)
+
         if pagelist_obj is None:
             return self.error('暂无数据')
 
         total = pagelist_obj.total
         page = pagelist_obj.page
         items = pagelist_obj.items
+        data = []
+        for item in items:
+            item2 = item.as_dict()
+            item2['sex_option'] = item.sex_option
+            data.append(item2)
 
         params = {
             'count': total,
             'uri': self.request.uri,
             'path': self.request.path,
-            'data': [user.as_dict() for user in items],
+            'data': data,
         }
         return self.success(**params)
 
