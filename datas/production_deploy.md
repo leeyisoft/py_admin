@@ -127,6 +127,13 @@ server {
     listen 80;
     server_name demo.leeyi.net;
 
+    location ^~ /static {
+        alias /data/www/py_admin/applications/statics;
+        if ($query_string) {
+            expires max;
+        }
+    }
+
     location / {
         proxy_pass_header Server;
         proxy_set_header Host $http_host;
@@ -145,8 +152,8 @@ server{
     listen 80;
     server_name supervisor.leeyi.net;
 
-    access_log /home/wwwlogs/supervisor_access.log;
-    error_log /home/wwwlogs/supervisor_error.log;
+    access_log /data/www/py_admin/logs/supervisor_access.log;
+    error_log /data/www/py_admin/logs/supervisor_error.log;
 
     client_max_body_size 60M;
     client_body_buffer_size 512k;
