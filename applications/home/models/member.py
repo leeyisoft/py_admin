@@ -8,6 +8,7 @@ import os
 from tornado.escape import json_decode
 
 from applications.core.settings_manager import settings
+from applications.core.cache import cache
 
 from applications.core.logger.client import SysLogger
 from applications.core.utils import Func
@@ -110,21 +111,38 @@ class Member(BaseModel):
         'female': '女',
     }
 
+
     @property
     def sex_option(self):
         return self.sex_options.get(self.sex, '保密')
+
+
+    @property
+    def authorized(self):
+        obj = MemberCertification.Q.filter(MemberCertification.user_id==self.uuid).first()
+        # print('MemberCertification : ', MemberCertification.Q.statement)
+        return True if obj and obj.authorized==1 else False
+
+
+    @property
+    def authorize_info(self):
+        return MemberCertification.Q.filter(MemberCertification.user_id==self.uuid).first()
+
 
     @property
     def last_login_at(self):
         return Func.dt_to_timezone(self.utc_last_login_at)
 
+
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
 
+
     @property
     def email_activated(self):
         return self.check_email_activated(self.uuid, self.email)
+
 
     @staticmethod
     def sex_options_html(sex=''):
@@ -136,12 +154,32 @@ class Member(BaseModel):
         # print("html", sex, html)
         return html
 
+
+    def cache_info(self, handler):
+        """cache member info"""
+        fileds = ['uuid','username','mobile','avatar','sign']
+        member_dict = self.as_dict(fileds)
+
+        if not member_dict['username']:
+            member_dict['username'] = member_dict.get('mobile', '--')
+        avatar = member_dict.get('avatar', None)
+        if avatar:
+            member_dict['avatar'] = handler.static_url(member_dict['avatar'])
+        else:
+            member_dict['avatar'] = handler.static_url('image/default_avatar.jpg')
+        cache_key = '%s%s' % (settings.member_cache_prefix, self.uuid)
+        cache.set(cache_key, member_dict, timeout=86400)
+        return cache_key
+
+
     @staticmethod
     def get_info(user_id, fields='username,avatar,sign', scalar=False):
         query = "select %s from member where uuid='%s'" % (fields, user_id, )
         info = Member.session.execute(query).first()
-        info = dict(info)
+        # print("info2", info)
+        info = dict(info) if info else {}
         return info.get(fields, '') if scalar is True else info
+
 
     @staticmethod
     def check_email_activated(user_id, email):
@@ -149,6 +187,7 @@ class Member(BaseModel):
         # print("query: ", query)
         value = Member.session.execute(query).scalar()
         return True if value>0 else False
+
 
     @staticmethod
     def _friend_list(user_id, where=''):
@@ -160,10 +199,12 @@ class Member(BaseModel):
                 items.append(dict(row))
         return items
 
+
     @staticmethod
     def friends_no_grouping(user_id):
         where = " and f.group_id='0'"
         return Member._friend_list(user_id, where)
+
 
     @staticmethod
     def friends_by_group(user_id, static_url):
@@ -203,6 +244,7 @@ class Member(BaseModel):
             raise e
 
         return f_g_li
+
 
     @staticmethod
     def login_success(member, handler, client='web'):
@@ -265,13 +307,6 @@ class MemberFriend(BaseModel):
 class Online:
     cache_key = 'member_online:%s'
 
-    online_members = []
-
-    @staticmethod
-    def check_online(app=1234):
-        # print(app, Func.utc_now())
-        pass
-
     @classmethod
     def get_online(cls, user_id):
         """
@@ -281,6 +316,12 @@ class Online:
         # return state.decode() if state else 'offline'
         return 'online'
 
+
+    @staticmethod
+    def check_online(cls, user_id):
+        pass
+
+
     @classmethod
     def set_online(cls, user_id, state):
         """
@@ -289,3 +330,44 @@ class Online:
         """
         # return redis_conn.set(cls.cache_key % (str(user_id),), state)
         return True
+
+
+class MemberCertification(BaseModel):
+    """
+    会员出售球币
+    """
+    __tablename__ = 'member_certification'
+    user_id = Column(String(32), primary_key=True, nullable=False)
+    realname = Column(String(40), nullable=False)
+    idcardno = Column(String(40), nullable=False)
+    idcard_img = Column(String(200), nullable=False, default='')
+    # 认证状态:( 0 待审核；1 审核通过, 2 审核不通过)
+    authorized = Column(Integer, nullable=False, default=0)
+    # 审核管理员ID，user 表 uuid
+    authorized_user_id = Column(String(32), nullable=False, default='')
+    client = Column(String(20), nullable=True, default='web')
+    ip = Column(String(40), nullable=False)
+    utc_updated_at = Column(TIMESTAMP, default=None)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+    # 状态:( 0 禁用；1 启用, 默认1)
+    status = Column(Integer, nullable=False, default=1)
+    # 备注；如果审核不通过，填写原因
+    remark = Column(String(200), nullable=False)
+
+    authorized_options = {
+        0: '待审核',
+        1: '审核通过',
+        2: '审核不通过',
+    }
+
+    @property
+    def authorized_option(self):
+        return self.authorized_options[self.authorized]
+
+
+    @property
+    def updated_at(self):
+        return Func.dt_to_timezone(self.utc_updated_at)
+    @property
+    def created_at(self):
+        return Func.dt_to_timezone(self.utc_created_at)

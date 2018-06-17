@@ -10,6 +10,8 @@ xsrf_cookies = True
 login_pwd_rsa_encrypt = True
 default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
 
+valid_code_key = 'ab1195c6f0084b4f8b007d3aa7628a38'
+
 # 163邮箱信息
 email = {
     'smtp_sever': 'smtp.163.com',
@@ -108,6 +110,9 @@ CACHES = {
     },
 
 }
+config_cache_prefix = 'conf:'
+member_cache_prefix = 'm_cache:'
+user_cache_prefix = 'u_cache:'
 
 IPV4_ONLY = True
 
@@ -159,7 +164,7 @@ standard_format = '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(
 LOGGING = (
     {
         'name': 'access_log',
-        'log_to_stderr': True,
+        # 'log_to_stderr': True,
         'filename': 'access_log.log'
     },
     {

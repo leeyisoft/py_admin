@@ -21,6 +21,7 @@ from sqlalchemy import PrimaryKeyConstraint
 from applications.core.utils import Func
 
 from applications.home.models import Member
+from applications.home.models import MemberCertification
 
 
 class Role(BaseModel):

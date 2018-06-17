@@ -20,8 +20,6 @@ from ..models import User
 from .common import CommonHandler
 
 
-valid_code_key = 'f782d88f80e84779ab754accce47a62c'
-
 class LoginHandler(CommonHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
@@ -39,6 +37,11 @@ class LoginHandler(CommonHandler):
         next = self.get_argument('next', '')
         password = self.get_argument('password', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        code = self.get_argument('code', 0)
+        _ = self.locale.translate
+
+        if self.invalid_img_captcha(code):
+            return self.error(_('验证码错误'))
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
             private_key = sys_config('sys_login_rsa_priv_key')
@@ -54,8 +57,7 @@ class LoginHandler(CommonHandler):
             return self.error('用户被“禁用”，请联系客服')
 
         User.login_success(user, self)
-        self.clear_cookie(valid_code_key)
-
+        self.clear_cookie(settings.valid_code_key)
 
         return self.success(next=next)
 
@@ -75,17 +77,10 @@ class CaptchaHandler(CommonHandler):
         imgio = io.BytesIO()
         #生成图片对象和对应字符串
         img, code = create_validate_code(size=(160, 38), font_size=32)
-        self.set_secure_cookie(valid_code_key, code, expires_days=1)
+        self.set_secure_cookie(settings.valid_code_key, code, expires_days=1)
         #将图片信息保存到文件流
         img.save(imgio, 'png')
         #返回图片
         self.set_header('Content-Type', 'image/png')
         self.write(imgio.getvalue())
         return self.finish()
-
-    def post(self, *args, **kwargs):
-        valid_code = self.get_argument('valid_code')
-        if self.get_secure_cookie(valid_code_key)==valid_code:
-            return self.success()
-        else:
-            return self.error(_('验证码错误'))

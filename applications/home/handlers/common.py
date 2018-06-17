@@ -9,35 +9,44 @@ import tornado
 
 from tornado.escape import json_decode
 
+from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.handler import BaseHandler
+from applications.core.cache import cache
+
+from ..models import Member
 
 
 class CommonHandler(BaseHandler):
-    session_key = 'ba561cfa32694a83883791db60d26135'
-    token_key = 'c17a6633e5e64f00bfc93534cae80a2b'
+    session_key = '171630947de24c969c28b2d178c4e0fe'
     def get_current_user(self):
-        user = self.get_secure_cookie(self.session_key)
-        if user is None:
+        cache_key = self.get_secure_cookie(self.session_key)
+        if cache_key is None:
             return None
         try:
-            user = str(user, encoding='utf-8')
-            user = user.replace('\'', '"')
-            user = json_decode(user)
-            avatar = user.get('avatar', None)
-            if avatar:
-                user['avatar'] = self.static_url(user['avatar'])
-            else:
-                user['avatar'] = self.static_url('image/default_avatar.jpg')
+            cache_key = str(cache_key, encoding='utf-8')
+            # print('cache_key: ', cache_key)
+            user = cache.get(cache_key)
+            # print('user: ', type(user), user)
+            if user:
+                return user
+            member_id = cache_key[len(settings.member_cache_prefix):]
+            # print('member_id: ', member_id)
+            member = Member.Q.filter(Member.uuid==member_id).first()
+            if member is None:
+                return None
+            self.set_curent_user(member)
+            user = cache.get(cache_key)
+            # print('user: ', type(user), user)
             return user
         except Exception as e:
             raise e
 
+
     def set_curent_user(self, member):
-        """设置登录用户cookie信息"""
-        user_fileds = ['uuid', 'username', 'avatar', 'sign']
-        user = member.as_dict(user_fileds)
-        self.set_secure_cookie(self.session_key, str(user), expires_days=1)
+        cache_key = member.cache_info(self)
+        self.set_secure_cookie(self.session_key, cache_key, expires_days=1)
+
 
     def get_login_url(self):
         return '/passport/login'

@@ -11,6 +11,7 @@ import tornado
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 from applications.core.cache import sys_config
+from applications.core.cache import cache
 from applications.core.decorators import required_permissions
 from applications.core.utils import Func
 from applications.core.models import Config
@@ -41,6 +42,9 @@ class ConfigHandler(CommonHandler):
 
         Config.Q.filter(Config.key==key).delete()
         Config.session.commit()
+
+        cache_key = '%s%s' % (settings.config_cache_prefix,key)
+        cache.delete(cache_key)
         return self.success()
 
 class ConfigListHandler(CommonHandler):
@@ -152,4 +156,8 @@ class ConfigEditHandler(CommonHandler):
         Config.session.add(Config(**params))
         Config.session.commit()
         params.pop('utc_created_at', None)
+
+        cache_key = '%s%s' % (settings.config_cache_prefix,key)
+        cache.delete(cache_key)
+
         return self.success(data=params)

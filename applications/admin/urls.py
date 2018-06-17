@@ -61,4 +61,6 @@ urls = [
     (r"/admin/member/list/?(.html)?", member.MemberListHandler),
     (r"/admin/member/add/?(.html)?", member.MemberAddHandler),
     (r"/admin/member/edit/?(.html)?", member.MemberEditHandler),
+    (r"/admin/member/authorize/?(.html)?", member.MemberAuthorizeHandler),
+    (r"/admin/member/authorize/list/?(.html)?", member.MemberAuthorizeListHandler),
 ]

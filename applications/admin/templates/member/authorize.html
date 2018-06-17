@@ -1,0 +1,244 @@
+{% extends "../base.html" %}
+
+{% block title %} {% end %}
+
+{% block body %}
+<div class="layui-body">
+    <div class="layui-card" id="search_box" style="display: ;">
+        <form class="layui-form layui-card-header" action="/admin/member/authorize/list">
+            <div class="layui-inline">
+                <label class="layui-form-label">用户ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="user_id" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="realname" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idcardno" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit="" lay-filter="searchSubmit">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <!-- 内容主体区域 -->
+    <div class="layui-btn-group topToolbar">
+        <a data-href="{:url('status?table=admin_user&val=1')}" class="layui-btn layui-btn-primary">
+            <i class="layui-icon">&#xe643;</i>启用
+        </a>
+        <a data-href="{:url('status?table=admin_user&val=0')}" class="layui-btn layui-btn-primary">
+            <i class="layui-icon">&#xe63f;</i>禁用
+        </a>
+        <a class="layui-btn layui-btn-primary" id="show_search_box">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+        </a>
+    </div>
+    <table id="user_list" class="layui-table" lay-filter="user_list"></table>
+</div>
+{% end %}
+
+{% block javascript %}
+<script type="text/html" id="user_list_bar">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="authorized_1" title="通过审核">
+        通过审核
+    </a>
+    <a class="layui-btn layui-btn-xs" lay-event="authorized_2" title="不通过">
+        不通过
+    </a>
+</script>
+
+<script type="text/html" id="switchStatus">
+    <input type="checkbox" name="status" value="{{!d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" {{!d.status == 1 ? 'checked' : ''}}>
+</script>
+
+<script type="text/javascript">
+
+$(document).on('click', '.show_picture', function() {
+    var that = $(this)
+    var img_url = $(this).attr('img_url')
+    if (!img_url) {
+        return
+    }
+    var html = '<img src="'+img_url+'" style="width:99%;"/>'
+    layer.open({
+        type: 1 //Page层类型
+        ,area: ['600px', '600px']
+        ,title: '查看手持身份证照片'
+        ,shade: 0.6 //遮罩透明度
+        ,maxmin: true //允许全屏最小化
+        ,anim: 1 //0-6的动画形式，-1不开启
+        ,content: html
+    })
+})
+
+layui.use(['table','form'], function() {
+    var table = layui.table
+    var form = layui.form
+
+    //监听工具条
+    table.on('tool(user_list)', function(obj){
+        var data = obj.data;
+        switch(obj.event) {
+            case 'authorized_1':
+                authorized(obj.data.user_id, 1, '')
+                break;
+            case 'authorized_2':
+                var html = '原因：\
+                    <textarea type="text" id="reson" /></textarea>\
+                '
+                layer.open({
+                    content: html
+                    , title: '认证认证不通过'
+                    ,btn: ['提交', '取消']
+                    ,yes: function(index, layero){
+                        var reson_obj = $('#reson')
+                        if (!reson_obj.val()) {
+                            reson_obj.focus()
+                            return false
+                        }
+                        return authorized(obj.data.user_id, 2, reson_obj.val())
+                    }
+                    ,btn2: function(index, layero){
+                        //按钮【按钮二】的回调
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                    ,cancel: function(){
+                        //右上角关闭回调
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+                break;
+        }
+    });
+
+    var authorized = function(user_id, code, remark) {
+        var params = {user_id: user_id, authorized: code, remark: remark}
+        params['_xsrf'] = get_xsrf()
+        $.ajax({
+            type: "POST",
+            url: '/admin/member/authorize',
+            data: params,
+            success: function(res) {
+                if (res.code==0) {
+                    layer.msg('操作成功', {icon: 1, time: 2000}, function(){
+                        location.href = res.next ? res.next : '/admin/member/authorize'
+                    })
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+    }
+
+    $('.topToolbar .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+
+    form.on('switch(status)', function() {
+        var status = this.checked ? 1 : 0
+        var user_id = $(this).parent().parent().parent().children('td[data-field="user_id"]').children('div').html()
+
+        var params = {user_id: user_id, status:status, }
+        params['_xsrf'] = get_xsrf()
+
+        $.ajax({
+            type: "POST",
+            url: '/admin/member/authorize',
+            data: params,
+            success: function(res) {
+                if (res.code==0) {
+                    console.log('success')
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+    })
+
+    var table_load = function(url, data) {
+        where = data
+        where['format'] = 'json'
+        // return false
+        table.render({
+            elem: '#user_list'
+            , where: where
+            , url: url
+                ,cols: [[
+                {field:'user_id', width:80, title: '会员ID', sort: true}
+                ,{field:'username', width:100, title: '用户名'}
+                ,{field:'mobile', width:120, title: '手机'}
+                ,{field:'realname', width:100, title: '姓名'}
+                ,{field:'idcardno', width:200, title: '身份证号'}
+                ,{field:'idcard_img_html', width:100, title:'手持身份证',}
+                ,{field:'authorized_option', width:100, title:'认证状态',}
+                ,{field:'remark', width:100, title:'备注',}
+                ,{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}
+                ,{field:'utc_created_at', width:135, title: '申请时间', sort: true}
+                ,{fixed: 'right', width:178, align:'center', toolbar: '#user_list_bar'}
+            ]]
+            ,page: true
+            ,done: function(res) {
+                if (res.code==0) {
+                    layer.closeAll()
+                    // layer.msg('操作成功', {icon: 1, time: 2000}, function(){
+                    //     layer.closeAll()
+                    // })
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                return true
+            }
+            , error: function(xhr){
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                return true
+            }
+        })
+        return false
+    }
+    table_load('/admin/member/authorize/list', {})
+    form.on('submit(searchSubmit)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+        // console.log('obj.field', obj.field)
+        return table_load(obj.form.action, obj.field)
+    })
+})
+
+</script>
+{% end %}

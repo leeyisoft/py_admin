@@ -17,6 +17,7 @@ from applications.core.utils.hasher import make_password
 from applications.core.utils import Func
 
 from ..models import Member
+from ..models import MemberCertification
 from ..models import Role
 from ..models import AdminMenu
 
@@ -164,7 +165,7 @@ class MemberEditHandler(CommonHandler):
         member = Member.Q.filter(Member.uuid==uuid).first()
 
         data_info = member.as_dict()
-
+        data_info.pop('password', None)
         params = {
             'member': member,
             'menu_list': menu_list,
@@ -195,9 +196,9 @@ class MemberEditHandler(CommonHandler):
         mobile = params.get('mobile', None)
         params.pop('mobile', None)
         if mobile:
-            params['password'] = mobile
+            params['mobile'] = mobile
             if Func.is_mobile(mobile):
-                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==params['mobile']).count()
+                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==mobile).count()
                 if count>0:
                     return self.error('电话号码已被占用')
 
@@ -206,15 +207,17 @@ class MemberEditHandler(CommonHandler):
         if email:
             params['email'] = email
             if Func.is_email(email):
-                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==params['email']).count()
+                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==email).count()
                 if count>0:
                     return self.error('Email已被占用')
 
         password = params.get('password', None)
+        params.pop('password', None)
         if password:
             rsa_encrypt = params.get('rsa_encrypt', 0)
             if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
                 private_key = sys_config('sys_login_rsa_priv_key')
+                # print('password: ', type(password), password)
                 password = RSAEncrypter.decrypt(password, private_key)
             params['password'] = make_password(password)
 
@@ -222,6 +225,10 @@ class MemberEditHandler(CommonHandler):
         params.pop('rsa_encrypt', None)
         Member.Q.filter(Member.uuid==uuid).update(params)
         Member.session.commit()
+
+        # update member cache info
+        member = Member.Q.filter(Member.uuid==uuid).first()
+        cache_key = member.cache_info(self)
 
         return self.success(data=params)
 
@@ -280,3 +287,95 @@ class MemberInfoHandler(CommonHandler):
         Member.session.commit()
 
         return self.success(data=user)
+
+
+class MemberAuthorizeHandler(CommonHandler):
+    """实名认证"""
+    @tornado.web.authenticated
+    @required_permissions('admin:member:authorize')
+    def get(self, *args, **kwargs):
+        """**"""
+        params = {
+        }
+        self.render('member/authorize.html', **params)
+
+    @tornado.web.authenticated
+    @required_permissions('admin:member:authorize')
+    def post(self, *args, **kwargs):
+        """上传图片"""
+        current_user_id = self.current_user.get('user_id')
+
+        user_id = self.get_argument('user_id', None)
+        status = self.get_argument('status', None)
+        authorized = self.get_argument('authorized', None)
+        remark = self.get_argument('remark', '')
+
+        member = Member.Q.filter(Member.uuid==user_id).first()
+        if member is None:
+            return self.error('用户不存在')
+
+
+        params = {
+            'user_id': user_id,
+            'utc_updated_at': Func.utc_now(),
+            'authorized_user_id': current_user_id,
+        }
+        if status is not None:
+            params['status'] = status
+        if authorized is not None:
+            params['authorized'] = authorized
+            params['remark'] = remark
+            if member.authorized:
+                return self.error('已经实名认证')
+
+        MemberCertification.Q.filter(MemberCertification.user_id==user_id).update(params)
+        MemberCertification.session.commit()
+
+        return self.success()
+
+
+class MemberAuthorizeListHandler(CommonHandler):
+    """docstring for Passport"""
+    @tornado.web.authenticated
+    @required_permissions('admin:member:authorize')
+    def get(self, *args, **kwargs):
+        limit = self.get_argument('limit', 10)
+        page = self.get_argument('page', 1)
+        user_id = self.get_argument('user_id', None)
+        realname = self.get_argument('realname', None)
+        idcardno = self.get_argument('idcardno', None)
+
+        query = MemberCertification.Q
+        # query = query.filter(MemberCertification.status==1)
+        if user_id:
+            query = query.filter(MemberCertification.user_id==user_id)
+        if realname:
+            query = query.filter(MemberCertification.realname==realname)
+        if idcardno:
+            query = query.filter(MemberCertification.idcardno==idcardno)
+
+        pagelist_obj = query.paginate(page=page, per_page=limit)
+
+        if pagelist_obj is None:
+            return self.error('暂无数据')
+
+        total = pagelist_obj.total
+        page = pagelist_obj.page
+        items = pagelist_obj.items
+        data = []
+        for item in items:
+            item2 = item.as_dict()
+            member = Member.get_info(item.user_id, fields='username,mobile')
+            item2['username'] = member.get('username', '')
+            item2['mobile'] = member.get('mobile', '')
+            item2['authorized_option'] = item.authorized_option
+            item2['idcard_img_html'] = '<a href="#" class="show_picture" img_url="%s"><i class="fa fa-picture-o"></i></a>' % self.static_url(item.idcard_img)
+            data.append(item2)
+
+        params = {
+            'count': total,
+            'uri': self.request.uri,
+            'path': self.request.path,
+            'data': data,
+        }
+        return self.success(**params)

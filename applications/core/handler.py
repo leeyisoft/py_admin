@@ -91,6 +91,12 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
     def params(self):
         return dict((k, self.get_argument(k) ) for k, _ in self.request.arguments.items())
 
+    def invalid_img_captcha(self, code):
+        """ 图像验证码验证 不区分大小写"""
+        valid_code = self.get_secure_cookie(settings.valid_code_key)
+        valid_code = valid_code.decode('utf-8')
+        return valid_code.lower()!=code.lower()
+
     def get_template_namespace(self):
         """Returns a dictionary to be used as the default template namespace.
 
