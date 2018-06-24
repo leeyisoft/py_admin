@@ -58,6 +58,8 @@ set global validate_password_policy=0;
 create database db_py_admin default charset utf8;
 GRANT ALL PRIVILEGES ON db_py_admin.* TO 'user_py_admin'@'%' IDENTIFIED BY 'eb26acWq16E1' WITH GRANT OPTION;
 flush privileges;
+
+mysqldump -uroot -p db_py_admin > datas/db.sql
 ```
 # features
 * 后台配置添加
@@ -71,16 +73,19 @@ flush privileges;
 * 参考网站 [torngas](https://github.com/mqingyn/torngas)
 * UI 使用 [layui-v2.2.6](https://www.layui.com)
 * 其他特性继承自 tornado
-
-* 前端 注册、登录、修改资料、激活Email、修改密码、通过Email找回密码、上传头像、绑定手机号码、绑定多个Email、绑定微信、绑定支付宝、人类验证、找回密码、系统消息、用户等级
+* 后台用户登录日志功能
+* 前端 注册、登录、修改资料、激活Email、修改密码、通过Email找回密码、上传头像
 
 ## todo fetures
-* 后台用户登录日志功能
 * 多次登录失败账户锁定功能
-* 图像验证码验证功能
 * 锁屏功能
 * 清理缓存功能
-*
+
+## maybe todo fetures
+* 绑定手机号码、绑定多个Email、绑定微信、绑定支付宝、
+* 人类验证
+* 系统消息
+* 用户等级
 
 # FAQ
 ## 为什么要用 datetime(6) ？

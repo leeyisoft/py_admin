@@ -223,7 +223,7 @@ class ActivateHandler(CommonHandler):
         """
         user_id = self.current_user.get('uuid')
         token = self.get_argument('token', None)
-        token2 = self.get_secure_cookie(self.token_key)
+        token2 = self.get_secure_cookie(settings.token_key)
         if token and token2:
             token2 = str(token2, encoding='utf-8')
             token2 = token2.replace('\'', '"')
@@ -239,7 +239,7 @@ class ActivateHandler(CommonHandler):
                     'client': 'web',
                 }
                 MemberOperationLog.add_log(params)
-                self.clear_cookie(self.token_key)
+                self.clear_cookie(settings.token_key)
 
         member = Member.Q.filter(Member.uuid==user_id).first()
         params = {
@@ -262,7 +262,7 @@ class SendmailHandler(CommonHandler):
         if member.email_activated:
             return self.error('已经激活了，请不要重复操作')
 
-        token = self.get_secure_cookie(self.token_key)
+        token = self.get_secure_cookie(settings.token_key)
         if token:
             return self.error('邮件已发送，10分钟后重试')
 
@@ -288,7 +288,7 @@ class SendmailHandler(CommonHandler):
             'action':'email_reset_pwd',
         }
         expires = time.mktime(localnow.timetuple())
-        self.set_secure_cookie(self.token_key, str(save), expires=expires)
+        self.set_secure_cookie(settings.token_key, str(save), expires=expires)
         return self.success()
 
     def email_reset_pwd(self, email):
@@ -297,7 +297,7 @@ class SendmailHandler(CommonHandler):
         if not Func.is_email(email):
             return self.error('Email格式不正确')
 
-        token = self.get_secure_cookie(self.token_key)
+        token = self.get_secure_cookie(settings.token_key)
         if token:
             return self.error('邮件已发送，30分钟后重试')
 
@@ -322,6 +322,7 @@ class SendmailHandler(CommonHandler):
         content = self.render_string(tmpl, **params)
         # print('content', content)
         Func.sendmail({'to_addr': email, 'subject':subject, 'content': content})
+        # Func.sendmail({'to_addr': email, 'subject':subject, 'content': content})
         save = {
             'token':token,
             'account': email,
@@ -329,7 +330,7 @@ class SendmailHandler(CommonHandler):
             'action':'email_reset_pwd',
         }
         expires = time.mktime(localnow.timetuple())
-        self.set_secure_cookie(self.token_key, str(save), expires=expires)
+        self.set_secure_cookie(settings.token_key, str(save), expires=expires)
         return self.success()
 
     def post(self, *args, **kwargs):
@@ -337,7 +338,12 @@ class SendmailHandler(CommonHandler):
         """
         account = self.get_argument('account', '')
         action = self.get_argument('action', '')
-        vercode = self.get_argument('vercode', '')
+        code = self.get_argument('code', '')
+        _ = self.locale.translate
+
+        if self.invalid_img_captcha(code):
+            return self.error(_('验证码错误'))
+
         if action=='activate_email':
             return self.activate_email(account)
         elif action=='email_reset_pwd':

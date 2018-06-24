@@ -2,6 +2,7 @@
 # -*- coding: utf-8  -*-
 import time
 import smtplib
+import tornado
 import email.mime.multipart
 import email.mime.text
 
@@ -18,6 +19,7 @@ def _format_addr(s):
 
 
 # sendmail({'to_addr':'leeyisoft@qq.com', 'subject':'ly test subject', 'content': 'abc'})
+@tornado.gen.coroutine
 def sendmail(params):
     """发送Email，支持HTML格式内容，支持定义发送者名称，定义邮件主题
     """

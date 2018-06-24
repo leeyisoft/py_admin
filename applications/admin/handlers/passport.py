@@ -37,7 +37,7 @@ class LoginHandler(CommonHandler):
         next = self.get_argument('next', '')
         password = self.get_argument('password', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
-        code = self.get_argument('code', 0)
+        code = self.get_argument('code', '')
         _ = self.locale.translate
 
         if self.invalid_img_captcha(code):

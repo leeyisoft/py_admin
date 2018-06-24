@@ -50,7 +50,7 @@ class LoginHandler(CommonHandler):
         account = self.get_argument('account', None)
         password = self.get_argument('password', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
-        code = self.get_argument('code', 0)
+        code = self.get_argument('code', '')
         _ = self.locale.translate
 
         if self.invalid_img_captcha(code):
@@ -122,17 +122,22 @@ class RegisterHandler(CommonHandler):
         repass = self.get_argument('repass', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
         ref_user_id = self.get_argument('ref_user_id', '')
+        code = self.get_argument('code', '')
+        _ = self.locale.translate
+
+        if self.invalid_img_captcha(code):
+            return self.error(_('验证码错误'))
+
+        if not email:
+            return self.error('Email不能为空')
+
+        if not password:
+            return self.error('密码不能为空')
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
             private_key = sys_config('sys_login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
             repass = RSAEncrypter.decrypt(repass, private_key)
-
-        if not mobile:
-            return self.error('电话号码不能为空')
-
-        if not password:
-            return self.error('密码不能为空')
 
         if repass!=password:
             msg = '两次输入的密码不一致，请重新输入'
@@ -179,9 +184,9 @@ class RegisterHandler(CommonHandler):
 class ForgetHandler(CommonHandler):
     """docstring for Passport"""
     def get(self, *args, **kwargs):
-
         token = self.get_argument('token', None)
-        token2 = self.get_secure_cookie(self.token_key)
+        token2 = self.get_secure_cookie(settings.token_key)
+
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
@@ -209,8 +214,13 @@ class ForgetHandler(CommonHandler):
         password = self.get_argument('password', None)
         repass = self.get_argument('repass', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        code = self.get_argument('code', '')
+        _ = self.locale.translate
 
-        token2 = self.get_secure_cookie(self.token_key)
+        if self.invalid_img_captcha(code):
+            return self.error(_('验证码错误'))
+
+        token2 = self.get_secure_cookie(settings.token_key)
         if not(token and token2):
             return self.error('Token不存在或已经过期')
 
@@ -265,7 +275,7 @@ class ForgetHandler(CommonHandler):
         }
         MemberOperationLog.add_log(params)
 
-        self.clear_cookie(self.token_key)
+        self.clear_cookie(settings.token_key)
         return self.success(next=next)
 
 

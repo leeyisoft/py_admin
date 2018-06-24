@@ -56,12 +56,12 @@
                             </div>
                             {% end %}
                             <div class="layui-form-item">
-                                <label for="L_vercode" class="layui-form-label">人类验证</label>
+                                <label for="L_vercode" class="layui-form-label">验证码</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
+                                    <input type="text" name="code" class="layui-input">
                                 </div>
                                 <div class="layui-form-mid">
-                                    <span style="color: #c00;">d.vercode</span>
+                                    <img id="code" src="/passport/captcha.png" style="width: 11.5em; cursor: pointer;" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -143,6 +143,10 @@ layui.use(['form'], function() {
             }
         })
         return false;
+    })
+
+    $("#code").on('click', function () {
+        $(this).attr('src', '/passport/captcha.png?t=' + Math.random())
     })
 })
 </script>

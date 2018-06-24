@@ -11,6 +11,7 @@ login_pwd_rsa_encrypt = True
 default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
 
 valid_code_key = 'ab1195c6f0084b4f8b007d3aa7628a38'
+token_key = 'f30a2331813f46d0adc2bcf26fcbbbf4'
 
 # 163邮箱信息
 email = {
@@ -65,7 +66,7 @@ CRONTAB_PeriodicCallback = [
         'applications.home.models.Online',
         'check_online',
         # 参数必须是一个 dict
-        {'app': 'test'},
+        {'user_id': ''},
         # 每隔 1800000 毫秒(30分钟)执行一次
         1800000,
     ),
