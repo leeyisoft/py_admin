@@ -266,6 +266,8 @@ class SendmailHandler(CommonHandler):
         if token:
             return self.error('邮件已发送，10分钟后重试')
 
+        self.success()
+
         subject = '[%s]激活邮件' % sys_config('site_name')
         token = Func.uuid32()
         action_url = sys_config('site_url') + '/member/activate.html?token=' + token
@@ -289,7 +291,7 @@ class SendmailHandler(CommonHandler):
         }
         expires = time.mktime(localnow.timetuple())
         self.set_secure_cookie(settings.token_key, str(save), expires=expires)
-        return self.success()
+        return
 
     def email_reset_pwd(self, email):
         """使用Email充值密码发送邮件功能
@@ -307,6 +309,8 @@ class SendmailHandler(CommonHandler):
         if member.status==0:
             return self.error('账户被禁用')
 
+        self.success()
+
         subject = '[%s]找回密码' % sys_config('site_name')
         token = Func.uuid32()
         action_url = sys_config('site_url') + '/passport/forget.html?token=' + token
@@ -322,7 +326,6 @@ class SendmailHandler(CommonHandler):
         content = self.render_string(tmpl, **params)
         # print('content', content)
         Func.sendmail({'to_addr': email, 'subject':subject, 'content': content})
-        # Func.sendmail({'to_addr': email, 'subject':subject, 'content': content})
         save = {
             'token':token,
             'account': email,
@@ -331,7 +334,7 @@ class SendmailHandler(CommonHandler):
         }
         expires = time.mktime(localnow.timetuple())
         self.set_secure_cookie(settings.token_key, str(save), expires=expires)
-        return self.success()
+        return
 
     def post(self, *args, **kwargs):
         """激活邮箱“写入数据库、发送邮件”
