@@ -5,51 +5,14 @@ var status_html = {
     '0':'<div class="layui-table-cell laytable-cell-1-status"><input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" checked=""><div class="layui-unselect layui-form-switch" lay-skin="_switch"><em>禁用</em><i></i></div></div>',
 }
 
-function get_xsrf() {
-    return $("input[name='_xsrf']").val()
-}
-
+var $ = function() {}
+var get_xsrf = function() {}
 // 修改模式下表单自动赋值
-var set_form_data = function(formData) {
-    var input = ''
-    if (formData) {
-        for (var i in formData) {
-            switch($('.field-'+i).attr('type')) {
-                case 'select':
-                    input = $('.field-'+i).find('option[value="'+formData[i]+'"]');
-                    input.prop("selected", true);
-                    break;
-                case 'radio':
-                    input = $('.field-'+i+'[value="'+formData[i]+'"]');
-                    input.prop('checked', true);
-                    break;
-                case 'checkbox':
-                    for(var j in formData[i]) {
-                        input = $('.field-'+i+'[value="'+formData[i][j]+'"]');
-                        input.prop('checked', true);
-                    }
-                    break;
-                case 'img':
-                    input = $('.field-'+i);
-                    input.attr('src', formData[i]);
-                default:
-                    input = $('.field-'+i);
-                    input.val(formData[i]);
-                    break;
-            }
-            if (input.attr('data-disabled')) {
-                input.prop('disabled', true);
-            }
-            if (input.attr('data-readonly')) {
-                input.prop('readonly', true);
-            }
-        }
-    }
-}
+var set_form_data = function(){}
 
 layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     var form = layui.form
-    var $ = layui.jquery
+    $ = layui.jquery
     var element = layui.element
     var layer = layui.layer
     /* 全选 */
@@ -75,10 +38,50 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         layer.open({type:2, title:_title, content:_url, area: [_width+'px', _height+'px']})
         return false
     })
-})
 
-$(document).ready(function(){
-    $('#show_search_box').on('click', function() {
-        $('#search_box').slideToggle("slow")
+    get_xsrf = function() {
+        return $("input[name='_xsrf']").val()
+    }
+    set_form_data = function(formData) {
+        var input = ''
+        if (formData) {
+            for (var i in formData) {
+                switch($('.field-'+i).attr('type')) {
+                    case 'select':
+                        input = $('.field-'+i).find('option[value="'+formData[i]+'"]');
+                        input.prop("selected", true);
+                        break;
+                    case 'radio':
+                        input = $('.field-'+i+'[value="'+formData[i]+'"]');
+                        input.prop('checked', true);
+                        break;
+                    case 'checkbox':
+                        for(var j in formData[i]) {
+                            input = $('.field-'+i+'[value="'+formData[i][j]+'"]');
+                            input.prop('checked', true);
+                        }
+                        break;
+                    case 'img':
+                        input = $('.field-'+i);
+                        input.attr('src', formData[i]);
+                    default:
+                        input = $('.field-'+i);
+                        input.val(formData[i]);
+                        break;
+                }
+                if (input.attr('data-disabled')) {
+                    input.prop('disabled', true);
+                }
+                if (input.attr('data-readonly')) {
+                    input.prop('readonly', true);
+                }
+            }
+        }
+    }
+
+    $(document).ready(function(){
+        $('#show_search_box').on('click', function() {
+            $('#search_box').slideToggle("slow")
+        })
     })
 })
