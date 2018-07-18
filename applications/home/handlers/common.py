@@ -18,9 +18,8 @@ from ..models import Member
 
 
 class CommonHandler(BaseHandler):
-    session_key = '171630947de24c969c28b2d178c4e0fe'
     def get_current_user(self):
-        cache_key = self.get_secure_cookie(self.session_key)
+        cache_key = self.get_secure_cookie(settings.front_session_key)
         if cache_key is None:
             return None
         try:
@@ -45,7 +44,7 @@ class CommonHandler(BaseHandler):
 
     def set_curent_user(self, member):
         cache_key = member.cache_info(self)
-        self.set_secure_cookie(self.session_key, cache_key, expires_days=1)
+        self.set_secure_cookie(settings.front_session_key, cache_key, expires_days=1)
 
 
     def get_login_url(self):

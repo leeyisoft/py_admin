@@ -108,6 +108,7 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
         """
         namespace = dict(
             sys_config=sys_config,
+            def_avator=self.static_url('image/default_avatar.jpg'),
 
             handler=self,
             request=self.request,

@@ -60,6 +60,7 @@ GRANT ALL PRIVILEGES ON db_py_admin.* TO 'user_py_admin'@'%' IDENTIFIED BY 'eb26
 flush privileges;
 
 mysqldump -uroot -p db_py_admin > datas/db.sql
+
 ```
 # features
 * 后台配置添加
@@ -117,3 +118,6 @@ openssl rsa -pubout -in private.pem -out public.pem
 还有发放奖励功能需要做
 用户上传头像的功能
 
+### IM 参考
+
+http://test.guoshanchina.com/index.php

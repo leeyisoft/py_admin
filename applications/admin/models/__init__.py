@@ -7,6 +7,7 @@ import json
 from applications.core.settings_manager import settings
 
 from applications.core.models import BaseModel
+from applications.core.models import Message
 from applications.core.models import Sequence
 from applications.core.logger.client import SysLogger
 
@@ -60,6 +61,7 @@ class Role(BaseModel):
         query = cls.session.query('permission')
         query = query.filter(Role.uuid == role_id)
         return query.scalar()
+
 
 class User(BaseModel):
     """
@@ -132,6 +134,7 @@ class User(BaseModel):
         UserLoginLog.session.commit()
         return True
 
+
 class UserLoginLog(BaseModel):
     """
     user model
@@ -147,6 +150,7 @@ class UserLoginLog(BaseModel):
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
+
 
 class AdminMenu(BaseModel):
     """

@@ -13,6 +13,8 @@ default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
 valid_code_key = 'ab1195c6f0084b4f8b007d3aa7628a38'
 token_key = 'f30a2331813f46d0adc2bcf26fcbbbf4'
 
+front_session_key = '171630947de24c969c28b2d178c4e0fe'
+
 # 163邮箱信息
 email = {
     'smtp_sever': 'smtp.163.com',
@@ -63,8 +65,8 @@ MIDDLEWARE_CLASSES = (
 # 定时任务之定期调用，执行定时任务需要首先加载 middleware.PeriodicCallbackMiddleware
 CRONTAB_PeriodicCallback = [
     (
-        'applications.home.models.Online',
-        'check_online',
+        'applications.home.models.PeriodicCallbackDemo',
+        'demo_test',
         # 参数必须是一个 dict
         {'user_id': ''},
         # 每隔 1800000 毫秒(30分钟)执行一次
@@ -238,7 +240,6 @@ TEMPLATE_CONFIG = {
 
 # 数据库连接字符串，
 # 元祖，每组为n个数据库连接，有且只有一个master，可配与不配slave
-DB_DATETIME_IS_UTC = True
 DATABASE_CONNECTION = {
     'default': {
         'connections': [

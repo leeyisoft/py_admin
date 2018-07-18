@@ -1,0 +1,66 @@
+{% extends "../base.html" %}
+
+{% block title %}
+欢迎使用 {{ sys_config('SITE_NAME') }} 聊天工具!
+{% end %}
+{% block css %}
+    <link rel="stylesheet" href="{{ static_url('layui/css/modules/layim/layim.css') }}">
+{% end %}
+{% block body %}
+{% include ../common/header.html %}
+<div class="layui-container">
+    <h1>欢迎使用 {{ sys_config('SITE_NAME') }} 聊天工具</h1>
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default">Left</button>
+        <button type="button" class="btn btn-default">Middle</button>
+        <button type="button" class="btn btn-default"><a href="/passport/logout">logout</a></button>
+    </div>
+</div>
+
+{% end %}
+{% block javascript %}
+<script src="{{ static_url('home/js/chat.js') }}" charset="utf-8"></script>
+<script type="text/javascript">
+    var token = '{{ token }}';
+    if (token=='') {
+        window.location = '/passport/login';
+    }
+    var user_list_url = '/chat/init';
+    var im_name = "{{ sys_config('SITE_NAME') }} IM"
+    // var member_list_url = "/index.php/index/index/getmembers.html";
+    // var upload_img_url = "/index.php/index/upload/uploadimg.html";
+    // var upload_file_url = "/index.php/index/upload/uploadfile.html";
+    // var msg_box_url = "/index.php/index/msgbox/index.html";
+    // var find_url = "/index.php/index/findgroup/index.html";
+    // var chatlog_url = "/index.php/index/chatlog/index.html";
+    // var change_sign_url = "/index.php/index/chatuser/changesign.html";
+    // var chat_user_url = "/index.php/index/chatuser/index.html";
+    // var save_audio_url = "/index.php/index/tools/saveaudio.html";
+    // var get_noread_url = "/index.php/index/msgbox/getnoread.html";
+    // var join_group_url = "/index.php/index/findgroup/joindetail.html";
+
+    var member_list_url = '';
+    var upload_img_url = '';
+    var upload_file_url = '';
+    var msg_box_url = '/chat/msgbox';
+    var msg_url = '/chat/notice';
+    var find_url = '/friend/find';
+    var chatlog_url = '';
+    var change_sign_url = '';
+    var chat_user_url = '';
+    var save_audio_url = '';
+    var get_noread_url = '';
+    var join_group_url = '';
+
+    var curr_uuid = "{{ current_user['uuid'] }}";
+    var curr_uname = "{{ current_user['username']}}";
+    var curr_avatar = "{{ current_user['avatar'] }}";
+    var curr_sign = "{{ current_user['sign'] }}";
+
+    var ws_scheme = window.location.protocol == 'https:' ? 'wss' : 'ws'
+    var ws_host = ws_scheme + '://' + window.location.host + '/chat/websocket/?' + curr_uuid + '&token=' + token;
+
+    var im_events;
+
+</script>
+{% end %}

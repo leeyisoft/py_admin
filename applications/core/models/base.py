@@ -19,7 +19,9 @@ from ..db.dbalchemy import Connector
 from ..utils import Func
 from ..settings_manager import settings
 
+
 MetaBaseModel = declarative_base()
+
 
 class BaseModel(MetaBaseModel):
     __abstract__ = True
@@ -53,8 +55,8 @@ class BaseModel(MetaBaseModel):
             val = getattr(self, column.name)
             val = '' if val is None else val
             if isinstance(val, datetime.datetime):
-                if settings.DB_DATETIME_IS_UTC:
-                    val = Func.dt_to_timezone(val)
+                tz = 'UTC' if column.name[0:4]=='utc_' else None
+                val = Func.dt_to_timezone(val, tz)
                 val = str(val)
             elif isinstance(val, Decimal):
                 val = str(val)
@@ -64,6 +66,7 @@ class BaseModel(MetaBaseModel):
             else :
                 items[column.name] = val
         return items
+
 
 class Sequence(BaseModel):
     """
@@ -126,6 +129,7 @@ class Config(BaseModel):
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
 
+
 class Attach(BaseModel):
     """
     user model
@@ -178,4 +182,34 @@ class Attach(BaseModel):
         except Exception as e:
             raise e
         return True
+
+
+class Message(BaseModel):
+    """
+    sys_message model
+    """
+    __tablename__ = 'sys_message'
+
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    # 消息类型 'apply_friend','accept_friend','system'
+    msgtype = Column(String(40), nullable=False)
+    related_uuid = Column(String(32), nullable=False, default='')
+    message = Column(String(200), nullable=False, default='')
+    # Member 用户ID 消息发送者 0表示为系统消息
+    from_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+    # 消息接收者 Member 用户ID
+    to_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+
+    utc_read_at = Column(TIMESTAMP, nullable=True)
+    # 状态:( 0 未读；1 已读, 默认0)
+    status = Column(Integer, nullable=False, default=0)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+
+    @property
+    def read_at(self):
+        return Func.dt_to_timezone(self.utc_read_at)
+
+    @property
+    def created_at(self):
+        return Func.dt_to_timezone(self.utc_created_at)
 

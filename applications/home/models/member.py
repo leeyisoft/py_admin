@@ -47,15 +47,14 @@ class MemberOperationLog(BaseModel):
     @staticmethod
     def add_log(params):
         """激活邮件
-
         [description]
-
         Arguments:
             params {[type]} -- [description]
         """
         log = MemberOperationLog(**params)
         MemberOperationLog.session.add(log)
         MemberOperationLog.session.commit()
+
 
 class MemberLoginLog(BaseModel):
     """
@@ -72,6 +71,7 @@ class MemberLoginLog(BaseModel):
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
+
 
 class Member(BaseModel):
     """
@@ -111,11 +111,9 @@ class Member(BaseModel):
         'female': '女',
     }
 
-
     @property
     def sex_option(self):
         return self.sex_options.get(self.sex, '保密')
-
 
     @property
     def authorized(self):
@@ -123,26 +121,21 @@ class Member(BaseModel):
         # print('MemberCertification : ', MemberCertification.Q.statement)
         return True if obj and obj.authorized==1 else False
 
-
     @property
     def authorize_info(self):
         return MemberCertification.Q.filter(MemberCertification.user_id==self.uuid).first()
-
 
     @property
     def last_login_at(self):
         return Func.dt_to_timezone(self.utc_last_login_at)
 
-
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
 
-
     @property
     def email_activated(self):
         return self.check_email_activated(self.uuid, self.email)
-
 
     @staticmethod
     def sex_options_html(sex=''):
@@ -171,15 +164,13 @@ class Member(BaseModel):
         cache.set(cache_key, member_dict, timeout=86400)
         return cache_key
 
-
     @staticmethod
-    def get_info(user_id, fields='username,avatar,sign', scalar=False):
+    def get_info(user_id, fields='uuid,username,avatar,sign', scalar=False):
         query = "select %s from member where uuid='%s'" % (fields, user_id, )
         info = Member.session.execute(query).first()
         # print("info2", info)
         info = dict(info) if info else {}
         return info.get(fields, '') if scalar is True else info
-
 
     @staticmethod
     def check_email_activated(user_id, email):
@@ -187,64 +178,6 @@ class Member(BaseModel):
         # print("query: ", query)
         value = Member.session.execute(query).scalar()
         return True if value>0 else False
-
-
-    @staticmethod
-    def _friend_list(user_id, where=''):
-        query = "select m.uuid as user_id,m.username,m.avatar,m.sign,f.group_id from member m left join member_friend f on m.uuid=f.to_user_id where f.from_user_id='%s' and m.status=1 and f.status=1 %s" % (user_id, where)
-        rows = Member.session.execute(query).fetchall()
-        items = []
-        if rows:
-            for row in rows:
-                items.append(dict(row))
-        return items
-
-
-    @staticmethod
-    def friends_no_grouping(user_id):
-        where = " and f.group_id='0'"
-        return Member._friend_list(user_id, where)
-
-
-    @staticmethod
-    def friends_by_group(user_id, static_url):
-        """
-        按分组获取好友
-        """
-        _friend_list = Member._friend_list(user_id)
-        # print('_friend_list: ', _friend_list)
-        query = "select uuid, groupname from member_friendgroup where owner_user_id='%s'" % user_id
-        grows = Member.session.execute(query).fetchall()
-        grows = grows if grows else []
-        # print("grows: ", type(grows), grows)
-        f_g_li = []
-        try:
-            if len(grows)>0:
-                f_g_li += [{
-                    'id': group_id,
-                    'groupname': groupname,
-                    'list':[{
-                        'id':fnd.get('user_id'),
-                        'username':fnd.get('username'),
-                        'status': Online.get_online(fnd.get('user_id')),
-                        'sign':fnd.get('sign'),
-                        'avatar':fnd.get('avatar')
-                    } for fnd in _friend_list if fnd.get('group_id')==group_id
-                ]} for (group_id, groupname) in grows]
-
-            # Member.friends_no_grouping(user_id)
-            f_g_li += [{'id': '0', 'groupname': '未分组', 'list':[{
-                'id':fnd.get('user_id'),
-                'username':fnd.get('username'),
-                'status': Online.get_online(fnd.get('user_id')),
-                'sign':fnd.get('sign'),
-                'avatar':static_url(fnd.get('avatar'))
-            } for fnd in Member.friends_no_grouping(user_id)]}]
-        except Exception as e:
-            raise e
-
-        return f_g_li
-
 
     @staticmethod
     def login_success(member, handler, client='web'):
@@ -288,21 +221,126 @@ class Member(BaseModel):
             SysLogger.info(e)
             return (500, str(e))
 
+
 class MemberFriend(BaseModel):
     """
-    user model
+    聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 member表的主键）
     """
     __tablename__ = 'member_friend'
 
     uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    user_id = Column(String(32), ForeignKey('member.uuid'))
-    ip = Column(String(40), nullable=False)
-    client = Column(String(20), nullable=True, default='web')
+    from_user_id = Column(String(32), ForeignKey('member.uuid'))
+    to_user_id = Column(String(32), ForeignKey('member.uuid'))
+    group_id = Column(String(32), nullable=True, default='0')
+    remark = Column(String(200), nullable=True, default='')
+    # `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
+    status = Column(Integer, nullable=True, default=0)
+    utc_updated_at = Column(TIMESTAMP, nullable=True)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+
+    @property
+    def updated_at(self):
+        return Func.dt_to_timezone(self.utc_updated_at)
 
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)
+
+    @staticmethod
+    def _friend_list(user_id, where=''):
+        query = "select m.uuid,m.username,m.avatar,m.sign,f.group_id from member m left join member_friend f on m.uuid=f.to_user_id where f.from_user_id='%s' and m.status=1 and f.status=1 %s" % (user_id, where)
+        rows = Member.session.execute(query).fetchall()
+        items = []
+        if rows:
+            for row in rows:
+                items.append(dict(row))
+        return items
+
+    @staticmethod
+    def _friends_no_grouping(user_id):
+        where = " and f.group_id='0'"
+        return MemberFriend._friend_list(user_id, where)
+
+    @staticmethod
+    def friends_by_group(user_id, static_url):
+        """
+        按分组获取好友
+        """
+        _friend_list = MemberFriend._friend_list(user_id)
+        # print('_friend_list: ', _friend_list)
+        query = "select uuid, groupname from member_friendgroup where owner_user_id='%s'" % user_id
+        grows = MemberFriend.session.execute(query).fetchall()
+        grows = grows if grows else []
+        # print("grows: ", type(grows), grows)
+        f_g_li = []
+        try:
+            f_g_li += [{'id': '0', 'groupname': '未分组', 'list':[{
+                'id':fnd.get('uuid'),
+                'username':fnd.get('username'),
+                'status': Online.get_online(fnd.get('uuid')),
+                'sign':fnd.get('sign'),
+                'avatar':static_url(fnd.get('avatar'))
+            } for fnd in MemberFriend._friends_no_grouping(user_id)]}]
+
+            if len(grows)>0:
+                f_g_li += [{
+                    'id': group_id,
+                    'groupname': groupname,
+                    'list':[{
+                        'id':fnd.get('uuid'),
+                        'username':fnd.get('username'),
+                        'status': Online.get_online(fnd.get('uuid')),
+                        'sign':fnd.get('sign'),
+                        'avatar':static_url(fnd.get('avatar'))
+                    } for fnd in _friend_list if fnd.get('group_id')==group_id
+                ]} for (group_id, groupname) in grows]
+
+        except Exception as e:
+            raise e
+
+        return f_g_li
+
+    @staticmethod
+    def online_list(user_id):
+        """
+        获取在线的好友列表
+        返回 [1,2,3,]
+        """
+        # user_id 的 好友
+        _friend_list = MemberFriend._friend_list(user_id)
+        # 过滤掉离线好友
+        return [friend for friend in _friend_list if Online.get_online(friend['uuid'])=='online']
+
+
+class MemberFriendNotice(BaseModel):
+    """
+    member_friend_notice model
+    """
+    __tablename__ = 'member_friend_notice'
+
+    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    # 消息类型 'apply_friend','system'
+    msgtype = Column(String(40), nullable=False)
+    related_uuid = Column(String(32), nullable=False, default='')
+    message = Column(String(200), nullable=False, default='')
+    # Member 用户ID 消息发送者 0表示为系统消息
+    from_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+    # 消息接收者 Member 用户ID
+    to_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+
+    utc_read_at = Column(TIMESTAMP, nullable=True)
+    # 状态:( 0 未读；1 已读 11 接受 12 拒绝请求)
+    status = Column(Integer, nullable=False, default=0)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+
+    @property
+    def read_at(self):
+        return Func.dt_to_timezone(self.utc_read_at)
+
+    @property
+    def created_at(self):
+        return Func.dt_to_timezone(self.utc_created_at)
+
 
 class Online:
     cache_key = 'member_online:%s'
@@ -312,15 +350,9 @@ class Online:
         """
         获取用户在线状态
         """
-        # state = redis_conn.get(cls.cache_key % (str(user_id),))
-        # return state.decode() if state else 'offline'
-        return 'online'
-
-
-    @staticmethod
-    def check_online(cls, user_id):
-        pass
-
+        cache_key = cls.cache_key % (str(user_id),)
+        state = cache.get(cache_key)
+        return state if state else 'offline'
 
     @classmethod
     def set_online(cls, user_id, state):
@@ -328,8 +360,8 @@ class Online:
         设置用户在线状态
         state : [hide|online|offline]
         """
-        # return redis_conn.set(cls.cache_key % (str(user_id),), state)
-        return True
+        cache_key = cls.cache_key % (str(user_id),)
+        return cache.set(cache_key, state, timeout=86400)
 
 
 class MemberCertification(BaseModel):
@@ -364,10 +396,10 @@ class MemberCertification(BaseModel):
     def authorized_option(self):
         return self.authorized_options[self.authorized]
 
-
     @property
     def updated_at(self):
         return Func.dt_to_timezone(self.utc_updated_at)
+
     @property
     def created_at(self):
         return Func.dt_to_timezone(self.utc_created_at)

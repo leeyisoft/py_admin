@@ -1,0 +1,60 @@
+{% extends "../base.html" %}
+
+{% block title %}
+欢迎使用 {{ sys_config('SITE_NAME') }} 聊天工具!
+{% end %}
+{% block css %}
+    <link rel="stylesheet" href="{{ static_url('home/css/webrtc.css') }}">
+{% end %}
+{% block body %}
+{% include ../common/header.html %}
+<div class="fly-panel fly-column">
+    <div class="layui-container">
+        <div class="layui-row">
+            <h1>WebRTC Chat</h1>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-xs3">
+                <h2>Local Video</h2>
+            </div>
+            <div class="layui-col-xs3">
+                <h2>Remote Video</h2>
+            </div>
+            <div class="layui-col-xs3">
+                <h2>Chat Messages</h2>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-xs3">
+                <video id="local_video" autoplay ></video>
+            </div>
+            <div class="layui-col-xs3">
+                <video id="remote_video" autoplay ></video>
+            </div>
+            <div class="layui-col-xs3">
+                <textarea id="chat_messages" readonly></textarea>
+            </div>
+        </div>
+        <div class="layui-row">
+            <p>
+                <button type="button" class="layui-btn layui-btn-info" onclick="startVideo();">Start Local Video</button>
+                <button type="button" class="layui-btn layui-btn-danger" onclick="stopVideo();">Stop Local Video</button>
+                <button type="button" class="layui-btn layui-btn-info" onclick="connect();">Sync Remote</button>
+                <button type="button" class="layui-btn layui-btn-danger" onclick="hangUp();">Hang Up</button>
+            </p>
+        </div>
+        <div class="row">
+            <input id="chat_messages_input" class="chat_messages_input" type="text" placeholder="Please input chat messages...">
+        </div>
+        <div class="row">
+            <button type="button" id="sendBtn" class="layui-btn layui-btn-dark" onclick="sendMsg();">Send Message</button>
+        </div>
+    </div>
+</div>
+{% end %}
+{% block javascript %}
+<script src="{{ static_url('home/js/webrtc.js') }}" charset="utf-8"></script>
+<script type="text/javascript">
+    var token = '{{ token }}';
+</script>
+{% end %}

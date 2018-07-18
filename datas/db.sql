@@ -55,7 +55,7 @@ CREATE TABLE `member` (
 
 LOCK TABLES `member` WRITE;
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
-INSERT INTO `member` VALUES ('07cd3c82d2f141b49594c9827e4ba042',0,'pbkdf2_sha256$100000$ULGfqskKpc7B1ZEz$sfFuLT0JP71+Wj/Qwuf3BhUgcuX9kAgjV3Iig0hvAqo=','M6',NULL,'ll@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:03:56.684410','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:03:56.662033','192.168.31.100','mobile'),('27b32fab88c84ccd972b21feb09df9c3',0,'pbkdf2_sha256$100000$HoPM1t2mW0uHyUfX$ru2JUjNEeqccfsNjZe17EJzUEPvG2lo5NrljeQnmd9I=','M7',NULL,'lll@leeyi.net',0,'male','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:12:03.292378','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:12:03.261715','192.168.31.100','mobile'),('4ac3533b39db40ed99197c1ce7b8d2b1',0,'pbkdf2_sha256$100000$a6D68FUxaaddI3KM$0DMNC38gAEO2+ST0UmM88vFLQMuOw12d/01Z6Ng2jqk=','me4',NULL,'me4@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-18 04:08:01.521523','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 04:08:01.470958','127.0.0.1','web'),('4e93411afc72498abd5f8ee472c58080',0,'pbkdf2_sha256$100000$8DRUqPZFeAiz1CLz$7YTT3oywzLPf0yyBDYo1q2TLY0XCyoKYE4sqz16/Y6c=','M5',NULL,'llleeyi@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:00:31.335758','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:00:31.291693','192.168.31.100','mobile'),('640839e0650a41ce99ab15eb5f2e313e',0,'pbkdf2_sha256$100000$J38SwuXjhPa978qD$yKbYHt8rqzf1X+7mEybVeY6rrM/hrGra0gLke/tQeX0=','wangli',NULL,'lover@leeyi.net',0,'female','upload/avatar/6f22438437367aaa7485754c7dabe3ba.jpeg','',12,'192.168.1.147','2018-05-24 12:55:50.530079','',1,0,'2018-05-07 03:28:54.037108',NULL,NULL),('8b27c990cd4a43dfbea88ac4daa717ac',0,'pbkdf2_sha256$100000$zsfNqyfXcuoMMFNl$gczja3Xc5bO82trQUQQaWEFgks6C9Cl4VGWRXeQnf1A=','leeyi3',NULL,'me3@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-18 04:04:54.042066','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 04:04:53.981922','127.0.0.1','web'),('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$NlBb6F2IeIPqyTZD$hYLLKMHAYfFbdf0jQXwDKrJRO0pXOf+j+sZtRboYy9o=','leeyi',NULL,'leeyisoft@qq.com',0,'hide','upload/avatar/de001cb8f0404944994e14f20bf76a02.png','AAAaa33',53,'127.0.0.1','2018-05-29 07:44:27.714460','',1,0,'2018-05-07 01:18:45.377346',NULL,NULL),('f1f38e0add7b46f08bc91c6abafd1049',0,'pbkdf2_sha256$100000$Jp8QdY7ThGq98zBE$/10Pn3/IxfYg+va6p5n/Ks2Y/yfdLens/jYAFvQaiF8=','leeyi2',NULL,'me2@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-22 05:46:23.284106','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 03:59:36.831971','127.0.0.1','web');
+INSERT INTO `member` VALUES ('07cd3c82d2f141b49594c9827e4ba042',0,'pbkdf2_sha256$100000$ULGfqskKpc7B1ZEz$sfFuLT0JP71+Wj/Qwuf3BhUgcuX9kAgjV3Iig0hvAqo=','M6',NULL,'ll@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:03:56.684410','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:03:56.662033','192.168.31.100','mobile'),('27b32fab88c84ccd972b21feb09df9c3',0,'pbkdf2_sha256$100000$HoPM1t2mW0uHyUfX$ru2JUjNEeqccfsNjZe17EJzUEPvG2lo5NrljeQnmd9I=','M7',NULL,'lll@leeyi.net',0,'male','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:12:03.292378','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:12:03.261715','192.168.31.100','mobile'),('4ac3533b39db40ed99197c1ce7b8d2b1',0,'pbkdf2_sha256$100000$a6D68FUxaaddI3KM$0DMNC38gAEO2+ST0UmM88vFLQMuOw12d/01Z6Ng2jqk=','me4',NULL,'me4@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-18 04:08:01.521523','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 04:08:01.470958','127.0.0.1','web'),('4e93411afc72498abd5f8ee472c58080',0,'pbkdf2_sha256$100000$8DRUqPZFeAiz1CLz$7YTT3oywzLPf0yyBDYo1q2TLY0XCyoKYE4sqz16/Y6c=','M5',NULL,'llleeyi@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'192.168.31.100','2018-05-18 09:00:31.335758','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 09:00:31.291693','192.168.31.100','mobile'),('640839e0650a41ce99ab15eb5f2e313e',0,'pbkdf2_sha256$100000$HaNdJqnIcdBf7E4o$5gmTBGMQxI0VGxqecd4uK4kBHrLiVLYQlG/HMqzJPfI=','wangli',NULL,'lover@leeyi.net',0,'female','upload/avatar/6f22438437367aaa7485754c7dabe3ba.jpeg','',17,'127.0.0.1','2018-07-01 13:37:02.484432','',1,0,'2018-05-07 03:28:54.037108',NULL,NULL),('8b27c990cd4a43dfbea88ac4daa717ac',0,'pbkdf2_sha256$100000$zsfNqyfXcuoMMFNl$gczja3Xc5bO82trQUQQaWEFgks6C9Cl4VGWRXeQnf1A=','leeyi3',NULL,'me3@leeyi.net',0,'hide','image/default_avatar.jpg','',1,'127.0.0.1','2018-05-18 04:04:54.042066','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 04:04:53.981922','127.0.0.1','web'),('de001cb8f0404944994e14f20bf76a02',0,'pbkdf2_sha256$100000$HaNdJqnIcdBf7E4o$5gmTBGMQxI0VGxqecd4uK4kBHrLiVLYQlG/HMqzJPfI=','leeyi',NULL,'leeyisoft@qq.com',0,'hide','upload/avatar/de001cb8f0404944994e14f20bf76a02.png','AAAaa33',56,'127.0.0.1','2018-07-01 00:00:50.097795','',1,0,'2018-05-07 01:18:45.377346',NULL,NULL),('f1f38e0add7b46f08bc91c6abafd1049',0,'pbkdf2_sha256$100000$Jp8QdY7ThGq98zBE$/10Pn3/IxfYg+va6p5n/Ks2Y/yfdLens/jYAFvQaiF8=','leeyi2',NULL,'me2@leeyi.net',0,'hide','image/default_avatar.jpg','',2,'127.0.0.1','2018-07-01 13:38:14.820170','de001cb8f0404944994e14f20bf76a02',1,0,'2018-05-18 03:59:36.831971','127.0.0.1','web');
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,6 +132,7 @@ CREATE TABLE `member_friend` (
   `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
   `utc_updated_at` datetime(6) DEFAULT NULL COMMENT '记录更新时间',
   `utc_created_at` datetime(6) NOT NULL COMMENT '创建记录UTC时间',
+  `remark` varchar(200) NOT NULL DEFAULT '' COMMENT '申请好友的验证消息',
   PRIMARY KEY (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 member表的主键）';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -142,7 +143,7 @@ CREATE TABLE `member_friend` (
 
 LOCK TABLES `member_friend` WRITE;
 /*!40000 ALTER TABLE `member_friend` DISABLE KEYS */;
-INSERT INTO `member_friend` VALUES ('640839e0650a41ce99ab15eb5f2e313e','de001cb8f0404944994e14f20bf76a02','640839e0650a41ce99ab15eb5f2e313e','0','1',NULL,'2018-05-10 15:45:02.000000'),('640839e0650a41ce99ab15eb5f2e31e3','640839e0650a41ce99ab15eb5f2e313e','de001cb8f0404944994e14f20bf76a02','0','1',NULL,'2018-05-10 15:45:02.000000');
+INSERT INTO `member_friend` VALUES ('621741caf2c448869f23d11e890774ca','de001cb8f0404944994e14f20bf76a02','f1f38e0add7b46f08bc91c6abafd1049','de001cb8f0404944994e14f20bf76a03','0',NULL,'2018-07-01 13:36:11.601175','ddd'),('640839e0650a41ce99ab15eb5f2e313e','de001cb8f0404944994e14f20bf76a02','640839e0650a41ce99ab15eb5f2e313e','0','1',NULL,'2018-05-10 15:45:02.000000',''),('640839e0650a41ce99ab15eb5f2e31e3','640839e0650a41ce99ab15eb5f2e313e','de001cb8f0404944994e14f20bf76a02','0','1',NULL,'2018-05-10 15:45:02.000000','');
 /*!40000 ALTER TABLE `member_friend` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,6 +227,7 @@ CREATE TABLE `member_login_log` (
 
 LOCK TABLES `member_login_log` WRITE;
 /*!40000 ALTER TABLE `member_login_log` DISABLE KEYS */;
+INSERT INTO `member_login_log` VALUES ('25f88cabfee64b34a444cb413e9be13e','640839e0650a41ce99ab15eb5f2e313e','127.0.0.1','web','2018-07-01 13:37:02.598046'),('af97412ec9af473289c0837223713674','f1f38e0add7b46f08bc91c6abafd1049','127.0.0.1','web','2018-07-01 13:38:14.876382');
 /*!40000 ALTER TABLE `member_login_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -254,6 +256,7 @@ CREATE TABLE `member_operation_log` (
 
 LOCK TABLES `member_operation_log` WRITE;
 /*!40000 ALTER TABLE `member_operation_log` DISABLE KEYS */;
+INSERT INTO `member_operation_log` VALUES ('3b0f2fc502434b48b99e0fe36d40d88d','de001cb8f0404944994e14f20bf76a02','leeyisoft@qq.com','email_reset_pwd','127.0.0.1','web','2018-06-24 03:49:20.055633'),('50f1ee8750c84a68a4f137050cfa6aee','de001cb8f0404944994e14f20bf76a02','leeyisoft@qq.com','email_reset_pwd','127.0.0.1','web','2018-06-24 03:53:37.697305');
 /*!40000 ALTER TABLE `member_operation_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -388,7 +391,7 @@ CREATE TABLE `sys_admin_user` (
 
 LOCK TABLES `sys_admin_user` WRITE;
 /*!40000 ALTER TABLE `sys_admin_user` DISABLE KEYS */;
-INSERT INTO `sys_admin_user` VALUES ('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces31','131111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,NULL,1,'2018-05-02 03:43:38.918080'),('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi','13692177080','leeyisoft@qq.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:system\", \"admin:system:function\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\"]',NULL,NULL,NULL,1,'2018-02-28 09:15:10.012341'),('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',21,'127.0.0.1','2018-05-29 09:11:25.006991',1,'2018-02-28 09:15:10.012341');
+INSERT INTO `sys_admin_user` VALUES ('a85844f06ce74eb88c12f2d25e29282f','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$0RAcdxzlsMjsDwxE$WXPx6LTlPYoLfQXIrVOxE+3Qg6EI007d6P8Iu/t9ats=','ces31','131111','ces33@admin.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\"]',0,NULL,NULL,1,'2018-05-02 03:43:38.918080'),('de713937f2e3487ebe54b8863bb1a1b7','960245d0d12540918825ecd42553fd39','pbkdf2_sha256$100000$VeYBgw06FjOgFThY$9F9IzDbqOHjdc4GPdHN8TFTwyYQ9LMYvxrs355i65a0=','leeyi','13692177080','leeyisoft@qq.com','[\"admin:main\", \"admin:quick\", \"admin:user:iframe\", \"admin:index:index\", \"admin:system\", \"admin:system:function\", \"admin:config:index\", \"admin:menu:index\", \"admin:user:role\", \"admin:user:index\", \"admin:role:index\", \"admin:annex:index\", \"admin:log:index\", \"admin:language:index\", \"admin:member\", \"admin:member:level\", \"admin:member:index\"]',NULL,NULL,NULL,1,'2018-02-28 09:15:10.012341'),('de713937f2e3487ebe54b8863bb1a1b8','6b0642103a1749949a07f4139574ead9','pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin','13692177081','admin@admin.com','[]',24,'127.0.0.1','2018-07-01 03:14:21.459330',1,'2018-02-28 09:15:10.012341');
 /*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -508,6 +511,35 @@ INSERT INTO `sys_config` VALUES ('login_pwd_rsa_encrypt','1','登录密码使用
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sys_message`
+--
+
+DROP TABLE IF EXISTS `sys_message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sys_message` (
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
+  `msgtype` enum('apply_friend','accept_friend','system') DEFAULT NULL COMMENT '消息类型',
+  `message` varchar(200) DEFAULT '' COMMENT '附加消息',
+  `from_user_id` varchar(32) DEFAULT NULL COMMENT 'Member 用户ID 消息发送者 0表示为系统消息',
+  `to_user_id` varchar(32) DEFAULT NULL COMMENT '消息接收者 Member 用户ID',
+  `utc_read_at` datetime(6) DEFAULT NULL COMMENT '读消息UTC时间',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未读；1 已读, 默认0)',
+  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`uuid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统消息，定时删除30天内的已读消息';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sys_message`
+--
+
+LOCK TABLES `sys_message` WRITE;
+/*!40000 ALTER TABLE `sys_message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sys_message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `sys_sequence`
 --
 
@@ -539,4 +571,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-17 14:14:43
+-- Dump completed on 2018-07-02 19:00:23
