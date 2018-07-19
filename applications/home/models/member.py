@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import datetime
-import uuid
 import json
 import os
 
@@ -30,8 +29,8 @@ class MemberOperationLog(BaseModel):
     """
     __tablename__ = 'member_operation_log'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    user_id = Column(String(32), ForeignKey('member.uuid'))
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    user_id = Column(Integer, ForeignKey('member.id'))
     # 用户账号： email or mobile or username
     account = Column(String(80), nullable=False)
     # 会员操作类型： email_reset_pwd mobile_reset_pwd username_reset_pwd activate_email
@@ -62,8 +61,8 @@ class MemberLoginLog(BaseModel):
     """
     __tablename__ = 'member_login_log'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    user_id = Column(String(32), ForeignKey('member.uuid'))
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    user_id = Column(Integer, ForeignKey('member.id'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
@@ -79,7 +78,7 @@ class Member(BaseModel):
     """
     __tablename__ = 'member'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
     password = Column(String(128), nullable=False, default='')
     username = Column(String(40), nullable=False)
     mobile = Column(String(11), nullable=True)
@@ -100,7 +99,7 @@ class Member(BaseModel):
     status = Column(Integer, nullable=False, default=1)
     utc_last_login_at = Column(TIMESTAMP, nullable=True)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
-    ref_user_id = Column(String(32), default='')
+    ref_user_id = Column(Integer, default='')
     register_ip = Column(String(40), nullable=False, default='')
     # 客户端：web wechat android ios mobile
     register_client = Column(String(40), nullable=False, default='')
@@ -117,13 +116,13 @@ class Member(BaseModel):
 
     @property
     def authorized(self):
-        obj = MemberCertification.Q.filter(MemberCertification.user_id==self.uuid).first()
+        obj = MemberCertification.Q.filter(MemberCertification.user_id==self.id).first()
         # print('MemberCertification : ', MemberCertification.Q.statement)
         return True if obj and obj.authorized==1 else False
 
     @property
     def authorize_info(self):
-        return MemberCertification.Q.filter(MemberCertification.user_id==self.uuid).first()
+        return MemberCertification.Q.filter(MemberCertification.user_id==self.id).first()
 
     @property
     def last_login_at(self):
@@ -135,7 +134,7 @@ class Member(BaseModel):
 
     @property
     def email_activated(self):
-        return self.check_email_activated(self.uuid, self.email)
+        return self.check_email_activated(self.id, self.email)
 
     @staticmethod
     def sex_options_html(sex=''):
@@ -150,7 +149,7 @@ class Member(BaseModel):
 
     def cache_info(self, handler):
         """cache member info"""
-        fileds = ['uuid','username','mobile','avatar','sign']
+        fileds = ['id','username','mobile','avatar','sign']
         member_dict = self.as_dict(fileds)
 
         if not member_dict['username']:
@@ -160,13 +159,13 @@ class Member(BaseModel):
             member_dict['avatar'] = handler.static_url(member_dict['avatar'])
         else:
             member_dict['avatar'] = handler.static_url('image/default_avatar.jpg')
-        cache_key = '%s%s' % (settings.member_cache_prefix, self.uuid)
+        cache_key = '%s%s' % (settings.member_cache_prefix, self.id)
         cache.set(cache_key, member_dict, timeout=86400)
         return cache_key
 
     @staticmethod
-    def get_info(user_id, fields='uuid,username,avatar,sign', scalar=False):
-        query = "select %s from member where uuid='%s'" % (fields, user_id, )
+    def get_info(user_id, fields='id,username,avatar,sign', scalar=False):
+        query = "select %s from member where id='%s'" % (fields, user_id, )
         info = Member.session.execute(query).first()
         # print("info2", info)
         info = dict(info) if info else {}
@@ -184,18 +183,18 @@ class Member(BaseModel):
         # 设置登录用户cookiex信息
         handler.set_curent_user(member)
 
-        user_id = member.uuid
+        user_id = member.id
         login_count = member.login_count if member.login_count else 0
         params = {
             'login_count': login_count+1,
             'utc_last_login_at': Func.utc_now(),
             'last_login_ip': handler.request.remote_ip,
         }
-        Member.Q.filter(Member.uuid==user_id).update(params)
+        Member.Q.filter(Member.id==user_id).update(params)
 
         # 写登录日志
         params2 = {
-            'uuid': Func.uuid32(),
+            'id': Func.id32(),
             'user_id': user_id,
             'client': client,
             'ip': handler.request.remote_ip,
@@ -209,8 +208,6 @@ class Member(BaseModel):
     def register(params):
         """用户注册事务"""
         try:
-            user_id = Func.uuid32()
-            params['uuid'] = user_id
             member = Member(**params)
             Member.session.add(member)
 
@@ -228,10 +225,10 @@ class MemberFriend(BaseModel):
     """
     __tablename__ = 'member_friend'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    from_user_id = Column(String(32), ForeignKey('member.uuid'))
-    to_user_id = Column(String(32), ForeignKey('member.uuid'))
-    group_id = Column(String(32), nullable=True, default='0')
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    from_user_id = Column(Integer, ForeignKey('member.id'))
+    to_user_id = Column(Integer, ForeignKey('member.id'))
+    group_id = Column(Integer, nullable=True, default='0')
     remark = Column(String(200), nullable=True, default='')
     # `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
     status = Column(Integer, nullable=True, default=0)
@@ -248,7 +245,7 @@ class MemberFriend(BaseModel):
 
     @staticmethod
     def _friend_list(user_id, where=''):
-        query = "select m.uuid,m.username,m.avatar,m.sign,f.group_id from member m left join member_friend f on m.uuid=f.to_user_id where f.from_user_id='%s' and m.status=1 and f.status=1 %s" % (user_id, where)
+        query = "select m.id,m.username,m.avatar,m.sign,f.group_id from member m left join member_friend f on m.id=f.to_user_id where f.from_user_id='%s' and m.status=1 and f.status=1 %s" % (user_id, where)
         rows = Member.session.execute(query).fetchall()
         items = []
         if rows:
@@ -268,16 +265,16 @@ class MemberFriend(BaseModel):
         """
         _friend_list = MemberFriend._friend_list(user_id)
         # print('_friend_list: ', _friend_list)
-        query = "select uuid, groupname from member_friendgroup where owner_user_id='%s'" % user_id
+        query = "select id, groupname from member_friendgroup where owner_user_id='%s'" % user_id
         grows = MemberFriend.session.execute(query).fetchall()
         grows = grows if grows else []
         # print("grows: ", type(grows), grows)
         f_g_li = []
         try:
             f_g_li += [{'id': '0', 'groupname': '未分组', 'list':[{
-                'id':fnd.get('uuid'),
+                'id':fnd.get('id'),
                 'username':fnd.get('username'),
-                'status': Online.get_online(fnd.get('uuid')),
+                'status': Online.get_online(fnd.get('id')),
                 'sign':fnd.get('sign'),
                 'avatar':static_url(fnd.get('avatar'))
             } for fnd in MemberFriend._friends_no_grouping(user_id)]}]
@@ -287,9 +284,9 @@ class MemberFriend(BaseModel):
                     'id': group_id,
                     'groupname': groupname,
                     'list':[{
-                        'id':fnd.get('uuid'),
+                        'id':fnd.get('id'),
                         'username':fnd.get('username'),
-                        'status': Online.get_online(fnd.get('uuid')),
+                        'status': Online.get_online(fnd.get('id')),
                         'sign':fnd.get('sign'),
                         'avatar':static_url(fnd.get('avatar'))
                     } for fnd in _friend_list if fnd.get('group_id')==group_id
@@ -309,7 +306,7 @@ class MemberFriend(BaseModel):
         # user_id 的 好友
         _friend_list = MemberFriend._friend_list(user_id)
         # 过滤掉离线好友
-        return [friend for friend in _friend_list if Online.get_online(friend['uuid'])=='online']
+        return [friend for friend in _friend_list if Online.get_online(friend['id'])=='online']
 
 
 class MemberFriendNotice(BaseModel):
@@ -318,15 +315,15 @@ class MemberFriendNotice(BaseModel):
     """
     __tablename__ = 'member_friend_notice'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
     # 消息类型 'apply_friend','system'
     msgtype = Column(String(40), nullable=False)
-    related_uuid = Column(String(32), nullable=False, default='')
+    related_id = Column(Integer, nullable=False, default='')
     message = Column(String(200), nullable=False, default='')
     # Member 用户ID 消息发送者 0表示为系统消息
-    from_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+    from_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default='0')
     # 消息接收者 Member 用户ID
-    to_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+    to_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default='0')
 
     utc_read_at = Column(TIMESTAMP, nullable=True)
     # 状态:( 0 未读；1 已读 11 接受 12 拒绝请求)
@@ -369,14 +366,14 @@ class MemberCertification(BaseModel):
     会员出售球币
     """
     __tablename__ = 'member_certification'
-    user_id = Column(String(32), primary_key=True, nullable=False)
+    user_id = Column(Integer, primary_key=True, nullable=False)
     realname = Column(String(40), nullable=False)
     idcardno = Column(String(40), nullable=False)
     idcard_img = Column(String(200), nullable=False, default='')
     # 认证状态:( 0 待审核；1 审核通过, 2 审核不通过)
     authorized = Column(Integer, nullable=False, default=0)
-    # 审核管理员ID，user 表 uuid
-    authorized_user_id = Column(String(32), nullable=False, default='')
+    # 审核管理员ID，user 表 id
+    authorized_user_id = Column(Integer, nullable=False, default='')
     client = Column(String(20), nullable=True, default='web')
     ip = Column(String(40), nullable=False)
     utc_updated_at = Column(TIMESTAMP, default=None)

@@ -43,6 +43,7 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         return $("input[name='_xsrf']").val()
     }
     set_form_data = function(formData) {
+        // console.log('formData', formData)
         var input = ''
         if (formData) {
             for (var i in formData) {

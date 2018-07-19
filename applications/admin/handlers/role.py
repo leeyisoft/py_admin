@@ -33,14 +33,14 @@ class RoleHandler(CommonHandler):
     def delete(self, *args, **kwargs):
         """删除角色
         """
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
 
         # 超级管理员角色 默认角色
-        user_role_li = [settings.SUPER_ROLE_ID,'6b0642103a1749949a07f4139574ead9']
-        if uuid in user_role_li:
+        user_role_li = [settings.SUPER_ROLE_ID]
+        if id in user_role_li:
             return self.error('角色不允许删除')
 
-        Role.Q.filter(Role.uuid==uuid).delete()
+        Role.Q.filter(Role.id==id).delete()
         Role.session.commit()
         return self.success()
 
@@ -74,7 +74,7 @@ class RoleAddHandler(CommonHandler):
     @required_permissions('admin:role:add')
     def post(self, *args, **kwargs):
         rolename = self.get_argument('rolename', None)
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
         status = self.get_argument('status', 1)
         if not rolename:
             return self.error('分组名称不能为空')
@@ -97,8 +97,8 @@ class RoleEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:role:edit')
     def get(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
-        role = Role.Q.filter(Role.uuid==uuid).first()
+        id = self.get_argument('id', None)
+        role = Role.Q.filter(Role.id==id).first()
 
         menu_list = AdminMenu.children(status=1)
 
@@ -119,7 +119,7 @@ class RoleEditHandler(CommonHandler):
     @required_permissions('admin:role:edit')
     def post(self, *args, **kwargs):
         rolename = self.get_argument('rolename', None)
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
         sort = self.get_argument('sort', None)
         status = self.get_argument('status', 0)
         permission = self.get_body_arguments('permission[]')
@@ -130,7 +130,7 @@ class RoleEditHandler(CommonHandler):
 
         if rolename:
             role['rolename'] = rolename
-            count = Role.Q.filter(Role.uuid!=uuid).filter(Role.rolename==rolename).count()
+            count = Role.Q.filter(Role.id!=id).filter(Role.rolename==rolename).count()
             if count>0:
                 return self.error('名称已被占用')
 
@@ -140,6 +140,6 @@ class RoleEditHandler(CommonHandler):
         if permission:
             role['permission'] = json.dumps(permission)
 
-        Role.Q.filter(Role.uuid==uuid).update(role)
+        Role.Q.filter(Role.id==id).update(role)
         Role.session.commit()
         return self.success(data=role)

@@ -31,7 +31,7 @@ class MainHandler(CommonHandler):
             msg = '节点不存在或者已禁用！'
             return self.error(code=404, msg=msg);
 
-        _bread_crumbs = AdminMenu.brand_crumbs(c_menu['uuid'])
+        _bread_crumbs = AdminMenu.brand_crumbs(c_menu['id'])
         _admin_menu_parents = _bread_crumbs[0] if len(_bread_crumbs) else {'parent_id':'1'}
         _admin_menu = AdminMenu.main_menu()
 

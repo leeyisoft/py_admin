@@ -31,7 +31,7 @@ class CommonHandler(BaseHandler):
                 return user
             member_id = cache_key[len(settings.member_cache_prefix):]
             # print('member_id: ', member_id)
-            member = Member.Q.filter(Member.uuid==member_id).first()
+            member = Member.Q.filter(Member.id==member_id).first()
             if member is None:
                 return None
             self.set_curent_user(member)

@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{{ static_url('admin/css/style.css') }}">
     <link rel="stylesheet" href="{{ static_url('fonts/typicons/min.css') }}">
     <link rel="stylesheet" href="{{ static_url('fonts/font-awesome/min.css') }}">
+    <script src="{{ static_url('layui/layui.js') }}" charset="utf-8"></script>
+    <script src="{{ static_url('js/global.js') }}" charset="utf-8"></script>
     <style type="text/css">
         .layui-body {
             left: auto!important; right:auto;
@@ -42,6 +44,4 @@
     {% block footer %}{% end %}
 </body>
 </html>
-<script src="{{ static_url('layui/layui.js') }}" charset="utf-8"></script>
-<script src="{{ static_url('js/global.js') }}" charset="utf-8"></script>
 {% block javascript %}{% end %}

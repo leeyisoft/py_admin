@@ -258,15 +258,14 @@ class ForgetHandler(CommonHandler):
 
         if int(member.status)==0:
             return self.error('用户被“禁用”，请联系客服')
-        user_id = member.uuid
+        user_id = member.id
         params = {
             'password': make_password(password),
         }
-        Member.Q.filter(Member.uuid==user_id).update(params)
+        Member.Q.filter(Member.id==user_id).update(params)
         Member.session.commit()
 
         params = {
-            'uuid': Func.uuid32(),
             'user_id': user_id,
             'account': account,
             'action': 'email_reset_pwd',

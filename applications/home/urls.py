@@ -5,7 +5,6 @@ from .handlers import index
 from .handlers import passport
 from .handlers import member
 from .handlers import chat
-from .handlers import message
 from .handlers import friend
 
 # 其他 URL 通过 acl 获取

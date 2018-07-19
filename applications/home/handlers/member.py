@@ -56,7 +56,7 @@ class UploadHandler(CommonHandler):
     @tornado.web.authenticated
     def post(self, *args, **kwargs):
         """上传图片"""
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
 
         next = self.get_argument('next', '')
         imgfile = self.request.files.get('file')
@@ -97,8 +97,8 @@ class SetHandler(CommonHandler):
     def get(self, *args, **kwargs):
         """Home首页
         """
-        user_id = self.current_user.get('uuid')
-        member = Member.Q.filter(Member.uuid==user_id).first()
+        user_id = self.current_user.get('id')
+        member = Member.Q.filter(Member.id==user_id).first()
         data_info = member.as_dict()
         params = {
             'member': member,
@@ -112,7 +112,7 @@ class SetHandler(CommonHandler):
 
     @tornado.web.authenticated
     def post(self, *args, **kwargs):
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
         username = self.get_argument('username', None)
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
@@ -125,18 +125,18 @@ class SetHandler(CommonHandler):
 
         if username:
             params['username'] = username
-            count = Member.Q.filter(Member.uuid!=user_id).filter(Member.username==username).count()
+            count = Member.Q.filter(Member.id!=user_id).filter(Member.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
 
         if mobile:
             params['mobile'] = mobile
-            count = Member.Q.filter(Member.uuid!=user_id).filter(Member.mobile==mobile).count()
+            count = Member.Q.filter(Member.id!=user_id).filter(Member.mobile==mobile).count()
             if count>0:
                 return self.error('电话号码已被占用')
         if email:
             params['email'] = email
-            count = Member.Q.filter(Member.uuid!=user_id).filter(Member.email==email).count()
+            count = Member.Q.filter(Member.id!=user_id).filter(Member.email==email).count()
             if count>0:
                 return self.error('Email已被占用')
 
@@ -147,14 +147,14 @@ class SetHandler(CommonHandler):
 
         if avatar and file_md5:
             params['avatar'] = avatar
-            member = Member.Q.filter(Member.uuid==user_id).first()
+            member = Member.Q.filter(Member.id==user_id).first()
 
             if avatar!=member.avatar:
                 Attach.remove_avatar(user_id, member.avatar)
 
-            query = "REPLACE INTO `sys_attach_related` (`uuid`, `file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
+            query = "REPLACE INTO `sys_attach_related` (`id`, `file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
             q_param = (
-                Func.uuid32(),
+                Func.id32(),
                 file_md5,
                 'member',
                 user_id,
@@ -162,11 +162,11 @@ class SetHandler(CommonHandler):
                 str(Func.utc_now())[0:-6],
             )
             Member.session.execute(query % q_param)
-        Member.Q.filter(Member.uuid==user_id).update(params)
+        Member.Q.filter(Member.id==user_id).update(params)
         Member.session.commit()
 
         # 设置登录用户cookie信息
-        member = Member.Q.filter(Member.uuid==user_id).first()
+        member = Member.Q.filter(Member.id==user_id).first()
         self.set_curent_user(member)
 
         return self.success()
@@ -176,7 +176,7 @@ class ResetPasswordHandler(CommonHandler):
     def post(self, *args, **kwargs):
         """重置密码
         """
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
         next = self.get_argument('next', '')
         nowpass = self.get_argument('nowpass', None)
         password = self.get_argument('password', None)
@@ -200,7 +200,7 @@ class ResetPasswordHandler(CommonHandler):
             msg = "%s, %s" %(password, repass)
             return self.error(msg)
 
-        member = Member.Q.filter(Member.uuid==user_id).first()
+        member = Member.Q.filter(Member.id==user_id).first()
 
         if int(member.status)==0:
             return self.error('用户被“禁用”，请联系客服')
@@ -211,7 +211,7 @@ class ResetPasswordHandler(CommonHandler):
             'password': make_password(password),
             'status': 1,
         }
-        Member.Q.filter(Member.uuid==user_id).update(params)
+        Member.Q.filter(Member.id==user_id).update(params)
         Member.session.commit()
         return self.success(next=next)
 
@@ -221,7 +221,7 @@ class ActivateHandler(CommonHandler):
     def get(self, *args, **kwargs):
         """Home首页
         """
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
         token = self.get_argument('token', None)
         token2 = self.get_secure_cookie(settings.token_key)
         if token and token2:
@@ -241,7 +241,7 @@ class ActivateHandler(CommonHandler):
                 MemberOperationLog.add_log(params)
                 self.clear_cookie(settings.token_key)
 
-        member = Member.Q.filter(Member.uuid==user_id).first()
+        member = Member.Q.filter(Member.id==user_id).first()
         params = {
             'member': member,
             'active': {'set':'layui-this'},
@@ -256,8 +256,8 @@ class SendmailHandler(CommonHandler):
         if not Func.is_email(email):
             return self.error('Email格式不正确')
 
-        user_id = self.current_user.get('uuid')
-        member = Member.Q.filter(Member.uuid==user_id).first()
+        user_id = self.current_user.get('id')
+        member = Member.Q.filter(Member.id==user_id).first()
 
         if member.email_activated:
             return self.error('已经激活了，请不要重复操作')
@@ -269,7 +269,7 @@ class SendmailHandler(CommonHandler):
         self.success()
 
         subject = '[%s]激活邮件' % sys_config('site_name')
-        token = Func.uuid32()
+        token = Func.id32()
         action_url = sys_config('site_url') + '/member/activate.html?token=' + token
 
         localnow = Func.local_now() + datetime.timedelta(minutes=10)
@@ -312,7 +312,7 @@ class SendmailHandler(CommonHandler):
         self.success()
 
         subject = '[%s]找回密码' % sys_config('site_name')
-        token = Func.uuid32()
+        token = Func.id32()
         action_url = sys_config('site_url') + '/passport/forget.html?token=' + token
 
         localnow = Func.local_now() + datetime.timedelta(minutes=30)
@@ -371,7 +371,7 @@ class InviteHandler(CommonHandler):
     def get(self, *args, **kwargs):
         """邀请好友
         """
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
         referrer = aes_encrypt(user_id, prefix='')
         register_uri = '%s://%s/%s%s' %(
             self.request.protocol,

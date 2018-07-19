@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import datetime
-import uuid
 import json
 
 from applications.core.settings_manager import settings
@@ -31,7 +30,7 @@ class Role(BaseModel):
     """
     __tablename__ = 'sys_admin_role'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
     rolename = Column(String(40), nullable=False)
     permission = Column(Text, default='')
     sort = Column(Integer, nullable=False, default=20)
@@ -51,15 +50,15 @@ class Role(BaseModel):
         # SysLogger.debug(query.statement)
         option_str = ''
         for row in rows:
-            selected = 'selected' if role_id==row.uuid else ''
-            option_str += '<option value="%s" %s>%s</option>' % (row.uuid, selected, row.rolename)
+            selected = 'selected' if role_id==row.id else ''
+            option_str += '<option value="%s" %s>%s</option>' % (row.id, selected, row.rolename)
         # SysLogger.debug('option_str: %s' % option_str)
         return option_str
 
     @classmethod
     def get_permission(cls, role_id):
         query = cls.session.query('permission')
-        query = query.filter(Role.uuid == role_id)
+        query = query.filter(Role.id == role_id)
         return query.scalar()
 
 
@@ -69,8 +68,8 @@ class User(BaseModel):
     """
     __tablename__ = 'sys_admin_user'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    role_id = Column(String(32), ForeignKey('sys_admin_role.uuid'))
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    role_id = Column(Integer, ForeignKey('sys_admin_role.id'))
     password = Column(String(128), nullable=False, default='')
     username = Column(String(40), nullable=False)
     mobile = Column(String(11), nullable=True)
@@ -93,7 +92,7 @@ class User(BaseModel):
 
     @property
     def role_permission(self):
-        query = "select permission from sys_admin_role where uuid='%s'" % self.role_id
+        query = "select permission from sys_admin_role where id='%s'" % self.role_id
         permission = User.session.execute(query).scalar()
         try:
             return json.loads(permission)
@@ -114,18 +113,18 @@ class User(BaseModel):
         # 设置登录用户cookie信息
         handler.set_curent_user(user)
 
-        user_id = user.uuid
+        user_id = user.id
         login_count = user.login_count if user.login_count else 0
         params = {
             'login_count': login_count + 1,
             'utc_last_login_at': Func.utc_now(),
             'last_login_ip': handler.request.remote_ip,
         }
-        User.Q.filter(User.uuid==user_id).update(params)
+        User.Q.filter(User.id==user_id).update(params)
 
         params = {
-            'uuid': Func.uuid32(),
-            'user_id': user.uuid,
+            'id': 0,
+            'user_id': user.id,
             'client': 'web',
             'ip': handler.request.remote_ip,
         }
@@ -141,8 +140,8 @@ class UserLoginLog(BaseModel):
     """
     __tablename__ = 'sys_admin_user_login_log'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'))
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    user_id = Column(Integer, ForeignKey('sys_admin_user.id'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
@@ -158,9 +157,9 @@ class AdminMenu(BaseModel):
     """
     __tablename__ = 'sys_admin_menu'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
-    user_id = Column(String(32), ForeignKey('sys_admin_user.uuid'), nullable=False, default='')
-    parent_id = Column(String(32), nullable=False, default='top')
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    user_id = Column(Integer, ForeignKey('sys_admin_user.id'), nullable=False, default='0')
+    parent_id = Column(Integer, nullable=False, default=0)
     code = Column(String(64), nullable=True)
     title = Column(String(20), nullable=False)
     icon = Column(String(20), nullable=False)
@@ -178,20 +177,20 @@ class AdminMenu(BaseModel):
         return Func.dt_to_timezone(self.utc_created_at)
 
     @classmethod
-    def info(cls, uuid=None, path=None):
+    def info(cls, id=None, path=None):
         """获取当前访问节点信息
 
         [description]
 
         Keyword Arguments:
-            uuid {str} -- [description] (default: {''})
+            id {str} -- [description] (default: {''})
 
         Returns:
             [type] -- [description]
         """
         query = cls.session.query(AdminMenu)
-        if uuid:
-            query = query.filter(AdminMenu.uuid == uuid)
+        if id:
+            query = query.filter(AdminMenu.id == id)
         if path:
             path = path.split('?')[0]
             if path[-1:]=='/':
@@ -207,20 +206,20 @@ class AdminMenu(BaseModel):
         return row
 
     @classmethod
-    def brand_crumbs(cls, uuid):
+    def brand_crumbs(cls, id):
         """获取当前节点的面包屑
 
         [description]
 
         Arguments:
-            uuid {[type]} -- [description]
+            id {[type]} -- [description]
 
         Returns:
             [type] -- [description]
         """
         menu = []
-        row = cls.info(uuid=uuid)
-        if row['parent_id']!='' and row['parent_id']!='top':
+        row = cls.info(id=id)
+        if row['parent_id']>0:
             menu.append(row)
             child = cls.brand_crumbs(row['parent_id'])
             if len(child):
@@ -229,7 +228,7 @@ class AdminMenu(BaseModel):
 
 
     @classmethod
-    def main_menu(cls, parent_id='top', status=1, level=0):
+    def main_menu(cls, parent_id=0, status=1, level=0):
         """获取后台主菜单(一级 > 二级 > 三级)
             后台顶部和左侧使用
 
@@ -241,7 +240,7 @@ class AdminMenu(BaseModel):
         """
         trees = []
         if not len(trees):
-            filds = ['uuid', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon']
+            filds = ['id', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon']
             query = cls.session.query(AdminMenu)
             if status is not None:
                 query = query.filter(AdminMenu.status == status)
@@ -261,18 +260,18 @@ class AdminMenu(BaseModel):
                 #     unset($data[$k]);
                 #     continue;
                 # }
-                row['children'] = cls.main_menu(row.get('uuid'), status, level+1)
+                row['children'] = cls.main_menu(row.get('id'), status, level+1)
                 trees.append(row)
         return trees
 
 
     @staticmethod
-    def children(parent_id='top', status=None, level=0, user_id=''):
+    def children(parent_id=0, status=None, level=0, user_id=''):
         """获取指定节点下的所有子节点(不含快捷收藏的菜单)
         """
         trees = []
         if not len(trees):
-            filds = ['uuid', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon', 'sort', 'status']
+            filds = ['id', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon', 'sort', 'status']
             query = AdminMenu.session.query(AdminMenu)
             if user_id:
                 query = query.filter(AdminMenu.user_id == user_id)
@@ -291,12 +290,12 @@ class AdminMenu(BaseModel):
                 #     unset($data[$k]);
                 #     continue;
                 # }
-                row['children'] = AdminMenu.children(row.get('uuid'), status, level+1)
+                row['children'] = AdminMenu.children(row.get('id'), status, level+1)
                 trees.append(row)
         return trees
 
     @staticmethod
-    def menu_option(uuid=''):
+    def menu_option(id=''):
         """菜单选项"""
         menus = AdminMenu.main_menu(status=None)
         if not len(menus)>0:
@@ -306,21 +305,21 @@ class AdminMenu(BaseModel):
         option3 = '<option level="3" value="%s" %s>——— %s</option>'
         html = ''
         for menu in menus:
-            selected = 'selected' if uuid==menu.get('uuid', '') else ''
+            selected = 'selected' if id==menu.get('id', '') else ''
             title1 = menu.get('title', '')
             children1 = menu.get('children', [])
-            html += option1 % (menu.get('uuid', ''), selected, title1)
+            html += option1 % (menu.get('id', ''), selected, title1)
             if not len(children1)>0:
                 continue
             for menu2 in children1:
-                selected2 = 'selected' if uuid==menu2.get('uuid', '') else ''
+                selected2 = 'selected' if id==menu2.get('id', '') else ''
                 title2 = menu2.get('title', '')
                 children2 = menu2.get('children', [])
-                html += option2 % (menu2.get('uuid', ''), selected2, title2)
+                html += option2 % (menu2.get('id', ''), selected2, title2)
                 if not len(children2)>0:
                     continue
                 for menu3 in children2:
-                    selected3 = 'selected' if uuid==menu3.get('uuid', '') else ''
+                    selected3 = 'selected' if id==menu3.get('id', '') else ''
                     title3 = menu3.get('title', '')
-                    html += option3 % (menu3.get('uuid', ''), selected3, title3)
+                    html += option3 % (menu3.get('id', ''), selected3, title3)
         return html

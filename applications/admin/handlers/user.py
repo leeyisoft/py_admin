@@ -40,9 +40,9 @@ class UserHandler(CommonHandler):
         """删除用户
         """
         # return self.show('<script type="text/javascript">alert(1)</script>')
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
 
-        User.Q.filter(User.uuid==uuid).delete()
+        User.Q.filter(User.id==id).delete()
         User.session.commit()
         return self.success()
 
@@ -159,10 +159,10 @@ class UserEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:user:edit')
     def get(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
 
         menu_list = AdminMenu.children(status=1)
-        user = User.Q.filter(User.uuid==uuid).first()
+        user = User.Q.filter(User.id==id).first()
 
         role_id = user.role_id
 
@@ -187,7 +187,7 @@ class UserEditHandler(CommonHandler):
     @required_permissions('admin:user:edit')
     def post(self, *args, **kwargs):
         role_id = self.get_argument('role_id', None)
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
         username = self.get_argument('username', None)
         password = self.get_argument('password', None)
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
@@ -199,7 +199,7 @@ class UserEditHandler(CommonHandler):
         email = None if email=='None' else email
         mobile = None if mobile=='None' else mobile
 
-        if not uuid:
+        if not id:
             return self.error('用户ID不能为空')
 
         user = {
@@ -208,7 +208,7 @@ class UserEditHandler(CommonHandler):
 
         if username:
             user['username'] = username
-            count = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+            count = User.Q.filter(User.id!=id).filter(User.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
         if password:
@@ -219,12 +219,12 @@ class UserEditHandler(CommonHandler):
 
         if mobile:
             user['mobile'] = mobile
-            count = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
+            count = User.Q.filter(User.id!=id).filter(User.mobile==mobile).count()
             if count>0:
                 return self.error('电话号码已被占用')
         if email:
             user['email'] = email
-            count = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
+            count = User.Q.filter(User.id!=id).filter(User.email==email).count()
             if count>0:
                 return self.error('Email已被占用')
 
@@ -234,7 +234,7 @@ class UserEditHandler(CommonHandler):
         if role_id:
             user['role_id'] = role_id
 
-        User.Q.filter(User.uuid==uuid).update(user)
+        User.Q.filter(User.id==id).update(user)
         User.session.commit()
 
         return self.success(data=user)
@@ -244,8 +244,8 @@ class UserInfoHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:user:info')
     def get(self, *args, **kwargs):
-        uuid = self.current_user.get('uuid', None)
-        user = User.Q.filter(User.uuid==uuid).first()
+        id = self.current_user.get('id', None)
+        user = User.Q.filter(User.id==id).first()
         data_info = user.as_dict()
         params = {
             'user': user,
@@ -264,12 +264,12 @@ class UserInfoHandler(CommonHandler):
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
 
-        uuid = self.current_user.get('uuid', None)
+        id = self.current_user.get('id', None)
         user = {}
 
         if username:
             user['username'] = username
-            count = User.Q.filter(User.uuid!=uuid).filter(User.username==username).count()
+            count = User.Q.filter(User.id!=id).filter(User.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
         if password:
@@ -280,17 +280,17 @@ class UserInfoHandler(CommonHandler):
 
         if mobile:
             user['mobile'] = mobile
-            count = User.Q.filter(User.uuid!=uuid).filter(User.mobile==mobile).count()
+            count = User.Q.filter(User.id!=id).filter(User.mobile==mobile).count()
             if count>0:
                 return self.error('电话号码已被占用')
         if email:
             user['email'] = email
-            count = User.Q.filter(User.uuid!=uuid).filter(User.email==email).count()
+            count = User.Q.filter(User.id!=id).filter(User.email==email).count()
             if count>0:
                 return self.error('Email已被占用')
 
 
-        User.Q.filter(User.uuid==uuid).update(user)
+        User.Q.filter(User.id==id).update(user)
         User.session.commit()
 
         return self.success(data=user)

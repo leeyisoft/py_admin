@@ -28,7 +28,7 @@ class CommonHandler(BaseHandler):
             if user:
                 return user
             user_id = cache_key[len(settings.user_cache_prefix):]
-            user = User.Q.filter(User.uuid==user_id).first()
+            user = User.Q.filter(User.id==user_id).first()
             if user is None:
                 return None
             self.set_curent_user(user)
@@ -41,15 +41,15 @@ class CommonHandler(BaseHandler):
 
     def set_curent_user(self, user):
         """设置登录用户cookie信息"""
-        user_fileds = ['uuid', 'username', 'role_id']
-        cache_key = '%s%s' % (settings.user_cache_prefix, user.uuid)
+        user_fileds = ['id', 'username', 'role_id']
+        cache_key = '%s%s' % (settings.user_cache_prefix, user.id)
         user = user.as_dict(user_fileds)
         cache.set(cache_key, user, timeout=86400)
         self.set_secure_cookie(self.session_key, cache_key, expires_days=1)
 
 
     def super_role(self):
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
         role_id = self.current_user.get('role_id')
         return True if (user_id in settings.SUPER_ADMIN) or (role_id==settings.SUPER_ROLE_ID) else False
 

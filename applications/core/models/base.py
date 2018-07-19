@@ -136,13 +136,13 @@ class Attach(BaseModel):
     """
     __tablename__ = 'sys_attach'
 
-    file_md5 = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    file_md5 = Column(String(32), primary_key=True, nullable=False, default='')
     file_ext = Column(String(20), nullable=False)
     file_size = Column(Integer, nullable=False)
     file_mimetype = Column(String(40), nullable=False)
     origin_name = Column(String(80), nullable=False)
     path_file = Column(String(200), nullable=False)
-    user_id = Column(String(32), ForeignKey('member.uuid'))
+    user_id = Column(Integer, ForeignKey('member.id'))
     ip = Column(String(40), nullable=False)
     utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
 
@@ -190,15 +190,15 @@ class Message(BaseModel):
     """
     __tablename__ = 'sys_message'
 
-    uuid = Column(String(32), primary_key=True, nullable=False, default=Func.uuid32())
+    id = Column(Integer, primary_key=True, nullable=False, default=0)
     # 消息类型 'apply_friend','accept_friend','system'
     msgtype = Column(String(40), nullable=False)
-    related_uuid = Column(String(32), nullable=False, default='')
-    message = Column(String(200), nullable=False, default='')
+    related_id = Column(Integer, nullable=False, default=0)
+    message = Column(String(200), nullable=False, default=0)
     # Member 用户ID 消息发送者 0表示为系统消息
-    from_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+    from_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
     # 消息接收者 Member 用户ID
-    to_user_id = Column(String(32), ForeignKey('member.uuid'), nullable=False, default='0')
+    to_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
 
     utc_read_at = Column(TIMESTAMP, nullable=True)
     # 状态:( 0 未读；1 已读, 默认0)

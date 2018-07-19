@@ -43,9 +43,9 @@ class MemberHandler(CommonHandler):
         """删除用户
         """
         # return self.show('<script type="text/javascript">alert(1)</script>')
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
 
-        Member.Q.filter(Member.uuid==uuid).delete()
+        Member.Q.filter(Member.id==id).delete()
         Member.session.commit()
         return self.success()
 
@@ -147,7 +147,7 @@ class MemberAddHandler(CommonHandler):
 
         params.pop('_xsrf', None)
         params.pop('rsa_encrypt', None)
-        params['uuid'] = Func.uuid32()
+        params['id'] = Func.id32()
         member = Member(**params)
         Member.session.add(member)
         Member.session.commit()
@@ -159,10 +159,10 @@ class MemberEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:member:edit')
     def get(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
 
         menu_list = AdminMenu.children(status=1)
-        member = Member.Q.filter(Member.uuid==uuid).first()
+        member = Member.Q.filter(Member.id==id).first()
 
         data_info = member.as_dict()
         data_info.pop('password', None)
@@ -178,18 +178,18 @@ class MemberEditHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:member:edit')
     def post(self, *args, **kwargs):
-        uuid = self.get_argument('uuid', None)
+        id = self.get_argument('id', None)
 
         params = self.params()
 
         params['status'] = params.get('status', 0)
 
-        if not uuid:
+        if not id:
             return self.error('用户ID不能为空')
 
         username = params.get('username', None)
         if username:
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.username==username).count()
+            count = Member.Q.filter(Member.id!=id).filter(Member.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
 
@@ -198,7 +198,7 @@ class MemberEditHandler(CommonHandler):
         if mobile:
             params['mobile'] = mobile
             if Func.is_mobile(mobile):
-                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==mobile).count()
+                count = Member.Q.filter(Member.id!=id).filter(Member.mobile==mobile).count()
                 if count>0:
                     return self.error('电话号码已被占用')
 
@@ -207,7 +207,7 @@ class MemberEditHandler(CommonHandler):
         if email:
             params['email'] = email
             if Func.is_email(email):
-                count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==email).count()
+                count = Member.Q.filter(Member.id!=id).filter(Member.email==email).count()
                 if count>0:
                     return self.error('Email已被占用')
 
@@ -223,11 +223,11 @@ class MemberEditHandler(CommonHandler):
 
         params.pop('_xsrf', None)
         params.pop('rsa_encrypt', None)
-        Member.Q.filter(Member.uuid==uuid).update(params)
+        Member.Q.filter(Member.id==id).update(params)
         Member.session.commit()
 
         # update member cache info
-        member = Member.Q.filter(Member.uuid==uuid).first()
+        member = Member.Q.filter(Member.id==id).first()
         cache_key = member.cache_info(self)
 
         return self.success(data=params)
@@ -237,8 +237,8 @@ class MemberInfoHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:member:info')
     def get(self, *args, **kwargs):
-        uuid = self.current_user.get('uuid', None)
-        user = Member.Q.filter(Member.uuid==uuid).first()
+        id = self.current_user.get('id', None)
+        user = Member.Q.filter(Member.id==id).first()
         data_info = user.as_dict()
         params = {
             'user': user,
@@ -257,12 +257,12 @@ class MemberInfoHandler(CommonHandler):
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
 
-        uuid = self.current_user.get('uuid', None)
+        id = self.current_user.get('id', None)
         user = {}
 
         if username:
             user['username'] = username
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.username==username).count()
+            count = Member.Q.filter(Member.id!=id).filter(Member.username==username).count()
             if count>0:
                 return self.error('用户名已被占用')
         if password:
@@ -273,17 +273,17 @@ class MemberInfoHandler(CommonHandler):
 
         if mobile:
             user['mobile'] = mobile
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.mobile==mobile).count()
+            count = Member.Q.filter(Member.id!=id).filter(Member.mobile==mobile).count()
             if count>0:
                 return self.error('电话号码已被占用')
         if email:
             user['email'] = email
-            count = Member.Q.filter(Member.uuid!=uuid).filter(Member.email==email).count()
+            count = Member.Q.filter(Member.id!=id).filter(Member.email==email).count()
             if count>0:
                 return self.error('Email已被占用')
 
 
-        Member.Q.filter(Member.uuid==uuid).update(user)
+        Member.Q.filter(Member.id==id).update(user)
         Member.session.commit()
 
         return self.success(data=user)
@@ -310,7 +310,7 @@ class MemberAuthorizeHandler(CommonHandler):
         authorized = self.get_argument('authorized', None)
         remark = self.get_argument('remark', '')
 
-        member = Member.Q.filter(Member.uuid==user_id).first()
+        member = Member.Q.filter(Member.id==user_id).first()
         if member is None:
             return self.error('用户不存在')
 

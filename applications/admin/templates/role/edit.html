@@ -5,7 +5,7 @@
 {% block body %}
 <form class="layui-form" action="{{ request.uri }}" method="post" id="editForm">
     {% raw xsrf_form_html() %}
-    <input type="hidden" name="uuid" value="{{ role.uuid }}">
+    <input type="hidden" name="id" value="{{ role.id }}">
     <div class="layui-tab" style="margin: 1em;">
         <ul class="layui-tab-title">
             <li class="layui-this">基本信息</li>
@@ -90,9 +90,12 @@
 <script type="text/javascript">
 
 var formData = {% raw data_info %}
-set_form_data(formData)
+
 layui.use(['form'], function() {
-    var $ = layui.jquery, form = layui.form
+    var $ = layui.jquery
+    var form = layui.form
+
+    set_form_data(formData)
 
     form.on('checkbox(userPermission)', function(data) {
         var child = $(data.elem).parent('dt').siblings('dd').find('input')

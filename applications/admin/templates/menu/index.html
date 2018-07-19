@@ -20,7 +20,7 @@
                 <form class="page-list-form">
                     <div class="page-toolbar">
                         <div class="layui-btn-group fl">
-                            <a href="/admin/menu/add?parent_id={{ v['uuid'] }}" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添加子菜单</a>
+                            <a href="/admin/menu/add?parent_id={{ v['id'] }}" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添加子菜单</a>
                             <a data-href="/admin/menu/edit?status=1" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-qiyong"></i>启用</a>
                             <a data-href="/admin/menu/edit?status=0" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-jinyong1"></i>禁用</a>
                             <a data-href="#" data-href="/admin/menu/delete" class="layui-btn layui-btn-primary j-page-btns confirm"><i class="aicon ai-jinyong"></i>删除</a>
@@ -39,13 +39,13 @@
                     {% for vv in v['children'] %}
                     <dl class="menu-dl1">
                         <dt>
-                            <input type="checkbox" name="ids" value="{{ vv['uuid'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vv['title'] }}">
+                            <input type="checkbox" name="ids" value="{{ vv['id'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vv['title'] }}">
                             <div class="layui-form-checkbox" lay-skin="primary">
                                 <span>{{ vv['title'] }}</span>
                                 <i class="layui-icon">&#xe626;</i>
                             </div>
-                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vv['sort'] }}" data-value="{{ vv['sort'] }}" data-href="/admin/menu/sort?ids={{ vv['uuid'] }}">
-                            <input type="checkbox" name="status" value="{{ vv['status'] }}" {% if vv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vv['uuid'] }}">
+                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vv['sort'] }}" data-value="{{ vv['sort'] }}" data-href="/admin/menu/sort?ids={{ vv['id'] }}">
+                            <input type="checkbox" name="status" value="{{ vv['status'] }}" {% if vv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vv['id'] }}">
                             <div class="layui-form-switch">
                                 <em>
                                 {% if vv['status']==1 %}启用{% else %}禁用{% end %}
@@ -53,13 +53,13 @@
                                 <i></i>
                             </div>
                             <div class="menu-btns">
-                                <a href="/admin/menu/edit?uuid={{ vv['uuid'] }}&menu_tab={{ k }}" title="编辑">
+                                <a href="/admin/menu/edit?id={{ vv['id'] }}&menu_tab={{ k }}" title="编辑">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
-                                <a href="/admin/menu/add?parent_id={{ vv['uuid'] }}" title="添加子菜单">
+                                <a href="/admin/menu/add?parent_id={{ vv['id'] }}" title="添加子菜单">
                                     <i class="layui-icon">&#xe654;</i>
                                 </a>
-                                <a href="#" data-href="/admin/menu/delete?uuid={{ vv['uuid'] }}" class="j-dl-del" title="删除">
+                                <a href="#" data-href="/admin/menu/delete?id={{ vv['id'] }}" class="j-dl-del" title="删除">
                                     <i class="layui-icon">&#xe640;</i></a>
                             </div>
                         </dt>
@@ -73,9 +73,9 @@
                                     {%set kk+=1 %}
                                     <dl class="menu-dl2">
                                         <dt>
-                                            <input type="checkbox" name="ids[{{ kk }}]" value="{{ vvv['uuid'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vvv['title'] }}"><div class="layui-form-checkbox" lay-skin="primary"><span>{{ vvv['title'] }}</span><i class="layui-icon">&#xe626;</i></div>
-                                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vvv['sort'] }}" data-value="{{ vvv['sort'] }}" data-href="/admin/menu/sort?ids={{ vvv['uuid'] }}">
-                                            <input type="checkbox" name="status" value="{{ vvv['status'] }}" {% if vvv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vvv['uuid'] }}">
+                                            <input type="checkbox" name="ids[{{ kk }}]" value="{{ vvv['id'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vvv['title'] }}"><div class="layui-form-checkbox" lay-skin="primary"><span>{{ vvv['title'] }}</span><i class="layui-icon">&#xe626;</i></div>
+                                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vvv['sort'] }}" data-value="{{ vvv['sort'] }}" data-href="/admin/menu/sort?ids={{ vvv['id'] }}">
+                                            <input type="checkbox" name="status" value="{{ vvv['status'] }}" {% if vvv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vvv['id'] }}">
                                             <div class="layui-form-switch">
                                                 <em>
                                                 {% if vvv['status']==1 %}启用{% else %}禁用{% end %}
@@ -83,11 +83,11 @@
                                                 <i></i>
                                             </div>
                                             <div class="menu-btns">
-                                                <a href="/admin/menu/edit?uuid={{ vvv['uuid'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
-                                                <a href="/admin/menu/add?parent_id={{ vvv['uuid'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
-                                                <a href="#" data-href="/admin/menu/delete?uuid={{ vvv['uuid'] }}" class="j-dl-del" title="删除"><i class="layui-icon">&#xe640;</i></a>
+                                                <a href="/admin/menu/edit?id={{ vvv['id'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
+                                                <a href="/admin/menu/add?parent_id={{ vvv['id'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
+                                                <a href="#" data-href="/admin/menu/delete?id={{ vvv['id'] }}" class="j-dl-del" title="删除"><i class="layui-icon">&#xe640;</i></a>
                                                 {% if vvv['path']=='/admin/plugins/run' %}
-                                                <a href="/admin/menu/export?uid{{ vvv['uuid'] }}" title="导出菜单"><i class="layui-icon" style="font-weight:bolder;">&#xe601;</i></a>
+                                                <a href="/admin/menu/export?uid{{ vvv['id'] }}" title="导出菜单"><i class="layui-icon" style="font-weight:bolder;">&#xe601;</i></a>
                                                 {% end %}
                                             </div>
                                         </dt>
@@ -95,9 +95,9 @@
                                         {% for vvvv in vvv['children'] %}
                                         {%set kk+=1 %}
                                         <dd>
-                                            <input type="checkbox" name="ids[{{ kk }}]" value="{{ vvvv['uuid'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vvvv['title'] }}"><div class="layui-form-checkbox" lay-skin="primary"><span>{{ vvvv['title'] }}</span><i class="layui-icon">&#xe626;</i></div>
-                                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vvvv['sort'] }}" data-value="{{ vvvv['sort'] }}" data-href="/admin/menu/sort?ids={{ vvvv['uuid'] }}">
-                                            <input type="checkbox" name="status" value="{{ vvvv['status'] }}" {% if vvvv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vvvv['uuid'] }}">
+                                            <input type="checkbox" name="ids[{{ kk }}]" value="{{ vvvv['id'] }}" class="checkbox-ids" lay-skin="primary" title="{{ vvvv['title'] }}"><div class="layui-form-checkbox" lay-skin="primary"><span>{{ vvvv['title'] }}</span><i class="layui-icon">&#xe626;</i></div>
+                                            <input type="text" class="menu-sort j-ajax-input" name="sort[{{ kk }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ vvvv['sort'] }}" data-value="{{ vvvv['sort'] }}" data-href="/admin/menu/sort?ids={{ vvvv['id'] }}">
+                                            <input type="checkbox" name="status" value="{{ vvvv['status'] }}" {% if vvvv['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ vvvv['id'] }}">
                                             <div class="layui-form-switch">
                                                 <em>
                                                 {% if vvvv['status']==1 %}启用{% else %}禁用{% end %}
@@ -105,9 +105,9 @@
                                                 <i></i>
                                             </div>
                                             <div class="menu-btns">
-                                                <a href="/admin/menu/edit?uuid={{ vvvv['uuid'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
-                                                <a href="/admin/menu/add?parent_id={{ vvvv['uuid'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
-                                                <a href="#" data-href="/admin/menu/delete?uuid={{ vvvv['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
+                                                <a href="/admin/menu/edit?id={{ vvvv['id'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
+                                                <a href="/admin/menu/add?parent_id={{ vvvv['id'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
+                                                <a href="#" data-href="/admin/menu/delete?id={{ vvvv['id'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
                                             </div>
                                         </dd>
                                         {% end %}
@@ -140,14 +140,14 @@
                     {% for v in menu_list %}
                     <dl class="menu-dl1">
                         <dt>
-                            <input type="checkbox" name="ids[{{ k }}]" class="checkbox-ids" value="{{ v['uuid'] }}" lay-skin="primary" title="{{ v['title'] }}">
+                            <input type="checkbox" name="ids[{{ k }}]" class="checkbox-ids" value="{{ v['id'] }}" lay-skin="primary" title="{{ v['title'] }}">
                             <div class="layui-form-checkbox" lay-skin="primary">
                                 <span>{{ v['title'] }}</span>
                                 <i class="layui-icon">&#xe626;</i>
                             </div>
-                            <input type="text" class="layui-input j-ajax-input menu-sort" name="sort[{{ k }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ v['sort'] }}" data-value="{{ v['sort'] }}" data-href="/admin/menu/sort?ids={{ v['uuid'] }}">
+                            <input type="text" class="layui-input j-ajax-input menu-sort" name="sort[{{ k }}]" onkeyup="value=value.replace(/[^\d]/g,'')" value="{{ v['sort'] }}" data-value="{{ v['sort'] }}" data-href="/admin/menu/sort?ids={{ v['id'] }}">
 
-                            <input type="checkbox" name="status" value="{{ v['status'] }}" {% if v['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ v['uuid'] }}" >
+                            <input type="checkbox" name="status" value="{{ v['status'] }}" {% if v['status']==1 %}checked=""{% end %} lay-skin="switch" lay-filter="switchStatus" lay-text="启用|禁用" data-href="/admin/menu/status?ids={{ v['id'] }}" >
                             <div class="layui-form-switch">
                                 <em>
                                 {% if v['status']==1 %}启用{% else %}禁用{% end %}
@@ -155,10 +155,10 @@
                                 <i></i>
                             </div>
                             <div class="menu-btns">
-                                <a href="/admin/menu/edit?uuid={{ v['uuid'] }}&menu_tab={{ len(menu_list)+1 }}" title="编辑">
+                                <a href="/admin/menu/edit?id={{ v['id'] }}&menu_tab={{ len(menu_list)+1 }}" title="编辑">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
-                                <a href="#" data-href="/admin/menu/delete?uuid={{ v['uuid'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
+                                <a href="#" data-href="/admin/menu/delete?id={{ v['id'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
                             </div>
                         </dt>
                     </dl>

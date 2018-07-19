@@ -52,13 +52,13 @@
     var get_noread_url = '';
     var join_group_url = '';
 
-    var curr_uuid = "{{ current_user['uuid'] }}";
+    var curr_id = "{{ current_user['id'] }}";
     var curr_uname = "{{ current_user['username']}}";
     var curr_avatar = "{{ current_user['avatar'] }}";
     var curr_sign = "{{ current_user['sign'] }}";
 
     var ws_scheme = window.location.protocol == 'https:' ? 'wss' : 'ws'
-    var ws_host = ws_scheme + '://' + window.location.host + '/chat/websocket/?' + curr_uuid + '&token=' + token;
+    var ws_host = ws_scheme + '://' + window.location.host + '/chat/websocket/?' + curr_id + '&token=' + token;
 
     var im_events;
 

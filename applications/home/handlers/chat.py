@@ -25,7 +25,7 @@ class ChartRoomHandler(CommonHandler):
     def get(self, *args, **kwargs):
         params = {
             'limit': 20,
-            'token': self.current_user.get('uuid'),
+            'token': self.current_user.get('id'),
         }
         self.render('chat/room.html', **params)
 
@@ -34,13 +34,13 @@ class ChartInitHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        user_id = self.current_user.get('uuid')
-        mine = Member.Q.filter(Member.uuid==user_id).first()
+        user_id = self.current_user.get('id')
+        mine = Member.Q.filter(Member.id==user_id).first()
         friend = MemberFriend.friends_by_group(user_id, static_url=self.static_url)
         # print('friend: ', type(friend), friend)
         data = {
             'mine': {
-                'id': mine.uuid,
+                'id': mine.id,
                 'username': mine.username,
                 # 'status': Online.get_online(mine.id),
                 'status': 1,
@@ -56,7 +56,7 @@ class ChartMsgboxHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
 
         params = {
         }
@@ -68,7 +68,7 @@ class ChartNoticeHandler(CommonHandler):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         # return self.error('333aaa')
-        user_id = self.current_user.get('uuid')
+        user_id = self.current_user.get('id')
         data = []
         query = MemberFriendNotice.Q.filter(MemberFriendNotice.status==0)
         query = query.filter(MemberFriendNotice.msgtype!=None)
@@ -82,9 +82,9 @@ class ChartNoticeHandler(CommonHandler):
             from_user = Member.get_info(msg.from_user_id)
             from_user['avatar'] = self.static_url(from_user['avatar']);
             item = {
-                'uuid': msg.uuid,
+                'id': msg.id,
                 'msgtype': msg.msgtype,
-                'related_uuid': msg.related_uuid,
+                'related_id': msg.related_id,
                 'message': msg.message,
                 'from_user': from_user,
                 'status': msg.status,
@@ -109,7 +109,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
 
     def __init__(self, application, request, **kwargs):
         super(ChatServerHandler, self).__init__(application, request, **kwargs)
-        self.current_user_id = self.get_current_user().get('uuid', '')
+        self.current_user_id = self.get_current_user().get('id', '')
 
     def get_current_user(self):
         cache_key = self.get_secure_cookie(settings.front_session_key)
@@ -124,7 +124,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
                 return user
             member_id = cache_key[len(settings.member_cache_prefix):]
             # print('member_id: ', member_id)
-            member = Member.Q.filter(Member.uuid==member_id).first()
+            member = Member.Q.filter(Member.id==member_id).first()
             if member is None:
                 return None
             self.set_curent_user(member)
@@ -157,7 +157,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
                 'uid': self.current_user_id,
                 'status': state,
             }
-            waiter = self.waiters.get(friend.get('uuid', ''), None)
+            waiter = self.waiters.get(friend.get('id', ''), None)
             if waiter:
                 waiter.write_message(msg_dict)
 
@@ -203,7 +203,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
             return
 
         chat_type = data.get('type', 'dialog')
-        # curr_uuid = data.get('mine').get('id')
+        # curr_id = data.get('mine').get('id')
 
         if chat_type=='dialog':
             # 两人聊天
@@ -245,15 +245,15 @@ class WebRtcRoomHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        user_id = self.current_user.get('uuid')
-        member = Member.Q.filter(Member.uuid==user_id).first()
-        fields = ['uuid', 'username', 'avatar', 'sign']
+        user_id = self.current_user.get('id')
+        member = Member.Q.filter(Member.id==user_id).first()
+        fields = ['id', 'username', 'avatar', 'sign']
         curr_user = member.as_dict(fields)
         items = Member.Q.filter(Member.status==1).all()
         user_list = []
         if items:
             for row in items:
-                user_list.append(row.as_dict(['uuid', 'username', 'avatar', 'sign']))
+                user_list.append(row.as_dict(['id', 'username', 'avatar', 'sign']))
         params = {
             'def_avator': self.static_url('image/default_avatar.jpg'),
             'timestamp': Func.unix_time(),

@@ -6,7 +6,7 @@
 <div class="layui-body">
     <form class="layui-form layui-form-pane" action="{{ request.uri }}" method="post" id="editForm">
         {% raw xsrf_form_html() %}
-        <input type="hidden" class="field-uuid" name="uuid">
+        <input type="hidden" class="field-id" name="id">
         <div class="layui-collapse page-tips">
             <div class="layui-colla-item">
                 <h2 class="layui-colla-title">温馨提示</h2>
@@ -110,9 +110,13 @@
 {% block javascript %}
 <script type="text/javascript">
 var formData = {% raw data_info %}
-set_form_data(formData)
+
 layui.use(['form'], function() {
-    var $ = layui.jquery, form = layui.form
+    var $ = layui.jquery
+    var form = layui.form
+
+    set_form_data(formData)
+
     if (formData) {
         $('.ass-level').val(parseInt($('.field-parent_id option:selected').attr('level'))+1)
     }

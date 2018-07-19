@@ -23,7 +23,7 @@
         <thead>
             <tr>
                 <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
-                <th lay-data="{field:'uuid', width:120, fixed: true}">UUID</th>
+                <th lay-data="{field:'id', width:120, fixed: true}">id</th>
                 <th lay-data="{field:'username', width:120, sort: true}">用户名</th>
                 <th lay-data="{field:'mobile', width:120, sort: true}">电话</th>
                 <th lay-data="{field:'email', width:160, sort: true}">Email</th>
@@ -94,7 +94,7 @@ layui.use(['table','form'], function() {
                 break;
             case 'del':
                 layer.confirm('删除之后无法恢复，您确定要删除吗？', function(index) {
-                    del(data.uuid, obj, index)
+                    del(data.id, obj, index)
                 });
                 break;
         }
@@ -142,17 +142,17 @@ layui.use(['table','form'], function() {
             shade: false,
             maxmin: false,
             area: ['50em', '40em'],
-            content: '/admin/user/edit?uuid=' + data.uuid,
+            content: '/admin/user/edit?id=' + data.id,
         })
     }
 
     // 删除
-    var del = function(uuid, obj, index) {
+    var del = function(id, obj, index) {
         var next = '/admin/user/delete'
         $.ajax({
             type: 'DELETE',
             url: next,
-            data: {uuid: uuid, _xsrf: get_xsrf()},
+            data: {id: id, _xsrf: get_xsrf()},
             dataType: 'json',
             success: function(data) {
                 obj.del();
@@ -181,9 +181,9 @@ layui.use(['table','form'], function() {
 
     form.on('switch(status)', function() {
         var status = this.checked ? 1 : 0
-        var uuid = $(this).parent().parent().parent().children('td[data-field="uuid"]').children('div').html()
+        var id = $(this).parent().parent().parent().children('td[data-field="id"]').children('div').html()
 
-        var params = {uuid: uuid, status:status, }
+        var params = {id: id, status:status, }
         params['_xsrf'] = get_xsrf()
 
         $.ajax({

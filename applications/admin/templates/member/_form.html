@@ -1,7 +1,7 @@
 <form class="layui-form" action="{{ request.uri }}" method="post" id="editForm">
     {% raw xsrf_form_html() %}
     <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}"/>
-    <input type="hidden" class="field-uuid" name="uuid" value="">
+    <input type="hidden" class="field-id" name="id" value="">
 
     <div class="layui-tab-item layui-show">
         <div class="layui-form-item">

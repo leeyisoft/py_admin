@@ -149,13 +149,14 @@ var rsa_encrypt = '{{ rsa_encrypt }}'
 var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
 
 var formData = {% raw data_info %}
-set_form_data(formData)
 
 layui.use(['form', 'upload', 'element'], function() {
     var $ = layui.jquery
     var form = layui.form
     var upload = layui.upload
     var element = layui.element
+
+    set_form_data(formData)
 
     //显示当前tab
     if(location.hash){

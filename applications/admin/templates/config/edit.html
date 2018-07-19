@@ -68,9 +68,12 @@
 <script type="text/javascript">
 
 var formData = {% raw data_info %}
-set_form_data(formData)
+
 layui.use(['form'], function() {
-    var $ = layui.jquery, form = layui.form
+    var $ = layui.jquery
+    var form = layui.form
+
+    set_form_data(formData)
 
     // 表单验证
     form.verify({
@@ -111,5 +114,6 @@ layui.use(['form'], function() {
         return false
     })
 })
+
 </script>
 {% end %}

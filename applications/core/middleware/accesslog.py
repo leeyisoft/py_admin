@@ -29,7 +29,7 @@ class AccessLogMiddleware(object):
             'referer': handler.request.headers.get('Referer', ''),
             'user_agent': handler.request.headers.get('User-Agent', ''),
             'request_time': 1000.0 * handler.request.request_time(),
-            'uuid': handler.get_argument('uuid', ''),
+            'id': handler.get_argument('id', ''),
             'client': handler.get_argument('client', ''),
             'token': handler.get_argument('token', ''),
         }

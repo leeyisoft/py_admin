@@ -14,13 +14,14 @@ def required_permissions(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             code = dargs[0]
             self = args[0]
-            user_id = self.current_user.get('uuid')
+            user_id = self.current_user.get('id')
+            print(self.current_user, user_id)
             if user_id in SUPER_ADMIN:
                 return method(*args, **kargs)
 
-            obj = User.Q.filter(User.uuid==user_id).first()
-            if obj and code not in obj.permission:
-                if code not in obj.role_permission:
+            obj = User.Q.filter(User.id==user_id).first()
+            if obj and obj.permission and code not in obj.permission:
+                if obj.role_permission and code not in obj.role_permission:
                     return self.error('未授权', 401)
             return method(*args, **kargs)
         return _wrapper

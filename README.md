@@ -9,7 +9,7 @@
 * 在第一个发布版本之前的“数据库结构、数据变动”，不会给出相应update的SQL语句（如有需要、或者其他建议，欢迎留言）
 * 数据库密码经过AES加密，没有明文存储，进过AES加密的密码，格式 aes::: + ciphertext；
 * 数据库和时间相关的字段统一使用datetime(6)数据类型，通过Python3取UTC时间
-* 数据库表的主键统一用uuid(32位)
+* 数据库表的主键统一用 int(11)
 * 其他约定遵从[Python风格规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/)、[Python 编码规范](http://liyangliang.me/posts/2015/08/simple-python-style-guide/)
 
 # 环境依赖
