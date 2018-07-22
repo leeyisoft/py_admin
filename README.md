@@ -53,13 +53,21 @@ python server.py
 ```
 
 # init db
+## datas/db.sql
+只有表结构数据
+
+## datas/db_data.sql
+含默认的后台管理用户、默认菜单、默认配置数据
+
+## db other
 ```
 set global validate_password_policy=0;
 create database db_py_admin default charset utf8;
 GRANT ALL PRIVILEGES ON db_py_admin.* TO 'user_py_admin'@'%' IDENTIFIED BY 'eb26acWq16E1' WITH GRANT OPTION;
 flush privileges;
 
-mysqldump -uroot -p db_py_admin > datas/db.sql
+// 只导出表结构
+mysqldump --opt -d db_py_admin -u root -p > datas/db.sql
 
 ```
 # features

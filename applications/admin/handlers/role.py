@@ -36,10 +36,9 @@ class RoleHandler(CommonHandler):
         id = self.get_argument('id', None)
 
         # 超级管理员角色 默认角色
-        user_role_li = [settings.SUPER_ROLE_ID]
-        if id in user_role_li:
+        user_role_li = [settings.SUPER_ROLE_ID, settings.DEFAULT_ROLE_ID]
+        if int(id) in user_role_li:
             return self.error('角色不允许删除')
-
         Role.Q.filter(Role.id==id).delete()
         Role.session.commit()
         return self.success()

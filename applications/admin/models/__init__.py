@@ -97,7 +97,8 @@ class User(BaseModel):
         try:
             return json.loads(permission)
         except Exception as e:
-            raise e
+            pass
+            # raise e
         return []
 
     @classmethod
@@ -105,7 +106,8 @@ class User(BaseModel):
         try:
             return json.loads(cls.permission)
         except Exception as e:
-            raise e
+            pass
+            # raise e
         return []
 
     @staticmethod

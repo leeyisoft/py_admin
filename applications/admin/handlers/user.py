@@ -84,9 +84,16 @@ class UserAddHandler(CommonHandler):
     @tornado.web.authenticated
     @required_permissions('admin:user:add')
     def get(self, *args, **kwargs):
-        role_id = '6b0642103a1749949a07f4139574ead9'
+        role_id = settings.DEFAULT_ROLE_ID
         menu_list = AdminMenu.children(status=1)
-        user = User(status=1, role_id=role_id)
+        params = {
+            'status':1,
+            'role_id':role_id,
+            'username':'',
+            'mobile': '',
+            'email': '',
+        }
+        user = User(**params)
 
         data_info = user.as_dict()
         try:
@@ -115,6 +122,8 @@ class UserAddHandler(CommonHandler):
         mobile = self.get_argument('mobile', None)
         status = self.get_argument('status', 1)
         permission = self.get_body_arguments('permission')
+
+        role_id = int(role_id)
 
         if not username:
             return self.error('用户名不能为空')
@@ -152,7 +161,7 @@ class UserAddHandler(CommonHandler):
         User.session.add(user)
         User.session.commit()
 
-        return self.success(data=user.as_dict())
+        return self.success()
 
 class UserEditHandler(CommonHandler):
     """docstring for Passport"""
@@ -164,7 +173,9 @@ class UserEditHandler(CommonHandler):
         menu_list = AdminMenu.children(status=1)
         user = User.Q.filter(User.id==id).first()
 
-        role_id = user.role_id
+
+        user.mobile = user.mobile if user.mobile else ''
+        user.email = user.email if user.email else ''
 
         data_info = user.as_dict()
         # SysLogger.debug(data_info)
@@ -175,7 +186,7 @@ class UserEditHandler(CommonHandler):
 
         params = {
             'user': user,
-            'role_option': Role.option_html(role_id),
+            'role_option': Role.option_html(user.role_id),
             'menu_list': menu_list,
             'data_info': data_info,
             'public_key': sys_config('sys_login_rsa_pub_key'),

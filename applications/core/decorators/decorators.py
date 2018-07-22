@@ -15,8 +15,8 @@ def required_permissions(*dargs, **dkargs):
             code = dargs[0]
             self = args[0]
             user_id = self.current_user.get('id')
-            print(self.current_user, user_id)
-            if user_id in SUPER_ADMIN:
+            # print(self.current_user, user_id)
+            if int(user_id) in SUPER_ADMIN:
                 return method(*args, **kargs)
 
             obj = User.Q.filter(User.id==user_id).first()

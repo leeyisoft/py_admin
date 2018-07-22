@@ -13,6 +13,7 @@ default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
 valid_code_key = 'ab1195c6f0084b4f8b007d3aa7628a38'
 token_key = 'f30a2331813f46d0adc2bcf26fcbbbf4'
 
+admin_session_key = 'de0b3fb0c2f44563944a8cccca7f225a'
 front_session_key = '171630947de24c969c28b2d178c4e0fe'
 
 # 163邮箱信息
@@ -32,13 +33,16 @@ TEMPLATE_PATH = os.path.join(ROOT_PATH, 'applications/admin/templates')
 
 xheaders = True
 
-# Super Admin
+# Super Admin 必须是 int 型数据
 SUPER_ADMIN = [
-    'de713937f2e3487ebe54b8863bb1a1b8', # admin uid
-    'de713937f2e3487ebe54b8863bb1a1b7', #
+    1, # admin uid
+    2, #
 ]
 # 超级管理员角色ID
-SUPER_ROLE_ID = '960245d0d12540918825ecd42553fd39'
+# 必须是 int 型数据
+SUPER_ROLE_ID = 1
+# 必须是 int 型数据
+DEFAULT_ROLE_ID = 2
 
 # tornado全局配置
 TORNADO_CONF = {
