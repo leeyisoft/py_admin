@@ -75,7 +75,6 @@ class ApplyAddFriendHandler(CommonHandler):
             'status': 0,
         }
         if friend is None:
-            params['id'] = Func.id32()
             friend = MemberFriend(**params)
             MemberFriend.session.add(friend)
         elif friend.status==1:
@@ -98,7 +97,6 @@ class ApplyAddFriendHandler(CommonHandler):
             'status': 0,
         }
         if notice is None:
-            params2['id'] = Func.id32()
             notice = MemberFriendNotice(**params2)
             MemberFriendNotice.session.add(notice)
         else:

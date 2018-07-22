@@ -190,7 +190,7 @@ class Message(BaseModel):
     """
     __tablename__ = 'sys_message'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     # 消息类型 'apply_friend','accept_friend','system'
     msgtype = Column(String(40), nullable=False)
     related_id = Column(Integer, nullable=False, default=0)

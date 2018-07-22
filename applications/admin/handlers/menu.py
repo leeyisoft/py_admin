@@ -127,7 +127,6 @@ class MenuAddHandler(CommonHandler):
         menu_tab = self.get_argument('menu_tab', 1)
 
         params = self.params()
-        params['id'] = Func.id32()
         params.pop('user_id', None)
         params.pop('menu_tab', None)
         params.pop('_xsrf', None)

@@ -30,7 +30,7 @@ class Role(BaseModel):
     """
     __tablename__ = 'sys_admin_role'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     rolename = Column(String(40), nullable=False)
     permission = Column(Text, default='')
     sort = Column(Integer, nullable=False, default=20)
@@ -68,7 +68,7 @@ class User(BaseModel):
     """
     __tablename__ = 'sys_admin_user'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     role_id = Column(Integer, ForeignKey('sys_admin_role.id'))
     password = Column(String(128), nullable=False, default='')
     username = Column(String(40), nullable=False)
@@ -142,7 +142,7 @@ class UserLoginLog(BaseModel):
     """
     __tablename__ = 'sys_admin_user_login_log'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     user_id = Column(Integer, ForeignKey('sys_admin_user.id'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True)
@@ -159,7 +159,7 @@ class AdminMenu(BaseModel):
     """
     __tablename__ = 'sys_admin_menu'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     user_id = Column(Integer, ForeignKey('sys_admin_user.id'), nullable=False, default='0')
     parent_id = Column(Integer, nullable=False, default=0)
     code = Column(String(64), nullable=True)

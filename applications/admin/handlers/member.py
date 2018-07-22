@@ -147,7 +147,6 @@ class MemberAddHandler(CommonHandler):
 
         params.pop('_xsrf', None)
         params.pop('rsa_encrypt', None)
-        params['id'] = Func.id32()
         member = Member(**params)
         Member.session.add(member)
         Member.session.commit()

@@ -152,9 +152,8 @@ class SetHandler(CommonHandler):
             if avatar!=member.avatar:
                 Attach.remove_avatar(user_id, member.avatar)
 
-            query = "REPLACE INTO `sys_attach_related` (`id`, `file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
+            query = "REPLACE INTO `sys_attach_related` (`file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
             q_param = (
-                Func.id32(),
                 file_md5,
                 'member',
                 user_id,
@@ -269,7 +268,7 @@ class SendmailHandler(CommonHandler):
         self.success()
 
         subject = '[%s]激活邮件' % sys_config('site_name')
-        token = Func.id32()
+        token = Func.uuid32()
         action_url = sys_config('site_url') + '/member/activate.html?token=' + token
 
         localnow = Func.local_now() + datetime.timedelta(minutes=10)
@@ -312,7 +311,7 @@ class SendmailHandler(CommonHandler):
         self.success()
 
         subject = '[%s]找回密码' % sys_config('site_name')
-        token = Func.id32()
+        token = Func.uuid32()
         action_url = sys_config('site_url') + '/passport/forget.html?token=' + token
 
         localnow = Func.local_now() + datetime.timedelta(minutes=30)

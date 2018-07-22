@@ -29,7 +29,7 @@ class MemberOperationLog(BaseModel):
     """
     __tablename__ = 'member_operation_log'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     user_id = Column(Integer, ForeignKey('member.id'))
     # 用户账号： email or mobile or username
     account = Column(String(80), nullable=False)
@@ -61,7 +61,7 @@ class MemberLoginLog(BaseModel):
     """
     __tablename__ = 'member_login_log'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     user_id = Column(Integer, ForeignKey('member.id'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
@@ -78,7 +78,7 @@ class Member(BaseModel):
     """
     __tablename__ = 'member'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     password = Column(String(128), nullable=False, default='')
     username = Column(String(40), nullable=False)
     mobile = Column(String(11), nullable=True)
@@ -194,7 +194,6 @@ class Member(BaseModel):
 
         # 写登录日志
         params2 = {
-            'id': Func.id32(),
             'user_id': user_id,
             'client': client,
             'ip': handler.request.remote_ip,
@@ -209,9 +208,10 @@ class Member(BaseModel):
         """用户注册事务"""
         try:
             member = Member(**params)
-            Member.session.add(member)
+            member.id = Member.session.add(member)
 
             Member.session.commit()
+            # print('register: ', type(member.id), member.id)
             return (0, member)
         except Exception as e:
             Member.session.rollback()
@@ -225,7 +225,7 @@ class MemberFriend(BaseModel):
     """
     __tablename__ = 'member_friend'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     from_user_id = Column(Integer, ForeignKey('member.id'))
     to_user_id = Column(Integer, ForeignKey('member.id'))
     group_id = Column(Integer, nullable=True, default='0')
@@ -315,7 +315,7 @@ class MemberFriendNotice(BaseModel):
     """
     __tablename__ = 'member_friend_notice'
 
-    id = Column(Integer, primary_key=True, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
     # 消息类型 'apply_friend','system'
     msgtype = Column(String(40), nullable=False)
     related_id = Column(Integer, nullable=False, default='')
