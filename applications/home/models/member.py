@@ -321,9 +321,9 @@ class MemberFriendNotice(BaseModel):
     related_id = Column(Integer, nullable=False, default='')
     message = Column(String(200), nullable=False, default='')
     # Member 用户ID 消息发送者 0表示为系统消息
-    from_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default='0')
+    from_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
     # 消息接收者 Member 用户ID
-    to_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default='0')
+    to_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
 
     utc_read_at = Column(TIMESTAMP, nullable=True)
     # 状态:( 0 未读；1 已读 11 接受 12 拒绝请求)

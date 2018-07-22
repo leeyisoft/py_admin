@@ -98,7 +98,7 @@ layui.use(['layim', 'laytpl'], function(){
          //我的信息
         , mine: {
             username: curr_uname //我的昵称
-            ,id: curr_uuid //我的ID
+            ,id: curr_id //我的ID
             ,status: "online" //在线状态 online：在线、hide：隐身
             ,sign: curr_sign //我的签名
             ,avatar: curr_avatar //我的头像
@@ -275,18 +275,21 @@ layui.use(['layim', 'laytpl'], function(){
                 ,username: $(that).attr('username')
                 ,avatar: $(that).attr('avatar')
                 ,submit: function(group_id, remark, index){
-                    layer.msg('好友申请已发送，请等待对方确认', {
-                        icon: 1
-                        ,shade: 0.5
-                    }, function(){
-                        layer.close(index)
-                    })
-
+                    var to_user_id = $(that).attr('user_id')
+                    if (to_user_id==curr_id) {
+                        layer.msg('没有必要添加自己为好友吧', {
+                            icon: 2
+                            ,shade: 0.5
+                        }, function(){
+                            layer.close(index)
+                        })
+                        return false
+                    }
                     //通知对方
                     $.post(
                         '/friend/apply',
                         {
-                            to_user_id: $(that).attr('user_id'),
+                            to_user_id: to_user_id,
                             group_id: group_id,
                             remark: remark,
                             _xsrf: get_xsrf(),
@@ -294,13 +297,14 @@ layui.use(['layim', 'laytpl'], function(){
                         function(res){
                             if(res.code != 0){
                                 return layer.msg(res.msg)
+                            } else {
+                                layer.msg('好友申请已发送，请等待对方确认', {
+                                    icon: 1
+                                    ,shade: 0.5
+                                }, function(){
+                                    layer.close(index)
+                                })
                             }
-                            layer.msg('好友申请已发送，请等待对方确认', {
-                                icon: 1
-                                ,shade: 0.5
-                            }, function(){
-                                layer.close(index)
-                            })
                         }
                     )
                 }
@@ -482,7 +486,7 @@ layui.use(['layim', 'laytpl'], function(){
                 // 检测聊天数据
                 case 'dialog':
                     // console.log('case dialog data.to: ', data.to)
-                    if (data.to.id!=curr_uuid) {
+                    if (data.to.id!=curr_id) {
                         layim.getMessage(data.to)
                     }
                     break
@@ -681,7 +685,7 @@ layui.use(['layim', 'laytpl'], function(){
                 token: token,
                 'type': 'online',
                 'status': status,
-                'uid': curr_uuid,
+                'uid': curr_id,
             }
             // console.log('online status ', status)
             heartCheck.ws.send(JSON.stringify(message))

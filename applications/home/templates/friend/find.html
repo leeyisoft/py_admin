@@ -89,11 +89,11 @@ html body {
         <%# if(d.type == 'friend'){ %>
             <%#  layui.each(d.data, function(index, item){ %>
             <div class="layui-col-xs3 layui-find-list">
-                <li layim-event="add" data-type="friend" data-index="0" data-uid="<% item.uuid %>" data-name="<%item.username%>">
+                <li layim-event="add" data-type="friend" data-index="0" data-uid="<% item.id %>" data-name="<%item.username%>">
                     <img src="<%item.avatar%>" onerror="javascript:this.src=default_avatar" >
                     <span><%item.username%></span>
                     <p><%item.sign%>  <%#  if(item.sign == ''){ %>我很懒，懒得写签名<%#  } %> </p>
-                    <button class="layui-btn layui-btn-xs btncolor add" data-type="friend" username="<%item.username%>" avatar="<%item.avatar%>" user_id="<%item.uuid%>">
+                    <button class="layui-btn layui-btn-xs btncolor add" data-type="friend" username="<%item.username%>" avatar="<%item.avatar%>" user_id="<%item.id%>">
                         <i class="layui-icon">&#xe654;</i>加好友
                     </button>
                 </li>

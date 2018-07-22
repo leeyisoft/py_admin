@@ -64,6 +64,8 @@ class ApplyAddFriendHandler(CommonHandler):
         to_user_id = self.get_argument('to_user_id', None)
         group_id = self.get_argument('group_id', None)
         remark = self.get_argument('remark', None)
+        if int(to_user_id)==int(user_id):
+            return self.error('没有必要添加自己为好友吧')
 
         query = MemberFriend.Q.filter(MemberFriend.from_user_id==user_id)
         friend = query.first()

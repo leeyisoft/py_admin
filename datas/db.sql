@@ -117,16 +117,16 @@ DROP TABLE IF EXISTS `member_friend_notice`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `member_friend_notice` (
-  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT '主键',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `msgtype` enum('apply_friend','system') DEFAULT NULL COMMENT '消息类型',
-  `related_uuid` varchar(32) DEFAULT NULL COMMENT '关联业务主键',
+  `related_id` int(11) DEFAULT NULL COMMENT '关联业务主键',
   `message` varchar(200) DEFAULT '' COMMENT '附加消息',
-  `from_user_id` varchar(32) DEFAULT NULL COMMENT 'Member 用户ID 消息发送者 0表示为系统消息',
-  `to_user_id` varchar(32) DEFAULT NULL COMMENT '消息接收者 Member 用户ID',
+  `from_user_id` int(11) DEFAULT NULL COMMENT 'Member 用户ID 消息发送者 0表示为系统消息',
+  `to_user_id` int(11) DEFAULT NULL COMMENT '消息接收者 Member 用户ID',
   `utc_read_at` datetime(6) DEFAULT NULL COMMENT '读消息UTC时间',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未读；1 已读 11 接受 12 拒绝请求)',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
-  PRIMARY KEY (`uuid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='添加好友状态通知，定时删除60天内的已读消息';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
