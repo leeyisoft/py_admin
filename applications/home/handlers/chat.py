@@ -109,7 +109,11 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
 
     def __init__(self, application, request, **kwargs):
         super(ChatServerHandler, self).__init__(application, request, **kwargs)
-        self.current_user_id = self.get_current_user().get('id', '')
+        self.current_user = self.get_current_user()
+        if self.current_user is None:
+            self.current_user = {}
+
+        self.current_user_id = int(self.current_user.get('id', 0))
 
     def get_current_user(self):
         cache_key = self.get_secure_cookie(settings.front_session_key)
@@ -146,7 +150,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
         Arguments:
             state {string} -- [hide|online|offline]
         """
-        curr_username = self.get_current_user().get('username', '')
+        curr_username = self.current_user.get('username', '')
         # 设置用户状态
         Online.set_online(self.current_user_id, state)
         for friend in MemberFriend.online_list(self.current_user_id):
@@ -163,6 +167,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
 
 
     def open(self, *args, **kwargs):
+        SysLogger.debug('self.current_user_id %s' % (str(self.current_user_id)))
         self.waiters[self.current_user_id] = self
         self._change_state_notify('online')
 
@@ -197,12 +202,15 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
         """
         try:
             message = message.replace('\'', '"')
+            SysLogger.debug('%s : %s' % ('chat on message ', message))
+            print('chat on message ', message)
             data = json_decode(message)
         except ValueError:
             SysLogger.debug("ws message isn't json text, message is: %s", message)
             return
 
         chat_type = data.get('type', 'dialog')
+        SysLogger.debug('chat_type: %s' % chat_type)
         # curr_id = data.get('mine').get('id')
 
         if chat_type=='dialog':
@@ -221,7 +229,9 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
                 'to': new_to,
             }
             # SysLogger.info("msg_dict %s ", msg_dict)
-            waiter = self.waiters.get(old_uid, None)
+            waiter = self.waiters.get(int(old_uid), None)
+            # print('waiter', type(waiter), waiter, msg_dict)
+            SysLogger.debug('waiter: %s %s %s' % (old_uid, type(waiter), waiter))
             if waiter:
                 waiter.write_message(msg_dict)
             return

@@ -171,7 +171,7 @@ standard_format = '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(
 LOGGING = (
     {
         'name': 'access_log',
-        # 'log_to_stderr': True,
+        'log_to_stderr': True,
         'filename': 'access_log.log'
     },
     {

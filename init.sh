@@ -16,5 +16,6 @@ pytz
 pillow
 python-dateutil
 qrcode
+websocket-client
 " > requirements.txt
 pip install -r requirements.txt

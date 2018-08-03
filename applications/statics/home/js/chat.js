@@ -4,7 +4,8 @@
 
 //心跳检测
 var heartCheck = {
-    timeout: 120000 //120秒
+    // timeout: 120000 //120秒
+    timeout: 20000 //20秒
     , timeoutObj: null
     , serverTimeoutObj: null
     , onmessage: null // 接受消息处理的函数
@@ -468,11 +469,11 @@ layui.use(['layim', 'laytpl'], function(){
         //监听收到的消息
         function(message){
             var data = JSON.parse(message.data)
-            // console.log('onmessage data: ', data)
+            console.log('onmessage data: ', data)
             var message = {
                 token: token,
             }
-            // console.log('data type: ', data['type'])
+            console.log('data type: ', data['type'])
             switch(data['type']){
                 // 服务端ping客户端
                 case 'ping':
