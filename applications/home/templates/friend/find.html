@@ -98,7 +98,7 @@ html body {
                     </button>
                 </li>
             </div>
-            <%#  }); %>
+            <%#  }) %>
         <%# }else{ %>
             <%#  layui.each(d.data, function(index, item){ %>
             <div class="layui-col-xs3 layui-find-list">
@@ -109,32 +109,32 @@ html body {
                     <button class="layui-btn layui-btn-xs btncolor add" data-type="group"><i class="layui-icon">&#xe654;</i>加群</button>
                 </li>
             </div>
-            <%#  }); %>
+            <%#  }) %>
         <%# } %>
     </div>
 </textarea>
 <script type="text/javascript">
 layui.use([ 'layim', 'laytpl','laypage','form',], function(){
     var layim = layui.layim
-    , layer = layui.layer
-    ,laytpl = layui.laytpl
-    ,form = layui.form
-    ,$ = layui.jquery
-    ,laypage = layui.laypage;
+    var layer = layui.layer
+    var laytpl = layui.laytpl
+    var form = layui.form
+    var $ = layui.jquery
+    var laypage = layui.laypage
 
     laytpl.config({
         open: '<%',
         close: '%>'
-    });
+    })
 
-    var cache = parent.layui.layim.cache();
+    var cache = parent.layui.layim.cache()
     // console.log(cache)
 
     $(function(){
-        getRecommend();
-    });
+        getRecommend()
+    })
     //获得URL参数。
-    var url = cache.base.find;
+    var url = cache.base.find
     function getRecommend(){
         $.get(url,
             {type:'recommend', '_xsrf':get_xsrf()},
@@ -143,41 +143,43 @@ layui.use([ 'layim', 'laytpl','laypage','form',], function(){
                     data: res.data,
                     legend:'推荐好友',
                     type:'friend'
-                });
-                $('#LAY_view').html(html);
-        });
+                })
+                $('#LAY_view').html(html)
+        })
     }
 
-    $('body').on('click', '.add', function () {//添加好友
-        var othis = $(this), type = othis.data('type');
-        parent.im_events.applyFriend.call(othis);
-        // type == 'friend' ? parent.layui.im.addFriend(othis,type) : parent.layui.im.addGroup(othis);
-    });
+    $('body').on('click', '.add', function () {
+        //添加好友
+        var othis = $(this)
+        var type = othis.data('type')
+        parent.im_events.applyFriend.call(othis)
+        // type == 'friend' ? parent.layui.im.addFriend(othis,type) : parent.layui.im.addGroup(othis)
+    })
     $('body').on('click', '.createGroup', function () {//创建群
-        var othis = $(this);
-        // parent.layui.im.createGroup(othis);
-    });
+        var othis = $(this)
+        // parent.layui.im.createGroup(othis)
+    })
     $('body').on('click', '.back', function () {//返回推荐好友
-        getRecommend();
-        $("#LAY_page").css("display","none");
-    });
+        getRecommend()
+        $("#LAY_page").css("display","none")
+    })
 
     $("body").keydown(function(event){
         if(event.keyCode==13){
-            $(".find").click();
+            $(".find").click()
         }
-    });
+    })
     $('body').on('click', '.find', function () {
-        $("#LAY_page").css("display","block");
-        var othis = $(this),input = othis.parents('.layui-col-space3').find('input').val();
-        var addType = $('input:radio:checked').val();
+        $("#LAY_page").css("display","block")
+        var othis = $(this),input = othis.parents('.layui-col-space3').find('input').val()
+        var addType = $('input:radio:checked').val()
         if (input) {
             var url = cache.base.find;
             $.get(url,
                 {type:addType, value:input, '_xsrf':get_xsrf()},
                 function(res){
                 if(res.code != 0){
-                    return layer.msg(res.msg);
+                    return layer.msg(res.msg)
                 }
                 laypage.render({ elem: 'LAY_page'
                   ,count: res.total
@@ -193,27 +195,27 @@ layui.use([ 'layim', 'laytpl','laypage','form',], function(){
                         $.get(url,
                             {type:addType,value:input, page: obj.curr || 1, '_xsrf':get_xsrf()},
                             function(res){
-                                $("#LAY_page").css("display","block");
+                                $("#LAY_page").css("display","block")
                                 var html = laytpl(LAY_tpl.value).render({
                                     data: res.data,
                                     legend:'<a class="back"><i class="layui-icon">&#xe65c;</>返回</a> 查找结果',
                                     type:addType
-                                });
-                                $('#LAY_view').html(html);
-                        });
+                                })
+                                $('#LAY_view').html(html)
+                            })
+                        }
                     }
-                  }
-                });
+                })
 
                 var html = laytpl(LAY_tpl.value).render({
                     data: res.data,
                     legend:'找人',
                     type:'friend'
-                });
-                $('#LAY_view').html(html);
-            });
+                })
+                $('#LAY_view').html(html)
+            })
         }
-    });
-});
+    })
+})
 </script>
 {% end %}

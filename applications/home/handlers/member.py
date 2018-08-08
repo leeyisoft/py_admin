@@ -109,9 +109,8 @@ class SetHandler(CommonHandler):
         }
         self.render('member/set.html', **params)
 
-
     @tornado.web.authenticated
-    def post(self, *args, **kwargs):
+    def put(self, *args, **kwargs):
         user_id = self.current_user.get('id')
         username = self.get_argument('username', None)
         email = self.get_argument('email', None)
@@ -142,7 +141,7 @@ class SetHandler(CommonHandler):
 
         if sex:
             params['sex'] = sex
-        if sign:
+        if sign is not None:
             params['sign'] = sign
 
         if avatar and file_md5:
