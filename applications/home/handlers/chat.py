@@ -167,7 +167,7 @@ class ChatServerHandler(tornado.websocket.WebSocketHandler):
 
 
     def open(self, *args, **kwargs):
-        SysLogger.debug('self.current_user_id %s' % (str(self.current_user_id)))
+        # SysLogger.debug('self.current_user_id %s' % (str(self.current_user_id)))
         self.waiters[self.current_user_id] = self
         self._change_state_notify('online')
 

@@ -4,6 +4,8 @@
 
 特别声明：
 > 本软件很多地方“参考”了[torngas](https://github.com/mqingyn/torngas)，在MacBookPro下采用 Python3.6+MySQL5.7开发；因为torngas没有更新了（最后一次提交在2016年9月份，参考的时候它也不支持Python3），所以就自己开始“造轮子”了。
+# wiki
+* [生产环境部署](https://gitee.com/leeyi/py_admin/wikis/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2?sort_id=403630)
 
 # 开发约定
 * 在第一个发布版本之前的“数据库结构、数据变动”，不会给出相应update的SQL语句（如有需要、或者其他建议，欢迎留言）
