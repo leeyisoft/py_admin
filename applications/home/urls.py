@@ -43,6 +43,8 @@ urls = [
     (r"/friend/find/?(.html)?", friend.FindHandler),
     (r"/friend/apply/?(.html)?", friend.ApplyAddFriendHandler),
     (r"/friend/add/?(.html)?", friend.AddFriendHandler),
+    (r"/friend/group/?(.html)?", friend.GroupHandler),
+    (r"/friend/move/?(.html)?", friend.MoveHandler),
 
     # chat webrtc
     (r"/chat/webrtc/room/?(.html)?", chat.WebRtcRoomHandler),

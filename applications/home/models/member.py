@@ -308,6 +308,18 @@ class MemberFriend(BaseModel):
         # 过滤掉离线好友
         return [friend for friend in _friend_list if Online.get_online(friend['id'])=='online']
 
+class Friendgroup(BaseModel):
+    __tablename__ = 'member_friendgroup'
+
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
+    groupname = Column(String(40), nullable=False, default='')
+    owner_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
+    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+
+    @property
+    def created_at(self):
+        return Func.dt_to_timezone(self.utc_created_at)
+
 
 class MemberFriendNotice(BaseModel):
     """

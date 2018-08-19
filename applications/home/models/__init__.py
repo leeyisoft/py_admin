@@ -6,6 +6,7 @@ from .member import MemberOperationLog
 from .member import MemberLoginLog
 from .member import Member
 from .member import MemberFriend
+from .member import Friendgroup
 from .member import MemberFriendNotice
 from .member import Online
 

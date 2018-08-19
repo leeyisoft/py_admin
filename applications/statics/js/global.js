@@ -86,3 +86,53 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
         })
     })
 })
+
+function default_error_callback(xhr, res) {
+    if (res && res.msg) {
+        layui.layer.msg(res.msg, {icon:2})
+    } else if (xhr && xhr.responseJSON && xhr.responseJSON.msg) {
+        layui.layer.msg(xhr.responseJSON.msg, {icon:2})
+    } else {
+        layui.layer.msg('未知错误', {icon:2})
+    }
+}
+/**
+ * [api_ajax description]
+ * @param  {[type]}   url            [description]
+ * @param  {[type]}   method         get post put delete
+ * @param  {[type]}   params         [description]
+ * @param  {Function} callback       [description]
+ * @param  {[type]}   error_callback [description]
+ * @param  {Boolean}  async          async. 默认是true，即为异步方式
+ * @return {[type]}                  [description]
+ */
+function api_ajax(url, method, params, callback, error_callback, async) {
+    async = async===false ? false : true
+    $.ajax({
+        type: method,
+        url: url,
+        async: async,
+        data: params,
+        dataType: 'json',
+        success: function(res) {
+            // console.log(res)
+            if (res.code==0) {
+                if (callback) {
+                    callback(res.data)
+                }
+            } else if(res.code=='990013') {
+                current_token('clear')
+                location.href = '/passport/login'
+            } else {
+                if (error_callback) {
+                    error_callback(false, res)
+                }
+            }
+        },
+        error: function(xhr){
+            if (error_callback) {
+                error_callback(xhr, false)
+            }
+        }
+    })
+}

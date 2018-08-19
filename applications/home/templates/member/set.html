@@ -270,15 +270,17 @@ layui.use(['form', 'upload', 'element'], function() {
         }
         ,done: function(res){
             if(res.code == 0){
-                $.post('/member/set/', {
+                var url = '/member/set'
+                var params = {
                     avatar: res.data.path_file,
                     file_md5: res.data.file_md5,
                     _xsrf: get_xsrf(),
-                }, function(res){
+                }
+                api_ajax(url, 'put', params, function(data) {
                     location.reload()
                 })
             } else {
-                layer.msg(res.msg, {icon: 5})
+                layer.msg(res.msg, {icon: 2})
             }
             $('.avatar-add').find('.loading').hide()
         }

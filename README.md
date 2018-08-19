@@ -86,6 +86,11 @@ mysqldump --opt -d db_py_admin -u root -p > datas/db.sql
 * 后台用户登录日志功能
 * 前端 注册、登录、修改资料、激活Email、修改密码、通过Email找回密码、上传头像
 
+## im fetures
+* group [add group, edit group, delete group]
+* move friend to other group
+
+
 ## todo fetures
 * 多次登录失败账户锁定功能
 * 锁屏功能

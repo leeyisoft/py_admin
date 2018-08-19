@@ -151,15 +151,15 @@ class SetHandler(CommonHandler):
             if avatar!=member.avatar:
                 Attach.remove_avatar(user_id, member.avatar)
 
-            query = "REPLACE INTO `sys_attach_related` (`file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')"
-            q_param = (
+            query = "REPLACE INTO `sys_attach_related` (`file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%d', '%s', '%s')" % (
                 file_md5,
                 'member',
                 user_id,
                 self.request.remote_ip,
                 str(Func.utc_now())[0:-6],
             )
-            Member.session.execute(query % q_param)
+            # print('query ', query )
+            Member.session.execute(query)
         Member.Q.filter(Member.id==user_id).update(params)
         Member.session.commit()
 

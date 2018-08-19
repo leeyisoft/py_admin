@@ -50,11 +50,13 @@
     }).extend({
         chat: 'chat',
     })
-    layui.use(['layim', 'jquery', 'chat'], function (layim, chat) {
+    layui.use(['layim', 'laytpl', 'jquery', 'chat'], function (layim, chat) {
         var $ = layui.jquery
         var chat = layui.chat
         var token = $('body').data('token')
         var rykey = $('body').data('rykey')
+
+
         chat.config({
             user: token,
             pwd: rykey ,
@@ -63,7 +65,7 @@
 
         layim.config({
             init: {
-                url: '/chat/init', data: {}
+                url: user_list_url, data: {}
             },
             //获取群成员
             members: {
@@ -138,18 +140,19 @@
             , isVideo: false //开启聊天工具栏视频
             , groupMembers: true
             //扩展工具栏
-            // , tool: [{
-            //         alias: 'code'
-            //         , title: '代码'
-            //         , icon: '&#xe64e;'
-            //     }]
-            ,title: 'layim'
+            , tool: [{
+                    alias: 'code'
+                    , title: '代码'
+                    , icon: '&#xe64e;'
+                }]
+            ,title: im_name
             ,copyright:true
             , initSkin: '1.jpg' //1-5 设置初始背景
             , notice: true //是否开启桌面消息提醒，默认false
             , systemNotice: false //是否开启系统消息提醒，默认false
             , msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
-            , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
+            // , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
+            , find: find_url
             , chatLog: layui.cache.dir + 'css/modules/layim/html/chatlog.html' //聊天记录页面地址，若不开启，剔除该项即可
             , createGroup: layui.cache.dir + 'css/modules/layim/html/createGroup.html' //创建群页面地址，若不开启，剔除该项即可
             , Information: layui.cache.dir + 'css/modules/layim/html/getInformation.html' //好友群资料页面

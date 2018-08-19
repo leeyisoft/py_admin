@@ -1,3 +1,4 @@
+use db_py_admin;
 -- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
 --
 -- Host: localhost    Database: db_py_admin
@@ -253,6 +254,23 @@ CREATE TABLE `sys_admin_menu` (
 ) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8 COMMENT='管理菜单';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `spider_document`;
+CREATE TABLE `spider_document` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `url` varchar(200) NOT NULL COMMENT '',
+  `title` varchar(80) NOT NULL COMMENT '标题',
+  `tags` varchar(200) NOT NULL COMMENT '标签 list json 字符串',
+  `categories` varchar(80) NOT NULL COMMENT '分类',
+  `post_date` varchar(80) NOT NULL COMMENT '发布时间',
+  `author` varchar(80) NOT NULL COMMENT '作者',
+  `source` varchar(80) NOT NULL DEFAULT '' COMMENT '来源',
+  `sitename` varchar(80) NOT NULL DEFAULT '' COMMENT '来源站点名称',
+  `imgs` text NOT NULL COMMENT '图片地址 list json 字符串',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
+  UNIQUE KEY `uk_url` (`url`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Table structure for table `sys_admin_role`
 --
@@ -394,6 +412,7 @@ CREATE TABLE `sys_message` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统消息，定时删除30天内的已读消息';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Table structure for table `sys_sequence`

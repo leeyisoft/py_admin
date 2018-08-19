@@ -65,7 +65,7 @@ class LogoutHandler(CommonHandler):
     """docstring for Passport"""
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        self.clear_cookie(self.session_key)
+        self.clear_cookie(self.admin_session_key)
         self.redirect(self.get_login_url())
 
 

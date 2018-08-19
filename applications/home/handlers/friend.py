@@ -11,8 +11,77 @@ from applications.core.utils import Func
 from .common import CommonHandler
 from ..models import Member
 from ..models import MemberFriend
+from ..models import Friendgroup
 from ..models import MemberFriendNotice
 
+
+class GroupHandler(CommonHandler):
+    @tornado.web.authenticated
+    def post(self, *args, **kwargs):
+        # return self.success(data={'id':22, 'groupname':'leeyitest'})
+        try:
+            user_id = self.current_user.get('id')
+            params = {'groupname': '未命名分组'}
+            params['owner_user_id'] = user_id
+            group = Friendgroup(**params)
+            Friendgroup.session.add(group)
+            Friendgroup.session.commit()
+        except Exception as e:
+            SysLogger.error('post group error: %s' % e)
+            return self.error(msg='操作失败')
+        return self.success(data=group.as_dict())
+
+    @tornado.web.authenticated
+    def put(self, *args, **kwargs):
+        try:
+            user_id = self.current_user.get('id')
+            groupid = self.get_argument('groupid', 0)
+            groupname = self.get_argument('groupname', '')
+
+            # raise NameError('test error')
+            Friendgroup.Q.filter(Friendgroup.id==groupid).filter(Friendgroup.owner_user_id==user_id).update({'groupname': groupname})
+            Friendgroup.session.commit()
+        except Exception as e:
+            SysLogger.error('delete group error: %s' % e)
+            return self.error(msg='操作失败')
+            # raise e
+        return self.success()
+
+    @tornado.web.authenticated
+    def delete(self, *args, **kwargs):
+        # return self.success()
+        try:
+            user_id = self.current_user.get('id')
+            groupid = self.get_argument('groupid', 0)
+            # raise NameError('test error')
+            Friendgroup.Q.filter(Friendgroup.id==groupid).filter(Friendgroup.owner_user_id==user_id).delete()
+
+            MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.group_id==groupid).update({'group_id': 0})
+
+            Friendgroup.session.commit()
+        except Exception as e:
+            SysLogger.error('delete group error: %s' % e)
+            return self.error(msg='操作失败')
+            # raise e
+        return self.success()
+
+
+class MoveHandler(CommonHandler):
+    @tornado.web.authenticated
+    def put(self, *args, **kwargs):
+        try:
+            user_id = self.current_user.get('id')
+            friend_id = self.get_argument('friend_id', 0)
+            groupid = self.get_argument('groupid', 0)
+
+            # raise NameError('test error')
+            MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.to_user_id==friend_id).update({'group_id': groupid})
+            MemberFriend.session.commit()
+        except Exception as e:
+            SysLogger.error('delete group error: %s' % e)
+            return self.error(msg='操作失败')
+            # raise e
+        return self.success()
 
 class FindHandler(CommonHandler):
     """docstring for Passport"""
