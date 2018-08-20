@@ -95,9 +95,7 @@ class FindHandler(CommonHandler):
         if find_type=='friend' or find_type=='recommend':
             return self._find_friend(value, page, limit)
         else:
-            params = {
-            }
-            self.render('friend/find.html', **params)
+            self.render('friend/find.html')
 
     def _find_friend(self, value, page, limit):
         # print("value: ", type(value), value)
@@ -117,12 +115,17 @@ class FindHandler(CommonHandler):
         items = pagelist_obj.items
 
         user_list = []
+        tplfile= '%s/common/tpl/find_friend.tpl' % self.get_template_path()
+        tpl = ''
+        with open(tplfile) as openfile:
+            tpl = openfile.read()
         if items:
             for row in items:
                 item = row.as_dict(['id', 'username', 'avatar', 'sign'])
                 item['avatar'] = self.static_url(item['avatar'])
                 user_list.append(item)
-        return self.success(data=user_list, total=total, limit=limit, page=page)
+
+        return self.success(data=user_list, total=total, limit=limit, page=page, tpl=tpl)
 
 
 class ApplyAddFriendHandler(CommonHandler):

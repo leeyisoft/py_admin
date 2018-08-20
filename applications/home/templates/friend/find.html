@@ -5,56 +5,56 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style type="text/css">
-html body {
-    margin-left: auto;
-}
-.layui-find-list li img {
-    position: absolute;
-    left: 15px;
-    top: 8px;
-    width: 36px;
-    height: 36px;
-    border-radius: 100%;
-}
-.layui-find-list li {
-    position: relative;
-    height: 90px;;
-    padding: 5px 15px 5px 60px;
-    font-size: 0;
-    cursor: pointer;
-}
-.layui-find-list li * {
-    display: inline-block;
-    vertical-align: top;
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;
-}
-.layui-find-list li span {
-    margin-top: 4px;
-    max-width: 155px;
-}
+    html body {
+        margin-left: auto;
+    }
+    .layui-find-list li img {
+        position: absolute;
+        left: 15px;
+        top: 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 100%;
+    }
+    .layui-find-list li {
+        position: relative;
+        height: 90px;;
+        padding: 5px 15px 5px 60px;
+        font-size: 0;
+        cursor: pointer;
+    }
+    .layui-find-list li * {
+        display: inline-block;
+        vertical-align: top;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .layui-find-list li span {
+        margin-top: 4px;
+        max-width: 155px;
+    }
 
-.layui-find-list li p {
-    display: block;
-    line-height: 18px;
-    font-size: 12px;
-    color: #999;
-    overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;
-}
-.back{
-    cursor:pointer;
-}
-.lay_page{position: fixed;bottom: 0;margin-left: -15px;margin-bottom: 20px;background: #fff;width: 100%;}
-.layui-laypage {
-    width: 100%;
-    margin: 0 auto;
-    display: block;
-    text-align: center;
-}
+    .layui-find-list li p {
+        display: block;
+        line-height: 18px;
+        font-size: 12px;
+        color: #999;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .back{
+        cursor:pointer;
+    }
+    .lay_page{position: fixed;bottom: 0;margin-left: -15px;margin-bottom: 20px;background: #fff;width: 100%;}
+    .layui-laypage {
+        width: 100%;
+        margin: 0 auto;
+        display: block;
+        text-align: center;
+    }
 </style>
 {% end %}
 {% block body %}
@@ -81,38 +81,6 @@ html body {
 {% end %}
 
 {% block javascript %}
-<textarea title="消息模版" id="LAY_tpl" style="display:none;">
-    <fieldset class="layui-elem-field layui-field-title">
-      <legend><% d.legend%></legend>
-    </fieldset>
-    <div class="layui-row ">
-        <%# if(d.type == 'friend'){ %>
-            <%#  layui.each(d.data, function(index, item){ %>
-            <div class="layui-col-xs3 layui-find-list">
-                <li layim-event="add" data-type="friend" data-index="0" data-uid="<% item.id %>" data-name="<%item.username%>">
-                    <img src="<%item.avatar%>" onerror="javascript:this.src=default_avatar" >
-                    <span><%item.username%></span>
-                    <p><%item.sign%>  <%#  if(item.sign == ''){ %>我很懒，懒得写签名<%#  } %> </p>
-                    <button class="layui-btn layui-btn-xs btncolor add" data-type="friend" username="<%item.username%>" avatar="<%item.avatar%>" user_id="<%item.id%>">
-                        <i class="layui-icon">&#xe654;</i>加好友
-                    </button>
-                </li>
-            </div>
-            <%#  }) %>
-        <%# }else{ %>
-            <%#  layui.each(d.data, function(index, item){ %>
-            <div class="layui-col-xs3 layui-find-list">
-                <li layim-event="add" data-type="group" data-approval="<% item.approval %>" data-index="0" data-uid="<% item.groupIdx %>" data-name="<%item.groupName%>">
-                    <img src="<%item.avatar%>" onerror="javascript:this.src=default_avatar" >
-                    <span><%item.groupName%></span>
-                    <p><%item.des%>  <%#  if(item.des == ''){ %>无<%#  } %> </p>
-                    <button class="layui-btn layui-btn-xs btncolor add" data-type="group"><i class="layui-icon">&#xe654;</i>加群</button>
-                </li>
-            </div>
-            <%#  }) %>
-        <%# } %>
-    </div>
-</textarea>
 <script type="text/javascript">
 
     //layui绑定扩展
@@ -131,11 +99,6 @@ html body {
         var im = layui.im
         var laypage = layui.laypage
 
-        laytpl.config({
-            open: '<%',
-            close: '%>'
-        })
-
         var cache = parent.layui.layim.cache()
         // console.log(cache)
 
@@ -148,7 +111,8 @@ html body {
             $.get(url,
                 {type:'recommend', '_xsrf':get_xsrf()},
                 function(res){
-                    var html = laytpl(LAY_tpl.value).render({
+                    // var html = laytpl(LAY_tpl.value).render({
+                    var html = laytpl(res.tpl).render({
                         data: res.data,
                         legend:'推荐好友',
                         type:'friend'
@@ -207,7 +171,7 @@ html body {
                                 {type:addType,value:input, page: obj.curr || 1, '_xsrf':get_xsrf()},
                                 function(res){
                                     $("#LAY_page").css("display","block")
-                                    var html = laytpl(LAY_tpl.value).render({
+                                    var html = laytpl(res.tpl).render({
                                         data: res.data,
                                         legend:'<a class="back"><i class="layui-icon">&#xe65c;</>返回</a> 查找结果',
                                         type:addType
@@ -218,7 +182,7 @@ html body {
                         }
                     })
 
-                    var html = laytpl(LAY_tpl.value).render({
+                    var html = laytpl(res.tpl).render({
                         data: res.data,
                         legend:'找人',
                         type:'friend'

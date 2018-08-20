@@ -87,6 +87,7 @@ layui.define(['jquery', 'layer', 'layim', 'contextmenu', 'form'], function (expo
     var layer = layui.layer
     var form = layui.form
     var cachedata =  layui.layim.cache()
+    var curr_id = $('#curr_id').val()
 
     var conf = {
         uid: 0, //

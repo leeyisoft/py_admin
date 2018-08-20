@@ -13,6 +13,7 @@
 
 {% end %}
 {% block javascript %}
+<input type="hidden" name="curr_id" id="curr_id" value="{{ current_user['id'] }}">
 <script src="{{ static_url('home/js/contextmenu.js') }}" charset="utf-8"></script>
 <script src="{{ static_url('home/js/chat.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
