@@ -74,13 +74,16 @@ class MoveHandler(CommonHandler):
             friend_id = self.get_argument('friend_id', 0)
             groupid = self.get_argument('groupid', 0)
 
-            # raise NameError('test error')
-            MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.to_user_id==friend_id).update({'group_id': groupid})
+            data = {
+                'group_id': groupid,
+                'utc_updated_at': Func.utc_now(),
+                'status': 1,
+            }
+            MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.to_user_id==friend_id).update(data)
             MemberFriend.session.commit()
         except Exception as e:
             SysLogger.error('delete group error: %s' % e)
             return self.error(msg='操作失败')
-            # raise e
         return self.success()
 
 class FindHandler(CommonHandler):
