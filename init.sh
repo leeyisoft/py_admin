@@ -9,6 +9,7 @@ source py3/bin/activate
 echo "
 tornado>=5.0.2
 mysqlclient
+redis
 sqlalchemy
 rsa
 pycrypto

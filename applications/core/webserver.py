@@ -65,8 +65,6 @@ class Server(object):
         return self.application
 
     def _install_application(self, application):
-        if not self.urls:
-            raise UrlError("urls not found.")
         if application:
             app_class = application
         else:
@@ -102,11 +100,9 @@ class Server(object):
             for app_name in settings.INSTALLED_APPS:
                 app_urls = import_object('applications.%s.urls.urls' % app_name)
                 urls.extend(app_urls)
-        else:
-            raise ConfigError('load urls error,INSTALLED_APPS not found!')
-
-        # 过滤重复元素
-        self.urls = list(set(urls))
+            # 过滤重复元素
+            self.urls = list(set(urls))
+        # end if
         return self.urls
 
     def load_httpserver(self, sockets=None, **kwargs):
