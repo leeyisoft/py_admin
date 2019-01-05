@@ -177,30 +177,9 @@ layui.use(['form', 'upload', 'element'], function() {
     form.on('submit(baseSubmit)', function(obj) {
         layer.msg('数据提交中...',{time:50000})
 
-        $.ajax({
-            type: "POST",
-            url: obj.form.action,
-            data: obj.field,
-            success: function(res) {
-                if (res.code==0) {
-                    layer.msg('操作成功', {icon: 1, time: 2000}, function(){
-                    })
-                } else if(res.msg) {
-                    layer.msg(res.msg)
-                    $(":input[name='title']").focus()
-                } else {
-                    layer.msg('{{ _('未知错误') }}')
-                }
-            },
-            error: function(xhr){
-                console.log(xhr.responseJSON)
-                if (xhr.responseJSON && xhr.responseJSON.msg) {
-                    layer.msg(xhr.responseJSON.msg)
-                } else {
-                    layer.msg('{{ _('未知错误') }}')
-                }
-            }
-        })
+        api_ajax(obj.form.action, 'post', obj.field, function(res) {
+            layer.msg('操作成功', {icon: 1, time: 2000})
+        }, default_error_callback)
         return false
     })
     form.on('submit(resetPwdSubmit)', function(obj) {
@@ -226,32 +205,13 @@ layui.use(['form', 'upload', 'element'], function() {
             var ciphertext3 = encrypt.encrypt(obj.field.nowpass)
             obj.field.nowpass = ciphertext3
         }
-        $.ajax({
-            type: "POST",
-            url: form_action,
-            data: obj.field,
-            success: function(res) {
-                if (res.code==0) {
-                    layer.msg('操作成功', {icon: 1, time: 2000}, function(){
-                        $(":input[name='password']").val('')
-                        $(":input[name='repass']").val('')
-                        $(":input[name='nowpass']").val('')
-                    })
-                } else if(res.msg) {
-                    layer.msg(res.msg)
-                    $(":input[name='nowpass']").focus()
-                } else {
-                    layer.msg('{{ _('未知错误') }}')
-                }
-            },
-            error: function(xhr){
-                if (xhr.responseJSON && xhr.responseJSON.msg) {
-                    layer.msg(xhr.responseJSON.msg)
-                } else {
-                    layer.msg('{{ _('未知错误') }}')
-                }
-            }
-        })
+        api_ajax(form_action, 'post', obj.field, function(res) {
+            layer.msg('操作成功', {icon: 1, time: 2000}, function(){
+                $(":input[name='password']").val('')
+                $(":input[name='repass']").val('')
+                $(":input[name='nowpass']").val('')
+            })
+        }, default_error_callback)
         return false
     })
 
@@ -276,7 +236,7 @@ layui.use(['form', 'upload', 'element'], function() {
                     file_md5: res.data.file_md5,
                     _xsrf: get_xsrf(),
                 }
-                api_ajax(url, 'put', params, function(data) {
+                api_ajax(url, 'put', params, function(res2) {
                     location.reload()
                 })
             } else {

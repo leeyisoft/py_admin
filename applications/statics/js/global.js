@@ -88,12 +88,13 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
 })
 
 function default_error_callback(xhr, res) {
+    console.log('xhr ', xhr, 'res ', res)
     if (res && res.msg) {
         layui.layer.msg(res.msg, {icon:2})
     } else if (xhr && xhr.responseJSON && xhr.responseJSON.msg) {
         layui.layer.msg(xhr.responseJSON.msg, {icon:2})
     } else {
-        layui.layer.msg('未知错误', {icon:2})
+        layui.layer.msg('未知错误.', {icon:2})
     }
 }
 /**
@@ -107,6 +108,18 @@ function default_error_callback(xhr, res) {
  * @return {[type]}                  [description]
  */
 function api_ajax(url, method, params, callback, error_callback, async) {
+    if (!url) {
+        return false
+    }
+    if (!method) {
+        method = 'get'
+    }
+    if (!params) {
+        params = {}
+    }
+
+    params._xsrf = get_xsrf()
+
     async = async===false ? false : true
     $.ajax({
         type: method,
@@ -118,7 +131,7 @@ function api_ajax(url, method, params, callback, error_callback, async) {
             // console.log(res)
             if (res.code==0) {
                 if (callback) {
-                    callback(res.data)
+                    callback(res)
                 }
             } else if(res.code=='990013') {
                 current_token('clear')

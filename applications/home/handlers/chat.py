@@ -93,7 +93,12 @@ class ChartNoticeHandler(CommonHandler):
             }
             data.append(item)
 
+        tplfile= '%s/common/tpl/add_friend.tpl' % self.get_template_path()
+        tpl = ''
+        with open(tplfile) as openfile:
+            tpl = openfile.read()
         params = {
+            'tpl': tpl,
             'data': data,
             'pages': 1,
             'curr_user_id': user_id,
