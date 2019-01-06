@@ -1,0 +1,22 @@
+{% extends "default/common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "default/common/banner.htm" %}
+
+    {% include "default/common/top_nav.htm" %}
+    <!-- container-wrap -->
+    <div class="container">
+        <center><h1>404</h1></center>
+    </div>
+    <!-- //container-wrap -->
+{% endblock %}
+
+{% block footer %}
+{% include "default/common/footer.htm" %}
+{% include "default/common/copyright.htm" %}
+{% endblock %}

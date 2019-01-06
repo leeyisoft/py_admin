@@ -57,6 +57,25 @@ class Func():
         return True if re.match(regex, mobile) else False
 
     @staticmethod
+    def isphone(phone):
+        """
+        #写一个正则表达式，能匹配出多种格式的电话号码，包括
+        #(021)88776543   010-55667890 02584453362  0571 66345673
+        #\(?0\d{2,3}[) -]?\d{7,8}
+        # import re
+        # phone="(021)88776543 010-55667890 02584533622 057184720483 837922740"
+        """
+        m = re.findall(r"\(?0\d{2,3}[) -]?\d{7,8}",phone)
+        if m:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_phone_or_mobile(phone):
+        return ismobile(phone) or isphone(phone)
+
+    @staticmethod
     def unix_time():
         return int(time.mktime(datetime.datetime.now().timetuple()))
 

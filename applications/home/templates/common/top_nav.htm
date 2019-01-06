@@ -1,0 +1,51 @@
+<div class="top-nav">
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="logo">
+                    <a href="index.html" title="">
+                        <img alt="Brand" src="/static/home/images/logo.png?vsn=1.1">
+                        <h1>农产品彭氏</h1>
+                    </a>
+                </div>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-center">
+                    <li><a href="/"{% if not request.path %} class="active"{% endif %}>首页</a></li>
+                    <li><a href="/company/about/"{% if request.path=='/company/about/' %} class="active"{% endif %}>关于我们</a></li>
+
+                    <li><a href="/company/activity/"{% if request.path=='/company/activity/' %} class="active"{% endif %}>新闻活动</a></li>
+
+                    <li><a href="/regulations/"{% if request.path=='/regulations/' %} class="active"{% endif %}>政策法规</a></li>
+                    <li><a href="/company/product/"{% if request.path=='/company/product/' %} class="active"{% endif %}>产品展示</a></li>
+                    <li><a href="/company/contact/"{% if request.path=='/company/contact/' %} class="active"{% endif %}>联系我们</a></li>
+                </ul>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<!-- script-for sticky-nav -->
+<script type="text/javascript">
+$(document).ready(function() {
+     var navoffeset=$(".top-nav").offset().top;
+     $(window).scroll(function(){
+        var scrollpos=$(window).scrollTop();
+        if(scrollpos >=navoffeset){
+            $(".top-nav").addClass("fixed");
+        }else{
+            $(".top-nav").removeClass("fixed");
+        }
+     });
+
+});
+</script>
+<!-- /script-for sticky-nav -->

@@ -25,12 +25,10 @@ class _Settings(object):
             config = getattr(setting, item)
         else:
             raise ConfigError('settings "%s" not exist!' % item)
-
         return storage(config) if type(config) is dict else config
 
     @classmethod
     def settings_object(cls):
-
         if not hasattr(cls, '_sett'):
             cls._sett = global_settings
             try:

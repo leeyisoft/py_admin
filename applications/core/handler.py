@@ -10,6 +10,10 @@ import tornado.web
 
 from tornado.escape import xhtml_escape
 from tornado.escape import json_encode
+from jinja2 import Environment
+from jinja2 import FileSystemLoader
+from jinja2 import TemplateNotFound
+
 
 from .settings_manager import settings
 from .mixins.exception import UncaughtExceptionMixin
@@ -80,7 +84,27 @@ class _HandlerPatch(tornado.web.RequestHandler):
         except:
             pass
 
-class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
+class _TemplateRendring(object):
+  """
+  A simple class to hold methods for rendering templates.
+  """
+  def render_template(self, template_name, **kwargs):
+    template_dirs = []
+    # print('self.settings', self.settings)
+    # print('self.settings', self.settings['template_path'])
+    if self.settings.get('template_path', ''):
+      template_dirs.append(self.settings['template_path'])
+    # print('self.settings', self.settings['template_path'])
+    env = Environment(loader=FileSystemLoader(template_dirs))
+
+    try:
+      template = env.get_template(template_name)
+    except TemplateNotFound:
+      raise TemplateNotFound(template_name)
+    content = template.render(kwargs)
+    return content
+
+class BaseHandler(UncaughtExceptionMixin, _HandlerPatch, _TemplateRendring):
     def create_template_loader(self, template_path):
         loader = self.application.tmpl
         if loader is None:
@@ -96,6 +120,25 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch):
         valid_code = self.get_secure_cookie(settings.valid_code_key)
         valid_code = valid_code.decode('utf-8')
         return valid_code.lower()!=code.lower()
+
+    def render_html(self, template_name, **kwargs):
+        self.settings['template_path'] = self.get_template_path()
+        kwargs.update(dict(
+            sys_config=sys_config,
+            def_avator=self.static_url('image/default_avatar.jpg'),
+
+            handler=self,
+            request=self.request,
+            current_user=self.current_user,
+            locale=self.locale,
+            _=self.locale.translate,
+            pgettext=self.locale.pgettext,
+            static_url=self.static_url,
+            xsrf_form_html=self.xsrf_form_html,
+            reverse_url=self.reverse_url
+        ))
+        content = self.render_template(template_name, **kwargs)
+        self.write(content)
 
     def get_template_namespace(self):
         """Returns a dictionary to be used as the default template namespace.

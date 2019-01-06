@@ -1,0 +1,69 @@
+{% extends "common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!-- container-wrap -->
+    <div class="container">
+        {% include "common/breadcrumb.htm" %}
+
+        {% for new in arc_list %}
+        <div class="new-grids">
+            <div class="date">
+                <p>{{ new.publish_date }}</p>
+                <span>{{ new.publish_date }}</span>
+            </div>
+            <div class="new-grid-right" style="width: 90%;">
+                <h5>
+                <a href="/post/{{ new.id }}" title="{{ new.title }}">{{  new.title|truncate(64)  }}</a>
+                </h5>
+                <p>{{ new.description|truncate(200) }}</p>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+        {% endfor %}
+        <nav aria-label="..." style="width: 100%; text-align: center; margin: auto;">
+            <ul class="pagination">
+                {% if arc_list.has_previous %}
+                <li class="active">
+                    <a href="?page={{ arc_list.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                </li>
+                {% endif %}
+
+                {% for page in num_pages %}
+                    {% if page==cur_page %}
+                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(current)</span></a></li>
+                    {% else %}
+                    <li><a href="?page={{ page }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if arc_list.has_next %}
+                <li class="active">
+                    <a href="?page={{ arc_list.next_page_number }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <!-- //container-wrap -->
+{% endblock %}
+
+{% block footer %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
+{% endblock %}

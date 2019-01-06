@@ -1,0 +1,84 @@
+<!--baner-->
+<div class="banner">
+    <!-- container -->
+    <div class="container">
+        <div class="banner-top">
+            <div class="social" style="display: none;">
+                <ul>
+                    <li><a href="#" class="facebook"> </a></li>
+                    <li><a href="#" class="facebook twitter"> </a></li>
+                    <li><a href="#" class="facebook chrome"> </a></li>
+                    <li><a href="#" class="facebook dribbble"> </a></li>
+                </ul>
+            </div>
+            <div class="header-top-right">
+                <form style="display: none;">
+                    <input type="text" placeholder="Search" required="">
+                    <input type="submit" value="">
+                    <div class="clearfix"> </div>
+                </form>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+        <div class="banner-top-grid">
+            <div  id="top" class="callbacks_container-wrap">
+                <ul class="rslides" id="slider3">
+                {% for ad in ad_list %}
+                <li>
+                  <div class="banner-info">
+                    <h3>{{ ad.title }}</h3>
+                    <h5>{{ ad.subtitle }}</h5>
+                    <p>{{ ad.description }}</p>
+                    {% if ad.url %}
+                    <div class="banner-buttons">
+                      <div class="banner-button white-button">
+                        <a href="{{ ad.url }}" title="{{ ad.title }}" target="{{ ad.target }}">Click</a>
+                      </div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- //container -->
+</div>
+<!--//baner-->
+
+{% if ad_list %}
+<script type="text/javascript" src="/static/{{  app_name  }}/js/responsiveslides.min.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // Slideshow 4
+    $("#slider3").responsiveSlides({
+        auto: false,
+        pager: true,
+        nav: false,
+        speed: 500,
+        namespace: "callbacks",
+        before: function () {
+            $('.events').append("<li>before event fired.</li>");
+        },
+        after: function () {
+            $('.events').append("<li>after event fired.</li>");
+        }
+    });
+
+    $(".scroll").click(function(event){
+        event.preventdefault/common();
+        $('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
+    });
+
+    // 获取窗口高度
+    if (window.innerHeight) {
+        winHeight = window.innerHeight;
+        $(".banner").css('height', winHeight-80);
+    } else if ((document.body) && (document.body.clientHeight)) {
+        winHeight = document.body.clientHeight;
+        $(".banner").css('height', winHeight-80);
+    }
+});
+</script>
+{% endif %}

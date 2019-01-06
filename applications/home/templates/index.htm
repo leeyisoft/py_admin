@@ -1,0 +1,171 @@
+{% extends "common/base.htm" %}
+
+{% block title %} 首页 - {{site_name}} {% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!--navigation-->
+    <!-- banner-bottom -->
+    <div class="welcome">
+        <div class="welcome-left">
+            <h3>{{ welcome.title }}</h3>
+            <h4>{{ welcome.subtitle }}</h4>
+            <p>{{ welcome.cvalue }}</p>
+        </div>
+        {% if welcome.thumb %}
+        <div class="welcome-right" style="background: url({{ ad_thumb_prefix }}/{{ welcome.thumb }}) no-repeat 0px 0px; background-size: cover;"></div>
+        {% else %}
+        <div class="welcome-right"></div>
+        {% endif %}
+        <div class="clearfix"> </div>
+    </div>
+    <!-- offer -->
+    <div class="welcome offer">
+        <div class="welcome-left offer-left">
+            <h3>{{ offer.title }}</h3>
+            <h4>{{ offer.subtitle }}</h4>
+            <p>{{ offer.cvalue }}</p>
+            <div class="offer-left-list">
+                <ul>
+                    {% for arc in products_left %}
+                    <li><a href="/post/{{ arc.id }}" title="{{ arc.title }}" target="_blank">{{ arc.title | truncate(16) }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="offer-left-list">
+                <ul>
+                    {% for arc in products_right %}
+                    <li><a href="/post/{{ arc.id }}" title="{{ arc.title }}" target="_blank">{{ arc.title | truncate(16) }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+
+        {% if offer.thumb %}
+        <div class="welcome-right offer-right" style="background: url({{ ad_thumb_prefix }}/{{ offer.thumb }}) no-repeat 0px 0px; background-size: cover;"></div>
+        {% else %}
+        <div class="welcome-right offer-right"></div>
+        {% endif %}
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <!-- //offer -->
+    <!-- new -->
+    <div class="welcome new">
+        <div class="welcome-left new-left">
+            <h3>公司动态</h3>
+            {% for new in company_news %}
+            <div class="new-grids">
+                <div class="date">
+                    <p>{{ new.publish_date }}</p>
+                    <span>{{ new.publish_date }}</span>
+                </div>
+                <div class="new-grid-right">
+                    <h5>
+                    <a href="/post/{{ new.id }}" title="{{ new.title }}">{{  new.title | truncate(56) }}</a>
+                    </h5>
+                    <p>{{ new.description | truncate(160) }}</p>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if new_right.thumb %}
+        <div class="welcome-right new-right" style="background: url({{ ad_thumb_prefix }}/{{ new_right.thumb }}) no-repeat 0px 0px; background-size: cover;"></div>
+        {% else %}
+        <div class="welcome-right new-right"></div>
+        {% endif %}
+        <div class="clearfix"> </div>
+    </div>
+    <!-- //new -->
+    <!-- services -->
+    <div id="services" class="services">
+        <!-- container -->
+        <div class="container">
+            <div class="services-info">
+                <h3>Services</h3>
+            </div>
+            <div class="services-grids">
+                <div class="col-md-4 services-grid">
+                    <div class="services-icon">
+                        <span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
+                    </div>
+                    <h4>{{ services_1.title }}</h4>
+                    <p>{{ services_1.cvalue }}</p>
+                </div>
+                <div class="col-md-4 services-grid">
+                    <div class="services-icon">
+                        <span class="glyphicon glyphicon-asterisk glyphicon-check" aria-hidden="true"></span>
+                    </div>
+                    <h4>{{ services_2.title }}</h4>
+                    <p>{{ services_2.cvalue }}</p>
+                </div>
+                <div class="col-md-4 services-grid">
+                    <div class="services-icon">
+                        <span class="glyphicon glyphicon-asterisk glyphicon-time" aria-hidden="true"></span>
+                    </div>
+                    <h4>{{ services_3.title }}</h4>
+                    <p>{{ services_3.cvalue }}</p>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <!-- //container -->
+    </div>
+    <!-- services -->
+    <!-- new-bottom -->
+    {% if slogan.thumb %}
+    <div class="new-bottom" style="background: url({{ ad_thumb_prefix }}/{{ slogan.thumb }}) no-repeat 0px 0px; background-size: cover;">
+    {% else %}
+    <div class="new-bottom">
+    {% endif %}
+        <!-- container -->
+        <div class="container">
+            <div class="new-bottom-info">
+                <h2>{{ slogan.title }}</h2>
+                <p>{{ slogan.cvalue }}</p>
+            </div>
+        </div>
+        <!-- //container -->
+    </div>
+    <!-- //new-bottom -->
+
+{% endblock %}
+
+{% block footer %}
+    {% include "common/footer.htm" %}
+    {% include "common/copyright.htm" %}
+{% endblock %}
+
+{% block javascript %}
+<!-- script-for sticky-nav -->
+<script type="text/javascript">
+$(document).ready(function() {
+     var navoffeset=$(".top-nav").offset().top;
+     $(window).scroll(function(){
+        var scrollpos=$(window).scrollTop();
+        if(scrollpos >=navoffeset){
+            $(".top-nav").addClass("fixed");
+        }else{
+            $(".top-nav").removeClass("fixed");
+        }
+     });
+
+});
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?670b382fb063378f3543f80e4288e92b";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!--//end-smoth-scrolling-->
+{% endblock %}

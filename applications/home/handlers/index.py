@@ -17,5 +17,17 @@ class IndexHandler(CommonHandler):
         """首页
         """
         params = {
+            'ad_list': [],
+            'slogan': {'title':'','cvalue':''},
+            'welcome': {'title':'', 'subtitle':'','cvalue':''},
+            'offer': {'title':'', 'subtitle':'','cvalue':''},
+            'welcome': {'title':'', 'subtitle':'','cvalue':''},
+            'services_1': {'title':'','cvalue':''},
+            'services_2': {'title':'','cvalue':''},
+            'services_3': {'title':'','cvalue':''},
+            'company_news': [],
+            'new_right': None,
         }
-        self.render('index/index.html', **params)
+        # 合并字典
+        params.update(self.tpl_params())
+        self.render_html('index.htm', **params)

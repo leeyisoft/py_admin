@@ -5,7 +5,7 @@ from .handlers import index
 from .handlers import passport
 from .handlers import member
 from .handlers import chat
-from .handlers import friend
+from .handlers import company
 
 # 其他 URL 通过 acl 获取
 urls = [
@@ -39,14 +39,11 @@ urls = [
     (r"/chat/msgbox/?(.html)?", chat.ChartMsgboxHandler),
     (r"/chat/notice/?(.html)?", chat.ChartNoticeHandler),
 
-    # friend
-    (r"/friend/find/?(.html)?", friend.FindHandler),
-    (r"/friend/apply/?(.html)?", friend.ApplyAddFriendHandler),
-    (r"/friend/add/?(.html)?", friend.AddFriendHandler),
-    (r"/friend/group/?(.html)?", friend.GroupHandler),
-    (r"/friend/move/?(.html)?", friend.MoveHandler),
+    # company
+    (r"/company/about/?(.html)?", company.AboutHandler),
+    (r"/company/activity/?(.html)?", company.ActivityHandler),
+    (r"/company/product/?(.html)?", company.ProductHandler),
+    (r"/company/contact/?(.html)?", company.ContactHandler),
+    (r"/regulations/?(.html)?", company.RegulationsHandler),
 
-    # chat webrtc
-    (r"/chat/webrtc/room/?(.html)?", chat.WebRtcRoomHandler),
-    (r"/chat/webrtc/server/?(.html)?", chat.WebRTCServerHandler),
 ]

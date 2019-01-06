@@ -18,5 +18,6 @@ pillow
 python-dateutil
 qrcode
 websocket-client
+jinja2
 " > requirements.txt
 pip install -r requirements.txt
