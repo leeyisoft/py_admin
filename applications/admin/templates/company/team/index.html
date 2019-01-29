@@ -1,0 +1,269 @@
+{% extends "../../base.html" %}
+
+{% block title %} {% end %}
+
+{% block body %}
+<div class="layui-body">
+    <div class="layui-card" id="search_box" style="display: ;">
+        <form class="layui-form layui-card-header" action="/admin/team/list">
+            <div class="layui-inline">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">职务</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit="" lay-filter="searchSubmit">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <!-- 内容主体区域 -->
+    <div class="layui-btn-group topToolbar">
+        <a class="layui-btn layui-btn-primary" data-type="add">
+            <i class="layui-icon">&#xe608;</i>添加
+        </a>
+        <!-- <a data-href="{:url('status?table=admin_user&val=1')}" class="layui-btn layui-btn-primary">
+            <i class="layui-icon">&#xe643;</i>启用
+        </a>
+        <a data-href="{:url('status?table=admin_user&val=0')}" class="layui-btn layui-btn-primary">
+            <i class="layui-icon">&#xe63f;</i>禁用
+        </a>
+        <a data-href="{:url('delete')}" class="layui-btn layui-btn-primary">
+            <i class="layui-icon">&#xe640;</i>删除
+        </a> -->
+        <a class="layui-btn layui-btn-primary" id="show_search_box">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+        </a>
+    </div>
+    <table id="data_list" lay-filter="data_list" class="layui-table"></table>
+</div>
+{% end %}
+
+{% block javascript %}
+<script type="text/html" id="data_list_bar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑">
+        <i class="layui-icon">&#xe642;</i>
+    </a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" title="删除">
+        <i class="layui-icon">&#xe640;</i>
+    </a>
+</script>
+
+<script type="text/html" id="switchStatus">
+    <input type="checkbox" name="status" value="{{!d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" {{!d.status == 1 ? 'checked' : ''}}>
+</script>
+
+<script type="text/javascript">
+var edit_curent_obj = false
+
+var edit_success = function(data) {
+    if (edit_curent_obj) {
+        edit_curent_obj.update({
+            title: data.title,
+            name: data.name,
+            order: data.order,
+        })
+        if (status_html[data.status]) {
+            var td = edit_curent_obj.tr.children('td[data-field="status"]')
+            td.html(status_html[data.status])
+        }
+    } else {
+        window.location.reload()
+    }
+}
+
+layui.use(['table','form'], function() {
+    var table = layui.table
+    var form = layui.form
+
+    //监听表格复选框选择
+    table.on('checkbox(data_list)', function(obj){
+        console.log(obj)
+    });
+    //监听工具条
+    table.on('tool(data_list)', function(obj){
+        console.log(obj)
+        var data = obj.data
+        switch(obj.event) {
+            case 'edit':
+                edit_curent_obj = obj
+                edit(data)
+                break;
+            case 'del':
+                layer.confirm('删除之后无法恢复，您确定要删除吗？', function(index) {
+                    del(data.id, obj, index)
+                });
+                break;
+        }
+    });
+
+    var $ = layui.$, active = {
+        add: function() {
+            layer.open({
+                type: 2,
+                title: ['添加', 'background-color: #00bb9d;text-align:center;font-size:18px;color:#fff;'],
+                shadeClose: true,
+                shade: false,
+                maxmin: true,
+                area: ['100%', '100%'],
+                content: '/admin/team/add',
+            })
+        },
+        getCheckData: function(){ //获取选中数据
+            var checkStatus = table.checkStatus('data_list_table')
+            ,data = checkStatus.data;
+            layer.alert(JSON.stringify(data));
+        }
+        ,getCheckLength: function(){ //获取选中数目
+            var checkStatus = table.checkStatus('data_list_table')
+            ,data = checkStatus.data;
+            layer.msg('选中了：'+ data.length + ' 个');
+        }
+        ,isAll: function(){ //验证是否全选
+            var checkStatus = table.checkStatus('data_list_table');
+            layer.msg(checkStatus.isAll ? '全选': '未全选')
+        }
+    };
+
+    $('.topToolbar .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+
+    // 编辑
+    var edit = function(data) {
+        layer.open({
+            type: 2,
+            title: ['编辑', 'background-color: #00bb9d;text-align:center;font-size:18px;color:#fff;'],
+            shadeClose: true,
+            shade: false,
+            maxmin: false,
+            area: ['100%', '100%'],
+            content: '/admin/team/edit?id=' + data.id,
+        })
+    }
+
+    // 删除
+    var del = function(id, obj, index) {
+        var next = '/admin/team/delete'
+        $.ajax({
+            type: 'DELETE',
+            url: next,
+            data: {id: id, _xsrf: get_xsrf()},
+            dataType: 'json',
+            success: function(data) {
+                obj.del();
+                layer.close(index);
+                if (data.code==0) {
+                    layer.msg('{{ _('操作成功') }}')
+                } else if(data.msg) {
+                    layer.msg(data.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                setTimeout(function(){
+                    window.parent.layer.closeAll()
+                }, 2000)
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+    }
+
+    form.on('switch(status)', function() {
+        var status = this.checked ? 1 : 0
+        var id = $(this).parent().parent().parent().children('td[data-field="id"]').children('div').html()
+
+        var params = {id: id, status:status, }
+        params['_xsrf'] = get_xsrf()
+
+        $.ajax({
+            type: "POST",
+            url: '/admin/team/edit',
+            data: params,
+            success: function(res) {
+                if (res.code==0) {
+                    console.log('success')
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            },
+            error: function(xhr){
+                // console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+    })
+
+    var table_load = function(url, data) {
+        where = data
+        where['format'] = 'json'
+        // return false
+        table.render({
+            elem: '#data_list'
+            , where: where
+            , url: url
+                ,cols: [[
+                {field:'id', width:80, title: 'ID', sort: true}
+                ,{field:'name', width:120, title: '名称', sort: true}
+                ,{field:'title', title: '职务', minWidth: 80}
+                ,{field:'order', width:80, title: '排序', sort: true}
+                ,{field:'status', title:'状态', width:88, templet: '#switchStatus', unresize: true}
+                ,{field:'utc_created_at', width:135, title: '添加时间', sort: true}
+                ,{fixed: 'right', width:178, align:'center', toolbar: '#data_list_bar'}
+            ]]
+            ,page: true
+            ,done: function(res) {
+                if (res.code==0) {
+                    layer.closeAll()
+                    // layer.msg('操作成功', {icon: 1, time: 2000}, function(){
+                    //     layer.closeAll()
+                    // })
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                return true
+            }
+            , error: function(xhr){
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+                return true
+            }
+        })
+        return false
+    }
+    table_load('/admin/team/list', {})
+    form.on('submit(searchSubmit)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+        // console.log('obj.field', obj.field)
+        return table_load(obj.form.action, obj.field)
+    })
+});
+
+</script>
+{% end %}

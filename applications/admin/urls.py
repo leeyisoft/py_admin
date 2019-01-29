@@ -8,6 +8,7 @@ from .handlers import user
 from .handlers import role
 from .handlers import menu
 from .handlers import config
+from .handlers import content
 
 # 其他 URL 通过 acl 获取
 urls = [
@@ -63,4 +64,19 @@ urls = [
     (r"/admin/member/edit/?(.html)?", member.MemberEditHandler),
     (r"/admin/member/authorize/?(.html)?", member.MemberAuthorizeHandler),
     (r"/admin/member/authorize/list/?(.html)?", member.MemberAuthorizeListHandler),
+
+    # article
+    (r"/admin/article/index/?(.html)?", content.ArticleHandler),
+    (r"/admin/article/delete/?(.html)?", content.ArticleHandler),
+    (r"/admin/article/list/?(.html)?", content.ArticleListHandler),
+    (r"/admin/article/add/?(.html)?", content.ArticleAddHandler),
+    (r"/admin/article/edit/?(.html)?", content.ArticleEditHandler),
+
+    # company
+    (r"/admin/content/upload/?(.html)?", content.UploadHandler),
+    (r"/admin/company/team/?(.html)?", content.CompanyTeamHandler),
+    (r"/admin/team/list/?(.html)?", content.TeamListHandler),
+    (r"/admin/team/delete/?(.html)?", content.TeamListHandler),
+    (r"/admin/team/edit/?(.html)?", content.TeamEditHandler),
+    (r"/admin/team/add/?(.html)?", content.TeamAddHandler),
 ]

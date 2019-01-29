@@ -19,12 +19,12 @@
                     </div>
                     <div class="contact-infom">
                         <h4>{{ contact.subtitle }}</h4>
-                        <p>{{ contact.cvalue }}</p>
+                        <p>{{ contact.value }}</p>
                     </div>
                 </div>
                 <div class="col-md-5 contact-para">
                     <h5>Contact Form</h5>
-                    <form action="/contact/post/" method="post" class="contact_form">
+                    <form action="/company/contact/" method="post" class="contact_form">
                         {{ csrf_input }}
                         <div class="grid-contact">
                             <div class="col-md-6 contact-grid">
@@ -140,13 +140,16 @@ $(function(){
             "phone":/^((\+?86)|(\(\+86\)))?\d{3,4}-\d{7,8}(-\d{3,4})?$/
         },
         ajaxPost:true,
-        callback:function(msg){
-            console.log('callback', msg)
-            if( 200==msg.status ) {
-                $("#tips").removeClass('Validform_loading').removeClass('Validform_wrong').addClass('Validform_right').html(msg.info);
+        callback:function(res){
+            if (res.responseJSON && res.responseJSON.msg) {
+                res = res.responseJSON
+            }
+            console.log('callback', res)
+            if( 0==res.code ) {
+                $("#tips").removeClass('Validform_loading').removeClass('Validform_wrong').addClass('Validform_right').html(res.msg);
                 $("#message").val('')
-            } else if(msg.info){
-                $("#tips").removeClass('Validform_loading').removeClass('Validform_right').addClass('Validform_wrong').html(msg.info);
+            } else if(res.msg){
+                $("#tips").removeClass('Validform_loading').removeClass('Validform_right').addClass('Validform_wrong').html(res.msg);
             } else {
                 $("#tips").removeClass('Validform_loading').removeClass('Validform_right').addClass('Validform_wrong').html('未知错误');
             }
@@ -155,6 +158,7 @@ $(function(){
             //     window.location.href = "/company/contact/";
             // },3000);
         }
+
     });
 
 });

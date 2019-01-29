@@ -13,15 +13,17 @@
     <div class="container">
         {% include "common/breadcrumb.htm" %}
 
-        {% for new in arc_list %}
+        {% for new in pagelist_obj.items %}
         <div class="new-grids">
-            <div class="date">
-                <p>{{ new.publish_date }}</p>
-                <span>{{ new.publish_date }}</span>
+            <div class="date" title="{{new.publish_date}}">
+                <p>{{ dateformat(new.publish_date, '%d') }}</p>
+                <span>{{ dateformat(new.publish_date, '%Y/%m') }}</span>
             </div>
-            <div class="new-grid-right" style="width: 90%;">
+            <div class="new-grid-right" style="width: 88%;">
                 <h5>
-                <a href="/post/{{ new.id }}" title="{{ new.title }}">{{  new.title|truncate(64)  }}</a>
+                    <a href="/article/{{ new.id }}" title="{{ new.title }}">
+                        {{ new.title|truncate(64) }}
+                    </a>
                 </h5>
                 <p>{{ new.description|truncate(200) }}</p>
             </div>
@@ -30,9 +32,9 @@
         {% endfor %}
         <nav aria-label="..." style="width: 100%; text-align: center; margin: auto;">
             <ul class="pagination">
-                {% if arc_list.has_previous %}
+                {% if pagelist_obj.has_prev %}
                 <li class="active">
-                    <a href="?page={{ arc_list.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                    <a href="?page={{ pagelist_obj.prev_num }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
                 </li>
                 {% else %}
                 <li class="disabled">
@@ -40,17 +42,17 @@
                 </li>
                 {% endif %}
 
-                {% for page in num_pages %}
+                {% for page in range(1, pagelist_obj.pages+1) %}
                     {% if page==cur_page %}
-                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(current)</span></a></li>
+                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(cur_page)</span></a></li>
                     {% else %}
                     <li><a href="?page={{ page }}">{{ page }}</a></li>
                     {% endif %}
                 {% endfor %}
 
-                {% if arc_list.has_next %}
+                {% if pagelist_obj.has_next %}
                 <li class="active">
-                    <a href="?page={{ arc_list.next_page_number }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                    <a href="?page={{ pagelist_obj.next_num }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
                 </li>
                 {% else %}
                 <li class="disabled">

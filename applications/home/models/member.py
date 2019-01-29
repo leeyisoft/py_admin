@@ -403,7 +403,7 @@ class MemberCertification(BaseModel):
 
     @property
     def authorized_option(self):
-        return self.authorized_options[self.authorized]
+        return self.authorized_options.get(self.authorized, '')
 
     @property
     def updated_at(self):

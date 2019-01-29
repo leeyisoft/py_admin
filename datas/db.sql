@@ -1,28 +1,95 @@
-use db_py_admin;
--- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
---
--- Host: localhost    Database: db_py_admin
--- ------------------------------------------------------
--- Server version	5.7.22-0ubuntu18.04.1
+# ************************************************************
+# Sequel Pro SQL dump
+# Version 4541
+#
+# http://www.sequelpro.com/
+# https://github.com/sequelpro/sequelpro
+#
+# Host: 127.0.0.1 (MySQL 5.7.18)
+# Database: db_py_admin
+# Generation Time: 2019-01-29 05:08:14 +0000
+# ************************************************************
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Table structure for table `member`
---
+
+# Dump of table home_article
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `home_article`;
+
+CREATE TABLE `home_article` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(20) DEFAULT '' COMMENT '文章分类',
+  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '发布用户',
+  `title` varchar(80) NOT NULL DEFAULT '' COMMENT '文章标题',
+  `author` varchar(20) NOT NULL DEFAULT '' COMMENT '作者',
+  `source` varchar(20) NOT NULL DEFAULT '' COMMENT '来源',
+  `external_url` varchar(255) NOT NULL DEFAULT '' COMMENT '外链地址',
+  `thumb` varchar(255) NOT NULL DEFAULT '' COMMENT '缩略图',
+  `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO关键词',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO描述',
+  `publish_date` date NOT NULL COMMENT '发布日期',
+  `hits` int(11) DEFAULT '0' COMMENT '点击数量',
+  `content` text COMMENT '文章内容（如果是产品的话，为json格式数据）',
+  `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
+  `utc_updated_at` datetime(6) DEFAULT NULL COMMENT '更新记录UTC时间',
+  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员实名认证信息';
+
+
+
+# Dump of table home_contact
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `home_contact`;
+
+CREATE TABLE `home_contact` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `real_name` varchar(20) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `ip` char(40) DEFAULT NULL,
+  `message` varchar(400) NOT NULL DEFAULT '',
+  `utc_created_at` datetime(6) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='联系我们';
+
+
+
+# Dump of table home_team
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `home_team`;
+
+CREATE TABLE `home_team` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(160) DEFAULT NULL COMMENT '职务',
+  `description` text COMMENT '简介',
+  `name` varchar(60) NOT NULL COMMENT '名称',
+  `avatar` varchar(255) DEFAULT NULL COMMENT '头像',
+  `order` int(11) NOT NULL DEFAULT '20',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `utc_created_at` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理团队';
+
+
+
+# Dump of table member
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `level_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '会员等级ID',
@@ -48,15 +115,14 @@ CREATE TABLE `member` (
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员表';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_binding`
---
+
+
+# Dump of table member_binding
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_binding`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_binding` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` int(11) DEFAULT NULL COMMENT '用户ID',
@@ -64,15 +130,14 @@ CREATE TABLE `member_binding` (
   `openid` varchar(80) DEFAULT NULL COMMENT '第三方平台openid',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_certification`
---
+
+
+# Dump of table member_certification
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_certification`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_certification` (
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '主键，member表 id',
   `realname` varchar(40) NOT NULL DEFAULT '' COMMENT '登录名、昵称',
@@ -88,15 +153,14 @@ CREATE TABLE `member_certification` (
   `authorized_user_id` int(11) DEFAULT NULL COMMENT '审核管理员ID，user 表 uuid',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员实名认证信息';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_friend`
---
+
+
+# Dump of table member_friend
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_friend`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_friend` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `from_user_id` int(11) NOT NULL COMMENT '发起人',
@@ -108,15 +172,14 @@ CREATE TABLE `member_friend` (
   `remark` varchar(200) NOT NULL DEFAULT '' COMMENT '申请好友的验证消息',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 member表的主键）';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_friend_notice`
---
+
+
+# Dump of table member_friend_notice
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_friend_notice`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_friend_notice` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `msgtype` enum('apply_friend','system') DEFAULT NULL COMMENT '消息类型',
@@ -129,15 +192,14 @@ CREATE TABLE `member_friend_notice` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='添加好友状态通知，定时删除60天内的已读消息';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_friendgroup`
---
+
+
+# Dump of table member_friendgroup
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_friendgroup`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_friendgroup` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `groupname` varchar(40) NOT NULL DEFAULT '' COMMENT '分组名称',
@@ -145,15 +207,14 @@ CREATE TABLE `member_friendgroup` (
   `owner_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '分组所属用户ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='好友分组表';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_level`
---
+
+
+# Dump of table member_level
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_level`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_level` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(80) NOT NULL COMMENT '等级名称',
@@ -166,15 +227,14 @@ CREATE TABLE `member_level` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员等级';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_login_log`
---
+
+
+# Dump of table member_login_log
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_login_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_login_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
@@ -183,15 +243,14 @@ CREATE TABLE `member_login_log` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会员登录日志';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `member_operation_log`
---
+
+
+# Dump of table member_operation_log
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `member_operation_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `member_operation_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
@@ -202,15 +261,14 @@ CREATE TABLE `member_operation_log` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会议操作日志记录表(操作成功的时候插入)';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `sys_address`
---
+
+
+# Dump of table sys_address
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_address`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_address` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `country` varchar(8) NOT NULL DEFAULT '中国' COMMENT '所属国家',
@@ -225,15 +283,14 @@ CREATE TABLE `sys_address` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='联系地址信息表';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `sys_admin_menu`
---
+
+
+# Dump of table sys_admin_menu
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_admin_menu`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_admin_menu` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '管理员ID(快捷菜单专用)',
@@ -251,33 +308,15 @@ CREATE TABLE `sys_admin_menu` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8 COMMENT='管理菜单';
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理菜单';
 
-DROP TABLE IF EXISTS `spider_document`;
-CREATE TABLE `spider_document` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `url` varchar(200) NOT NULL COMMENT '',
-  `title` varchar(80) NOT NULL COMMENT '标题',
-  `tags` varchar(200) NOT NULL COMMENT '标签 list json 字符串',
-  `categories` varchar(80) NOT NULL COMMENT '分类',
-  `post_date` varchar(80) NOT NULL COMMENT '发布时间',
-  `author` varchar(80) NOT NULL COMMENT '作者',
-  `source` varchar(80) NOT NULL DEFAULT '' COMMENT '来源',
-  `sitename` varchar(80) NOT NULL DEFAULT '' COMMENT '来源站点名称',
-  `imgs` text NOT NULL COMMENT '图片地址 list json 字符串',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
-  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
-  UNIQUE KEY `uk_url` (`url`),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
---
--- Table structure for table `sys_admin_role`
---
+
+
+# Dump of table sys_admin_role
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_admin_role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_admin_role` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `rolename` varchar(40) DEFAULT NULL COMMENT '角色名称',
@@ -287,16 +326,15 @@ CREATE TABLE `sys_admin_role` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_rolename` (`rolename`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='后台用户角色表';
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='后台用户角色表';
 
---
--- Table structure for table `sys_admin_user`
---
+
+
+# Dump of table sys_admin_user
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_admin_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_admin_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `role_id` int(11) DEFAULT NULL COMMENT '角色ID',
@@ -314,16 +352,15 @@ CREATE TABLE `sys_admin_user` (
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='后台管用户表';
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='后台管用户表';
 
---
--- Table structure for table `sys_admin_user_login_log`
---
+
+
+# Dump of table sys_admin_user_login_log
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_admin_user_login_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_admin_user_login_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
@@ -331,16 +368,15 @@ CREATE TABLE `sys_admin_user_login_log` (
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='后台用户登录日志';
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='后台用户登录日志';
 
---
--- Table structure for table `sys_attach`
---
+
+
+# Dump of table sys_attach
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_attach`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_attach` (
   `file_md5` varchar(40) NOT NULL DEFAULT '' COMMENT '文件内容md5',
   `file_ext` varchar(20) NOT NULL DEFAULT '' COMMENT '文件扩展名，例如 png',
@@ -353,15 +389,14 @@ CREATE TABLE `sys_attach` (
   `utc_created_at` datetime(6) NOT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`file_md5`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统附件表';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `sys_attach_related`
---
+
+
+# Dump of table sys_attach_related
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_attach_related`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_attach_related` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `file_md5` varchar(40) NOT NULL DEFAULT '' COMMENT '文件内容md5',
@@ -371,35 +406,35 @@ CREATE TABLE `sys_attach_related` (
   `utc_created_at` datetime(6) NOT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统附件关联表';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `sys_config`
---
+
+
+# Dump of table sys_config
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_config`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_config` (
   `key` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
   `value` text,
   `title` varchar(40) DEFAULT NULL COMMENT '标题',
-  `sort` int(11) DEFAULT NULL,
+  `subtitle` varchar(160) DEFAULT NULL COMMENT '副标题',
+  `sort` int(11) DEFAULT '20',
   `remark` varchar(128) NOT NULL,
   `system` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为系统配置，系统配置不可删除',
+  `tab` varchar(20) DEFAULT NULL COMMENT '配置选项，便于后台分类浏览',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统配置';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `sys_message`
---
+
+
+# Dump of table sys_message
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_message`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_message` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `msgtype` enum('apply_friend','accept_friend','system') DEFAULT NULL COMMENT '消息类型',
@@ -411,30 +446,63 @@ CREATE TABLE `sys_message` (
   `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统消息，定时删除30天内的已读消息';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 
---
--- Table structure for table `sys_sequence`
---
+
+# Dump of table sys_sequence
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `sys_sequence`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `sys_sequence` (
   `key` varchar(40) NOT NULL DEFAULT '',
   `value` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+
+
+
+--
+-- Dumping routines (FUNCTION) for database 'db_py_admin'
+--
+DELIMITER ;;
+
+# Dump of FUNCTION currval
+# ------------------------------------------------------------
+
+/*!50003 DROP FUNCTION IF EXISTS `currval` */;;
+/*!50003 SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"*/;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 FUNCTION `currval`(seq_name VARCHAR(40)) RETURNS int(11)
+BEGIN
+DECLARE ret_value INTEGER;
+SET ret_value=0;
+SELECT `value` INTO ret_value
+FROM sys_sequence
+WHERE `key`=seq_name;
+RETURN ret_value;
+END */;;
+
+/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
+# Dump of FUNCTION nextval
+# ------------------------------------------------------------
+
+/*!50003 DROP FUNCTION IF EXISTS `nextval` */;;
+/*!50003 SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"*/;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 FUNCTION `nextval`(seq_name varchar(40), incr int(11)) RETURNS int(11)
+BEGIN
+UPDATE `sys_sequence`
+SET `value` = `value` + incr
+where `key`=seq_name;
+return currval(seq_name);
+END */;;
+
+/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
+DELIMITER ;
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2018-07-22  9:24:49

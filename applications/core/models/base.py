@@ -54,7 +54,8 @@ class BaseModel(MetaBaseModel):
         for column in self.__table__.columns:
             val = getattr(self, column.name)
             val = '' if val is None else val
-            if isinstance(val, datetime.datetime):
+            datetime_tuple = (datetime.datetime, datetime.date)
+            if isinstance(val, datetime_tuple):
                 tz = 'UTC' if column.name[0:4]=='utc_' else None
                 val = Func.dt_to_timezone(val, tz)
                 val = str(val)
@@ -116,8 +117,9 @@ class Config(BaseModel):
     __tablename__ = 'sys_config'
 
     key = Column(String(40), primary_key=True, nullable=False)
-    value = Column(String(80), nullable=False)
+    value = Column(String(400), nullable=False)
     title = Column(String(40), nullable=False)
+    subtitle = Column(String(160), nullable=False)
     remark = Column(String(128), nullable=False, default='')
     sort = Column(Integer, nullable=False, default=20)
     system = Column(Integer, nullable=False, default=0)

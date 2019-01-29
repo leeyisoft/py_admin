@@ -7,17 +7,17 @@
                     <div class="footer-grid-info">
                         <h3>Popular</h3>
                     </div>
-                    <div class="footer-grid-list col-md-6">
+                    <div class="footer-grid-list col-md-6" style="padding-right: 0; padding-left: 0;">
                         <ul>
                             {% for arc in populars_left %}
-                            <li><a href="/post/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(20) }}</a></li>
+                            <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(20) }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
-                    <div class="footer-grid-list col-md-6">
+                    <div class="footer-grid-list col-md-6" style="padding-right: 0; padding-left: 0;">
                         <ul>
                             {% for arc in populars_right %}
-                            <li><a href="/post/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(20) }}</a></li>
+                            <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(20) }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -27,13 +27,13 @@
                         <h3>{{ footer_address.title }}</h3>
                     </div>
                     <div class="footer-grid-list col-md-6">
-                        {{ footer_address.cvalue|safe }}
+                        {{ footer_address.value|safe }}
                     </div>
                     <div class="footer-grid-list col-md-6">
                         <h4>联系方式</h4>
                         <p>
-                            {{telephone.title}} : {{telephone.cvalue}}
-                            <span>{{fax.title}} : {{fax.cvalue}}</span>
+                            {{telephone.title}} : {{telephone.value}}
+                            <span>{{fax.title}} : {{fax.value}}</span>
                             {{email.title}} : <a href="mailto:{{email.title}}">{{email.title}}</a>
                         </p>
                     </div>

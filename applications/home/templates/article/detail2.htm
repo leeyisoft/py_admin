@@ -1,4 +1,4 @@
-{% extends "default/common/base.htm" %}
+{% extends "common/base.htm" %}
 
 {% block title %} {{ flatpage.title }} - {% endblock %}
 
@@ -6,14 +6,14 @@
 {% endblock %}
 
 {% block body %}
-    {% include "default/common/banner.htm" %}
+    {% include "common/banner.htm" %}
 
-    {% include "default/common/top_nav.htm" %}
+    {% include "common/top_nav.htm" %}
     <!-- container-wrap -->
     <div class="container">
         <div class="row-fluid">
             <div class="span12">
-                {% include "default/common/breadcrumb.htm" %}
+                {% include "common/breadcrumb.htm" %}
                 <div class="blog-post" style="margin-bottom: 32px;">
                     <h2 class="blog-post-title">{{ arc.title}}</h2>
                     <h5 class="blog-post-meta" style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin: 20px auto;">
@@ -21,7 +21,7 @@
                         <br/>
                     </h5>
                     <p>
-                        {{ arc.body|safe}}
+                        {{ arc.content|safe}}
                     </p>
                 </div><!-- /.blog-post -->
             </div>
@@ -31,6 +31,6 @@
 {% endblock %}
 
 {% block footer %}
-{% include "default/common/footer.htm" %}
-{% include "default/common/copyright.htm" %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
 {% endblock %}

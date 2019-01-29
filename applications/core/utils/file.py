@@ -18,7 +18,9 @@ class Uploader():
     def upload_img(file_md5, img, save_name, path, param):
         attach = Attach.Q.filter(Attach.file_md5==file_md5).first()
         if attach is not None:
-            return attach.as_dict()
+            path_file = settings.STATIC_PATH+'/'+attach.path_file
+            if os.path.isfile(path_file):
+                return attach.as_dict()
 
         prefix = settings.STATIC_PATH + '/upload/'
         path = prefix + path

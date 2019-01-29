@@ -20,6 +20,8 @@ from sqlalchemy import PrimaryKeyConstraint
 
 from applications.core.utils import Func
 
+from applications.home.models.content import Article
+from applications.home.models.content import Team
 from applications.home.models import Member
 from applications.home.models import MemberCertification
 
@@ -268,14 +270,14 @@ class AdminMenu(BaseModel):
 
 
     @staticmethod
-    def children(parent_id=0, status=None, level=0, user_id=''):
+    def children(parent_id=0, status=None, level=0, user_id=0):
         """获取指定节点下的所有子节点(不含快捷收藏的菜单)
         """
         trees = []
         if not len(trees):
             filds = ['id', 'code', 'parent_id', 'title', 'path', 'param', 'target', 'icon', 'sort', 'status']
             query = AdminMenu.session.query(AdminMenu)
-            if user_id:
+            if user_id>0:
                 query = query.filter(AdminMenu.user_id == user_id)
             query = query.filter(AdminMenu.parent_id == parent_id)
             if status in [1,0]:

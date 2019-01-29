@@ -57,7 +57,7 @@ class Func():
         return True if re.match(regex, mobile) else False
 
     @staticmethod
-    def isphone(phone):
+    def is_phone(phone):
         """
         #写一个正则表达式，能匹配出多种格式的电话号码，包括
         #(021)88776543   010-55667890 02584453362  0571 66345673
@@ -73,7 +73,7 @@ class Func():
 
     @staticmethod
     def is_phone_or_mobile(phone):
-        return ismobile(phone) or isphone(phone)
+        return Func.is_mobile(phone) or Func.is_phone(phone)
 
     @staticmethod
     def unix_time():
@@ -136,5 +136,12 @@ class Func():
         return dt.astimezone(tz)
 
     @staticmethod
+    def dateformat(value, format="%Y-%m"):
+        if type(value)==str:
+            value = Func.str_to_datetime(value)
+        return value.strftime(format)
+
+    @staticmethod
     def function():
         pass
+

@@ -37,7 +37,7 @@
                 <div class="col-md-6 about-left">
                     <h3>{{ about_us_a.title }}</h3>
                     <h4>{{ about_us_a.subtitle }}</h4>
-                    <p>{{ about_us_a.cvalue|safe }}</p>
+                    <p>{{ about_us_a.value|safe }}</p>
                 </div>
                 <div class="col-md-6 about-right">
                 {% if new_right.thumb %}
@@ -56,7 +56,7 @@
                 <div class="col-md-12 about-bottom-left">
                     <h3>{{ about_us_b.title }}</h3>
                     <h4>{{ about_us_b.subtitle }}</h4>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ about_us_b.cvalue|safe }}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ about_us_b.value|safe }}</p>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -67,11 +67,11 @@
         <div class="about-team">
                 <!-- container -->
                 <div class="container">
-                    <h4>Work Team</h4>
-                    <div class="team-grids">
+                    <h4>工作团队</h4>
+                    <div class="team-grids" style="margin-top: 0;">
                         {% for item in teams %}
-                        <div class="col-md-3 team-grid">
-                            <img src="/{{ article_thumb_prefix }}/{{ item.thumb }}" alt="{{ item.title }}" width="255">
+                        <div class="col-md-12 team-grid" style="margin-top: 2.0em;">
+                            <img src="{{ static_url(item.avatar) }}" alt="{{ item.title }}" style="width: 200px; float: left; margin-right: 1em;" onerror="this.src='{{ static_url('image/default_avatar.jpg') }}';">
                             <h6>{{ item.name }} | {{ item.title }}</h6>
                             <p>{{ item.description }}</p>
                         </div>

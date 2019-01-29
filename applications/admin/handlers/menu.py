@@ -23,11 +23,12 @@ class MenuHandler(CommonHandler):
     @required_permissions('admin:menu:index')
     def get(self, *args, **kwargs):
         if not self.super_role():
-            user_id = user_id = self.current_user.get('id')
+            user_id = self.current_user.get('id')
         else:
-            user_id = False
+            user_id = 0
 
         menu_list = AdminMenu.children(user_id=user_id)
+        print('user_id: ',user_id,menu_list)
         tab_data = []
         for menu in menu_list:
             tab_data.append({'title': menu.get('title')})

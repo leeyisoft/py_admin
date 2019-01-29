@@ -1,0 +1,201 @@
+{% extends "../../base.html" %}
+
+{% block title %} {% end %}
+{% block css %}
+<style type="text/css">
+    .avatar-add p {
+        float: left; width: auto; margin: auto 10px;
+    }
+    .avatar-add .upload-img {
+        float: left;
+    }
+    .avatar-add img {
+        margin: -90px auto auto 640px;
+        width: 200px;
+        float: left;
+    }
+</style>
+{% end %}
+{% block body %}
+<div class="layui-body" style="padding-top: 0px; padding-left: 10px;">
+    <div class="layui-tab">
+        <!-- <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>其他信息</li>
+        </ul> -->
+        <form class="layui-tab-content layui-form layui-form-pane" action="{{ request.uri }}" method="post" id="editForm">
+            {% raw xsrf_form_html() %}
+            <input type="hidden" class="field-id" name="id">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input field-name" name="name" lay-verify="required" autocomplete="off" placeholder="请输入名称">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                    </div>
+                    <label class="layui-form-label">职务</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input field-title" name="title" lay-verify="required" autocomplete="off" placeholder="请输入职务">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">头像</label>
+                    <input type="hidden" class="field-avatar" name="avatar" value="{{team.avatar}}">
+                    <div class="avatar-add">
+                        <p>建议尺寸200*200，支持jpg、png、gif，最大不能超过80KB</p>
+                        <button type="button" class="layui-btn upload-img" id="avatar">
+                            <i class="layui-icon">&#xe67c;</i>上传头像
+                        </button>
+                        {% if team.avatar!='' %}
+                        <img src="{{ static_url(team.avatar) }}">
+                        {% else %}
+                        <img src="{{ static_url('image/default_avatar.jpg') }}">
+                        {% end %}
+                        <span class="loading"></span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-inline" style="width: 80%;">
+                        <textarea id="description" class="field-description" name="description" style="display: none;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态设置</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" class="field-status" name="status" value="1" title="启用" checked>
+                        <input type="radio" class="field-status" name="status" value="0" title="禁用">
+                    </div>
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input field-order" name="order" lay-verify="required" autocomplete="off" placeholder="请输入排序">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="formSubmit">提交</button>
+                    <a href="/admin/company/team/" class="layui-btn layui-btn-primary ml10">
+                        <i class="aicon ai-fanhui"></i>返回
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% end %}
+{% block javascript %}
+<script type="text/javascript">
+var formData = {% raw data_info %}
+
+layui.config({
+        base: '/static/cropper/' //layui自定义layui组件目录
+    }).use(['form', 'layedit', 'element', 'upload', 'croppers'], function() {
+    var $ = layui.jquery
+    var element = layui.element
+    var form = layui.form
+    var layedit = layui.layedit
+    var upload = layui.upload
+    var croppers = layui.croppers
+
+    layedit.set({
+        uploadImage: {
+            url: '' //接口url
+            ,type: '' //默认post
+        }
+    })
+
+    //创建一个头像上传组件
+    croppers.render({
+        elem: '#avatar'
+        ,tips:'缩略图的尺寸限定200x200px,大小在80kb以内'
+        ,saveW:200 //保存宽度
+        ,saveH:200
+        // ,aspectRatio:200/200 //选取比例
+        ,area:'900px' //弹窗宽度
+        ,url: '/admin/content/upload/' //上传接口
+        ,exts: 'png|jpg|jpeg|gif' //只允许上传压缩文件
+        ,data: {
+            '_xsrf': get_xsrf(),
+            'path': 'team_avatar',
+            'action': 'avatar',
+        }
+        ,before: function(){
+            $('.avatar-add').find('.loading').show()
+        }
+        ,done: function(res){
+            // console.log('res ', res)
+            if(res.code == 0){
+                $('.field-avatar').val(res.data.path_file)
+                var src = '/static/'+res.data.path_file
+                $('.avatar-add img').attr('src', src)
+            } else {
+                layer.msg(res.msg, {icon: 2})
+            }
+            $('.avatar-add').find('.loading').hide()
+        }
+        ,error: function(){
+            $('.avatar-add').find('.loading').hide()
+        }
+    })
+
+    //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+    // layedit.build('description')
+    layedit.build('description', {
+        height: 180, //设置编辑器高度
+        tool: [
+          'strong' //加粗
+          ,'italic' //斜体
+          ,'underline' //下划线
+          ,'del' //删除线
+          ,'|' //分割线
+          ,'left' //左对齐
+          ,'center' //居中对齐
+          ,'right' //右对齐
+          ,'link' //超链接
+          ,'unlink' //清除链接
+          ,'face' //表情
+          // ,'image' //插入图片
+          ,'help' //帮助
+        ]
+    })
+
+    set_form_data(formData)
+
+    form.on('submit(formSubmit)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+
+        $.ajax({
+            type: "POST",
+            url: obj.form.action,
+            data: obj.field,
+            success: function(res) {
+                if (res.code==0) {
+                    layer.msg(res.msg, {icon: 1, time: 2000}, function(){
+                        parent.edit_success(res.data)
+                        var index = parent.layer.getFrameIndex(window.name)
+                        parent.layer.close(index)
+                    })
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            },
+            error: function(xhr){
+                console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+        return false
+    })
+})
+</script>
+{% end %}

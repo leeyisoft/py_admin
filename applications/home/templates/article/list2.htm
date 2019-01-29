@@ -13,20 +13,20 @@
     <div class="container">
         {% include "common/breadcrumb.htm" %}
         <div class="col-sm-12 row" id="masonry">
-        {% for new in arc_list %}
+        {% for new in pagelist_obj.items %}
         <div class="col-sm-6 col-md-4 box">
             <div class="thumbnail">
                 {% if new.thumb %}
-                <img src="/{{ article_thumb_prefix }}/{{ new.thumb }}" alt="{{ new.description }}">
+                <img src="{{ static_url(new.thumb) }}" alt="{{ new.description }}">
                 {% else %}
 
-                <img data-src="holder.js/100%x200" alt="100%x200" style="height: 200px; width: 100%; display: block;" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjQyIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDI0MiAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzEwMCV4MjAwCkNyZWF0ZWQgd2l0aCBIb2xkZXIuanMgMi42LjAuCkxlYXJuIG1vcmUgYXQgaHR0cDovL2hvbGRlcmpzLmNvbQooYykgMjAxMi0yMDE1IEl2YW4gTWFsb3BpbnNreSAtIGh0dHA6Ly9pbXNreS5jbwotLT48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwhW0NEQVRBWyNob2xkZXJfMTViMzg3OTQzNTUgdGV4dCB7IGZpbGw6I0FBQUFBQTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxMnB0IH0gXV0+PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImhvbGRlcl8xNWIzODc5NDM1NSI+PHJlY3Qgd2lkdGg9IjI0MiIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSI4OS44NTkzNzUiIHk9IjEwNS4xIj4yNDJ4MjAwPC90ZXh0PjwvZz48L2c+PC9zdmc+" data-holder-rendered="true">
+                <img alt="313x200" style="height: 200px; width: 100%; display: block;" src="{{static_url('image/313_200.png')}}" data-holder-rendered="true">
                 {% endif %}
                 <div class="caption">
                     <h3 title="{{ new.title }}">{{  new.title|truncate(40)  }}</h3>
                     <p title="{{ new.description }}">{{ new.description|truncate(240) }}</p>
                     <p title="{{ new.title }}">
-                        <a href="/post/{{ new.id }}" class="btn btn-primary btn-lg" role="button" style="float: right;">详情</a>
+                        <a href="/product/{{ new.id }}" class="btn btn-primary btn-lg" role="button" style="float: right;">详情</a>
                     </p>
                 </div>
             </div>
@@ -35,9 +35,9 @@
         </div>
         <nav aria-label="..." style="width: 100%; text-align: center; margin: auto;">
             <ul class="pagination">
-                {% if arc_list.has_previous %}
+                {% if pagelist_obj.has_prev %}
                 <li class="active">
-                    <a href="?page={{ arc_list.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                    <a href="?page={{ pagelist_obj.prev_num }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
                 </li>
                 {% else %}
                 <li class="disabled">
@@ -45,17 +45,17 @@
                 </li>
                 {% endif %}
 
-                {% for page in num_pages %}
+                {% for page in range(1, pagelist_obj.pages+1) %}
                     {% if page==cur_page %}
-                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(current)</span></a></li>
+                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(cur_page)</span></a></li>
                     {% else %}
                     <li><a href="?page={{ page }}">{{ page }}</a></li>
                     {% endif %}
                 {% endfor %}
 
-                {% if arc_list.has_next %}
+                {% if pagelist_obj.has_next %}
                 <li class="active">
-                    <a href="?page={{ arc_list.next_page_number }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                    <a href="?page={{ pagelist_obj.next_num }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
                 </li>
                 {% else %}
                 <li class="disabled">

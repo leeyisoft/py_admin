@@ -137,16 +137,23 @@ def close_caches(**kwargs):
     for cache in caches.all():
         cache.close()
 
-def sys_config(key):
+def sys_config(key, field='value'):
     cache_key = '%s%s' % (settings.config_cache_prefix,key)
     cache_val = cache.get(cache_key)
     if cache_val:
         # print('cache_val: ', cache_val)
         return cache_val
 
-    query = "select `value` from `sys_config` where `status`=1 and `key`='%s';" % key;
-    value = Config.session.execute(query).scalar()
-    value = value if value is not None else ''
+    if field=='value':
+        query = "select `value` from `sys_config` where `status`=1 and `key`='%s';" % key;
+        value = Config.session.execute(query).scalar()
+        value = value if value is not None else ''
+    elif type(field)==list:
+        query = "select %s from `sys_config` where `status`=1 and `key`='%s';" % (','.join(field),key);
+        # print('field', type(field), field)
+        field = Config.session.execute(query).fetchone()
+        # print('field', type(field), field)
+        value = dict(field)
     cache.set(cache_key, value, timeout=86400)
     # print('cache: ', cache)
     return value
