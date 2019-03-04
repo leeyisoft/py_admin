@@ -37,7 +37,7 @@
         </ul>
         <ul class="layui-nav fr nobg head-info" lay-filter="">
             <li class="layui-nav-item">
-                <a href="javascript:void(0);">{{ current_user.get('username') }}&nbsp;&nbsp;</a>
+                <a href="javascript:void(0)">{{ current_user.get('username') }}&nbsp;&nbsp;</a>
                 <dl class="layui-nav-child">
                     <dd><a data-id="00" href="/admin/user/info" class="admin-nav-item"><span style="color:#333">个人设置</span></a></dd>
                     <dd><a href="/admin/logout">退出登陆</a></dd>
@@ -45,8 +45,8 @@
             </li>
             <li class="layui-nav-item"><a href="{{ sys_config('site_url') }}" target="_blank">前台</a></li>
             <li class="layui-nav-item"><a href="/admin/index/clear" class="j-ajax" refresh="yes">清缓存</a></li>
-            <li class="layui-nav-item"><a href="javascript:void(0);" id="lockScreen">锁屏</a></li>
-            <li class="layui-nav-item"><a href="javascript:void(0);" onclick="fullscreen();">全屏</a></li>
+            <li class="layui-nav-item"><a href="javascript:void(0)" id="lockScreen">锁屏</a></li>
+            <li class="layui-nav-item"><a href="javascript:void(0)" onclick="fullscreen()">全屏</a></li>
         </ul>
     </div>
     <div class="layui-side layui-bg-black" id="switchNav">
@@ -111,29 +111,29 @@
 var fullscreen = function() {
     elem = document.body;
     if(elem.webkitRequestFullScreen){
-        elem.webkitRequestFullScreen();
+        elem.webkitRequestFullScreen()
     }else if(elem.mozRequestFullScreen){
-        elem.mozRequestFullScreen();
+        elem.mozRequestFullScreen()
     }else if(elem.requestFullScreen){
-        elem.requestFullscreen();
+        elem.requestFullscreen()
     }else{
         //浏览器不支持全屏API或已被禁用
-        layer.msg("浏览器不支持全屏API或已被禁用");
+        layer.msg("浏览器不支持全屏API或已被禁用")
     }
 }
 var exitFullscreen = function() {
     var elem = document;
     if(elem.webkitCancelFullScreen){
-        elem.webkitCancelFullScreen();
+        elem.webkitCancelFullScreen()
     }else if(elem.mozCancelFullScreen){
-        elem.mozCancelFullScreen();
+        elem.mozCancelFullScreen()
     }else if(elem.cancelFullScreen){
-        elem.cancelFullScreen();
+        elem.cancelFullScreen()
     }else if(elem.exitFullscreen){
-        elem.exitFullscreen();
+        elem.exitFullscreen()
     }else{
         //浏览器不支持全屏API或已被禁用
-        layer.msg("浏览器不支持全屏API或已被禁用");
+        layer.msg("浏览器不支持全屏API或已被禁用")
     }
 }
 
@@ -144,8 +144,8 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     var form = layui.form
 
     var lockscreen = function() {
-        document.oncontextmenu=new Function("event.returnValue=false;");
-        document.onselectstart=new Function("event.returnValue=false;");
+        document.oncontextmenu=new Function("event.returnValue=false;")
+        document.onselectstart=new Function("event.returnValue=false;")
         layer.open({
             title: false,
             type: 1,
@@ -153,111 +153,111 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
             closeBtn: 0,
             shade: 0.95,
             offset: '350px'
-        });
+        })
 
         $('#unlocked').click(function() {
             var pwd_obj = $('#unlockedPwd')
-            var pwd = pwd_obj.val();
+            var pwd = pwd_obj.val()
             if (pwd == '') {
                 pwd_obj.focus()
                 return false;
             }
             $.post('/admin/user/unlocked', {password:pwd, _xsrf: get_xsrf()}, function(res) {
                 if (res.code == 0) {
-                    window.sessionStorage.setItem("lockscreen", false);
-                    layer.closeAll();
+                    window.sessionStorage.setItem("lockscreen", false)
+                    layer.closeAll()
                 } else {
-                    $('#unlockTips').html(res.msg);
+                    $('#unlockTips').html(res.msg)
                     setTimeout(function(){
-                        $('#unlockTips').html('');
-                    }, 3000);
+                        $('#unlockTips').html('')
+                    }, 3000)
                 }
-            });
-        });
+            })
+        })
     }
     /* 锁屏 */
     $('#lockScreen').click(function () {
-        window.sessionStorage.setItem("lockscreen", true);
-        lockscreen();
+        window.sessionStorage.setItem("lockscreen", true)
+        lockscreen()
     })
     if(window.sessionStorage.getItem("lockscreen") == "true"){
-        lockscreen();
+        lockscreen()
     }
 
     /* 导航高亮标记 */
     $('.admin-nav-item').click(function() {
-        window.localStorage.setItem("adminNavTag", $(this).attr('href'));
-    });
+        window.localStorage.setItem("adminNavTag", $(this).attr('href'))
+    })
     if (window.localStorage.getItem("adminNavTag")) {
-        $('#switchNav a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed');
+        $('#switchNav a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed')
     }
     if (typeof(LAYUI_OFFSET) == 'undefined') {
-        layer.config({offset:'60px'});
+        layer.config({offset:'60px'})
     } else {
-        layer.config({offset:LAYUI_OFFSET+'px'});
+        layer.config({offset:LAYUI_OFFSET+'px'})
     }
     /* 打开/关闭左侧导航 */
     $('#foldSwitch').click(function(){
-        var that = $(this);
+        var that = $(this)
         if (!that.hasClass('close')) {
-            that.addClass('close');
+            that.addClass('close')
             $('#switchNav').animate({width:'52px'}, 100).addClass('close').hover(function() {
                 if (that.hasClass('close')) {
-                    $(this).animate({width:'200px'}, 300);
-                    $('#switchNav .fold-mark').removeClass('fold-mark');
-                    $('a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed');
+                    $(this).animate({width:'200px'}, 300)
+                    $('#switchNav .fold-mark').removeClass('fold-mark')
+                    $('a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed')
                 }
             },function() {
                 if (that.hasClass('close')) {
-                    $(this).animate({width:'52px'}, 300);
-                    $('#switchNav .layui-nav-item').addClass('fold-mark').removeClass('layui-nav-itemed');
+                    $(this).animate({width:'52px'}, 300)
+                    $('#switchNav .layui-nav-item').addClass('fold-mark').removeClass('layui-nav-itemed')
                 }
-            });
-            $('#switchBody,.footer').animate({left:'52px'}, 100);
-            $('#switchNav .layui-nav-item').addClass('fold-mark').removeClass('layui-nav-itemed');
+            })
+            $('#switchBody,.footer').animate({left:'52px'}, 100)
+            $('#switchNav .layui-nav-item').addClass('fold-mark').removeClass('layui-nav-itemed')
         } else {
-            $('a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed');
-            that.removeClass('close');
-            $('#switchNav').animate({width:'200px'}, 100).removeClass('close');
-            $('#switchBody,.footer').animate({left:'200px'}, 100);
-            $('#switchNav .fold-mark').removeClass('fold-mark');
+            $('a[href="'+window.localStorage.getItem("adminNavTag")+'"]').parent('dd').addClass('layui-this').parents('li').addClass('layui-nav-itemed').siblings('li').removeClass('layui-nav-itemed')
+            that.removeClass('close')
+            $('#switchNav').animate({width:'200px'}, 100).removeClass('close')
+            $('#switchBody,.footer').animate({left:'200px'}, 100)
+            $('#switchNav .fold-mark').removeClass('fold-mark')
         }
-    });
+    })
 
     /* 导航菜单切换 */
     $('.main-nav a').click(function () {
-        var that = $(this), i = $('.main-nav a').index(this);
-        $('.layui-nav-tree').hide().eq(i).show();
-    });
+        var that = $(this), i = $('.main-nav a').index(this)
+        $('.layui-nav-tree').hide().eq(i).show()
+    })
 
     /* 操作提示 */
     $('.help-tips').click(function(){
         layer.tips($(this).attr('data-title'), this, {
             tips: [3, '#009688'],
             time: 5000
-        });
+        })
         return false;
-    });
+    })
 
     /* 全屏控制 */
     $('#fullscreen-btn').click(function(){
-        var that = $(this);
+        var that = $(this)
         if (!that.hasClass('ai-quanping')) {
-            $('#switchBody').css({'z-index':1000});
-            $('#switchNav').css({'z-index':900});
-            that.addClass('ai-quanping').removeClass('ai-quanping1').parents('.page-body').addClass('fullscreen');
-            $('.page-tab-content').css({'min-height':($(window).height()-63)+'px'});
+            $('#switchBody').css({'z-index':1000})
+            $('#switchNav').css({'z-index':900})
+            that.addClass('ai-quanping').removeClass('ai-quanping1').parents('.page-body').addClass('fullscreen')
+            $('.page-tab-content').css({'min-height':($(window).height()-63)+'px'})
         } else {
-            $('#switchBody').css({'z-index':998});
-            $('#switchNav').css({'z-index':1000});
-            that.addClass('ai-quanping1').removeClass('ai-quanping').parents('.page-body').removeClass('fullscreen');
-            $('.page-tab-content').css({'min-height':'auto'});
+            $('#switchBody').css({'z-index':998})
+            $('#switchNav').css({'z-index':1000})
+            that.addClass('ai-quanping1').removeClass('ai-quanping').parents('.page-body').removeClass('fullscreen')
+            $('.page-tab-content').css({'min-height':'auto'})
         }
-    });
+    })
 
     var tab = {
         add: function(title, url, id, icon) {
-            $('.layui-tab-content').height($(window).height() - 120);
+            $('.layui-tab-content').height($(window).height() - 120)
             var icon_html = '<i class="layui-icon j-ajax" data-href="'+ url +'">&#xe600;&nbsp;</i>'
             if ($(icon).attr('class')) {
                 icon_html = '<i class="'+ $(icon).attr('class') +'" data-href="'+ url +'">'+ $(icon).text() +'</i>'
@@ -266,42 +266,46 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
                 title: icon_html+title,
                 content: '<iframe width="100%" height="100%" lay-id="'+id+'" frameborder="0" src="'+url+'" scrolling="yes" class="x-iframe"></iframe>',
                 id: id
-            });
+            })
         }, change: function(id) {
-          element.tabChange('hisiTab', id);
+          element.tabChange('hisiTab', id)
         }
-    };
+    }
+
     $('.admin-nav-item').click(function(event) {
         window.layer.closeAll()
 
-        var that = $(this);
+        var that = $(this)
         var data_id = that.attr('data-id')
         var iframe = $('iframe[src="'+that.attr('href')+'"]')[0]
         if (iframe) {
             // 二次点击左侧菜单，刷新内容页面
             iframe.src = that.attr('href')
-            tab.change(data_id);
-            event.stopPropagation();
+            tab.change(data_id)
+            event.stopPropagation()
             return false;
         }
         if ($('iframe').length == 20) {
-            layer.msg('最多可打开20个标签页');
+            layer.msg('最多可打开20个标签页')
             return false;
         }
-        that.css({color:'#fff'});
+        that.css({color:'#fff'})
         var icon = $(this).children('i')
-        tab.add(that.text(), that.attr('href'), data_id, icon);
-        tab.change(data_id);
-        event.stopPropagation();
+        tab.add(that.text(), that.attr('href'), data_id, icon)
+        tab.change(data_id)
+        event.stopPropagation()
         return false;
-    });
+    })
+
     $(document).on('click', '.layui-tab-close', function() {
-        $('.layui-nav-child a[data-id="'+$(this).parent('li').attr('lay-id')+'"]').css({color:'rgba(255,255,255,.7)'});
-    });
+        $('.layui-nav-child a[data-id="'+$(this).parent('li').attr('lay-id')+'"]').css({color:'rgba(255,255,255,.7)'})
+    })
 
     window.onresize = function(){
-        $('.layui-tab-content').height($(window).height() - 120);
+        $('.layui-tab-content').height($(window).height() - 120)
     }
+
+    $('.layui-nav-tree').hide().eq(0).show()
 })
 </script>
 </body>

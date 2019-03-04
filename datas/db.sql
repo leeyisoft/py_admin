@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Pro SQL dump
-# Version 4541
+# Version 5438
 #
-# http://www.sequelpro.com/
+# https://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.7.18)
-# Database: db_py_admin
-# Generation Time: 2019-01-29 05:08:14 +0000
+# Host: 192.168.1.199 (MySQL 8.0.11)
+# Database: db_flux
+# Generation Time: 2019-03-04 08:58:37 +0000
 # ************************************************************
 
 
@@ -15,6 +15,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
+SET NAMES utf8mb4;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
@@ -264,6 +265,30 @@ CREATE TABLE `member_operation_log` (
 
 
 
+# Dump of table spider_document
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `spider_document`;
+
+CREATE TABLE `spider_document` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `url` varchar(200) NOT NULL,
+  `title` varchar(80) NOT NULL COMMENT '标题',
+  `tags` varchar(200) NOT NULL COMMENT '标签 list json 字符串',
+  `categories` varchar(80) NOT NULL COMMENT '分类',
+  `post_date` varchar(80) NOT NULL COMMENT '发布时间',
+  `author` varchar(80) NOT NULL COMMENT '作者',
+  `source` varchar(80) NOT NULL DEFAULT '' COMMENT '来源',
+  `sitename` varchar(80) NOT NULL DEFAULT '' COMMENT '来源站点名称',
+  `imgs` text NOT NULL COMMENT '图片地址 list json 字符串',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `utc_created_at` datetime(6) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_url` (`url`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table sys_address
 # ------------------------------------------------------------
 
@@ -462,43 +487,6 @@ CREATE TABLE `sys_sequence` (
 
 
 
-
---
--- Dumping routines (FUNCTION) for database 'db_py_admin'
---
-DELIMITER ;;
-
-# Dump of FUNCTION currval
-# ------------------------------------------------------------
-
-/*!50003 DROP FUNCTION IF EXISTS `currval` */;;
-/*!50003 SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 FUNCTION `currval`(seq_name VARCHAR(40)) RETURNS int(11)
-BEGIN
-DECLARE ret_value INTEGER;
-SET ret_value=0;
-SELECT `value` INTO ret_value
-FROM sys_sequence
-WHERE `key`=seq_name;
-RETURN ret_value;
-END */;;
-
-/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
-# Dump of FUNCTION nextval
-# ------------------------------------------------------------
-
-/*!50003 DROP FUNCTION IF EXISTS `nextval` */;;
-/*!50003 SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 FUNCTION `nextval`(seq_name varchar(40), incr int(11)) RETURNS int(11)
-BEGIN
-UPDATE `sys_sequence`
-SET `value` = `value` + incr
-where `key`=seq_name;
-return currval(seq_name);
-END */;;
-
-/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
-DELIMITER ;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

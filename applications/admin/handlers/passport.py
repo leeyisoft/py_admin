@@ -37,13 +37,14 @@ class LoginHandler(CommonHandler):
         next = self.get_argument('next', '')
         password = self.get_argument('password', '')
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        rsa_encrypt = int(rsa_encrypt) if rsa_encrypt else 0
         code = self.get_argument('code', '')
         _ = self.locale.translate
 
         if self.invalid_img_captcha(code):
             return self.error(_('验证码错误'))
 
-        if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
+        if settings.login_pwd_rsa_encrypt and rsa_encrypt==1 and len(password)>10:
             private_key = sys_config('sys_login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
 
