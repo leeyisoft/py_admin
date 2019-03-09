@@ -51,7 +51,7 @@ class MenuHandler(CommonHandler):
         menu_tab = self.get_argument('menu_tab', None)
 
         menu = AdminMenu.Q.filter(AdminMenu.id==id).first()
-        if (not self.super_role()) and menu.system==1:
+        if menu.system==1:
             return self.error('系统菜单，无法删除')
 
         count = AdminMenu.Q.filter(AdminMenu.parent_id==id).count()
