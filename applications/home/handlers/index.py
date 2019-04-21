@@ -14,6 +14,8 @@ from .common import CommonHandler
 
 from ..utils import tpl_params
 from ..models.content import Contact
+from ..models.content import Article
+
 
 class IndexHandler(CommonHandler):
     def get(self, *args, **kwargs):
@@ -33,6 +35,14 @@ class IndexHandler(CommonHandler):
         # 公司动态
         # company_news = get_article(category='company_news', options={'limit': 2, 'order': '-publish_date'})
         company_news = []
+        params = {}
+        params['category'] = 'activity'
+        params['per_page'] = 3
+        news_obj = Article.lists(params)
+        print('news_obj ', type(news_obj), news_obj.items)
+        if news_obj and news_obj.items:
+            for item in news_obj.items:
+                company_news.append(item)
 
         # 产品展示
         # products = get_article(category='products', options={'get_list': True, 'order': '-publish_date', 'limit': 8})
