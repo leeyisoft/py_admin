@@ -10,14 +10,14 @@
                     <div class="footer-grid-list col-md-6" style="padding-right: 0; padding-left: 0;">
                         <ul>
                             {% for arc in populars_left %}
-                            <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(20) }}</a></li>
+                            <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(18) }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
                     <div class="footer-grid-list col-md-6" style="padding-right: 0; padding-left: 0;">
                         <ul>
                             {% for arc in populars_right %}
-                            <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(20) }}</a></li>
+                            <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}">{{ arc.title|truncate(18) }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>

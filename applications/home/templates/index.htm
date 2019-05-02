@@ -14,6 +14,9 @@
 .new-grids {
     margin-top:1.1em;
 }
+.new-grid-right p {
+    font-size: 0.7em;
+}
 </style>
 {% endblock %}
 {% block body %}
@@ -53,9 +56,9 @@
                     </div>
                     <div class="new-grid-right">
                         <h5>
-                        <a href="/post/{{ new.id }}" title="{{ new.title }}">{{  new.title | truncate(20) }}</a>
+                        <a href="/article/{{ new.id }}" title="{{ new.title }}">{{  new.title | truncate(20) }}</a>
                         </h5>
-                        <p>{{ new.description | truncate(48) }}</p>
+                        <p>{{ new.description | truncate(45) }}</p>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
@@ -74,14 +77,14 @@
                 <div class="offer-left-list">
                     <ul>
                         {% for arc in products_left %}
-                        <li><a href="/post/{{ arc.id }}" title="{{ arc.title }}" target="_blank">{{ arc.title | truncate(16) }}</a></li>
+                        <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}" target="_blank">{{ arc.title | truncate(16) }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
                 <div class="offer-left-list">
                     <ul>
                         {% for arc in products_right %}
-                        <li><a href="/post/{{ arc.id }}" title="{{ arc.title }}" target="_blank">{{ arc.title | truncate(16) }}</a></li>
+                        <li><a href="/article/{{ arc.id }}" title="{{ arc.title }}" target="_blank">{{ arc.title | truncate(16) }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>

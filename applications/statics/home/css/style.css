@@ -567,7 +567,7 @@ ul.dropdown-menu {
   color: #5BD982;
   font-family: 'Mandali-Regular';
   margin: 0;
-  font-size: 3em;
+  font-size: 2em;
 }
 .welcome-left h4,.about-left h4{
   color: #424242;
@@ -783,7 +783,7 @@ ul.dropdown-menu {
   margin:1em 0;
 }
 .footer-grid-list ul li a{
-  font-size: .9em;
+  font-size: .8em;
   color: #777;
   text-decoration: none;
   padding-left: 1.5em;
