@@ -6,7 +6,7 @@
 """
 import tornado
 
-from applications.core.cache import sys_config
+from applications.core.utils import sys_config
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
 

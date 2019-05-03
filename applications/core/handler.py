@@ -8,74 +8,52 @@ base handler
 import tornado.locale
 import tornado.web
 
+import pyrestful.rest
+
 from tornado.escape import xhtml_escape
 from tornado.escape import json_encode
-from jinja2 import Environment
-from jinja2 import FileSystemLoader
-from jinja2 import TemplateNotFound
 
+from raven.contrib.tornado import SentryMixin
 
 from .settings_manager import settings
 from .mixins.exception import UncaughtExceptionMixin
 from .exception import Http404
 from .exception import HttpBadRequestError
 from .cache import close_caches
-from .cache import sys_config
+from applications.core.utils import sys_config
 
 
-class _HandlerPatch(tornado.web.RequestHandler):
+class _HandlerPatch(pyrestful.rest.RestHandler, tornado.web.RequestHandler):
+    response_to_mq = False
 
-    def get_format(self, params_name="format"):
-        format = self.get_argument(params_name, None)
-        if not format:
-            accept = self.request.headers.get('Accept')
-            try:
-                format = accept.split(',')[0].split('/')[1]
-                format = 'json' if format=='*' else format
-            except Exception as e:
-                format = 'json'
-        return format.lower() or 'json'
-
-    def _return(self, msg, code=0, **args):
-        msg = '%s' % msg
-        resp_str = ''
-        requ_format = self.get_format()
-        if requ_format in ['json', 'jsonp']:
-            self.set_header('Content-Type', 'application/json; charset=UTF-8')
-            data_dict = {
-                'code': code,
-                'msg': msg,
-            }
-            data_dict.update(args)
-            resp_str = json_encode(data_dict)
-            if requ_format=='jsonp':
-                callback = self.get_argument('callback', 'callback')
-                resp_str = '%s(%s)' % (callback, resp_str)
-        else:
-            self.set_header('Content-Type', 'text/html; charset=UTF-8')
-
-            resp_str = msg if args.get('xhtml_escape', True) is False else xhtml_escape(msg)
-
-        self.write(resp_str)
-        self.finish()
-        return
-
-    def error(self, msg='error', code=500, **args):
-        code = int(code) if str(code).isdigit() else 500
-        self.set_status(code, msg)
-        return self._return(msg, code, **args)
+    def error(self, msg='error', code=1, **args):
+        code = int(code) if str(code).isdigit() else 1
+        self.set_status(200, msg)
+        return self.api_json_error(msg, code=code, **args)
 
     def success(self, msg='success', **args):
         self.set_status(200, msg)
-        return self._return(msg, code=0, **args)
-
-    def show(self, data, **args):
-        return self._return(data, **args)
+        return self.api_json_error(msg, code=0, **args)
 
     def get_user_locale(self):
         if settings.TRANSLATIONS_CONF.use_accept_language:
-            return None
-
+            user_locale = self.get_argument('lang', None)
+            if user_locale in ['en', 'us','en_US', 'en-US']:
+                return tornado.locale.get('en_US')
+            elif user_locale in ['cn','zh_CN', 'zh-CN', 'zh-hans', 'zh-Hans-CN']:
+                return tornado.locale.get('zh_CN')
+            elif user_locale in ['ph','en_PH', 'en-PH']:
+                # 英国 -菲律宾共和国
+                return tornado.locale.get('en_PH')
+            elif user_locale in ['id','id_ID', 'id-ID']:
+                # 印尼 -印尼
+                return tornado.locale.get('id_ID')
+            elif user_locale in ['vi','vi_VN', 'vi-VN']:
+                # 越南 -越南
+                return tornado.locale.get('vi_VN')
+            elif user_locale in ['tw','zh_TW', 'zh-TW']:
+                return tornado.locale.get('zh_TW')
+        # 默认中文
         return tornado.locale.get(settings.TRANSLATIONS_CONF.locale_default)
 
     def on_finish(self):
@@ -84,27 +62,7 @@ class _HandlerPatch(tornado.web.RequestHandler):
         except:
             pass
 
-class _TemplateRendring(object):
-  """
-  A simple class to hold methods for rendering templates.
-  """
-  def render_template(self, template_name, **kwargs):
-    template_dirs = []
-    # print('self.settings', self.settings)
-    # print('self.settings', self.settings['template_path'])
-    if self.settings.get('template_path', ''):
-      template_dirs.append(self.settings['template_path'])
-    # print('self.settings', self.settings['template_path'])
-    env = Environment(loader=FileSystemLoader(template_dirs))
-
-    try:
-      template = env.get_template(template_name)
-    except TemplateNotFound:
-      raise TemplateNotFound(template_name)
-    content = template.render(kwargs)
-    return content
-
-class BaseHandler(UncaughtExceptionMixin, _HandlerPatch, _TemplateRendring):
+class BaseHandler(SentryMixin, UncaughtExceptionMixin, _HandlerPatch):
     def create_template_loader(self, template_path):
         loader = self.application.tmpl
         if loader is None:
@@ -114,31 +72,6 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch, _TemplateRendring):
 
     def params(self):
         return dict((k, self.get_argument(k) ) for k, _ in self.request.arguments.items())
-
-    def invalid_img_captcha(self, code):
-        """ 图像验证码验证 不区分大小写"""
-        valid_code = self.get_secure_cookie(settings.valid_code_key)
-        valid_code = valid_code.decode('utf-8')
-        return valid_code.lower()!=code.lower()
-
-    def render_html(self, template_name, **kwargs):
-        self.settings['template_path'] = self.get_template_path()
-        kwargs.update(dict(
-            sys_config=sys_config,
-            def_avator=self.static_url('image/default_avatar.jpg'),
-
-            handler=self,
-            request=self.request,
-            current_user=self.current_user,
-            locale=self.locale,
-            _=self.locale.translate,
-            pgettext=self.locale.pgettext,
-            static_url=self.static_url,
-            xsrf_form_html=self.xsrf_form_html,
-            reverse_url=self.reverse_url
-        ))
-        content = self.render_template(template_name, **kwargs)
-        self.write(content)
 
     def get_template_namespace(self):
         """Returns a dictionary to be used as the default template namespace.
@@ -152,6 +85,7 @@ class BaseHandler(UncaughtExceptionMixin, _HandlerPatch, _TemplateRendring):
         namespace = dict(
             sys_config=sys_config,
             def_avator=self.static_url('image/default_avatar.jpg'),
+            lang=self.get_argument('lang', None),
 
             handler=self,
             request=self.request,

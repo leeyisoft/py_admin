@@ -10,7 +10,7 @@ from email.utils import parseaddr
 from email.utils import formataddr
 from email.header import Header
 
-from applications.configs import settings
+from applications.core.settings_manager import settings
 
 
 def _format_addr(s):

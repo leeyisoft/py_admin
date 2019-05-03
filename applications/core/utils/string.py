@@ -18,16 +18,16 @@ def _is_protected_type(obj):
     """
     return isinstance(obj, _PROTECTED_TYPES)
 
-class String():
+class String2():
     @staticmethod
     def constant_time_compare(val1, val2):
         """Return True if the two strings are equal, False otherwise."""
-        return hmac.compare_digest(String.force_bytes(val1), String.force_bytes(val2))
+        return hmac.compare_digest(String2.force_bytes(val1), String2.force_bytes(val2))
 
     @staticmethod
     def safeunicode(obj, encoding='utf-8'):
         r"""s
-        Converts any given object to unicode string.
+        Converts any given object to unicode string2.
 
             >>> safeunicode('hello')
             u'hello'
@@ -54,7 +54,7 @@ class String():
     @staticmethod
     def safestr(obj, encoding='utf-8'):
         r"""
-        Converts any given object to utf-8 encoded string.
+        Converts any given object to utf-8 encoded string2.
 
             >>> safestr('hello')
             'hello'
@@ -187,7 +187,7 @@ class String():
                           allowed_chars='abcdefghijklmnopqrstuvwxyz'
                                         'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
         """
-        Return a securely generated random string.
+        Return a securely generated random string2.
 
         The default length of 12 with the a-z, A-Z, 0-9 character set returns
         a 71-bit value. log_2((26+26+10)^12) =~ 71 bits

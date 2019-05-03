@@ -11,7 +11,7 @@ from tornado.util import import_object
 
 from ..logger import SysLogger
 from ..settings_manager import settings
-from ..utils import Func
+
 
 class PeriodicCallbackMiddleware(object):
     def process_init(self, application):

@@ -6,6 +6,7 @@ from threading import local
 from tornado.util import import_object
 from tornado.ioloop import PeriodicCallback
 
+from applications.common.models.base import Config
 from ..exception import ConfigError
 from ..settings_manager import settings
 
@@ -13,7 +14,6 @@ from .backends.base import InvalidCacheBackendError
 from .backends.base import CacheKeyWarning
 from .backends.base import BaseCache
 
-from applications.core.models import Config
 
 BACKENDS = {
     'memcached': 'memcached',
@@ -22,7 +22,7 @@ BACKENDS = {
     'redis': 'rediscache'
 }
 
-DEFAULT_CACHE_ALIAS = 'default'
+DEFAULT_CACHE_ALIAS = 'default_redis'
 DEFAULT_REDIS_ALIAS = 'default_redis'
 DEFAULT_MEMCACHED_ALIAS = 'default_memcache'
 DEFAULT_DUMMY_ALIAS = 'dummy'
@@ -136,24 +136,3 @@ def close_caches(**kwargs):
     # cache.close is a no-op
     for cache in caches.all():
         cache.close()
-
-def sys_config(key, field='value'):
-    cache_key = '%s%s' % (settings.config_cache_prefix,key)
-    cache_val = cache.get(cache_key)
-    if cache_val:
-        # print('cache_val: ', cache_val)
-        return cache_val
-
-    if field=='value':
-        query = "select `value` from `sys_config` where `status`=1 and `key`='%s';" % key;
-        value = Config.session.execute(query).scalar()
-        value = value if value is not None else ''
-    elif type(field)==list:
-        query = "select %s from `sys_config` where `status`=1 and `key`='%s';" % (','.join(field),key);
-        # print('field', type(field), field)
-        field = Config.session.execute(query).fetchone()
-        # print('field', type(field), field)
-        value = dict(field)
-    cache.set(cache_key, value, timeout=86400)
-    # print('cache: ', cache)
-    return value

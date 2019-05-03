@@ -13,7 +13,7 @@ from tornado.escape import json_decode
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-from applications.core.cache import sys_config
+from applications.core.utils import sys_config
 from applications.core.decorators import required_permissions
 from applications.core.models import Attach
 from applications.core.utils.encrypter import RSAEncrypter

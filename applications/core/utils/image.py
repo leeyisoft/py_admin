@@ -6,11 +6,13 @@ import os
 import random
 import qrcode
 import base64
+import requests
 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageFilter
+from . import func
 
 from qrcode.constants import ERROR_CORRECT_H
 
@@ -21,6 +23,42 @@ _letter_cases = "abcdefghjkmnpqrstuvwxy"  # 小写字母，去除可能干扰的
 _upper_cases = _letter_cases.upper()  # 大写字母
 _numbers = ''.join(map(str, range(3, 10)))  # 数字
 init_chars = ''.join((_letter_cases, _upper_cases, _numbers))
+
+def download_img(url, root_path='/tmp/img/', headers=None):
+    try:
+        if not url:
+            return ''
+        img_ext = 'png'
+        filename = ''
+        binary_data = b''
+        if url[0:22]=='data:image/png;base64,':
+            from binascii import a2b_base64
+            data = bytes(url[22:], encoding='utf8')
+            binary_data = a2b_base64(data)
+            filename = func.md5(binary_data)
+            img_ext = 'png'
+        else:
+            if url[0:2]=='//':
+                url = 'https:'+url
+            url = url.replace('\\','')
+            r = requests.get(url, headers=headers, timeout=30000)
+            binary_data = r.content
+            filename = func.md5(url.split('/')[-1])
+            img_ext = r.headers['Content-Type'].split('/')[1]
+        # end if
+        path = root_path + filename
+        if not os.path.exists(root_path):
+            os.makedirs(root_path)
+        img_file = '%s.%s' % (path, img_ext, )
+        if not os.path.exists(img_file):
+            with open(img_file,'wb') as f:
+                f.write(binary_data)
+        return (img_file, img_ext)
+    except TimeoutError as e:
+        print(url)
+    except Exception as e:
+        print(url)
+        raise e
 
 def create_validate_code(
     size=(120, 40),

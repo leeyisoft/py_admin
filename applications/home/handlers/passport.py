@@ -20,7 +20,7 @@ from applications.core.utils.encrypter import aes_encrypt
 
 from applications.core.settings_manager import settings
 from applications.core.logger.client import SysLogger
-from applications.core.cache import sys_config
+from applications.core.utils import sys_config
 
 from ..models import Member
 from ..models import MemberOperationLog

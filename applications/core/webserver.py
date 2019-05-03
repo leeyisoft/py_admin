@@ -21,6 +21,7 @@ from .exception import ConfigError
 from .exception import ArgumentError
 from .exception import UrlError
 from .application import Application
+from .application import ApplicationRest
 from .settings_manager import settings
 from .logger import ProcessLogTimedFileHandler
 from .logger import enable_pretty_logging
@@ -50,8 +51,12 @@ class Server(object):
             except:
                 warnings.warn('locale dir load failure,maybe your config file is not set correctly.')
 
+        print('load_application: ', application)
+        # sys.exit(0)
         if not application:
             self._install_application(application)
+        elif application=='restful':
+            self._install_restful_application()
         elif isinstance(application, Application):
             self.application = application
         elif issubclass(application, Application):
@@ -61,20 +66,18 @@ class Server(object):
 
         tmpl = settings.TEMPLATE_CONFIG.template_engine
         self.application.tmpl = import_object(tmpl) if tmpl else None
+        from raven.contrib.tornado import AsyncSentryClient
+        self.application.sentry_client = AsyncSentryClient(
+            settings.sentry_url
+        )
 
         return self.application
 
-    def _install_application(self, application):
-        if application:
-            app_class = application
-        else:
-            app_class = Application
-
+    def _tornado_conf(self):
         tornado_conf = settings.TORNADO_CONF
         if 'default_handler_class' in tornado_conf and \
                 isinstance(tornado_conf['default_handler_class'], str):
             tornado_conf['default_handler_class'] = import_object(tornado_conf['default_handler_class'])
-
         else:
             tornado_conf['default_handler_class'] = import_object('applications.core.handler.ErrorHandler')
 
@@ -88,11 +91,33 @@ class Server(object):
             tornado_conf['login_url'] = options.login_url
 
         tornado_conf['debug'] = settings.debug
+        tornado_conf['xsrf_cookies'] = settings.xsrf_cookies
+        return tornado_conf
+
+    def _install_restful_application(self):
+        if not self.urls:
+            self.urls
+        tornado_conf = self._tornado_conf()
+        self.application = ApplicationRest(self.urls,
+            resource=None,
+            handlers=None,
+            default_host='',
+            transforms=None,
+            middlewares=settings.MIDDLEWARE_CLASSES,
+            **tornado_conf)
+
+    def _install_application(self, application):
+        if application:
+            app_class = application
+        else:
+            app_class = Application
+
+        tornado_conf = self._tornado_conf()
         self.application = app_class(handlers=self.urls,
-                                     default_host='',
-                                     transforms=None, wsgi=False,
-                                     middlewares=settings.MIDDLEWARE_CLASSES,
-                                     **tornado_conf)
+             default_host='',
+             transforms=None, wsgi=False,
+             middlewares=settings.MIDDLEWARE_CLASSES,
+             **tornado_conf)
 
     def load_urls(self):
         urls = []
@@ -166,6 +191,7 @@ class Server(object):
         options.run_parse_callbacks()
 
     def parse_logger_callback(self):
+        # print('parse_logger_callback: ')
         if options.disable_log:
             options.logging = None
         if options.log_file_prefix and options.log_port_prefix:

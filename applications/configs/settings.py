@@ -5,7 +5,7 @@ import os
 
 debug = False
 cookie_secret = 'e921bfcd-ace4-4124-8657-c57a162365f6'
-xsrf_cookies = True
+xsrf_cookies = False
 
 login_pwd_rsa_encrypt = True
 default_aes_secret = '883d65f06fd447f3a1e69a36e73f58e0'
@@ -16,6 +16,14 @@ token_key = 'f30a2331813f46d0adc2bcf26fcbbbf4'
 admin_session_key = 'de0b3fb0c2f44563944a8cccca7f225a'
 front_session_key = '171630947de24c969c28b2d178c4e0fe'
 
+jwt_key = ''
+
+oss_config = {
+    'accesskeyid':'',
+    'accesskey':'',
+    'endpoint':'',
+    'bucket_name':'',
+}
 # 163邮箱信息
 email = {
     'smtp_sever': 'smtp.163.com',
@@ -26,9 +34,12 @@ email = {
     'auth_code': '',
 }
 
+sentry_url = ''
+rabbitmq_config = ''
+
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-STATIC_PATH = os.path.join(ROOT_PATH, 'applications/statics')
+STATIC_PATH = os.path.join(ROOT_PATH, 'statics')
 TEMPLATE_PATH = os.path.join(ROOT_PATH, 'applications/admin/templates')
 
 xheaders = True
@@ -44,9 +55,21 @@ SUPER_ROLE_ID = 1
 # 必须是 int 型数据
 DEFAULT_ROLE_ID = 2
 
+collector_manage = 3
+collector = 4
+basic_collector = 5
+# 系统角色，非超级管理员不允许编辑权限和删除
+SYS_ROLE = [
+    SUPER_ROLE_ID,
+    DEFAULT_ROLE_ID,
+    collector_manage,
+    collector,
+    basic_collector,
+]
+
 # tornado全局配置
 TORNADO_CONF = {
-    'xsrf_cookies': True,
+    'xsrf_cookies': xsrf_cookies,
     'login_url': '/admin/login',
     'cookie_secret': cookie_secret,
     # 'ui_modules': ui_modules,
@@ -63,19 +86,20 @@ MIDDLEWARE_CLASSES = (
     'applications.core.middleware.dbalchemy.DBAlchemyMiddleware',
     'applications.core.middleware.AccessLogMiddleware',
     'applications.core.middleware.PeriodicCallbackMiddleware',
+    'applications.core.middleware.PushToMQMiddleware',
     # 'tornado.httpmodule.httpmodule.HttpModuleMiddleware',
 )
 
 # 定时任务之定期调用，执行定时任务需要首先加载 middleware.PeriodicCallbackMiddleware
 CRONTAB_PeriodicCallback = [
-    (
-        'applications.home.models.PeriodicCallbackDemo',
-        'demo_test',
-        # 参数必须是一个 dict
-        {'user_id': ''},
-        # 每隔 1800000 毫秒(30分钟)执行一次
-        1800000,
-    ),
+    # (
+    #     'applications.core.models.PeriodicCallbackDemo',
+    #     'demo_test',
+    #     # 参数必须是一个 dict
+    #     {'user_id': ''},
+    #     # 每隔 1800000 毫秒(30分钟)执行一次
+    #     1800000,
+    # ),
 ]
 
 INSTALLED_APPS = (
@@ -118,8 +142,8 @@ CACHES = {
 
 }
 config_cache_prefix = 'conf:'
-member_cache_prefix = 'm_cache:'
-user_cache_prefix = 'u_cache:'
+user_cache_prefix = 'user:'
+admin_cache_prefix = 'admin:'
 
 IPV4_ONLY = True
 
@@ -143,9 +167,9 @@ TIME_ZONE = 'Asia/Shanghai'
 #################
 # 本地化翻译文件地址#
 #################
-TRANSLATIONS = False  # 是否开启国际化
+TRANSLATIONS = True  # 是否开启国际化
 TRANSLATIONS_CONF = {
-    'translations_dir': os.path.join(os.path.dirname(__file__), 'translations'),
+    'translations_dir': os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'datas/locales'),
     'locale_default': 'zh_CN',
     'use_accept_language': True
 }
@@ -181,7 +205,7 @@ LOGGING = (
         'when': 'w0',
         'interval': 1,
         'formatter': standard_format,
-        'filename': 'error_log.log'
+        'filename': 'debug_log.log'
     },
     {
         'name': 'tornado.info.log',
@@ -190,7 +214,7 @@ LOGGING = (
         'when': 'midnight',
         'interval': 1,
         'formatter': standard_format,
-        'filename': 'error_log.log'
+        'filename': 'info_log.log'
     },
     {
         'name': 'tornado.warning.log',
@@ -199,7 +223,7 @@ LOGGING = (
         'when': 'midnight',
         'interval': 1,
         'formatter': standard_format,
-        'filename': 'error_log.log'
+        'filename': 'warning_log.log'
     },
     {
         'name': 'tornado.error.log',
@@ -217,7 +241,7 @@ LOGGING = (
         'when': 'midnight',
         'interval': 1,
         'formatter': standard_format,
-        'filename': 'error_log.log'
+        'filename': 'critical_log.log'
     },
 )
 
@@ -297,6 +321,34 @@ PASSWORD_HASHERS = [
     'applications.core.utils.hasher.PBKDF2PasswordHasher',
     'applications.core.utils.hasher.PBKDF2SHA1PasswordHasher',
 ]
+
+region_code = {
+    # https://countrycode.org/
+    'cn':{
+        'region':'China',
+        'number':'86',
+        'code':'CN',
+        'iso_code':'CN / CHN'
+    },
+    'ph':{
+        'region': 'Philippines',
+        'number': '63',
+        'code':'PH',
+        'iso_code':'PH / PHL'
+    },
+    'id':{
+        'region': 'Indonesia',
+        'number': '62',
+        'code':'ID',
+        'iso_code':'ID / IDN'
+    }
+}
+
+#订单审核：拒绝原因
+refuse_reason=['内部黑名单','第三方黑名单','联系人信息虚假','内含高危字段且击中三次以上','公司信息虚假','信息虚假','身份证过期','身份证姓名与填写姓名不符','第三方贷款申请','通话记录不足','联系人信息不足','收入不足','短信记录不足','贷款逾期超过7天','行业限制','居住地限制','职业限制','自动拒绝贷款','其他']
+#关闭原因
+close_reason=['身份证照片不清晰','身份证照片未包含工作号码','图片非原始身份证照片','图片未包含身份证照片','工作照不清晰','工作照无工装','联系人重复','银行卡号无效','非本人银行卡','请上传身份证','请上传工资单','其他']
+
 # 配置文件优先级 product > local > test > dev
 try:
     from .dev import *

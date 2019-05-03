@@ -2,33 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 基于sqlalchemy的数据库组件，提供全局连接，配置管理，主从库支持，目前支持单主多从
-connection config eg:
-DATABASE_CONNECTION = {
-    'default': {
-        'connections': [{
-                            'ROLE': 'master',
-                            'DRIVER': 'mysql+mysqldb',
-                            'UID': 'root',
-                            'PASSWD': '',
-                            'HOST': '',
-                            'PORT': 3306,
-                            'DATABASE': '',
-                            'QUERY': {"charset": "utf8"}
-
-                        },
-                        {
-                            'ROLE': 'slave',
-                            'DRIVER': 'mysql+mysqldb',
-                            'UID': 'root',
-                            'PASSWD': '',
-                            'HOST': '',
-                            'PORT': 3306,
-                            'DATABASE': '',
-                            'QUERY': {"charset": "utf8"}
-
-                        }]
-    }
-}
 """
 import random
 import threading
@@ -47,16 +20,8 @@ from ..logger import SysLogger
 from ..settings_manager import settings
 from ..exception import ConfigError
 from ..storage import storage
-from ..utils import Func
 from ..utils.encrypter import aes_decrypt
 
-from sqlalchemy.types import Integer
-from sqlalchemy.types import String
-from sqlalchemy.types import Text
-from sqlalchemy.types import TIMESTAMP
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import PrimaryKeyConstraint
 
 __all__ = [
     'create_session',
@@ -117,14 +82,12 @@ def create_session(engine=None, scopefunc=None, twophase=False, **kwargs):
         # eg:binds = {User:engine1, Account:engine2}
         session.configure(binds=engine, twophase=twophase)
 
-    query = ''
     return scoped_session(session, scopefunc)
 
 
 class DBConfigParser(object):
     @classmethod
     def parser_engines(cls):
-
         connections = settings.DATABASE_CONNECTION
         engines = {}
         for connection_name, connection_item in connections.items():
@@ -176,6 +139,9 @@ class DBConfigParser(object):
 
 
 class _Connector(object):
+    """
+    创建连接
+    """
     _conn_lock = threading.Lock()
     _conn = None
 
@@ -184,9 +150,11 @@ class _Connector(object):
 
     @property
     def conn_pool(self):
+        # 借用静态属性的单例模式
         if _Connector._conn:
             return _Connector._conn
         else:
+            # 创建连接
             with _Connector._conn_lock:
                 connection_pool = storage()
                 engines = DBConfigParser.parser_engines()
@@ -474,6 +442,14 @@ class Pagination(object):
                     yield None
             yield num
             last = num
+
+    def as_dict(self):
+        return {
+            "page": self.page,
+            "per_page": self.per_page,
+            "total": self.total,
+            'items': [item.as_dict() for item in self.items],
+        }
 
 Connector = get_connector(SQLAlchemy)
 

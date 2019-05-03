@@ -15,6 +15,6 @@ if __name__ == "__main__":
     sys.path.insert(0, root_path)
 
     try:
-        run()
+        run('restful')
     except KeyboardInterrupt:
         sys.exit(0)

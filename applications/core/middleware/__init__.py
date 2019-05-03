@@ -3,3 +3,4 @@
 
 from .accesslog import AccessLogMiddleware
 from .crontab import PeriodicCallbackMiddleware
+from .response import PushToMQMiddleware

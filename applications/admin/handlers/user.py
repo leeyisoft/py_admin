@@ -8,300 +8,178 @@
 import json
 import tornado
 
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.cache import sys_config
+from pyrestful.rest import JsonError
+from pyrestful.rest import get
+from pyrestful.rest import post
+from pyrestful.rest import delete
+from pyrestful.rest import put
+
+from applications.core.utils import sys_config
 from applications.core.decorators import required_permissions
 from applications.core.utils.encrypter import RSAEncrypter
-from applications.core.utils.hasher import make_password
+from applications.core.utils.hasher import check_password
+from applications.admin.services.role import RoleService
+from applications.core.settings_manager import settings
 
-from ..models import User
-from ..models import Role
-from ..models import AdminMenu
-
+from ..services.user import AdminUserService
+from ..models import AdminUser
 from .common import CommonHandler
 
 
 class UserHandler(CommonHandler):
     """docstring for Passport"""
-    @tornado.web.authenticated
-    @required_permissions('admin:user:index')
-    def get(self, *args, **kwargs):
-        """后台首页
-        """
-        # return self.show('<script type="text/javascript">alert(1)</script>')
-        params = {
-        }
-        self.render('user/index.html', **params)
-
+    @delete('/admin/user', _catch_fire=settings.debug)
     @tornado.web.authenticated
     @required_permissions('admin:user:delete')
-    def delete(self, *args, **kwargs):
+    def delete(self):
         """删除用户
         """
-        # return self.show('<script type="text/javascript">alert(1)</script>')
-        id = self.get_argument('id', None)
-
-        User.Q.filter(User.id==id).delete()
-        User.session.commit()
+        uid = self.get_argument('user_id', None)
+        AdminUserService.delete_data(uid)
         return self.success()
 
-class UserUnlockedHandler(CommonHandler):
+    @post('/admin/user/unlocked', _catch_fire=settings.debug)
     @tornado.web.authenticated
-    @required_permissions('admin:user:unlocked')
-    def post(self, *args, **kwargs):
+    def unlocked(self):
+        """锁屏解锁"""
         password = self.get_argument('password', None)
+
         if not password:
             return self.error('请输入密码')
 
+        is_rsa=sys_config('login_pwd_rsa_encrypt')
+        if  int(is_rsa) == 1:
+            private_key = sys_config('sys_login_rsa_priv_key')
+            try:
+                password = RSAEncrypter.decrypt(password, private_key)
+            except Exception:
+                return self.error(msg='签名失败',code=11)
+        user_info=self.get_current_user()
+        check=AdminUser.Q.filter(AdminUser.id == user_info['id']).first()
+        if check is None:
+            return self.error('用户信息出错')
+
+        if check_password(password,check.password)==False:
+            return self.error('密码错误')
+
         return self.success()
 
-class UserListHandler(CommonHandler):
-    """docstring for Passport"""
+
+    @get('/admin/user', _catch_fire=settings.debug)
     @tornado.web.authenticated
     @required_permissions('admin:user:index')
-    def get(self, *args, **kwargs):
+    def index(self):
+        """管理员列表"""
         limit = self.get_argument('limit', 10)
         page = self.get_argument('page', 1)
-        pagelist_obj = User.Q.filter().paginate(page=page, per_page=limit)
-        if pagelist_obj is None:
-            return self.error('暂无数据')
 
-        total = pagelist_obj.total
-        page = pagelist_obj.page
-        items = pagelist_obj.items
+        pagelist_obj = AdminUserService.get_data(limit, page)
+        items2=[]
+        for config in pagelist_obj.items:
+            val=config.as_dict()
+            if not val['permission'] or val['permission']=='':
+                val['permission']=[]
+            else:
+                val['permission']=val['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
+            items2.append(val)
 
         params = {
-            'count': total,
-            'uri': self.request.uri,
-            'path': self.request.path,
-            'data': [user.as_dict() for user in items],
+            'page':page,
+            'per_page':limit,
+            'total':pagelist_obj.total,
+            'items': items2,
         }
-        return self.success(**params)
+        return self.success(data=params)
 
-class UserAddHandler(CommonHandler):
-    """docstring for Passport"""
+    @post('/admin/user', _catch_fire=settings.debug)
     @tornado.web.authenticated
     @required_permissions('admin:user:add')
-    def get(self, *args, **kwargs):
-        role_id = settings.DEFAULT_ROLE_ID
-        menu_list = AdminMenu.children(status=1)
-        params = {
-            'status':1,
-            'role_id':role_id,
-            'username':'',
-            'mobile': '',
-            'email': '',
-        }
-        user = User(**params)
-
-        data_info = user.as_dict()
-        try:
-            data_info['permission'] = json.loads(user.permission)
-        except Exception as e:
-            data_info['permission'] = []
-
-        params = {
-            'user': user,
-            'role_option': Role.option_html(role_id),
-            'menu_list': menu_list,
-            'data_info': data_info,
-            'public_key': sys_config('sys_login_rsa_pub_key'),
-            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-        }
-        self.render('user/add.html', **params)
-
-    @tornado.web.authenticated
-    @required_permissions('admin:user:add')
-    def post(self, *args, **kwargs):
+    def add(self):
+        """新增管理员"""
         role_id = self.get_argument('role_id', None)
         username = self.get_argument('username', None)
         password = self.get_argument('password', None)
-        rsa_encrypt = self.get_argument('rsa_encrypt', None)
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
-        status = self.get_argument('status', 1)
-        permission = self.get_body_arguments('permission')
-
-        role_id = int(role_id)
+        status = self.get_argument('status', '1')
+        permission = self.get_argument('permission',[])
+        rsa_encrypt = self.get_argument('rsa_encrypt',1)
 
         if not username:
             return self.error('用户名不能为空')
         if not password:
             return self.error('密码不能为空')
-
-        if username:
-            count = User.Q.filter(User.username==username).count()
-            if count>0:
-                return self.error('用户名已被占用')
-
-        if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-            private_key = sys_config('sys_login_rsa_priv_key')
-            password = RSAEncrypter.decrypt(password, private_key)
-
-        params = {
-            'username': username,
-            'password': make_password(password),
-            'status': status,
-        }
-        if role_id:
-            params['role_id'] = role_id
-        if mobile:
-            params['mobile'] = mobile
-            count = User.Q.filter(User.mobile==mobile).count()
-            if count>0:
-                return self.error('电话号码已被占用')
-        if email:
-            params['email'] = email
-            count = User.Q.filter(User.email==email).count()
-            if count>0:
-                return self.error('Email已被占用')
-
-        user = User(**params)
-        User.session.add(user)
-        User.session.commit()
-
-        return self.success()
-
-class UserEditHandler(CommonHandler):
-    """docstring for Passport"""
-    @tornado.web.authenticated
-    @required_permissions('admin:user:edit')
-    def get(self, *args, **kwargs):
-        id = self.get_argument('id', None)
-
-        menu_list = AdminMenu.children(status=1)
-        user = User.Q.filter(User.id==id).first()
-
-
-        user.mobile = user.mobile if user.mobile else ''
-        user.email = user.email if user.email else ''
-
-        data_info = user.as_dict()
-        # SysLogger.debug(data_info)
-        try:
-            data_info['permission'] = json.loads(user.permission)
-        except Exception as e:
-            data_info['permission'] = []
-
-        params = {
-            'user': user,
-            'role_option': Role.option_html(user.role_id),
-            'menu_list': menu_list,
-            'data_info': data_info,
-            'public_key': sys_config('sys_login_rsa_pub_key'),
-            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-        }
-        self.render('user/edit.html', **params)
-
-    @tornado.web.authenticated
-    @required_permissions('admin:user:edit')
-    def post(self, *args, **kwargs):
-        role_id = self.get_argument('role_id', None)
-        id = self.get_argument('id', None)
-        username = self.get_argument('username', None)
-        password = self.get_argument('password', None)
-        rsa_encrypt = self.get_argument('rsa_encrypt', 0)
-        email = self.get_argument('email', None)
-        mobile = self.get_argument('mobile', None)
-        status = self.get_argument('status', 0)
-        permission = self.get_body_arguments('permission[]')
-
-        email = None if email=='None' else email
-        mobile = None if mobile=='None' else mobile
-
-        if not id:
-            return self.error('用户ID不能为空')
-
         user = {
             'status': status,
+            'username': username,
+            'password': password,
+            'mobile': mobile,
+            'email': email,
+            'permission':permission,
+            'role_id':role_id
         }
 
-        if username:
-            user['username'] = username
-            count = User.Q.filter(User.id!=id).filter(User.username==username).count()
-            if count>0:
-                return self.error('用户名已被占用')
-        if password:
-            if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-                private_key = sys_config('sys_login_rsa_priv_key')
-                password = RSAEncrypter.decrypt(password, private_key)
-            user['password'] = make_password(password)
+        AdminUserService.save_data(user, rsa_encrypt, None)
+        return self.success()
 
-        if mobile:
-            user['mobile'] = mobile
-            count = User.Q.filter(User.id!=id).filter(User.mobile==mobile).count()
-            if count>0:
-                return self.error('电话号码已被占用')
-        if email:
-            user['email'] = email
-            count = User.Q.filter(User.id!=id).filter(User.email==email).count()
-            if count>0:
-                return self.error('Email已被占用')
-
-        if permission:
-            user['permission'] = json.dumps(permission)
-
-        if role_id:
-            user['role_id'] = role_id
-
-        User.Q.filter(User.id==id).update(user)
-        User.session.commit()
-
-        return self.success(data=user)
-
-class UserInfoHandler(CommonHandler):
-    """docstring for Passport"""
+    @put('/admin/user',_catch_fire=settings.debug)
     @tornado.web.authenticated
-    @required_permissions('admin:user:info')
-    def get(self, *args, **kwargs):
-        id = self.current_user.get('id', None)
-        user = User.Q.filter(User.id==id).first()
-        data_info = user.as_dict()
-        params = {
-            'user': user,
-            'data_info': data_info,
-            'public_key': sys_config('sys_login_rsa_pub_key'),
-            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-        }
-        self.render('user/info.html', **params)
-
-    @tornado.web.authenticated
-    @required_permissions('admin:user:info')
-    def post(self, *args, **kwargs):
+    @required_permissions('admin:user:edit')
+    def edit(self):
+        role_id = self.get_argument('role_id', None)
+        uid = self.get_argument('user_id', None)
         username = self.get_argument('username', None)
         password = self.get_argument('password', None)
-        rsa_encrypt = self.get_argument('rsa_encrypt', 0)
+        rsa_encrypt = self.get_argument('rsa_encrypt', '0')
         email = self.get_argument('email', None)
         mobile = self.get_argument('mobile', None)
+        status = self.get_argument('status', '0')
+        permission = self.get_argument('permission',[])
 
-        id = self.current_user.get('id', None)
-        user = {}
+        if not uid:
+            raise JsonError('用户ID不能为空')
+        user = {
+            'id': uid,
+            'status': status,
+            'username': username,
+            'mobile': mobile,
+            'email': email
+        }
+        user['permission'] = '[]'
+        try:
+            user['permission'] = json.dumps(permission)
+        except Exception as e:
+            pass
+        if role_id:
+            user['role_id'] = role_id
+        AdminUserService.save_data(user, rsa_encrypt, uid)
+        return self.success(data=resdata)
 
-        if username:
-            user['username'] = username
-            count = User.Q.filter(User.id!=id).filter(User.username==username).count()
-            if count>0:
-                return self.error('用户名已被占用')
-        if password:
-            if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-                private_key = sys_config('sys_login_rsa_priv_key')
-                password = RSAEncrypter.decrypt(password, private_key)
-            user['password'] = make_password(password)
-
-        if mobile:
-            user['mobile'] = mobile
-            count = User.Q.filter(User.id!=id).filter(User.mobile==mobile).count()
-            if count>0:
-                return self.error('电话号码已被占用')
-        if email:
-            user['email'] = email
-            count = User.Q.filter(User.id!=id).filter(User.email==email).count()
-            if count>0:
-                return self.error('Email已被占用')
+    @get('/admin/valid_role')
+    def valid_role(self):
+        """获取有效的角色"""
+        data = RoleService.get_valid_role()
+        return self.success(data=data)
 
 
-        User.Q.filter(User.id==id).update(user)
-        User.session.commit()
-
-        return self.success(data=user)
+    @put('/admin/user/change_pwd',_catch_fire=settings.debug)
+    @tornado.web.authenticated
+    @required_permissions('admin:user:change_pwd')
+    def change_pwd(self):
+        """
+        修改密码
+        :return:
+        """
+        password=self.get_argument('password',None)
+        rsa_encrypt=self.get_argument('rsa_encrypt',None)
+        admin_id=self.get_argument('admin_id',None)
+        if password is None or rsa_encrypt is None or admin_id is None:
+            return self.error('参数必须')
+        check=AdminUser.Q.filter(AdminUser.id == admin_id).first()
+        if check is None:
+            return self.error('参数无效')
+        user={
+            'password':password
+        }
+        AdminUserService.change_pwd(user, rsa_encrypt, admin_id)
+        return self.success()

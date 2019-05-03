@@ -3,7 +3,7 @@
 """
 
 
-from applications.core.cache import sys_config
+from applications.core.utils import sys_config
 from applications.core.utils import Func
 
 

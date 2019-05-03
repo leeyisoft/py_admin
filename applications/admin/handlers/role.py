@@ -4,141 +4,108 @@
 
 [description]
 """
-
-import json
 import tornado
 
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.cache import sys_config
+from applications.admin.services.role import RoleService
 from applications.core.decorators import required_permissions
-
-from ..models import Role
 from ..models import AdminMenu
-
 from .common import CommonHandler
 
+from pyrestful.rest import get
+from pyrestful.rest import post
+from pyrestful.rest import delete
+from pyrestful.rest import put
+from applications.core.settings_manager import settings
 
 class RoleHandler(CommonHandler):
     """docstring for Passport"""
+
+    @get('/admin/role', _catch_fire=settings.debug)
     @tornado.web.authenticated
     @required_permissions('admin:role:index')
-    def get(self, *args, **kwargs):
+    def web_role_list(self):
+        """角色列表"""
+        limit = self.get_argument('limit', '10')
+        page = self.get_argument('page', '1')
+        pagelist_obj = RoleService.get_data(limit, page)
+        items2=[]
+        for item in pagelist_obj.items:
+            val=item.as_dict()
+            if not val['permission'] or val['permission']=='':
+                val['permission']=[]
+            else:
+                val['permission']=val['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
+            items2.append(val)
+
         params = {
+            'page':page,
+            'per_page':limit,
+            'total':pagelist_obj.total,
+            'items': items2,
         }
-        self.render('role/index.html', **params)
+        return self.success(data=params)
 
-    @tornado.web.authenticated
-    @required_permissions('admin:role:delete')
-    def delete(self, *args, **kwargs):
-        """删除角色
-        """
-        id = self.get_argument('id', None)
 
-        # 超级管理员角色 默认角色
-        user_role_li = [settings.SUPER_ROLE_ID, settings.DEFAULT_ROLE_ID]
-        if int(id) in user_role_li:
-            return self.error('角色不允许删除')
-        Role.Q.filter(Role.id==id).delete()
-        Role.session.commit()
-        return self.success()
-
-class RoleListHandler(CommonHandler):
-    """用户组列表"""
+    @get('/admin/role/{id}')
     @tornado.web.authenticated
     @required_permissions('admin:role:index')
-    def get(self, *args, **kwargs):
-        limit = self.get_argument('limit', 10)
-        page = self.get_argument('page', 1)
-        pagelist_obj = Role.Q.filter().paginate(page=page, per_page=limit)
-        if pagelist_obj is None:
-            return self.error('暂无数据')
+    def detail(self,role_id):
+        """个人角色列表"""
+        role = RoleService.get_info(role_id)
+        return self.success(data=role.as_dict())
 
-        total = pagelist_obj.total
-        page = pagelist_obj.page
-        items = pagelist_obj.items
-
-        params = {
-            'count': total,
-            'uri': self.request.uri,
-            'path': self.request.path,
-            'data': [role.as_dict() for role in items],
-        }
-        return self.success(**params)
-
-class RoleAddHandler(CommonHandler):
-    """用户组添加功能"""
-
+    @post('/admin/role')
     @tornado.web.authenticated
     @required_permissions('admin:role:add')
-    def post(self, *args, **kwargs):
+    def web_role_add(self):
+        """新增角色"""
         rolename = self.get_argument('rolename', None)
-        id = self.get_argument('id', None)
-        status = self.get_argument('status', 1)
-        if not rolename:
-            return self.error('分组名称不能为空')
-
-        count = Role.Q.filter(Role.rolename==rolename).count()
-        if count>0:
-            return self.error('名称已被占用')
-
         role = {
-            'rolename':rolename,
-            'status': status,
+            'rolename': rolename,
+            'status': 1,
+            'id':None
+
         }
-        role = Role(**role)
-        Role.session.add(role)
-        Role.session.commit()
+        RoleService.save_data(self.super_role(), role)
         return self.success()
 
-class RoleEditHandler(CommonHandler):
-    """用户组增删查改功能"""
+    @put('/admin/role',_catch_fire=settings.debug)
     @tornado.web.authenticated
     @required_permissions('admin:role:edit')
-    def get(self, *args, **kwargs):
-        id = self.get_argument('id', None)
-        role = Role.Q.filter(Role.id==id).first()
-
-        menu_list = AdminMenu.children(status=1)
-
-        data_info = role.as_dict()
-        try:
-            data_info['permission'] = json.loads(role.permission)
-        except Exception as e:
-            data_info['permission'] = []
-        params = {
-            'role': role,
-            'menu_list': menu_list,
-            'data_info': data_info,
-        }
-        self.render('role/edit.html', **params)
-
-
-    @tornado.web.authenticated
-    @required_permissions('admin:role:edit')
-    def post(self, *args, **kwargs):
+    def web_role_edit(self):
         rolename = self.get_argument('rolename', None)
-        id = self.get_argument('id', None)
+        roleid = self.get_argument('id', None)
         sort = self.get_argument('sort', None)
         status = self.get_argument('status', 0)
-        permission = self.get_body_arguments('permission[]')
+        permission = self.get_argument('permission',[])
+
+        if not roleid:
+            return self.error('参数错误')
 
         role = {
             'status': status,
+            'rolename':rolename,
+            'permission':permission,
+            'sort':sort,
         }
-
-        if rolename:
-            role['rolename'] = rolename
-            count = Role.Q.filter(Role.id!=id).filter(Role.rolename==rolename).count()
-            if count>0:
-                return self.error('名称已被占用')
-
-        if sort:
-            role['sort'] = sort
-
-        if permission:
-            role['permission'] = json.dumps(permission)
-
-        Role.Q.filter(Role.id==id).update(role)
-        Role.session.commit()
+        RoleService.save_data(self.super_role(), role, roleid)
         return self.success(data=role)
+
+
+    @get('/admin/permission')
+    @tornado.web.authenticated
+    def permission_list(self):
+        """权限菜单列表"""
+        menu_list = AdminMenu.children(status=1)
+        return self.success(msg='成功',data=menu_list)
+
+
+    @delete('/admin/role')
+    @tornado.web.authenticated
+    @required_permissions('admin:role:delete')
+    def web_role_delete(self):
+        """删除角色
+        """
+        role_id = self.get_argument('role_id', None)
+        RoleService.delete_data(role_id)
+        return self.success()

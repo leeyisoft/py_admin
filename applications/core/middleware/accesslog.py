@@ -4,6 +4,7 @@
 """
 access log中间件，替换tornado的log_request实现插件式日志输出
 """
+import os
 import time
 import logging
 
@@ -20,6 +21,7 @@ class AccessLogMiddleware(object):
         data = handler.request.arguments
         dstr = '&'.join(['%s=%s'%(k.strip(), ','.join([v.decode('utf-8').strip() for v in vl])) for (k, vl) in data.items()])
         message = {
+            'pid': os.getpid(),
             'remote_ip': handler.request.remote_ip,
             'created_at': time.time(),
             'protocol': handler.request.protocol,

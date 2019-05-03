@@ -29,9 +29,10 @@ API响应，在任意需要的地方 raise JsonError
 ```
 from pyrestful.rest import JsonError
 
-raise JsonError(0,'msg')
-raise JsonError(0,'msg', [])
-raise JsonError(1,'msg', [1,2,3])
+raise JsonError('msg')
+raise JsonError('msg', 0)
+raise JsonError('msg', 1, [])
+raise JsonError('msg', 1, [1,2,3])
 ```
 
 # 环境依赖

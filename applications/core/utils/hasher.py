@@ -10,8 +10,8 @@ import base64
 
 from tornado.util import import_object
 
-from .string import String
-from .func import Func
+from .string import String2
+from . import func
 
 from applications.core.settings_manager import settings
 
@@ -19,16 +19,14 @@ from applications.core.settings_manager import settings
 UNUSABLE_PASSWORD_PREFIX = '!'  # This will never be a valid encoded hash
 UNUSABLE_PASSWORD_SUFFIX_LENGTH = 40  # number of random chars to add after UNUSABLE_PASSWORD_PREFIX
 
-
 def _is_password_usable(encoded):
     if encoded is None or encoded.startswith(UNUSABLE_PASSWORD_PREFIX):
         return False
     try:
-        identify_hasher(encoded)
+        _identify_hasher(encoded)
     except ValueError:
         return False
     return True
-
 
 def check_password(password, encoded, setter=None, preferred='default'):
     """
@@ -42,7 +40,7 @@ def check_password(password, encoded, setter=None, preferred='default'):
         return False
 
     preferred = get_hasher(preferred)
-    hasher = identify_hasher(encoded)
+    hasher = _identify_hasher(encoded)
 
     hasher_changed = hasher.algorithm != preferred.algorithm
     must_update = hasher_changed or preferred.must_update(encoded)
@@ -59,7 +57,6 @@ def check_password(password, encoded, setter=None, preferred='default'):
         setter(password)
     return is_correct
 
-
 def make_password(password, salt=None, hasher='default'):
     """
     Turn a plain-text password into a hash for database storage
@@ -70,7 +67,7 @@ def make_password(password, salt=None, hasher='default'):
     access to staff or superuser accounts. See ticket #20079 for more info.
     """
     if password is None:
-        return UNUSABLE_PASSWORD_PREFIX + String.get_random_string(UNUSABLE_PASSWORD_SUFFIX_LENGTH)
+        return UNUSABLE_PASSWORD_PREFIX + String2.get_random_string(UNUSABLE_PASSWORD_SUFFIX_LENGTH)
     hasher = get_hasher(hasher)
 
     if not salt:
@@ -78,6 +75,15 @@ def make_password(password, salt=None, hasher='default'):
 
     return hasher.encode(password, salt)
 
+def pbkdf2(password, salt, iterations, dklen=0, digest=None):
+    """Return the hash of password using pbkdf2."""
+    if digest is None:
+        digest = hashlib.sha256
+    if not dklen:
+        dklen = None
+    password = String2.force_bytes(password)
+    salt = String2.force_bytes(salt)
+    return hashlib.pbkdf2_hmac(digest().name, password, salt, iterations, dklen)
 
 @functools.lru_cache()
 def get_hashers():
@@ -120,7 +126,7 @@ def get_hasher(algorithm='default'):
                              "setting?" % algorithm)
 
 
-def identify_hasher(encoded):
+def _identify_hasher(encoded):
     """
     Return an instance of a loaded password hasher.
 
@@ -141,7 +147,7 @@ def identify_hasher(encoded):
     return get_hasher(algorithm)
 
 
-def mask_hash(hash, show=6, char="*"):
+def _mask_hash(hash, show=6, char="*"):
     """
     Return the given hash, with only the first ``show`` number shown. The
     rest are masked with ``char`` for security reasons.
@@ -180,7 +186,7 @@ class BasePasswordHasher:
 
     def salt(self):
         """Generate a cryptographically secure nonce salt in ASCII."""
-        return String.get_random_string(16)
+        return String2.get_random_string(16)
 
     def verify(self, password, encoded):
         """Check if the given password is correct."""
@@ -225,7 +231,7 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
     Secure password hashing using the PBKDF2 algorithm (recommended)
 
     Configured to use PBKDF2 + HMAC + SHA256.
-    The result is a 64 byte binary string.  Iterations may be changed
+    The result is a 64 byte binary String2.  Iterations may be changed
     safely but you must rename the algorithm if you change SHA256.
     """
     algorithm = "pbkdf2_sha256"
@@ -237,7 +243,7 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
         assert salt and '$' not in salt
         if not iterations:
             iterations = self.iterations
-        hash = Func.pbkdf2(password, salt, iterations, digest=self.digest)
+        hash = pbkdf2(password, salt, iterations, digest=self.digest)
         hash = base64.b64encode(hash).decode('utf-8').strip()
         return "%s$%d$%s$%s" % (self.algorithm, iterations, salt, hash)
 
@@ -245,7 +251,7 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
         algorithm, iterations, salt, hash = encoded.split('$', 3)
         assert algorithm == self.algorithm
         encoded_2 = self.encode(password, salt, int(iterations))
-        return String.constant_time_compare(encoded, encoded_2)
+        return String2.constant_time_compare(encoded, encoded_2)
 
     def safe_summary(self, encoded):
         algorithm, iterations, salt, hash = encoded.split('$', 3)
@@ -253,8 +259,8 @@ class PBKDF2PasswordHasher(BasePasswordHasher):
         return OrderedDict([
             (_('algorithm'), algorithm),
             (_('iterations'), iterations),
-            (_('salt'), mask_hash(salt)),
-            (_('hash'), mask_hash(hash)),
+            (_('salt'), _mask_hash(salt)),
+            (_('hash'), _mask_hash(hash)),
         ])
 
     def must_update(self, encoded):
