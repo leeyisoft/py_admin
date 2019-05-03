@@ -16,3 +16,4 @@ remove_bocai_tb.sql
 applications/statics/upload
 applications/statics/layui/css/modules/layim/*
 applications/statics/layui/lay/modules/layim.js
+Pipfile.lock
