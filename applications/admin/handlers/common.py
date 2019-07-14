@@ -4,14 +4,19 @@
 
 [description]
 """
-from applications.core.settings_manager import settings
-from applications.core.handler import BaseHandler
-from applications.core.cache import cache
+from trest.exception import JsonError
+from trest.settings_manager import settings
+from trest.handler import BaseHandler
+from trest.cache import cache
+
+from applications.admin.services.user import AdminUserService
 
 from ..models import AdminUser
 
+
 class CommonHandler(BaseHandler):
     format = 'json'
+
     def get_current_user(self):
         cache_key = self.get_secure_cookie(settings.admin_session_key)
         if not cache_key:
@@ -45,7 +50,7 @@ class CommonHandler(BaseHandler):
         if self.current_user:
             user_id = self.current_user.get('id', 0)
             role_id = self.current_user.get('role_id', 0)
-        return True if (int(user_id) in settings.SUPER_ADMIN) or (int(role_id)==settings.SUPER_ROLE_ID) else False
+        return AdminUserService.is_super_role(user_id, role_id) if user_id>0 else False
 
     def get_template_path(self):
         return 'applications/admin/templates'

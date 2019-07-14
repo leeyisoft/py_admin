@@ -41,7 +41,7 @@ DATABASE_CONNECTION = {
 
 CACHES = {
     'default_redis': {
-        'BACKEND': 'applications.core.cache.backends.rediscache.RedisCache',
+        'BACKEND': 'trest.cache.backends.rediscache.RedisCache',
         'LOCATION': '127.0.0.1:6379',
         'OPTIONS': {
             'DB': 3,

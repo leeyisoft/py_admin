@@ -4,37 +4,43 @@
 黑名单控制器
 """
 import tornado
-from pyrestful.rest import get
-from pyrestful.rest import post
-from pyrestful.rest import put
-from pyrestful.rest import delete
+from trest.router import get
+from trest.router import post
+from trest.router import put
+from trest.router import delete
 
-from applications.core.settings_manager import settings
-from applications.core.decorators import required_permissions
+from trest.settings_manager import settings
+from applications.admin.utils import required_permissions
 from applications.admin.services.blacklist import BlackListService
 from .common import CommonHandler
 
 class IndexHandler(CommonHandler):
 
-    @get('/admin/blacklist', _catch_fire=settings.debug)
+    @get('/admin/blacklist')
     @tornado.web.authenticated
-    @required_permissions('admin:blacklist:index')
+    @required_permissions()
     def index(self):
         value = self.get_argument('value', None)
-        type = self.get_argument('type', None)
+        bltype = self.get_argument('type', None)
         limit = self.get_argument('limit', '10')
         page = self.get_argument('page', '1')
-        order_number = self.get_argument('order_number', None)
+        loan_order_id = self.get_argument('loan_order_id', None)
         admin_id = self.get_argument('admin_id', None)
-        param = {
-            'value': value,
-            'type': type,
-            'order_number': order_number,
-            'admin_id': admin_id
-        }
-        (code, msg, (total, data)) = BlackListService.data_list(param, page, limit)
-        if code > 0:
-            return self.error(msg=msg)
+        param = {}
+        if value:
+            param['value'] = value
+        if bltype:
+            param['bltype'] = bltype
+        if loan_order_id:
+            param['loan_order_id'] = loan_order_id
+        if admin_id:
+            param['admin_id'] = admin_id
+        pagelist_obj = BlackListService.data_list(param, page, limit)
+        # print('pagelist_obj ', type(pagelist_obj), pagelist_obj.items)
+        items = []
+        for val in pagelist_obj.items:
+            items.append(val.as_dict())
+
         options = {}
         if int(page) == 1:
             options['types'] = BlackListService.type_options()
@@ -42,31 +48,28 @@ class IndexHandler(CommonHandler):
         res = {
             'page': page,
             'per_page': limit,
-            'total': total,
-            'items': data,
-            'options': options
+            'total': pagelist_obj.total,
+            'items': items,
+            'options': options,
         }
         return self.success(data=res)
 
-
     @get('/admin/blacklist/{id}')
     @tornado.web.authenticated
-    @required_permissions('admin:blacklist:detail')
+    @required_permissions()
     def detail(self, id):
-        (code, msg, data) = BlackListService.detail_info(id)
-        if code > 0:
-            return self.error(msg=msg)
-        return self.success(data=data)
+        obj = BlackListService.detail_info(id)
+        return self.success(data=obj.as_dict())
 
 
-    @post('/admin/blacklist', _catch_fire=settings.debug)
+    @post('/admin/blacklist')
     @tornado.web.authenticated
-    @required_permissions('admin:blacklist:add')
+    @required_permissions()
     def add(self):
         type = self.get_argument('type', None)
         value = self.get_argument('value', None)
         reason = self.get_argument('reason', None)
-        order_number = self.get_argument('order_number', None)
+        loan_order_id = self.get_argument('loan_order_id', None)
         if not(value and type):
             return self.error('参数缺失')
         admin_id = self.current_user.get('id')
@@ -75,17 +78,15 @@ class IndexHandler(CommonHandler):
             'reason': reason,
             'type': type,
             'admin_id': admin_id,
-            'order_number': order_number
+            'loan_order_id': loan_order_id
         }
-        (code, msg, res_data) = BlackListService.add_data(param)
-        if code > 0:
-            return self.error(msg=msg)
+        BlackListService.add_data(param)
         return self.success()
 
 
-    @put('/admin/blacklist', _catch_fire=settings.debug)
+    @put('/admin/blacklist')
     @tornado.web.authenticated
-    @required_permissions('admin:blacklist:edit')
+    @required_permissions()
     def edit(self):
         id = self.get_argument('id', None)
         status = self.get_argument('status', None)
@@ -95,20 +96,16 @@ class IndexHandler(CommonHandler):
             'id': id,
             'status': status
         }
-        (code, msg, res_data) = BlackListService.put_data(param)
-        if code > 0:
-            return self.error(msg=msg)
+        BlackListService.put_data(param)
         return self.success()
 
 
     @delete('/admin/blacklist')
     @tornado.web.authenticated
-    @required_permissions('admin:blacklist:delete')
+    @required_permissions()
     def delete(self):
         id = self.get_argument('id', None)
         if not id:
             return self.error('参数缺失')
-        (code, msg, res_data) = BlackListService.delete_data(id)
-        if code > 0:
-            return self.error(msg=msg)
+        BlackListService.delete_data(id)
         return self.success()

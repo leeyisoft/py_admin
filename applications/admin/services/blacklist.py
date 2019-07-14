@@ -3,7 +3,8 @@
 """
 黑名单管理
 """
-from applications.admin.models import BlackList
+from trest.exception import JsonError
+from applications.common.models import BlackList
 
 
 class BlackListService:
@@ -17,30 +18,22 @@ class BlackListService:
         :param limit:
         :return:
         """
-        code = 0
-        msg = ''
-        res_data = (0, [])
-
         query = BlackList.Q
-        if param['value']:
+
+        if 'value' in param.keys():
             query = query.filter(BlackList.value == param['value'])
-        if param['type']:
-            query = query.filter(BlackList.type == param['type'])
-        if param['admin_id']:
+        if 'bltype' in param.keys():
+            query = query.filter(BlackList.type == param['bltype'])
+        if 'admin_id' in param.keys():
             query = query.filter(BlackList.admin_id == param['admin_id'])
-        if param['order_number']:
-            query = query.filter(BlackList.order_number == param['order_number'])
+        if 'loan_order_id' in param.keys():
+            query = query.filter(BlackList.loan_order_id == param['loan_order_id'])
 
         pagelist_obj = query.paginate(page=page, per_page=limit)
+        # print('query.statement: ', query.statement)
         if pagelist_obj is None:
-            code = 1
-            msg = "暂无数据"
-        else:
-            items = []
-            for val in pagelist_obj.items:
-                items.append(val.as_dict())
-            res_data = (pagelist_obj.total, items)
-        return (code, msg, res_data)
+            raise JsonError('暂无数据')
+        return pagelist_obj
 
     @staticmethod
     def detail_info(id):
@@ -49,17 +42,13 @@ class BlackListService:
         :param d:
         :return:
         """
-        code = 0
-        msg = ''
-        res_data = []
         if not id:
-            return (1,'未找到记录', res_data)
+            raise JsonError('参数缺失')
         data = BlackList.Q.filter(BlackList.id == id).first()
         BlackList.session.commit()
         if not data:
-            return (1, '未找到记录', res_data)
-        data = data.as_dict()
-        return (code, msg, data)
+            raise JsonError('未找到记录')
+        return data
 
     @staticmethod
     def add_data(param):
@@ -68,22 +57,16 @@ class BlackListService:
         :param param:
         :return:
         """
-        code = 0
-        msg = ''
-        res_data = []
         if BlackListService.check_value(param['value'], None):
-            code = 1
-            msg = "该黑名单已存在"
-            return (code, msg, res_data)
+            raise JsonError('该黑名单已存在')
         try:
             data = BlackList(**param)
             BlackList.session.add(data)
             BlackList.session.commit()
-        except Exception:
+        except Exception as e:
             BlackList.session.rollback()
-            code = 1
-            msg = '出错'
-        return (code, msg, res_data)
+            raise e
+        return data
 
     @staticmethod
     def put_data(param):
@@ -92,24 +75,18 @@ class BlackListService:
         :param param:
         :return:
         """
-        code = 0
-        msg = ''
-        res_data = []
         if not param['id']:
-            code = 1
-            msg = '参数缺失'
-            return (code, msg, res_data)
-        (code, msg, res_data) = BlackListService.is_exist(param['id'])
-        if code > 0:
-            return (code, msg, res_data)
+            raise JsonError('参数缺失')
+        is_exist = BlackListService.is_exist(param['id'])
+        if is_exist is False:
+            raise JsonError('记录不存在')
         try:
             BlackList.Q.filter(BlackList.id == param['id']).update(param)
             BlackList.session.commit()
-        except Exception:
+        except Exception as e:
             BlackList.session.rollback()
-            code = 1
-            msg = '出错'
-        return (code, msg, res_data)
+            raise e
+        return True
 
     @staticmethod
     def delete_data(id):
@@ -118,12 +95,12 @@ class BlackListService:
         :param id:
         :return:
         """
-        (code, msg, res_data) = BlackListService.is_exist(id)
-        if code > 0:
-            return (code, msg, res_data)
+        is_exist = BlackListService.is_exist(id)
+        if is_exist is False:
+            raise JsonError('记录不存在')
         BlackList.Q.filter(BlackList.id == id).delete()
         BlackList.session.commit()
-        return (code, msg, res_data)
+        return True
 
     @staticmethod
     def is_exist(id):
@@ -132,15 +109,9 @@ class BlackListService:
         :param id:
         :return:
         """
-        code = 0
-        msg = ""
-        res_data = []
-        BlackList_id = BlackList.session.query(BlackList.id) \
+        is_exist = BlackList.session.query(BlackList.id) \
             .filter(BlackList.id == id).scalar()
-        if not BlackList_id:
-            code = 1
-            msg = '该公司不存在'
-        return (code, msg, res_data)
+        return True if is_exist else False
 
     @staticmethod
     def check_value(value, id):
@@ -151,9 +122,7 @@ class BlackListService:
             count = BlackList.Q.filter(BlackList.id != id).filter(BlackList.value == value).count()
         else:
             count = BlackList.Q.filter(BlackList.value == value).count()
-        if count > 0:
-            return True
-        return False
+        return True if count>0 else False
 
     @staticmethod
     def status_options():
@@ -170,5 +139,3 @@ class BlackListService:
         :return:
         """
         return BlackList.type_options
-
-

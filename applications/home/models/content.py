@@ -6,12 +6,12 @@ import os
 
 from tornado.escape import json_decode
 
-from applications.core.settings_manager import settings
-from applications.core.cache import cache
+from trest.settings_manager import settings
+from trest.cache import cache
 
-from applications.core.logger.client import SysLogger
-from applications.core.utils import Func
-from applications.core.models import BaseModel
+from trest.logger.client import SysLogger
+from trest.utils import Func
+from trest.models import BaseModel
 
 from sqlalchemy.types import Integer
 from sqlalchemy.types import Numeric

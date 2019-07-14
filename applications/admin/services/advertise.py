@@ -3,17 +3,15 @@
 """
 广告位管理
 """
-from pyrestful.rest import JsonError
-from applications.core.utils import utime
+from trest.exception import JsonError
 from applications.common.models.base import Advertising
-from applications.common.models.base import AdvertisingCategory
 
 
 class AdvertisingService:
     @staticmethod
     def add_data(param):
         try:
-            data=Advertising(**param)
+            data = Advertising(**param)
             Advertising.session.add(data)
             Advertising.session.commit()
             return True

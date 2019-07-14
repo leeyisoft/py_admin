@@ -6,9 +6,9 @@
 """
 import tornado
 
-from applications.core.utils import sys_config
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
+from trest.utils import sys_config
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
 
 from .common import CommonHandler
 

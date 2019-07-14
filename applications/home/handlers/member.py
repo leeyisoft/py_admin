@@ -11,19 +11,19 @@ import datetime
 
 from tornado.escape import json_decode
 
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.utils import sys_config
-from applications.core.decorators import required_permissions
-from applications.core.models import Attach
-from applications.core.utils.encrypter import RSAEncrypter
-from applications.core.utils.encrypter import aes_encrypt
-from applications.core.utils.hasher import check_password
-from applications.core.utils.hasher import make_password
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
+from trest.utils import sys_config
+from applications.admin.utils import required_permissions
+from trest.models import Attach
+from trest.utils.encrypter import RSAEncrypter
+from trest.utils.encrypter import aes_encrypt
+from trest.utils.hasher import check_password
+from trest.utils.hasher import make_password
 
-from applications.core.utils import Func
-from applications.core.utils import FileUtil
-from applications.core.utils import Uploader
+from trest.utils import Func
+from trest.utils import FileUtil
+from trest.utils import Uploader
 
 from ..models import Member
 from ..models import MemberOperationLog
@@ -392,7 +392,7 @@ class InviteHandler(CommonHandler):
         query = query.filter(Member.deleted==0)
         member_li = query.order_by(Member.utc_created_at.desc()).all()
 
-        from applications.core.utils.image import qrcode_base64_img
+        from trest.utils.image import qrcode_base64_img
         logo = settings.STATIC_PATH+'/image/logo.png'
         qrcode_img = qrcode_base64_img(register_uri_mobile, logo)
 
@@ -406,7 +406,7 @@ class InviteHandler(CommonHandler):
 
 class MemberUnlockedHandler(CommonHandler):
     @tornado.web.authenticated
-    @required_permissions('admin:user:unlocked')
+    @required_permissions()
     def post(self, *args, **kwargs):
         password = self.get_argument('password', None)
         if not password:

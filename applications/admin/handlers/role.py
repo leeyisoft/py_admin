@@ -7,22 +7,23 @@
 import tornado
 
 from applications.admin.services.role import RoleService
-from applications.core.decorators import required_permissions
+from applications.admin.services.menu import AdminMenuService
+from applications.admin.utils import required_permissions
 from ..models import AdminMenu
 from .common import CommonHandler
 
-from pyrestful.rest import get
-from pyrestful.rest import post
-from pyrestful.rest import delete
-from pyrestful.rest import put
-from applications.core.settings_manager import settings
+from trest.router import get
+from trest.router import post
+from trest.router import delete
+from trest.router import put
+from trest.settings_manager import settings
 
 class RoleHandler(CommonHandler):
     """docstring for Passport"""
 
-    @get('/admin/role', _catch_fire=settings.debug)
+    @get('/admin/role')
     @tornado.web.authenticated
-    @required_permissions('admin:role:index')
+    @required_permissions()
     def web_role_list(self):
         """角色列表"""
         limit = self.get_argument('limit', '10')
@@ -48,7 +49,7 @@ class RoleHandler(CommonHandler):
 
     @get('/admin/role/{id}')
     @tornado.web.authenticated
-    @required_permissions('admin:role:index')
+    @required_permissions()
     def detail(self,role_id):
         """个人角色列表"""
         role = RoleService.get_info(role_id)
@@ -56,7 +57,7 @@ class RoleHandler(CommonHandler):
 
     @post('/admin/role')
     @tornado.web.authenticated
-    @required_permissions('admin:role:add')
+    @required_permissions()
     def web_role_add(self):
         """新增角色"""
         rolename = self.get_argument('rolename', None)
@@ -71,7 +72,7 @@ class RoleHandler(CommonHandler):
 
     @put('/admin/role',_catch_fire=settings.debug)
     @tornado.web.authenticated
-    @required_permissions('admin:role:edit')
+    @required_permissions()
     def web_role_edit(self):
         rolename = self.get_argument('rolename', None)
         roleid = self.get_argument('id', None)
@@ -96,13 +97,13 @@ class RoleHandler(CommonHandler):
     @tornado.web.authenticated
     def permission_list(self):
         """权限菜单列表"""
-        menu_list = AdminMenu.children(status=1)
+        menu_list = AdminMenuService.children(status=1)
         return self.success(msg='成功',data=menu_list)
 
 
     @delete('/admin/role')
     @tornado.web.authenticated
-    @required_permissions('admin:role:delete')
+    @required_permissions()
     def web_role_delete(self):
         """删除角色
         """

@@ -6,188 +6,119 @@
 """
 import tornado
 
-from applications.admin.services.menu import MenuService
-from applications.core.settings_manager import settings
-from applications.core.decorators import required_permissions
-from applications.core.db import mysqldb
-from ..models import AdminMenu,AdminUser,Role
+from trest.exception import JsonError
+from trest.router import get
+from trest.router import delete
+from trest.router import post
+from trest.router import put
+
+from applications.admin.utils import admin_required_login
+from applications.admin.utils import required_permissions
+from applications.admin.services.menu import AdminMenuService
+
 from .common import CommonHandler
 
-from pyrestful import mediatypes
-from pyrestful.rest import get
-from pyrestful.rest import delete
-from pyrestful.rest import post
-from pyrestful.rest import put
+class MenuPageHandler(CommonHandler):
+    @get('/admin/menu/index.page')
+    @tornado.web.authenticated
+    @required_permissions()
+    def menu_page(self):
+        uid = self.current_user['id']
+        menu_list = AdminMenuService.menu_list(uid)
+        tab_data = [{"title": item['title']} for item in menu_list]
+        params = {
+            'tab_data': tab_data,
+            'menu_list': menu_list,
+        }
+        self.render('menu/index.html', **params)
+
+    @get('/admin/menu/edit.page')
+    @tornado.web.authenticated
+    @required_permissions()
+    def eidt_page(self):
+        name = self.get_argument('name', None)
+        if not name:
+            return self.error('name为空')
+        data_info = AdminMenuService.info(name)
+
+        uid = self.current_user['id']
+        menu_list = AdminMenuService.menu_list(uid)
+        params = {
+            'menu_option': menu_list,
+            'menu_tab': self.get_argument('menu_tab', 1),
+            'data_info': data_info,
+        }
+        self.render('menu/edit.html', **params)
 
 class MenuHandler(CommonHandler):
     """docstring for AdminMenu"""
 
-    @delete('/admin/menu')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:delete')
-    def delete(self):
-        """删除菜单
+    # 系统现有api字典，组要用于menu_init_get 根据name过滤menu里面已经存在的API
+    apis = {}
+
+    # @get('/admin/menu')
+    @admin_required_login
+    # def menu_list(self):
+    def get(self):
+        """菜单列表 只需要登录就可以获取，不要参与授权检查（自动过滤非超级管理员未授权节点）
         """
-        menu_id = self.get_argument('id', None)
-        MenuService.delete_data(menu_id,self.super_role())
-        return self.success()
+        uid = self.current_user['id']
+        menu_list = AdminMenuService.menu_list(uid)
+        return self.success(data=menu_list)
 
+    # @get('/admin/menu/init')
+    # @admin_required_login
+    # def menu_init_get(self):
+    #     """获取特定版本所有菜单 | 超级管理员才有的权限，编辑菜单之前调用
+    #     """
+    #     if not self.super_role():  # 非超级管理员
+    #         raise JsonError('未授权', 401)
 
-    @put('/admin/menu/sort')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:sort')
-    def sort(self):
-
-        ids = self.get_argument('ids', None)
-        val = self.get_argument('val', 20)
-        if int(ids)<0 and not val:
-            return self.error('参数错误')
-
-        menu = {
-            'sort':val,
-        }
-
-        AdminMenu.Q.filter(AdminMenu.id==ids).update(menu)
-        AdminMenu.session.commit()
-        return self.success()
-
-
-    @put('/admin/menu/status')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:status')
-    def status(self):
-        ids = self.get_argument('ids', None)
-        val = self.get_argument('val', 1)
-        menu = {
-            'status':val,
-        }
-        MenuService.save_data(menu, ids)
-        return self.success(data=menu)
-
-
-    @get('/admin/menu',_catch_fire=settings.debug)
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:web_admin_list')
-    def web_admin_list(self):
-        """菜单列表"""
-        is_nav=self.get_argument('is_nav',None)
-        if not self.super_role():
-            user_id = self.current_user.get('id')
-            menu_list=AdminMenu.get_user_menu(user_id)
-        else:
-            user_id = 0
-            menu_list = AdminMenu.children(user_id=user_id,is_nav=is_nav)
-
-        tab_data = []
-        for menu in menu_list:
-            tab_data.append({'title': menu.get('title')})
-        tab_data.append({'title': '模块排序'})
-        params = {
-            'menu_list': menu_list,
-            'tab_data': tab_data,
-        }
-        return self.success(msg='成功',data=params)
-
-
-    @get('/admin/menu/{id}')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:detail')
-    def detail(self,menu_id):
-        """菜单详情"""
-        menu_list=AdminMenu.info(menu_id)
-        return self.success(msg='成功',data=menu_list)
-
-
-    @get('/admin/down_menu')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:add_menu_list')
-    def add_menu_list(self):
-        """新增菜单页面，菜单列表"""
-        menu=AdminMenu.menu_option('')
-        return self.success(msg='成功',data=menu)
-
+    #     self.apis = AdminMenuService.api_node_list()
+    #     def filter_menu(i2):
+    #         """ 根据name过滤menu里面已经存在的API """
+    #         if not i2:
+    #             return []
+    #         try:
+    #             name = i2.get('name', '')
+    #             children = i2.get('children', [])
+    #             if name in self.apis.keys():
+    #                 # print('name ', name, type(self.apis), self.apis.keys())
+    #                 # 根据name过滤menu里面已经存在的API
+    #                 i2['name'] = self.apis[name]['name']
+    #                 # i2['title'] = self.apis[name]['title']
+    #                 # path 以后台配置为准，所以不需要覆盖 path
+    #                 i2['method'] = self.apis[name]['method']
+    #                 self.apis.pop(name)
+    #             i2['children'] = [filter_menu(i3) for i3 in children]
+    #             return i2
+    #         except Exception as e:
+    #             # print('i2', i2)
+    #             raise e
+    #     menu_list = AdminMenuService.menu_list(1)
+    #     # 一定要先执行 filter_menu/1 再返回self.apis.items()
+    #     left = [filter_menu(i2) for i2 in menu_list]
+    #     right = [i1 for (k,i1) in self.apis.items()]
+    #     return self.success(data={'right':right,'left':left})
 
     @post('/admin/menu')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:web_menu_add')
-    def web_menu_add(self):
-        """新增菜单"""
-        title = self.get_argument('title','')
-        code = self.get_argument('code','')
-        parent_id = self.get_argument('parent_id',0)
-        icon = self.get_argument('icon','')
-        path = self.get_argument('path','')
-        param = self.get_argument('param','')
-        status = self.get_argument('status',1)
-        system= self.get_argument('system',0)
-        nav= self.get_argument('nav',0)
-        user_id=self.get_argument('user_id',0)
-
-        params={
-         'title':title,
-         'code':code,
-         'parent_id':parent_id,
-         'icon':icon,
-         'path':path,
-         'param':param,
-         'status':status,
-         'system':system,
-         'nav':nav,
-         'user_id':user_id,
-
-        }
-
-        if not code:
-            return self.error('授权码不能够为空')
-
-        if MenuService.check_code(code):
-            return self.error('Code已被占用')
-
-        if path[0:4]!='http' and path[0:1]!='/':
-            path = '/' + path
-
-        if parent_id and parent_id=='top':
-            parent_id = 0
-
-        MenuService.save_data(params,None)
-
-        return self.success(msg='成功')
-
-
-    @put('/admin/menu')
-    @tornado.web.authenticated
-    @required_permissions('admin:menu:edit')
-    def edit(self):
-        """编辑"""
-        menu_id = self.get_argument('id', None)
-        title = self.get_argument('title','')
-        code = self.get_argument('code','')
-        parent_id = self.get_argument('parent_id',None)
-        icon = self.get_argument('icon','')
-        path = self.get_argument('path','')
-        param = self.get_argument('param','')
-        status = self.get_argument('status',None)
-        system= self.get_argument('system',None)
-        nav= self.get_argument('nav',None)
-        user_id=self.get_argument('user_id',0)
-
-        if int(menu_id)<=0:
-            return self.error('参数错误')
-
-        if path[0:4]!='http' and path[0:1]!='/':
-           path = '/' + path
-
-        param={
-            'title':title,
-            'code':code,
-            'parent_id':parent_id,
-            'icon':icon,
-            'path':path,
-            'param':param,
-            'status':status,
-            'system':system,
-            'nav':nav,
-            'user_id':user_id,
-        }
-        MenuService.save_data(param, menu_id)
-        self.success(msg='成功')
+    @admin_required_login
+    def menu_post(self):
+        """保存修改的菜单 | 超级管理员才有的权限
+        """
+        if not self.super_role():  # 非超级管理员
+            raise JsonError('未授权', 401)
+        tree = self.get_argument('tree')
+        if '\\u' in tree:
+            tree = tree.encode('utf-8').decode('unicode_escape')
+        print('tree ', type(tree), tree)
+        try:
+            tree = json.loads(tree)
+            # AdminMenuService.save_data(tree)
+        except JsonError as e:
+            raise e
+        except json.decoder.JSONDecodeError as e:
+            raise JsonError('需要json数据')
+        except Exception as e:
+            raise e
+        self.success()

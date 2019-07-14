@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8  -*-
 import tornado
-from applications.core.decorators import required_permissions
+from applications.admin.utils import required_permissions
 import codecs
 from .common import CommonHandler
-from pyrestful.rest import get
-from applications.core.db import mysqldb
+from trest.router import get
+from trest.db import mysqldb
 
 class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/conversion')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:conversion')
+    @required_permissions()
     def conversion(self):
         """
         渠道转化
@@ -79,7 +79,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/register')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:register')
+    @required_permissions()
     def register(self):
         """
         VTG-注册口径
@@ -148,7 +148,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/issue')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:issue')
+    @required_permissions()
     def issue(self):
         """
         VTG-放款口径
@@ -244,7 +244,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/over_period')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:over_period')
+    @required_permissions()
     def over_period(self):
         """
         贷款逾期情况
@@ -333,7 +333,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/day_count')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:day_count')
+    @required_permissions()
     def day_count(self):
         """
         平台每日统计
@@ -436,7 +436,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/again_loan')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:again_loan')
+    @required_permissions()
     def again_loan(self):
         """
         VTG-复借口径
@@ -511,7 +511,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/trial')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:trial')
+    @required_permissions()
     def trial(self):
         """
         审批统计
@@ -582,7 +582,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/deal_efficiency')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:deal_efficiency')
+    @required_permissions()
     def deal_efficiency(self):
         """
         处理效率明细
@@ -672,7 +672,7 @@ class StatisticsHandler(CommonHandler):
 
     @get('/admin/statistic/deal')
     @tornado.web.authenticated
-    @required_permissions('admin:statistic:deal')
+    @required_permissions()
     def deal(self):
         """
         处理效率

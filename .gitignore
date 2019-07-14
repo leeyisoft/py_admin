@@ -3,7 +3,7 @@
 local.py
 requirements.txt
 *.pem
-py3
+*venv
 logs/*.log
 *.log.*
 node_modules

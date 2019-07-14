@@ -9,10 +9,10 @@ import tornado
 
 from tornado.escape import json_decode
 
-from applications.core.cache import cache
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.handler import BaseHandler
+from trest.cache import cache
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
+from trest.handler import BaseHandler
 
 from ..models import Member
 

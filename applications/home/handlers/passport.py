@@ -11,16 +11,16 @@ import datetime
 
 from tornado.escape import json_decode
 
-from applications.core.utils.encrypter import RSAEncrypter
-from applications.core.utils.hasher import check_password
-from applications.core.utils.hasher import make_password
-from applications.core.utils import Func
-from applications.core.utils.encrypter import aes_decrypt
-from applications.core.utils.encrypter import aes_encrypt
+from trest.utils.encrypter import RSAEncrypter
+from trest.utils.hasher import check_password
+from trest.utils.hasher import make_password
+from trest.utils import Func
+from trest.utils.encrypter import aes_decrypt
+from trest.utils.encrypter import aes_encrypt
 
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.utils import sys_config
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
+from trest.utils import sys_config
 
 from ..models import Member
 from ..models import MemberOperationLog
@@ -288,7 +288,7 @@ class LogoutHandler(CommonHandler):
 class CaptchaHandler(CommonHandler):
     def get(self, *args, **kwargs):
         import io
-        from applications.core.utils.image import create_validate_code
+        from trest.utils.image import create_validate_code
         #创建一个文件流
         imgio = io.BytesIO()
         #生成图片对象和对应字符串

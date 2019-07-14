@@ -3,9 +3,9 @@
 """
 公司管理
 """
-from pyrestful.rest import JsonError
-from applications.admin.models import Company
-from applications.core.utils import func
+from trest.exception import JsonError
+from applications.common.models import Company
+from trest.utils import func
 
 
 class CompanyService:

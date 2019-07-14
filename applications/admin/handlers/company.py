@@ -6,16 +6,16 @@
 import tornado
 
 from applications.admin.services.company import CompanyService
-from applications.core.decorators import required_permissions, settings
+from applications.admin.utils import required_permissions, settings
 from .common import CommonHandler
-from pyrestful.rest import get, post, put, delete
+from trest.router import get, post, put, delete
 
 
 class IndexHandler(CommonHandler):
 
-    @get('/admin/company', _catch_fire=settings.debug)
+    @get('/admin/company')
     @tornado.web.authenticated
-    @required_permissions('admin:company:index')
+    @required_permissions()
     def index(self):
         module = self.get_argument('module', None)
         status = self.get_argument('status', None)
@@ -38,14 +38,14 @@ class IndexHandler(CommonHandler):
 
     @get('/admin/company/{id}')
     @tornado.web.authenticated
-    @required_permissions('admin:company:detail')
+    @required_permissions()
     def detail(self, company_id):
         data= CompanyService.detail_info(company_id)
         return self.success(data=data.as_dict())
 
     @post('/admin/company')
     @tornado.web.authenticated
-    @required_permissions('admin:company:add')
+    @required_permissions()
     def add(self):
         module = self.get_argument('module', None)
         status = self.get_argument('status', None)
@@ -66,7 +66,7 @@ class IndexHandler(CommonHandler):
 
     @put('/admin/company')
     @tornado.web.authenticated
-    @required_permissions('admin:company:edit')
+    @required_permissions()
     def edit(self):
         company_id = self.get_argument('id', None)
         module = self.get_argument('module', None)
@@ -90,7 +90,7 @@ class IndexHandler(CommonHandler):
 
     @delete('/admin/company')
     @tornado.web.authenticated
-    @required_permissions('admin:company:delete')
+    @required_permissions()
     def delete(self):
         company_id = self.get_argument('id', None)
         CompanyService.delete_data(company_id)

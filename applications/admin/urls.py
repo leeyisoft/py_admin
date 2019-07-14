@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from .handlers import passport
 from .handlers import dashboard
-from .handlers import user
 from .handlers import role
 from .handlers import menu
 from .handlers import config
@@ -15,25 +14,29 @@ from .handlers import blacklist
 
 # 其他 URL 通过 acl 获取
 urls = [
+    # page
+    # (r"/(.*?)/(.*?)/(.*)", web.RedirectHandler, {"url": "/{1}/{0}/{2}"}),
     # passport
     (r"/admin/login/?(.html)?", passport.LoginHandler),
     (r"/admin/logout/?(.html)?", passport.LogoutHandler),
     (r"/admin/captcha/?(.png)?", passport.CaptchaHandler),
 
     # dashboard
-    (r"/admin/?(.html)?", dashboard.MainHandler),
+    (r"/(admin)?/?(.html)?", dashboard.MainHandler),
     (r"/admin/index/?(.html)?", dashboard.MainHandler),
     (r"/admin/main/?(.html)?", dashboard.MainHandler),
-    (r"/admin/welcome/?(.html)?", dashboard.WelcomeHandler),
+    # (r"welcome/?(.html)?", dashboard.WelcomeHandler),
 
-    dashboard.MainHandler,
-    config.ConfigHandler,
-    menu.MenuHandler,
-    user.UserHandler,
-    role.RoleHandler,
-    advertise.AdvertiseHandler,
-    advertise_cat.AdvertiseCatHandler,
-    user_sms_code.UserSmsCodeHandler,
-    company.IndexHandler,
-    blacklist.IndexHandler,
+    (r"/admin/menu/?(.html)?", menu.MenuHandler),
+
+    # dashboard.MainHandler,
+    # config.ConfigHandler,
+    # menu.MenuHandler,
+    # user.UserHandler,
+    # role.RoleHandler,
+    # advertise.AdvertiseHandler,
+    # advertise_cat.AdvertiseCatHandler,
+    # user_sms_code.UserSmsCodeHandler,
+    # company.IndexHandler,
+    # blacklist.IndexHandler,
 ]

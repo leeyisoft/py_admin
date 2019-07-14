@@ -23,7 +23,6 @@ class ContractService:
             msg='出错'
             return (code,msg)
 
-
     @staticmethod
     def data_list(param,page,limit):
         code=0

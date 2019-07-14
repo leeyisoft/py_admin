@@ -3,10 +3,10 @@
 """
 处理配置管理
 """
-from pyrestful.rest import JsonError
+from trest.exception import JsonError
 from applications.common.models.base import Config
-from applications.core.settings_manager import settings
-from applications.core.utils import sys_config
+from trest.settings_manager import settings
+from trest.utils import sys_config
 
 class ConfigService:
     @staticmethod
@@ -17,7 +17,7 @@ class ConfigService:
         :param page:
         :return:
         """
-        query=Config.Q.order_by(Config.sort.asc())
+        query=Config.Q.order_by(Config.sort.desc())
         if param['key']:
             query=query.filter(Config.key==param['key'])
         pagelist_obj = query.paginate(page=page, per_page=limit)
@@ -41,7 +41,7 @@ class ConfigService:
         Config.session.commit()
         # 同时删除对应缓存
         sys_config(key, 'delete_key_value')
-        return (code, msg, resdata)
+        return True
 
     @staticmethod
     def check_key(key, old_key=None):

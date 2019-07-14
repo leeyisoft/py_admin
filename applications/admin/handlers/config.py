@@ -7,59 +7,51 @@
 
 import tornado
 
-from pyrestful.rest import get
-from pyrestful.rest import delete
-from pyrestful.rest import post
-from pyrestful.rest import put
+from trest.exception import JsonError
+from trest.router import get
+from trest.router import delete
+from trest.router import post
+from trest.router import put
 
 from applications.admin.services.config import ConfigService
-from applications.core.settings_manager import settings
-from applications.core.decorators import required_permissions
+from trest.settings_manager import settings
+from applications.admin.utils import required_permissions
+from applications.common.models.base import Config
 
 from .common import CommonHandler
 
 
-class ConfigHandler(CommonHandler):
+class ConfigPageHandler(CommonHandler):
     """docstring for Passport"""
 
-    @get('/admin/config.page', _catch_fire=settings.debug)
-    def page(self, *args, **kwargs):
-        next = self.get_argument('next', '')
-        params = {
-            'next': next,
-        }
+    @get('/admin/config.page')
+    @tornado.web.authenticated
+    @required_permissions()
+    def config_page(self, *args, **kwargs):
+        params = {}
         self.render('config/index.html', **params)
 
-    @get('/admin/config', _catch_fire=settings.debug)
+    @get('/admin/config/edit.page')
     @tornado.web.authenticated
-    @required_permissions('admin:config:index_list_all')
-    def index_list_all(self):
-        page=int(self.get_argument('page',1))
-        limit=int(self.get_argument('limit',10))
-        param={
-            'key':self.get_argument('key',None)
-        }
-        pagelist_obj = ConfigService.get_data(param, limit, page)
-        index_list={
-            'page':page,
-            'per_page':limit,
-            'total':pagelist_obj.total,
-            'items':[item.as_dict() for item in pagelist_obj.items],
-        }
-        return self.success(data=index_list)
-
-    @delete('/admin/config', _catch_fire=settings.debug)
-    @tornado.web.authenticated
-    @required_permissions('admin:config:delete_one')
-    def delete_one(self):
+    @required_permissions()
+    def edit_page(self, *args, **kwargs):
         key = self.get_argument('key', None)
-        ConfigService.delete_data(key)
-        return self.success()
+        config = Config.Q.filter(Config.key==key).first()
+        if config is None:
+            return self.error('不存在的数据')
+        data_info = config.as_dict()
+        params = {
+            'config': config,
+            'data_info': data_info,
+        }
+        self.render('config/edit.html', **params)
 
-    @post('/admin/config', _catch_fire=settings.debug)
+class ConfigHandler(CommonHandler):
+    """docstring for Passport"""
+    @post('/admin/config')
     @tornado.web.authenticated
-    @required_permissions('admin:config:add')
-    def add(self):
+    @required_permissions()
+    def config_post(self):
         title = self.get_argument('title', None)
         key = self.get_argument('key', None)
         value = self.get_argument('value', None)
@@ -69,7 +61,7 @@ class ConfigHandler(CommonHandler):
         system = self.get_argument('system', 0)
         status = self.get_argument('status',1)
         if title is None or key is  None or value is None:
-            return self.error('参数不全')
+            return self.error('参数不全', data=['post'])
         params={
             'title':title,
             'key':key,
@@ -83,10 +75,10 @@ class ConfigHandler(CommonHandler):
         ConfigService.save_data(title, key,params)
         return self.success()
 
-    @put('/admin/config', _catch_fire=settings.debug)
+    @put('/admin/config')
     @tornado.web.authenticated
-    @required_permissions('admin:config:edit')
-    def edit(self):
+    @required_permissions()
+    def config_put(self):
         title = self.get_argument('title', None)
         key = self.get_argument('key', None)
         value = self.get_argument('value', None)
@@ -95,7 +87,7 @@ class ConfigHandler(CommonHandler):
         system = self.get_argument('system', 0)
         status = self.get_argument('status',1)
         if not title or not key or not value:
-            return self.error('参数不全')
+            return self.error('参数不全', data=['put'])
         param={
             'key':key,
             'title':title,
@@ -106,4 +98,42 @@ class ConfigHandler(CommonHandler):
             'status':status
         }
         ConfigService.update_data(param)
+        return self.success()
+
+    @get('/admin/config3')
+    @tornado.web.authenticated
+    @required_permissions()
+    def config_get3(self, *args, **kwargs):
+        return self.success(data = ['config_get3'])
+
+    @get('/admin/config2')
+    @tornado.web.authenticated
+    @required_permissions()
+    def config_get2(self, *args, **kwargs):
+        return self.success(data = ['config_get2'])
+
+    @get('/admin/config')
+    @tornado.web.authenticated
+    @required_permissions()
+    def config_get(self, *args, **kwargs):
+        page = int(self.get_argument('page',1))
+        limit = int(self.get_argument('limit',10))
+        param = {
+            'key':self.get_argument('key',None)
+        }
+        pagelist_obj = ConfigService.get_data(param, limit, page)
+        index_list = {
+            'page':page,
+            'per_page':limit,
+            'total':pagelist_obj.total,
+            'items':[item.as_dict() for item in pagelist_obj.items],
+        }
+        return self.success(data = index_list)
+
+    @delete('/admin/config')
+    @tornado.web.authenticated
+    @required_permissions()
+    def config_delete(self):
+        key = self.get_argument('key', None)
+        ConfigService.delete_data(key)
         return self.success()

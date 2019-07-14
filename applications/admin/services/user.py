@@ -3,17 +3,28 @@
 """
 用户管理
 """
-from pyrestful.rest import JsonError
-from applications.core.utils.encrypter import RSAEncrypter
-from applications.core.utils import utime
-from applications.core.utils import sys_config
-from applications.core.settings_manager import settings
-from applications.core.utils.hasher import make_password
-from ..models import AdminUser
+from trest.exception import JsonError
+
+from trest.settings_manager import settings
+from trest.utils.encrypter import RSAEncrypter
+from trest.utils import utime
+from trest.utils import sys_config
+from trest.utils.hasher import make_password
+from ..models import AdminUser, Role
 from ..models import AdminUserLoginLog
 
 
 class AdminUserService:
+    @staticmethod
+    def is_super_role(uid, role_id=0):
+        """"判断当前用户是否超级用户"""
+        if not (uid>0):
+            raise JsonError('用户ID不能为空')
+        if not(role_id>0):
+            user = AdminUserService.detail(uid)
+            role_id = user.role_id
+        return True if (int(uid) in settings.SUPER_ADMIN) or (int(role_id)==settings.SUPER_ROLE_ID) else False
+
     @staticmethod
     def login_success(user, handler):
         """
@@ -56,19 +67,17 @@ class AdminUserService:
         return pagelist_obj
 
     @staticmethod
-    def get_info(uid):
+    def detail(uid):
         """
         根据id获取详情
         :param id:
         :return:
         """
-        if not uid:
-            raise JsonError('用户ID不能为空')
-
+        if not (uid>0):
+            raise JsonError('Detail用户ID不能为空')
         user = AdminUser.Q.filter(AdminUser.id == uid).first()
         user.mobile = user.mobile if user.mobile else None
         user.email = user.email if user.email else None
-        data_info = user.as_dict()
         return user
 
     @staticmethod
@@ -79,7 +88,7 @@ class AdminUserService:
         :return:
         """
         if not uid:
-            raise JsonError('用户ID不能为空')
+            raise JsonError('DEL用户ID不能为空')
         param = {
             'status': -1,
             'permission': '[]',

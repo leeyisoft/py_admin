@@ -13,7 +13,6 @@
 </div>
 {% end %}
 
-
 {% block javascript %}
 <script type="text/html" id="config_option">
   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" title="查看">
@@ -89,11 +88,11 @@ layui.use(['table','form'], function() {
   })
 
   //监听表格复选框选择
-  table.on('checkbox(config_list)', function(obj) {
+  table.on('checkbox(config_table)', function(obj) {
     console.log(obj)
   })
   //监听工具条
-  table.on('tool(config_list)', function(obj) {
+  table.on('tool(config_table)', function(obj) {
     var data = obj.data;
     switch(obj.event) {
       case 'edit':
@@ -124,12 +123,12 @@ layui.use(['table','form'], function() {
       })
     }
     ,getCheckLength: function() { //获取选中数目
-      var checkStatus = table.checkStatus('config_list_table')
+      var checkStatus = table.checkStatus('config_table')
       ,data = checkStatus.data;
       layer.msg('选中了：'+ data.length + ' 个');
     }
     ,isAll: function() { //验证是否全选
-      var checkStatus = table.checkStatus('config_list_table');
+      var checkStatus = table.checkStatus('config_table');
       layer.msg(checkStatus.isAll ? '全选': '未全选')
     }
   }
@@ -148,7 +147,7 @@ layui.use(['table','form'], function() {
       shade: false,
       maxmin: false,
       area: ['900px', '600px'],
-      content: '/admin/config/edit?key=' + data.key
+      content: '/admin/config/edit.page?key=' + data.key
     })
   }
   // 删除

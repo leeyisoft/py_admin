@@ -3,10 +3,11 @@
 """
 角色管理
 """
-from pyrestful.rest import JsonError
-from applications.admin.models import Role, Company
-from applications.core.settings_manager import settings
-from applications.core.utils import func
+from trest.exception import JsonError
+from applications.common.models import Company
+from applications.admin.models import Role
+from trest.settings_manager import settings
+from trest.utils import func
 
 
 class RoleService:

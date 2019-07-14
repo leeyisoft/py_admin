@@ -10,7 +10,7 @@ from .member import Friendgroup
 from .member import MemberFriendNotice
 from .member import Online
 
-from applications.core.models import Message
+from trest.models import Message
 
 class PeriodicCallbackDemo(object):
     @staticmethod

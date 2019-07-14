@@ -5,8 +5,8 @@ import tornado.websocket
 
 from tornado.escape import json_decode
 
-from applications.core.logger.client import SysLogger
-from applications.core.utils import Func
+from trest.logger.client import SysLogger
+from trest.utils import Func
 
 from .common import CommonHandler
 from ..models import Member

@@ -27,12 +27,14 @@
         <div class="fl header-fold"><a href="javascript:;" title="打开/关闭左侧导航" class="aicon ai-caidan" id="foldSwitch"></a></div>
         <ul class="layui-nav fl nobg main-nav">
             {% for menu in _admin_menu %}
-                {% if _admin_menu_parents['parent_id']==menu['id'] %}
+                {% if menu.get('nav')==1 %}
+                {% if _admin_menu_parents['name']==menu['name'] %}
                 <li class="layui-nav-item layui-this">
                 {% else %}
                 <li class="layui-nav-item">
                 {% end %}
                 <a href="javascript:;">{{ _(menu['title']) }}</a></li>
+                {% end %}
             {% end %}
         </ul>
         <ul class="layui-nav fr nobg head-info" lay-filter="">
@@ -52,7 +54,7 @@
     <div class="layui-side layui-bg-black" id="switchNav">
         <div class="layui-side-scroll">
             {% for v in _admin_menu %}
-            {% if _admin_menu_parents['parent_id']==v['id'] %}
+            {% if _admin_menu_parents['name']==v['name'] %}
             <ul class="layui-nav layui-nav-tree">
             {% else %}
             <ul class="layui-nav layui-nav-tree" style="display:none;">
@@ -60,7 +62,7 @@
                 {% set kk = 1 %}
                 {% for vv in v['children'] %}
                 <li class="layui-nav-item {% if kk == 1 %}layui-nav-itemed{% end %}">
-                    <a href="javascript:;"><i class="{{ vv['icon'] }}"></i>{{ vv['title'] }}<span class="layui-nav-more"></span></a>
+                    <a href="javascript:;"><i class="{{ vv.get('icon', '') }}"></i>{{ vv['title'] }}<span class="layui-nav-more"></span></a>
                     <dl class="layui-nav-child">
                         {% if vv['title']=='快捷菜单' %}
                             <dd>
@@ -69,13 +71,13 @@
                                 </a>
                             </dd>
                             {% for vvv in vv['children'] %}
-                            <dd><a class="admin-nav-item" data-id="{{ vvv['id'] }}" href="{{ vvv['path'] }}?{{ vvv['param'] }}"><i class="{{ vvv['icon'] }}"></i> {{ vvv['title'] }}</a><i data-href="/admin/menu/del?ids={{ vvv['id'] }}" class="layui-icon j-del-menu">&#xe640;</i></dd>
+                            <dd><a class="admin-nav-item" data-id="{{ vvv['name'] }}" href="{{ vvv['path'] }}?{{ vvv.get('param', '') }}"><i class="{{ vvv.get('icon', '') }}"></i> {{ vvv['title'] }}</a><i data-href="/admin/menu/del?ids={{ vvv['name'] }}" class="layui-icon j-del-menu">&#xe640;</i></dd>
                             {% end %}
                         {% elif not vv['children'] %}
-                            <dd><a class="admin-nav-item" data-id="{{ vv['id'] }}" href="{% if vv['path'][0:4]!='http' %}{{vv['path']}}?{{vv['param']}}{% else %}{{ vv['path'] }}{% end %}"><i class="{{ vv['icon'] }}"></i> {{ vv['title'] }}</a></dd>
+                            <dd><a class="admin-nav-item" data-id="{{ vv['name'] }}" href="{% if vv['path'][0:4]!='http' %}{{vv['path']}}?{{vv.get('param', '')}}{% else %}{{ vv['path'] }}{% end %}"><i class="{{ vv.get('icon', '') }}"></i> {{ vv['title'] }}</a></dd>
                         {% else %}
                             {% for vvv in vv['children'] %}
-                            <dd><a class="admin-nav-item" data-id="{{ vvv['id'] }}" href="{% if vvv['path'][0:4]!='http' %}{{vvv['path']}}?{{vvv['param']}}{% else %}{{ vvv['path'] }}{% end %}"><i class="{{ vvv['icon'] }}"></i> {{ vvv['title'] }}</a></dd>
+                            <dd><a class="admin-nav-item" data-id="{{ vvv['name'] }}" href="{% if vvv['path'][0:4]!='http' %}{{vvv['path']}}?{{vvv.get('param', '')}}{% else %}{{ vvv['path'] }}{% end %}"><i class="{{ vvv.get('icon', '') }}"></i> {{ vvv['title'] }}</a></dd>
                             {% end %}
                         {% end %}
                     </dl>

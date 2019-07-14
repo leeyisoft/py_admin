@@ -1,25 +1,14 @@
 [[source]]
 name = "pypi"
-url = "https://mirrors.aliyun.com/pypi/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 
+[dev-packages]
+
 [packages]
-tornado = ">=6.0.1"
-mysqlclient = "*"
-sqlalchemy = "*"
-rsa = "*"
-pycryptodome = "*"
-pytz = "*"
-pillow = "*"
-python-dateutil = "*"
+trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "master"}
 qrcode = "*"
-raven = "*"
-pyjwt = "*"
 oss2 = "*"
-pika = "*"
-redis = "==2.10.6"
-baidu-aip = "*"
-pyrestful = {editable = true,git = "https://github.com/leeyisoft/tornado-rest.git",ref = "master"}
 
 [requires]
 python_version = "3.7"

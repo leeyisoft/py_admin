@@ -3,8 +3,8 @@
 """
 
 
-from applications.core.utils import sys_config
-from applications.core.utils import Func
+from trest.utils import sys_config
+from trest.utils import Func
 
 
 from .models.content import Article

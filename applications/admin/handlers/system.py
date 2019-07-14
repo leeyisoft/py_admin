@@ -7,12 +7,12 @@
 import tornado
 
 from pyrestful import mediatypes
-from pyrestful.rest import get
+from trest.router import get
 
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.utils.hasher import make_password
-from applications.core.decorators import required_permissions
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
+from trest.utils.hasher import make_password
+from applications.admin.utils import required_permissions
 
 from ..models import AdminMenu
 

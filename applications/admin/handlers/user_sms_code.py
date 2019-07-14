@@ -7,18 +7,17 @@
 import os
 import tornado
 from applications.admin.services.user_sms_code import UserSmsCodeService
-from applications.core.decorators import required_permissions
+from applications.admin.utils import required_permissions
 
 from .common import CommonHandler
-from pyrestful.rest import get
+from trest.router import get
 
 class UserSmsCodeHandler(CommonHandler):
 
     @get('/admin/user_sms_code')
     @tornado.web.authenticated
-    @required_permissions('admin:user_sms_code:index')
+    @required_permissions()
     def index(self):
-
         page=int(self.get_argument('page',1))
         limit=int(self.get_argument('limit',10))
         mobile=self.get_argument('mobile',None)

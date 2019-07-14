@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pyrestful.rest import JsonError
+from trest.exception import JsonError
 from applications.common.models.base import ClientVsn
 from applications.common.models.base import ApiVsn
 

@@ -4,7 +4,7 @@
 {% block css %} {% end %}
 {% block body %}
 <div class="layui-body">
-    <form class="layui-form" action="{{ request.uri }}" method="post" id="editForm">
+    <form class="layui-form" action="/admin/config" method="put" id="editForm">
         {% raw xsrf_form_html() %}
         <input type="hidden" name="old_key" value="{{ config.key }}">
         <div class="layui-form-item">
@@ -91,7 +91,7 @@ layui.use(['form'], function() {
         layer.msg('数据提交中...',{time:50000})
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: obj.form.action,
             data: obj.field,
             success: function(res) {
@@ -119,6 +119,7 @@ layui.use(['form'], function() {
         })
         return false
     })
+    form.render()
 })
 
 </script>

@@ -11,7 +11,7 @@ from sqlalchemy.types import DATE
 from sqlalchemy.types import DATETIME
 from sqlalchemy import ForeignKey
 from sqlalchemy import Column
-from applications.core.utils import utime
+from trest.utils import utime
 
 from applications.common.models.base import BaseModel
 

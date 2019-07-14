@@ -5,19 +5,19 @@
 """
 import tornado
 from applications.admin.services.level import LevelService
-from applications.core.decorators import required_permissions
+from applications.admin.utils import required_permissions
 from .common import CommonHandler
 
-from pyrestful.rest import get
-from pyrestful.rest import delete
-from pyrestful.rest import post
-from pyrestful.rest import put
+from trest.router import get
+from trest.router import delete
+from trest.router import post
+from trest.router import put
 
 class LevelHandler(CommonHandler):
 
     @post('/admin/level')
     @tornado.web.authenticated
-    @required_permissions('admin:level:add_record')
+    @required_permissions()
     def add_record(self):
 
         name=self.get_argument('name',None)
@@ -48,7 +48,7 @@ class LevelHandler(CommonHandler):
 
     @get('/admin/level')
     @tornado.web.authenticated
-    @required_permissions('admin:level:index')
+    @required_permissions()
     def index(self):
 
         page=int(self.get_argument('page',1))
@@ -79,7 +79,7 @@ class LevelHandler(CommonHandler):
 
     @get('/admin/level/valid')
     @tornado.web.authenticated
-    @required_permissions('admin:level:valid')
+    @required_permissions()
     def valid(self):
         """
         查询有效的等级
@@ -97,7 +97,7 @@ class LevelHandler(CommonHandler):
 
     @put('/admin/level')
     @tornado.web.authenticated
-    @required_permissions('admin:level:put_record')
+    @required_permissions()
     def put_record(self):
 
         name=self.get_argument('name',None)
@@ -134,7 +134,7 @@ class LevelHandler(CommonHandler):
 
     @delete('/admin/level')
     @tornado.web.authenticated
-    @required_permissions('admin:level:dels')
+    @required_permissions()
     def dels(self):
         level_id=self.get_argument('level_id',None)
         if not level_id:

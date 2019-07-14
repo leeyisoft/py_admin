@@ -5,11 +5,11 @@
 [description]
 """
 import tornado
-from applications.core.db.dbalchemy import Connector
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.utils import sys_config
-from applications.core.utils import Func
+from trest.db.dbalchemy import Connector
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
+from trest.utils import sys_config
+from trest.utils import Func
 
 from .common import CommonHandler
 

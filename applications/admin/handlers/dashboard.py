@@ -6,12 +6,19 @@
 """
 import tornado
 
-from applications.core.settings_manager import settings
-from applications.core.logger.client import SysLogger
-from applications.core.utils.hasher import make_password
-from applications.core.decorators import required_permissions
+from trest.exception import JsonError
+from trest.router import get
+from trest.router import post
 
+from trest.settings_manager import settings
+from trest.logger.client import SysLogger
+from trest.utils.hasher import make_password
+from applications.admin.utils import required_permissions
+from trest.exception import JsonError
+
+from applications.admin.services.menu import AdminMenuService
 from ..models import AdminMenu
+from ..models import AdminUser
 
 from .common import CommonHandler
 
@@ -26,26 +33,23 @@ class MainHandler(CommonHandler):
         if self.request.path.strip('/') in path_set:
             path = '/admin/main/'
 
-        c_menu = AdminMenu.info(path=path)
-        if not c_menu:
-            msg = '节点不存在或者已禁用！'
-            return self.error(code=404, msg=msg);
-
-        _bread_crumbs = AdminMenu.brand_crumbs(c_menu['id'])
-        _admin_menu_parents = _bread_crumbs[0] if len(_bread_crumbs) else {'parent_id':'1'}
-        _admin_menu = AdminMenu.main_menu()
+        _admin_menu = AdminMenuService.menu_list(self.current_user.get('id'))
+        _admin_menu_parents = {
+            'name': ''
+        }
 
         params = {
             '_admin_menu': _admin_menu,
             '_admin_menu_parents': _admin_menu_parents,
-            '_bread_crumbs': _bread_crumbs,
+            '_bread_crumbs': '',
         }
         self.render('dashboard/main.html', **params)
 
 class WelcomeHandler(CommonHandler):
+    @get('welcome')
+    @required_permissions()
     @tornado.web.authenticated
-    @required_permissions('admin:welcome')
-    def get(self, *args, **kwargs):
+    async def welcome_get(self, *args, **kwargs):
         """后台首页
         """
         # menu = AdminMenu.main_menu()
@@ -54,3 +58,21 @@ class WelcomeHandler(CommonHandler):
         params = {
         }
         self.render('dashboard/welcome.html', **params)
+
+    @get('welcome2')
+    async def welcome_get2(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome2'])
+
+    @get('/welcome3')
+    async def welcome_get3(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome3'])
+
+    @post('welcome4')
+    async def welcome_post(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome3'])

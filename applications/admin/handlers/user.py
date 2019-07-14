@@ -8,19 +8,19 @@
 import json
 import tornado
 
-from pyrestful.rest import JsonError
-from pyrestful.rest import get
-from pyrestful.rest import post
-from pyrestful.rest import delete
-from pyrestful.rest import put
+from trest.exception import JsonError
+from trest.router import get
+from trest.router import post
+from trest.router import delete
+from trest.router import put
 
-from applications.core.utils import sys_config
-from applications.core.decorators import required_permissions
-from applications.core.utils.encrypter import RSAEncrypter
-from applications.core.utils.hasher import check_password
-from applications.admin.services.role import RoleService
-from applications.core.settings_manager import settings
+from trest.utils import sys_config
+from applications.admin.utils import required_permissions
+from trest.utils.encrypter import RSAEncrypter
+from trest.utils.hasher import check_password
+from trest.settings_manager import settings
 
+from ..services.role import RoleService
 from ..services.user import AdminUserService
 from ..models import AdminUser
 from .common import CommonHandler
@@ -28,9 +28,9 @@ from .common import CommonHandler
 
 class UserHandler(CommonHandler):
     """docstring for Passport"""
-    @delete('/admin/user', _catch_fire=settings.debug)
+    @delete('/admin/user')
     @tornado.web.authenticated
-    @required_permissions('admin:user:delete')
+    @required_permissions()
     def delete(self):
         """删除用户
         """
@@ -38,7 +38,7 @@ class UserHandler(CommonHandler):
         AdminUserService.delete_data(uid)
         return self.success()
 
-    @post('/admin/user/unlocked', _catch_fire=settings.debug)
+    @post('/admin/user/unlocked')
     @tornado.web.authenticated
     def unlocked(self):
         """锁屏解锁"""
@@ -65,9 +65,9 @@ class UserHandler(CommonHandler):
         return self.success()
 
 
-    @get('/admin/user', _catch_fire=settings.debug)
+    @get('/admin/user')
     @tornado.web.authenticated
-    @required_permissions('admin:user:index')
+    @required_permissions()
     def index(self):
         """管理员列表"""
         limit = self.get_argument('limit', 10)
@@ -91,9 +91,9 @@ class UserHandler(CommonHandler):
         }
         return self.success(data=params)
 
-    @post('/admin/user', _catch_fire=settings.debug)
+    @post('/admin/user')
     @tornado.web.authenticated
-    @required_permissions('admin:user:add')
+    @required_permissions()
     def add(self):
         """新增管理员"""
         role_id = self.get_argument('role_id', None)
@@ -124,7 +124,7 @@ class UserHandler(CommonHandler):
 
     @put('/admin/user',_catch_fire=settings.debug)
     @tornado.web.authenticated
-    @required_permissions('admin:user:edit')
+    @required_permissions()
     def edit(self):
         role_id = self.get_argument('role_id', None)
         uid = self.get_argument('user_id', None)
@@ -137,7 +137,7 @@ class UserHandler(CommonHandler):
         permission = self.get_argument('permission',[])
 
         if not uid:
-            raise JsonError('用户ID不能为空')
+            raise JsonError('Edit用户ID不能为空')
         user = {
             'id': uid,
             'status': status,
@@ -153,7 +153,7 @@ class UserHandler(CommonHandler):
         if role_id:
             user['role_id'] = role_id
         AdminUserService.save_data(user, rsa_encrypt, uid)
-        return self.success(data=resdata)
+        return self.success()
 
     @get('/admin/valid_role')
     def valid_role(self):
@@ -164,7 +164,7 @@ class UserHandler(CommonHandler):
 
     @put('/admin/user/change_pwd',_catch_fire=settings.debug)
     @tornado.web.authenticated
-    @required_permissions('admin:user:change_pwd')
+    @required_permissions()
     def change_pwd(self):
         """
         修改密码

@@ -3,7 +3,7 @@
 """
 消息管理
 """
-from pyrestful.rest import JsonError
+from trest.exception import JsonError
 from applications.common.models.base import Message
 
 

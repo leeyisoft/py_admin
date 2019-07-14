@@ -1,3 +1,0 @@
-"""
-torngas cache backends
-"""
