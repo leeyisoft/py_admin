@@ -6,54 +6,22 @@
 """
 import tornado
 
+from trest.router import get
+from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
+from trest.settings_manager import settings
+
 from applications.admin.services.role import RoleService
 from applications.admin.services.menu import AdminMenuService
 from applications.admin.utils import required_permissions
 from ..models import AdminMenu
 from .common import CommonHandler
 
-from trest.router import get
-from trest.router import post
-from trest.router import delete
-from trest.router import put
-from trest.settings_manager import settings
 
 class RoleHandler(CommonHandler):
     """docstring for Passport"""
-
-    @get('/admin/role')
-    @tornado.web.authenticated
-    @required_permissions()
-    def web_role_list(self):
-        """角色列表"""
-        limit = self.get_argument('limit', '10')
-        page = self.get_argument('page', '1')
-        pagelist_obj = RoleService.get_data(limit, page)
-        items2=[]
-        for item in pagelist_obj.items:
-            val=item.as_dict()
-            if not val['permission'] or val['permission']=='':
-                val['permission']=[]
-            else:
-                val['permission']=val['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
-            items2.append(val)
-
-        params = {
-            'page':page,
-            'per_page':limit,
-            'total':pagelist_obj.total,
-            'items': items2,
-        }
-        return self.success(data=params)
-
-
-    @get('/admin/role/{id}')
-    @tornado.web.authenticated
-    @required_permissions()
-    def detail(self,role_id):
-        """个人角色列表"""
-        role = RoleService.get_info(role_id)
-        return self.success(data=role.as_dict())
 
     @post('/admin/role')
     @tornado.web.authenticated
@@ -70,7 +38,7 @@ class RoleHandler(CommonHandler):
         RoleService.save_data(self.super_role(), role)
         return self.success()
 
-    @put('/admin/role',_catch_fire=settings.debug)
+    @put('/admin/role')
     @tornado.web.authenticated
     @required_permissions()
     def web_role_edit(self):
@@ -92,13 +60,50 @@ class RoleHandler(CommonHandler):
         RoleService.save_data(self.super_role(), role, roleid)
         return self.success(data=role)
 
-
-    @get('/admin/permission')
+    @get(r'/admin/role/(?P<role_id>\d*)')
     @tornado.web.authenticated
-    def permission_list(self):
-        """权限菜单列表"""
-        menu_list = AdminMenuService.children(status=1)
-        return self.success(msg='成功',data=menu_list)
+    @required_permissions()
+    def role_detail(self, role_id):
+        """个人角色列表"""
+        # role_id = kwargs.get('role_id',None)
+        role = RoleService.get_info(role_id)
+        if not role:
+            return self.error('不存在的数据')
+        return self.success(data=role.as_dict())
+
+
+    @get('/admin/role')
+    @tornado.web.authenticated
+    @required_permissions()
+    def web_role_list(self, *args, **kwargs):
+        """角色列表"""
+        limit = self.get_argument('limit', '10')
+        page = self.get_argument('page', '1')
+        pagelist_obj = RoleService.get_data(limit, page)
+        items2=[]
+        for item in pagelist_obj.items:
+            val=item.as_dict()
+            if not val['permission'] or val['permission']=='':
+                val['permission']=[]
+            else:
+                val['permission']=val['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
+            items2.append(val)
+
+        params = {
+            'page':page,
+            'per_page':limit,
+            'total':pagelist_obj.total,
+            'items': items2,
+        }
+        return self.success(data=params)
+
+    # @get('/admin/permission')
+    # @tornado.web.authenticated
+    # def permission_list(self):
+    #     """权限菜单列表"""
+    #     # menu_list = AdminMenuService.children(status=1)
+    #     menu_list = []
+    #     return self.success(msg='成功xx',data=menu_list)
 
 
     @delete('/admin/role')

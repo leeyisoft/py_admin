@@ -4,7 +4,7 @@
 {% block css %} {% end %}
 {% block body %}
 <div class="layui-body">
-    <form class="layui-form" action="/admin/config" method="put" id="editForm">
+    <form class="layui-form" action="/admin/config" method="{{ method }}" id="editForm">
         {% raw xsrf_form_html() %}
         <input type="hidden" name="old_key" value="{{ config.key }}">
         <div class="layui-form-item">
@@ -15,12 +15,6 @@
             <label class="layui-form-label">配置排序</label>
             <div class="layui-input-inline w100">
                 <input type="text" class="layui-input field-sort" name="sort" lay-verify="number" autocomplete="off" placeholder="">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">副标题</label>
-            <div class="layui-input-inline w700">
-                <input type="text" class="layui-input field-subtitle" name="subtitle" lay-verify="" autocomplete="off" placeholder="">
             </div>
         </div>
         <div class="layui-form-item">
@@ -74,13 +68,10 @@
 <script type="text/javascript">
 
 var formData = {% raw data_info %}
-
+// console.log(formData)
 layui.use(['form'], function() {
     var $ = layui.jquery
     var form = layui.form
-
-    set_form_data(formData)
-
     // 表单验证
     form.verify({
         title : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '角色名称必须2到40位字母、数字组合或汉字'],
@@ -91,10 +82,11 @@ layui.use(['form'], function() {
         layer.msg('数据提交中...',{time:50000})
 
         $.ajax({
-            type: "PUT",
+            type: "{{ method }}",
             url: obj.form.action,
             data: obj.field,
             success: function(res) {
+                console.log('success', res)
                 if (res.code==0) {
                     layer.msg('操作成功', {icon: 1, time: 2000}, function(){
                         parent.edit_success(res.data)
@@ -109,7 +101,7 @@ layui.use(['form'], function() {
                 }
             },
             error: function(xhr){
-                console.log(xhr.responseJSON)
+                console.log('error: ', xhr.responseJSON)
                 if (xhr.responseJSON && xhr.responseJSON.msg) {
                     layer.msg(xhr.responseJSON.msg)
                 } else {
@@ -119,7 +111,11 @@ layui.use(['form'], function() {
         })
         return false
     })
-    form.render()
+    $(document).ready(function(){
+        set_form_data(formData)
+        console.log('form ', formData)
+        form.render()
+    })
 })
 
 </script>

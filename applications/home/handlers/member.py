@@ -13,7 +13,7 @@ from tornado.escape import json_decode
 
 from trest.settings_manager import settings
 from trest.logger.client import SysLogger
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 from applications.admin.utils import required_permissions
 from trest.models import Attach
 from trest.utils.encrypter import RSAEncrypter
@@ -151,12 +151,12 @@ class SetHandler(CommonHandler):
             if avatar!=member.avatar:
                 Attach.remove_avatar(user_id, member.avatar)
 
-            query = "REPLACE INTO `sys_attach_related` (`file_md5`, `related_table`, `related_id`, `ip`, `utc_created_at`) VALUES ('%s', '%s', '%d', '%s', '%s')" % (
+            query = "REPLACE INTO `sys_attach_related` (`file_md5`, `related_table`, `related_id`, `ip`, `created_at`) VALUES ('%s', '%s', '%d', '%s', '%s')" % (
                 file_md5,
                 'member',
                 user_id,
                 self.request.remote_ip,
-                str(Func.utc_now())[0:-6],
+                utime.timestamp(3),
             )
             # print('query ', query )
             Member.session.execute(query)
@@ -371,15 +371,15 @@ class InviteHandler(CommonHandler):
         """
         user_id = self.current_user.get('id')
         referrer = aes_encrypt(user_id, prefix='')
-        register_uri = '%s://%s/%s%s' %(
+        reg_uri = '%s://%s/%s%s' %(
             self.request.protocol,
             self.request.host,
             'passport/reg.html?referrer=',
             referrer,
         )
-        register_uri_mobile = register_uri
+        reg_uri_mobile = reg_uri
         if 'mobile' in settings.INSTALLED_APPS:
-            register_uri_mobile = '%s://%s/%s%s' %(
+            reg_uri_mobile = '%s://%s/%s%s' %(
                 self.request.protocol,
                 self.request.host,
                 'mobile/reg.html?referrer=',
@@ -390,14 +390,14 @@ class InviteHandler(CommonHandler):
         query = query.filter(Member.ref_user_id==user_id)
         query = query.filter(Member.status==1)
         query = query.filter(Member.deleted==0)
-        member_li = query.order_by(Member.utc_created_at.desc()).all()
+        member_li = query.order_by(Member.created_at.desc()).all()
 
         from trest.utils.image import qrcode_base64_img
         logo = settings.STATIC_PATH+'/image/logo.png'
-        qrcode_img = qrcode_base64_img(register_uri_mobile, logo)
+        qrcode_img = qrcode_base64_img(reg_uri_mobile, logo)
 
         params = {
-            'register_uri': register_uri,
+            'reg_uri': reg_uri,
             'qrcode_img': qrcode_img,
             'member_li': member_li,
             'active': {'invite':'layui-this'},

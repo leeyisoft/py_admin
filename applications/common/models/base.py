@@ -30,7 +30,7 @@ class Config(BaseModel):
     system = Column(Integer, nullable=False, default=0)
     # 状态:( 0 禁用；1 启用, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    created_at = Column(TIMESTAMP, default=utime.timestamp)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
 
 class Advertising(BaseModel):
@@ -45,7 +45,7 @@ class Advertising(BaseModel):
     title = Column(String(80), nullable=False)  # 标题
     start_at = Column(Integer, nullable=False, default=0)  # 投放开始时间
     end_at = Column(Integer, nullable=False, default=-1)  # 投放结束时间
-    created_at = Column(Integer, nullable=False, default=utime.timestamp)  # 创建时间
+    created_at = Column(Integer, nullable=False, default=utime.timestamp(3))  # 创建时间
     type = Column(Integer, nullable=False, default=1)  # 广告类型 1. 内接 2.外链
     client = Column(String(20), nullable=False)  # 投放的客户端
     img = Column(String(255), nullable=False)  # 图片链接

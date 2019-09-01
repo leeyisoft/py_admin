@@ -29,7 +29,7 @@ class Company(BaseModel):
     type = Column(ChoiceType(const.COMPANY_TYPE))  # 类型：（外部委派；内部)
     status = Column(ChoiceType(const.COMMON_STATUS), default=1)  # 状态:( 0 待激活；1 激活)
     module = Column(ChoiceType(const.COMPANY_MODULE))  # 业务：（审批；催收；管理；客服）
-    created_at = Column(Integer, default=utime.timestamp)
+    created_at = Column(Integer, default=utime.timestamp(3))
 
     status_options = dict(const.COMMON_STATUS2)
     type_options = dict(const.COMPANY_TYPE)
@@ -48,7 +48,7 @@ class BlackList(BaseModel):
     value = Column(String(100), nullable=True, default='')
     reason = Column(String(100), nullable=True, default='')
     status = Column(Integer, default=1)  # 0 禁用；1 启用, 默认1 删除 -1
-    created_at = Column(Integer, default=utime.timestamp)
+    created_at = Column(Integer, default=utime.timestamp(3))
 
     status_options = {
         '1': '激活',
@@ -75,7 +75,7 @@ class MessageTemplate(BaseModel):
     # 状态:( 0 禁用；1 启用, 默认1 删除 -1)
     status = Column(ChoiceType(const.COMMON_STATUS), default=1)
     updated_at = Column(Integer, default=None)
-    created_at = Column(Integer, default=utime.timestamp)
+    created_at = Column(Integer, default=utime.timestamp(3))
 
 
 class Tag(BaseModel):
@@ -89,7 +89,7 @@ class Tag(BaseModel):
     type = Column(ChoiceType(const.TAG_TYPE))  # 类型
     # 状态:( 0 禁用；1 启用, 默认1 删除 -1)
     status = Column(ChoiceType(const.COMMON_STATUS), default=1)
-    created_at = Column(Integer, default=utime.timestamp)
+    created_at = Column(Integer, default=utime.timestamp(3))
     updated_at = Column(Integer, default=None)
 
     type_options = dict(const.TAG_TYPE)

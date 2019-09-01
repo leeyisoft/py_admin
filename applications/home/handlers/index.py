@@ -6,7 +6,7 @@
 """
 import tornado
 
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 from trest.settings_manager import settings
 from trest.logger.client import SysLogger
 

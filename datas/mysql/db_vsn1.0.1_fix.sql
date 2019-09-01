@@ -8,7 +8,7 @@ DELIMITER ;;
 --
 -- 函数
 --
-CREATE DEFINER=`user_cashloan_v1`@`%` FUNCTION `currval` (`seq_name` VARCHAR(40)) RETURNS INT(11) SQL SECURITY INVOKER
+CREATE DEFINER=`user_py_admin`@`%` FUNCTION `currval` (`seq_name` VARCHAR(40)) RETURNS INT(11) SQL SECURITY INVOKER
 BEGIN
 DECLARE ret_value INTEGER;
 SET ret_value=0;
@@ -18,7 +18,7 @@ WHERE `key`=seq_name;
 RETURN ret_value;
 END;;
 
-CREATE DEFINER=`user_cashloan_v1`@`%` FUNCTION `nextval` (`seq_name` VARCHAR(40), `incr` INT(11)) RETURNS INT(11) SQL SECURITY INVOKER
+CREATE DEFINER=`user_py_admin`@`%` FUNCTION `nextval` (`seq_name` VARCHAR(40), `incr` INT(11)) RETURNS INT(11) SQL SECURITY INVOKER
 BEGIN
     UPDATE `sys_sequence` SET `value` = `value` + incr where `key`=seq_name;
 

@@ -41,6 +41,22 @@ class AdminMenuService:
             "children": []
         }
         return item
+
+    @classmethod
+    def brand_crumbs(cls, id):
+        """获取当前节点的面包屑
+
+        [description]
+
+        Arguments:
+            id {[type]} -- [description]
+
+        Returns:
+            [type] -- [description]
+        """
+        menu = []
+        return menu
+
     @staticmethod
     def save_data(tree):
         """

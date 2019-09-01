@@ -4,21 +4,19 @@
 
 [description]
 """
-
-import json
 import tornado
 
-from trest.exception import JsonError
 from trest.router import get
+from trest.router import put
 from trest.router import post
 from trest.router import delete
-from trest.router import put
-
-from trest.utils import sys_config
-from applications.admin.utils import required_permissions
-from trest.utils.encrypter import RSAEncrypter
-from trest.utils.hasher import check_password
+from trest.exception import JsonError
 from trest.settings_manager import settings
+from trest.utils.hasher import check_password
+from trest.utils.encrypter import RSAEncrypter
+
+from applications.common.utils import sys_config
+from applications.admin.utils import required_permissions
 
 from ..services.role import RoleService
 from ..services.user import AdminUserService
@@ -125,7 +123,7 @@ class UserHandler(CommonHandler):
     @put('/admin/user',_catch_fire=settings.debug)
     @tornado.web.authenticated
     @required_permissions()
-    def edit(self):
+    def user_put(self):
         role_id = self.get_argument('role_id', None)
         uid = self.get_argument('user_id', None)
         username = self.get_argument('username', None)

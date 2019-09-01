@@ -12,7 +12,7 @@ from sqlalchemy import ForeignKey
 
 from trest.settings_manager import settings
 from trest.utils import utime
-from trest.db import mysqldb
+from applications.common.utils import mysqldb
 from trest.db import Model as BaseModel
 from applications.common import const
 
@@ -31,7 +31,7 @@ class Role(BaseModel):
     status = Column(Integer, nullable=False, default=1)  # 状态:( 0 禁用；1 启用, 默认1)
     category = Column(Integer, nullable=False, default=0)
     company_id = Column(Integer, nullable=False, default=1)
-    created_at = Column(Integer, default=utime.timestamp)
+    created_at = Column(Integer, default=utime.timestamp(3))
 
     @classmethod
     def option_html(cls, role_id=None):
@@ -67,7 +67,7 @@ class AdminUser(BaseModel):
     last_login_ip = Column(String(128), nullable=False, default='')
     status        = Column(Integer, nullable=False, default=1)  # 用户状态:(0 锁定, 1正常, 默认1)
     last_login_at = Column(Integer, nullable=True)
-    created_at    = Column(Integer, default=utime.timestamp)
+    created_at    = Column(Integer, default=utime.timestamp(3))
     lang          = Column(String(2), nullable=False, default='')  # 默认语言
 
     @property
@@ -103,7 +103,7 @@ class AdminUserLoginLog(BaseModel):
     user_id     = Column(Integer, ForeignKey('sys_admin_user.id'))
     ip          = Column(String(40), nullable=False)
     client      = Column(String(20), nullable=True)
-    created_at  = Column(Integer, default=utime.timestamp)
+    created_at  = Column(Integer, default=utime.timestamp(3))
 
 
 class AdminMenu(BaseModel):
@@ -125,4 +125,4 @@ class AdminMenu(BaseModel):
     sort        = Column(Integer, nullable=False, default=20)
     system      = Column(Integer, nullable=False)
     status      = Column(Integer, nullable=False)
-    created_at  = Column(Integer, default=utime.timestamp)
+    created_at  = Column(Integer, default=utime.timestamp(3))

@@ -47,16 +47,16 @@ class Article(BaseModel):
     ip = Column(VARCHAR(40), nullable=False)
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_updated_at = Column(TIMESTAMP, default=None)
-    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+    updated_at = Column(TIMESTAMP, default=None)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
     @property
     def created_at(self):
-        return Func.dt_to_timezone(self.utc_created_at)
+        return Func.dt_to_timezone(self.created_at)
 
     @property
     def updated_at(self):
-        return Func.dt_to_timezone(self.utc_updated_at)
+        return Func.dt_to_timezone(self.updated_at)
 
     category_options = {
         'activity': '新闻活动',
@@ -80,7 +80,7 @@ class Article(BaseModel):
 
     @staticmethod
     def populars(limit=8):
-        now = Func.utc_now()
+        now = utime.timestamp(3)
         today = '%d-%d-%d' % (now.year, now.month, now.day)
         query = Article.Q
         query = query.filter(Article.status==1)
@@ -90,7 +90,7 @@ class Article(BaseModel):
 
     @staticmethod
     def detail(aid):
-        now = Func.utc_now()
+        now = utime.timestamp(3)
         today = '%d-%d-%d' % (now.year, now.month, now.day)
         query = Article.Q
         query = query.filter(Article.status==1)
@@ -104,7 +104,7 @@ class Article(BaseModel):
         per_page = option.get('per_page', 12)
         page = option.get('page', 1)
         category = option.get('category', '')
-        now = Func.utc_now()
+        now = utime.timestamp(3)
         today = '%d-%d-%d' % (now.year, now.month, now.day)
         query = Article.Q
         query = query.filter(Article.status==1)
@@ -128,7 +128,7 @@ class Contact(BaseModel):
     ip = Column(VARCHAR(40), nullable=False)
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
 
 class Team(BaseModel):
@@ -145,4 +145,4 @@ class Team(BaseModel):
     order = Column(Integer, nullable=False, default=20)
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_created_at = Column(TIMESTAMP, default=Func.utc_now)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))

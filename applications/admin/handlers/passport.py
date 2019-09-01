@@ -5,14 +5,17 @@
 [description]
 """
 import tornado
-from trest.exception import JsonError
-from trest.router import get
-from trest.router import post
 
-from trest.utils import sys_config
-from trest.utils.encrypter import RSAEncrypter
-from trest.utils.hasher import check_password
+from trest.router import get
+from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
 from trest.settings_manager import settings
+from trest.utils.hasher import check_password
+from trest.utils.encrypter import RSAEncrypter
+
+from applications.common.utils import sys_config
 
 from ..services.user import AdminUserService
 from ..models import AdminUser
@@ -28,7 +31,8 @@ class LoginHandler(CommonHandler):
         valid_code = valid_code.decode('utf-8') if valid_code else ''
         return valid_code.lower()!=code.lower()
 
-    def get(self, *args, **kwargs):
+    @get('login/?(.html)?')
+    def login_page(self, *args, **kwargs):
         next = self.get_argument('next', '')
         params = {
             'public_key': sys_config('sys_login_rsa_pub_key'),
@@ -38,6 +42,7 @@ class LoginHandler(CommonHandler):
         }
         self.render('passport/login.html', **params)
 
+    @post('login/?(.html)?')
     def post(self, *args, **kwargs):
         username = self.get_argument('username', '')
         password = self.get_argument('password', '')
@@ -78,8 +83,7 @@ class LoginHandler(CommonHandler):
         }
         return self.success('成功',data=data)
 
-class LogoutHandler(CommonHandler):
-    """docstring for Passport"""
+    @get('logout/?(.html)?')
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         cache_key = self.get_secure_cookie(settings.admin_session_key)
@@ -87,9 +91,10 @@ class LogoutHandler(CommonHandler):
         self.redirect(self.get_login_url())
 
 class CaptchaHandler(CommonHandler):
+    @get('captcha/?(.png)?')
     def get(self, *args, **kwargs):
         import io
-        from trest.utils.image import create_validate_code
+        from applications.common.utils import create_validate_code
         #创建一个文件流
         imgio = io.BytesIO()
         #生成图片对象和对应字符串

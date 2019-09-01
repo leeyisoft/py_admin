@@ -1,0 +1,125 @@
+{% extends "../base.html" %}
+
+{% block title %} {% end %}
+{% block css %}
+
+{% end %}
+{% block body %}
+
+{% include ../common/header.html %}
+<div class="layui-container fly-marginTop">
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title">
+                <li class="layui-this">登入</li>
+                <li><a href="reg.html">注册</a></li>
+            </ul>
+            <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form layui-form-pane">
+                        <form method="post">
+                            {% raw xsrf_form_html() %}
+                            <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
+                            <div class="layui-form-item">
+                                <label for="L_email" class="layui-form-label">账号</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="L_account" name="account" required lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_pass" class="layui-form-label">密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="L_password" name="password" required lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="L_vercode" class="layui-form-label">验证码</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="code" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid">
+                                    <img id="code" src="/passport/captcha.png" style="width: 11.5em; cursor: pointer;" />
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-filter="formSubmit" lay-submit>立即登录</button>
+                                <span style="padding-left:20px;">
+                                    <a href="forget.html">忘记密码？</a>
+                                </span>
+                            </div>
+                            <div class="layui-form-item fly-form-app">
+                                <span>或者使用社交账号登入</span>
+                                <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
+                                <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include ../common/footer.html %}
+
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url('js/jsencrypt.js') }}" charset="utf-8"></script>
+<script type="text/javascript">
+var rsa_encrypt = '{{ rsa_encrypt }}'
+var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
+layui.use(['form'], function() {
+    var $ = layui.jquery, form = layui.form
+
+    // 表单验证
+    form.verify({
+        username : [/[A-Za-z0-9\u4e00-\u9fa5]{2,40}$/, '用户名必须2到40位字母、数字、汉字组合'],
+        password : [/(.+){8,40}$/, '8到40个任意字符'],
+        number : [/^[0-9]*$/, '必须输入数字啊']
+    })
+    form.on('submit(formSubmit)', function(obj) {
+        layer.msg('数据提交中...',{time:50000})
+
+        if (rsa_encrypt=='1') {
+            // Encrypt with the public key...
+            var encrypt = new JSEncrypt()
+            encrypt.setPublicKey(public_key)
+            var ciphertext = encrypt.encrypt(obj.field.password)
+            obj.field.password = ciphertext
+        }
+
+        $.ajax({
+            type: "POST",
+            url: obj.form.action,
+            data: obj.field,
+            success: function(res) {
+                if (res.code==0) {
+                    location.href = res.next ? res.next : '/member/index'
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                    $(":input[name='username']").focus()
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                    setTimeout(function(){
+                        location.reload()
+                    }, 3000)
+                }
+            },
+            error: function(xhr){
+                console.log(xhr.responseJSON)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                }
+            }
+        })
+        return false;
+    })
+
+    $("#code").on('click', function () {
+        $(this).attr('src', '/passport/captcha.png?t=' + Math.random())
+    })
+})
+</script>
+{% end %}

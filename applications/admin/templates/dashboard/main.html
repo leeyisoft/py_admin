@@ -28,7 +28,7 @@
         <ul class="layui-nav fl nobg main-nav">
             {% for menu in _admin_menu %}
                 {% if menu.get('nav')==1 %}
-                {% if _admin_menu_parents['name']==menu['name'] %}
+                {% if _admin_menu_parents.get('name')==menu['name'] %}
                 <li class="layui-nav-item layui-this">
                 {% else %}
                 <li class="layui-nav-item">
@@ -54,7 +54,7 @@
     <div class="layui-side layui-bg-black" id="switchNav">
         <div class="layui-side-scroll">
             {% for v in _admin_menu %}
-            {% if _admin_menu_parents['name']==v['name'] %}
+            {% if _admin_menu_parents.get('name')==v['name'] %}
             <ul class="layui-nav layui-nav-tree">
             {% else %}
             <ul class="layui-nav layui-nav-tree" style="display:none;">

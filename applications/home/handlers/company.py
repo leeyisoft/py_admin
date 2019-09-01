@@ -8,7 +8,7 @@ import tornado
 from trest.db.dbalchemy import Connector
 from trest.settings_manager import settings
 from trest.logger.client import SysLogger
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 from trest.utils import Func
 
 from .common import CommonHandler
@@ -160,9 +160,9 @@ class ContactHandler(CommonHandler):
             if not (1<len(message) and len(message)<321):
                 return self.error('留言信息 至少2个字符,最多320个字符！')
             client_ip = self.request.remote_ip
-            now = Func.utc_now()
+            now = utime.dt_now()
             today = '%d-%d-%d' % (now.year, now.month, now.day)
-            check = Contact.Q.filter(Contact.phone, Contact.utc_created_at>=today).count()
+            check = Contact.Q.filter(Contact.phone, Contact.created_at>=today).count()
             # print('check0', check)
             if check>5:
                 query = ''

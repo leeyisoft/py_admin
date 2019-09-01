@@ -8,7 +8,7 @@ from trest.exception import JsonError
 from trest.settings_manager import settings
 from trest.utils.encrypter import RSAEncrypter
 from trest.utils import utime
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 from trest.utils.hasher import make_password
 from ..models import AdminUser, Role
 from ..models import AdminUserLoginLog
@@ -37,7 +37,7 @@ class AdminUserService:
         login_count = user.login_count if user.login_count else 0
         params = {
             'login_count': login_count + 1,
-            'last_login_at': utime.timestamp(),
+            'last_login_at': utime.timestamp(3),
             'last_login_ip': handler.request.remote_ip,
         }
         AdminUser.Q.filter(AdminUser.id==user_id).update(params)

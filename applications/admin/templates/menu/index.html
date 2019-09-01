@@ -21,8 +21,8 @@
                     <div class="page-toolbar">
                         <div class="layui-btn-group fl">
                             <a href="/admin/menu/add?parent_id={{ v['name'] }}" class="layui-btn layui-btn-primary"><i class="aicon ai-tianjia"></i>添加子菜单</a>
-                            <a data-href="/admin/menu/edit.page?status=1" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-qiyong"></i>启用</a>
-                            <a data-href="/admin/menu/edit.page?status=0" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-jinyong1"></i>禁用</a>
+                            <a data-href="/admin/menu/edit.html?status=1" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-qiyong"></i>启用</a>
+                            <a data-href="/admin/menu/edit.html?status=0" class="layui-btn layui-btn-primary j-page-btns"><i class="aicon ai-jinyong1"></i>禁用</a>
                             <a data-href="#" data-href="/admin/menu/delete" class="layui-btn layui-btn-primary j-page-btns confirm"><i class="aicon ai-jinyong"></i>删除</a>
                             <a href="/admin/menu/export" class="layui-btn layui-btn-primary"><i class="aicon ai-daochu"></i>导出</a>
                         </div>
@@ -52,7 +52,7 @@
                                 <i></i>
                             </div>
                             <div class="menu-btns">
-                                <a href="/admin/menu/edit.page?name={{ vv['name'] }}&menu_tab={{ k }}" title="编辑">
+                                <a href="/admin/menu/edit.html?name={{ vv['name'] }}&menu_tab={{ k }}" title="编辑">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
                                 <a href="/admin/menu/add?parent_id={{ vv['name'] }}" title="添加子菜单">
@@ -81,7 +81,7 @@
                                                 <i></i>
                                             </div>
                                             <div class="menu-btns">
-                                                <a href="/admin/menu/edit.page?name={{ vvv['name'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
+                                                <a href="/admin/menu/edit.html?name={{ vvv['name'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
                                                 <a href="/admin/menu/add?parent_id={{ vvv['name'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
                                                 <a href="#" data-href="/admin/menu/delete?name={{ vvv['name'] }}" class="j-dl-del" title="删除"><i class="layui-icon">&#xe640;</i></a>
                                                 {% if vvv['path']=='/admin/plugins/run' %}
@@ -102,7 +102,7 @@
                                                 <i></i>
                                             </div>
                                             <div class="menu-btns">
-                                                <a href="/admin/menu/edit.page?name={{ vvvv['name'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
+                                                <a href="/admin/menu/edit.html?name={{ vvvv['name'] }}&menu_tab={{ k }}" title="编辑"><i class="layui-icon">&#xe642;</i></a>
                                                 <a href="/admin/menu/add?parent_id={{ vvvv['name'] }}" title="添加子菜单"><i class="layui-icon">&#xe654;</i></a>
                                                 <a href="#" data-href="/admin/menu/delete?name={{ vvvv['name'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>
                                             </div>
@@ -151,7 +151,7 @@
                                 <i></i>
                             </div>
                             <div class="menu-btns">
-                                <a href="/admin/menu/edit.page?name={{ v['name'] }}&menu_tab={{ len(menu_list)+1 }}" title="编辑">
+                                <a href="/admin/menu/edit.html?name={{ v['name'] }}&menu_tab={{ len(menu_list)+1 }}" title="编辑">
                                     <i class="layui-icon">&#xe642;</i>
                                 </a>
                                 <a href="#" data-href="/admin/menu/delete?name={{ v['name'] }}" class="j-dl-del" title="删除之后无法恢复，您确定要删除吗？"><i class="layui-icon">&#xe640;</i></a>

@@ -7,18 +7,197 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2019-07-28 09:18:12 +0000
+# Generation Time: 2019-09-01 09:59:06 +0000
 # ************************************************************
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 SET NAMES utf8mb4;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Dump of table member
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member`;
+
+CREATE TABLE `member` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `level_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '会员等级ID',
+  `password` varchar(128) NOT NULL,
+  `username` varchar(40) DEFAULT NULL COMMENT '登录名、昵称',
+  `mobile` varchar(11) DEFAULT NULL,
+  `email` varchar(80) DEFAULT NULL,
+  `experience` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '经验值',
+  `sex` enum('hide','male','female') NOT NULL DEFAULT 'hide' COMMENT '性别(男 male ，女 female 隐藏 hide)',
+  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `sign` varchar(255) DEFAULT '' COMMENT '会员签名',
+  `login_count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '登陆次数',
+  `last_login_ip` varchar(40) NOT NULL DEFAULT '' COMMENT '最后登陆IP',
+  `last_login_at` bigint(13) DEFAULT NULL COMMENT '最后登录UTC时间',
+  `ref_user_id` char(32) DEFAULT NULL COMMENT '推荐人ID，空字符串表示为推荐人',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '已删除的 1 是 0 否 默认 0',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  `reg_ip` varchar(40) DEFAULT NULL COMMENT '注册IP',
+  `reg_client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_username` (`username`),
+  UNIQUE KEY `uk_email` (`email`),
+  UNIQUE KEY `uk_mobile` (`mobile`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
+
+
+
+# Dump of table member_binding
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_binding`;
+
+CREATE TABLE `member_binding` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
+  `type` enum('QQ','WECHAT','MOBILE','EMAIL','ALIPAY') DEFAULT NULL COMMENT '绑定类型',
+  `openid` varchar(80) DEFAULT NULL COMMENT '第三方平台openid',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table member_certification
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_certification`;
+
+CREATE TABLE `member_certification` (
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键，member表 id',
+  `realname` varchar(40) NOT NULL DEFAULT '' COMMENT '登录名、昵称',
+  `idcardno` varchar(40) NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `idcard_img` varchar(200) NOT NULL DEFAULT '' COMMENT '手持身份证照片一张（要求头像清晰，身份证号码清晰）',
+  `authorized` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '认证状态:( 0 待审核；1 审核通过, 2 审核失败)',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
+  `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
+  `updated_at` bigint(13) DEFAULT NULL COMMENT '更新记录UTC时间',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注；如果审核不通过，填写原因',
+  `authorized_user_id` bigint(20) DEFAULT NULL COMMENT '审核管理员ID，user 表 uuid',
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员实名认证信息';
+
+
+
+# Dump of table member_friend
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_friend`;
+
+CREATE TABLE `member_friend` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `from_user_id` bigint(20) NOT NULL COMMENT '发起人',
+  `to_user_id` bigint(20) NOT NULL COMMENT '接受人',
+  `group_id` bigint(20) DEFAULT '0' COMMENT '用户分组ID friendgroup主键',
+  `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
+  `updated_at` bigint(13) DEFAULT NULL COMMENT '记录更新时间',
+  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
+  `remark` varchar(200) NOT NULL DEFAULT '' COMMENT '申请好友的验证消息',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 member表的主键）';
+
+
+
+# Dump of table member_friend_notice
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_friend_notice`;
+
+CREATE TABLE `member_friend_notice` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `msgtype` enum('apply_friend','system') DEFAULT NULL COMMENT '消息类型',
+  `related_id` bigint(20) DEFAULT NULL COMMENT '关联业务主键',
+  `message` varchar(200) DEFAULT '' COMMENT '附加消息',
+  `from_user_id` bigint(20) DEFAULT NULL COMMENT 'Member 用户ID 消息发送者 0表示为系统消息',
+  `to_user_id` bigint(20) DEFAULT NULL COMMENT '消息接收者 Member 用户ID',
+  `read_at` bigint(13) DEFAULT NULL COMMENT '读消息UTC时间',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未读；1 已读 11 接受 12 拒绝请求)',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='添加好友状态通知，定时删除60天内的已读消息';
+
+
+
+# Dump of table member_friendgroup
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_friendgroup`;
+
+CREATE TABLE `member_friendgroup` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `groupname` varchar(40) NOT NULL DEFAULT '' COMMENT '分组名称',
+  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
+  `owner_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分组所属用户ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友分组表';
+
+
+
+# Dump of table member_level
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_level`;
+
+CREATE TABLE `member_level` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(80) NOT NULL COMMENT '等级名称',
+  `min_exper` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最小经验值',
+  `max_exper` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最大经验值',
+  `intro` varchar(255) NOT NULL COMMENT '等级简介',
+  `default` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '默认等级',
+  `expire` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '会员有效期(天)',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员等级';
+
+
+
+# Dump of table member_login_log
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_login_log`;
+
+CREATE TABLE `member_login_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
+  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='会员登录日志';
+
+
+
+# Dump of table member_operation_log
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `member_operation_log`;
+
+CREATE TABLE `member_operation_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
+  `account` varchar(40) NOT NULL DEFAULT '' COMMENT '用户账号： email or mobile or username',
+  `action` varchar(20) DEFAULT NULL COMMENT '会员操作类型： email_reset_pwd mobile_reset_pwd activate_email',
+  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='会议操作日志记录表(操作成功的时候插入)';
+
 
 
 # Dump of table sys_address
@@ -36,9 +215,9 @@ CREATE TABLE `sys_address` (
   `city_id` varchar(8) NOT NULL DEFAULT '' COMMENT '市编码',
   `county_id` varchar(8) NOT NULL DEFAULT '' COMMENT '区编码',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='联系地址信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='联系地址信息表';
 
 
 
@@ -53,13 +232,13 @@ CREATE TABLE `sys_admin_role` (
   `permission` text COMMENT '角色权限（存储菜单uuid，以json格式存储）',
   `sort` bigint(20) unsigned NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `category` tinyint(1) DEFAULT '0' COMMENT '角色分类： 0 默认 1 催收组 2 管理组',
   `company_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '所属公司',
   `description` varchar(100) NOT NULL COMMENT '描述',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_rolename` (`rolename`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8 COMMENT='后台用户角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户角色表';
 
 LOCK TABLES `sys_admin_role` WRITE;
 /*!40000 ALTER TABLE `sys_admin_role` DISABLE KEYS */;
@@ -121,22 +300,22 @@ CREATE TABLE `sys_admin_user` (
   `permission` text COMMENT '用户权限（存储菜单uuid，以json格式存储，最终权限是用户和角色权限的交集）',
   `login_count` bigint(20) DEFAULT '0' COMMENT '登录次数',
   `last_login_ip` varchar(40) DEFAULT NULL COMMENT '最后登陆IP',
-  `last_login_at` bigint(20) DEFAULT NULL COMMENT '最后登录Unix时间戳毫秒单位',
+  `last_login_at` bigint(13) DEFAULT NULL COMMENT '最后登录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `lang` char(2) NOT NULL COMMENT '默认客户端语言',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8 COMMENT='后台管用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
 
 LOCK TABLES `sys_admin_user` WRITE;
 /*!40000 ALTER TABLE `sys_admin_user` DISABLE KEYS */;
 
 INSERT INTO `sys_admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1228,'127.0.0.1',1561539165,1,0,'cd'),
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1237,'127.0.0.1',1567241400,1,0,'cd'),
 	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2','1111','1111','[]',0,'',NULL,0,1553759714,''),
 	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213','213','213','[]',0,'',NULL,-1,1553761927,''),
 	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
@@ -203,16 +382,25 @@ CREATE TABLE `sys_admin_user_login_log` (
   `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
   `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
 LOCK TABLES `sys_admin_user_login_log` WRITE;
 /*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
 
 INSERT INTO `sys_admin_user_login_log` (`id`, `user_id`, `ip`, `client`, `created_at`)
 VALUES
-	(1,1,'127.0.0.1','web',1561539165);
+	(1,1,'127.0.0.1','web',1561539165),
+	(2,1,'127.0.0.1','web',1564577918),
+	(3,1,'127.0.0.1','web',1564757166),
+	(4,1,'127.0.0.1','web',1564887302),
+	(5,1,'127.0.0.1','web',1566490334),
+	(6,1,'127.0.0.1','web',1567086596),
+	(7,1,'127.0.0.1','web',1567086596),
+	(8,1,'127.0.0.1','web',1567086596),
+	(9,1,'127.0.0.1','web',1567087804),
+	(10,1,'127.0.0.1','web',1567241400);
 
 /*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -227,9 +415,9 @@ CREATE TABLE `sys_advertising` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '标题',
-  `start_at` bigint(20) DEFAULT NULL COMMENT '投放开始Unix时间戳毫秒单位',
-  `end_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
-  `created_at` bigint(20) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
+  `start_at` bigint(13) DEFAULT NULL COMMENT '投放开始Unix时间戳毫秒单位',
+  `end_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
+  `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 0内部网页 1外部网页',
   `client` varchar(40) NOT NULL DEFAULT '' COMMENT '客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ',
   `img` varchar(255) NOT NULL COMMENT '图片链接',
@@ -238,7 +426,7 @@ CREATE TABLE `sys_advertising` (
   `category_id` bigint(20) NOT NULL COMMENT '广告分类 投放位置',
   `status` tinyint(1) DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COMMENT='广告列表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
 
 LOCK TABLES `sys_advertising` WRITE;
 /*!40000 ALTER TABLE `sys_advertising` DISABLE KEYS */;
@@ -267,7 +455,7 @@ CREATE TABLE `sys_advertising_category` (
   `name` varchar(80) NOT NULL DEFAULT '' COMMENT '分类名称',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='广告分类';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
 
 LOCK TABLES `sys_advertising_category` WRITE;
 /*!40000 ALTER TABLE `sys_advertising_category` DISABLE KEYS */;
@@ -289,11 +477,11 @@ DROP TABLE IF EXISTS `sys_advertising_log`;
 CREATE TABLE `sys_advertising_log` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `ad_id` bigint(20) NOT NULL COMMENT '广告的id',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `uid` bigint(20) DEFAULT NULL COMMENT '点击用户的 id（如果有的话）',
   `ip` varchar(20) DEFAULT NULL COMMENT '点击客户端IP',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='广告点击记录';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='广告点击记录';
 
 
 
@@ -309,11 +497,11 @@ CREATE TABLE `sys_api_vsn` (
   `pubkeyser` varchar(400) DEFAULT NULL COMMENT '公钥',
   `prikeyser` varchar(1200) DEFAULT NULL COMMENT '私钥',
   `remark` varchar(400) DEFAULT NULL COMMENT '版本说明',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_vsn` (`master_vsn`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 LOCK TABLES `sys_api_vsn` WRITE;
 /*!40000 ALTER TABLE `sys_api_vsn` DISABLE KEYS */;
@@ -338,7 +526,7 @@ CREATE TABLE `sys_area_cn` (
   `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0 省、直辖市；1 市、市辖区； 2 区、县',
   PRIMARY KEY (`code`),
   UNIQUE KEY `i_code` (`code`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='中国最新县及县以上行政区划代码（截止2014年10月31日）';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='中国最新县及县以上行政区划代码（截止2014年10月31日）';
 
 LOCK TABLES `sys_area_cn` WRITE;
 /*!40000 ALTER TABLE `sys_area_cn` DISABLE KEYS */;
@@ -3883,11 +4071,11 @@ CREATE TABLE `sys_article` (
   `hits` bigint(20) DEFAULT '0' COMMENT '点击数量',
   `content` text COMMENT '文章内容（如果是产品的话，为json格式数据）',
   `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
-  `updated_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章管理';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
 
 
@@ -3900,7 +4088,7 @@ CREATE TABLE `sys_article_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章分类表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
 
 
 
@@ -3915,11 +4103,11 @@ CREATE TABLE `sys_blacklist` (
   `type` enum('ktp','mobile','fullname','company_name','company_phone') DEFAULT NULL COMMENT '类型',
   `value` varchar(100) NOT NULL COMMENT '值',
   `reason` varchar(100) NOT NULL COMMENT '原因说明',
-  `created_at` bigint(20) unsigned DEFAULT NULL COMMENT '创建时间',
+  `created_at` bigint(13) unsigned DEFAULT NULL COMMENT '创建时间',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `loan_order_id` bigint(20) DEFAULT NULL COMMENT '贷款编号',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 LOCK TABLES `sys_blacklist` WRITE;
 /*!40000 ALTER TABLE `sys_blacklist` DISABLE KEYS */;
@@ -3956,11 +4144,11 @@ CREATE TABLE `sys_client_vsn` (
   `pubkeycli` varchar(400) DEFAULT NULL COMMENT '客服端公钥',
   `remark` varchar(400) DEFAULT NULL COMMENT '版本说明',
   `apk_url` varchar(255) DEFAULT NULL COMMENT 'apk包下载地址',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_cli_vsn` (`client`,`vsn`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 LOCK TABLES `sys_client_vsn` WRITE;
 /*!40000 ALTER TABLE `sys_client_vsn` DISABLE KEYS */;
@@ -3987,9 +4175,9 @@ CREATE TABLE `sys_company` (
   `type` enum('outer','inner') DEFAULT NULL COMMENT '类型：（outer外部委派；inner内部）',
   `module` enum('review','collection','manage','service') DEFAULT NULL COMMENT '业务：（review 审批；collection 催收；manage管理；service客服）',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用； 删除 -1)',
-  `created_at` bigint(20) DEFAULT NULL COMMENT '创建Unix时间戳毫秒单位',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='公司表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='公司表';
 
 LOCK TABLES `sys_company` WRITE;
 /*!40000 ALTER TABLE `sys_company` DISABLE KEYS */;
@@ -4018,10 +4206,10 @@ CREATE TABLE `sys_config` (
   `remark` varchar(128) NOT NULL,
   `system` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为系统配置，系统配置不可删除',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   PRIMARY KEY (`key`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统配置';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 
 LOCK TABLES `sys_config` WRITE;
 /*!40000 ALTER TABLE `sys_config` DISABLE KEYS */;
@@ -4034,7 +4222,7 @@ VALUES
 	('sys','sys_login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----','登录RSA算法加密公钥',2,'系统登录RSA加密公钥',1,1,0,0),
 	('sys','system.name','py_admin','系统名称',20,'',1,1,0,0),
 	('sys','system.version','1.0.1','软件版本',20,'',1,1,0,0),
-	('sys','site_url','http://localhost:5080','前台站点网址',20,'注意不要以 / 结尾',1,1,0,0),
+	('sys','site_url','http://127.0.0.1:8090','前台站点网址',20,'注意不要以 / 结尾',1,1,0,0),
 	('sys','test_verify_switch','0','测试验证码开关',20,'',0,0,0,0),
 	('company','working_time','9:30-19:00','工作时间',1,'',1,1,1554860991,0),
 	('sys','default_sms_platform','com.253','默认短信平台',1,'253云通讯-国际短信接口说明_JSON_v1.0.1_2017.04.24',1,1,1554285572,0),
@@ -4060,13 +4248,13 @@ CREATE TABLE `sys_contract` (
   `name` varchar(80) DEFAULT NULL,
   `content` text,
   `type` tinyint(4) DEFAULT NULL COMMENT '类型（1contract，2agreement，3privacy，4account_fee）',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   `status` tinyint(1) DEFAULT NULL,
   `operate_id` bigint(20) DEFAULT NULL,
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='合同模板管理';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='合同模板管理';
 
 LOCK TABLES `sys_contract` WRITE;
 /*!40000 ALTER TABLE `sys_contract` DISABLE KEYS */;
@@ -4093,11 +4281,11 @@ CREATE TABLE `sys_message` (
   `message` varchar(200) DEFAULT '' COMMENT '附加消息',
   `from_user_id` varchar(32) DEFAULT NULL COMMENT 'user or admin_user 用户ID 消息发送者 0表示为系统消息',
   `to_user_id` varchar(32) DEFAULT NULL COMMENT '消息接收者 user ID or admin_user id',
-  `read_at` bigint(20) DEFAULT NULL COMMENT '读消息Unix时间戳毫秒单位',
+  `read_at` bigint(13) DEFAULT NULL COMMENT '读消息Unix时间戳毫秒单位',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未读；1 已读, 默认0)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统消息，定时删除30天内的已读消息';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='系统消息，定时删除30天内的已读消息';
 
 
 
@@ -4110,11 +4298,11 @@ CREATE TABLE `sys_message_template` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `category` varchar(20) DEFAULT NULL COMMENT '模板类型',
   `content` varchar(400) DEFAULT NULL COMMENT '模板内容',
-  `updated_at` bigint(20) DEFAULT NULL COMMENT '更新记录Unix时间戳毫秒单位',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) DEFAULT NULL COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) DEFAULT NULL COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='消息模板';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='消息模板';
 
 LOCK TABLES `sys_message_template` WRITE;
 /*!40000 ALTER TABLE `sys_message_template` DISABLE KEYS */;
@@ -4140,12 +4328,12 @@ CREATE TABLE `sys_notice` (
   `content` text COMMENT '公告内容',
   `sort` bigint(20) unsigned NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
   `status` tinyint(3) DEFAULT NULL COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   `operate_id` bigint(20) DEFAULT NULL COMMENT '操作人',
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='系统公告表';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COMMENT='系统公告表';
 
 LOCK TABLES `sys_notice` WRITE;
 /*!40000 ALTER TABLE `sys_notice` DISABLE KEYS */;
@@ -4173,7 +4361,7 @@ CREATE TABLE `sys_sequence` (
   `key` varchar(40) NOT NULL DEFAULT '',
   `value` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -4188,10 +4376,10 @@ CREATE TABLE `sys_tag` (
   `type` enum('loan') DEFAULT NULL COMMENT '类型',
   `description` varchar(200) NOT NULL DEFAULT '' COMMENT '描述',
   `status` tinyint(3) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(20) unsigned DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) unsigned DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='标签';
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COMMENT='标签';
 
 LOCK TABLES `sys_tag` WRITE;
 /*!40000 ALTER TABLE `sys_tag` DISABLE KEYS */;
@@ -4211,251 +4399,6 @@ VALUES
 
 /*!40000 ALTER TABLE `sys_tag` ENABLE KEYS */;
 UNLOCK TABLES;
-
-
-# Dump of table user
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user`;
-
-CREATE TABLE `user` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `level_id` bigint(20) unsigned NOT NULL DEFAULT '1' COMMENT '会员等级ID',
-  `password` varchar(128) NOT NULL,
-  `username` varchar(40) DEFAULT NULL COMMENT '登录名、昵称',
-  `mobile` varchar(20) DEFAULT NULL COMMENT '电话号码 例如 86-13692177080',
-  `email` varchar(80) DEFAULT NULL,
-  `experience` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '经验值',
-  `sex` enum('hide','male','female','other','') NOT NULL DEFAULT 'hide' COMMENT '性别: 男 male 女 female 隐藏 hide 其他 other 不填 空字符串',
-  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
-  `sign` varchar(255) DEFAULT '' COMMENT '会员签名',
-  `login_count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '登陆次数',
-  `lastlogin_ip` varchar(40) NOT NULL DEFAULT '' COMMENT '最后登陆IP',
-  `lastlogin_at` bigint(20) DEFAULT NULL COMMENT '最后登录Unix时间戳毫秒单位',
-  `ref_user_id` bigint(20) DEFAULT NULL COMMENT '推荐人ID，空字符串表示无推荐人',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 2锁定 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `ip` varchar(40) DEFAULT NULL COMMENT '注册IP',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  `bundle_id` varchar(40) DEFAULT NULL COMMENT '包名 包的ID 例如 com.leying.loan',
-  `channel` varchar(40) DEFAULT NULL COMMENT '注册数的渠道号',
-  `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
-  `region` char(2) DEFAULT 'CN' COMMENT '区域码： CN PH US ID',
-  `platform` varchar(40) DEFAULT NULL COMMENT '进件平台标识',
-  `remark` varchar(100) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_username` (`username`),
-  UNIQUE KEY `uk_email` (`email`),
-  UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT='会员表';
-
-
-
-# Dump of table user_auth_facepp
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_auth_facepp`;
-
-CREATE TABLE `user_auth_facepp` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户ID',
-  `time_used` varchar(200) NOT NULL,
-  `id_photo_monochrome` varchar(200) NOT NULL DEFAULT '',
-  `id_attacked` varchar(200) NOT NULL DEFAULT '',
-  `confidence` float(11,2) NOT NULL DEFAULT '0.00' COMMENT 'confidence',
-  `1e-3` float(11,2) NOT NULL DEFAULT '0.00' COMMENT '1e-3',
-  `1e-5` float(11,2) NOT NULL DEFAULT '0.00',
-  `1e-4` float(11,2) NOT NULL DEFAULT '0.00',
-  `1e-6` float(11,2) NOT NULL DEFAULT '0.00',
-  `log_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'log表ID',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信用认证Face++认证';
-
-
-
-# Dump of table user_auth_facepp_log
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_auth_facepp_log`;
-
-CREATE TABLE `user_auth_facepp_log` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `data` text NOT NULL COMMENT '数据',
-  `user_id` bigint(20) unsigned NOT NULL COMMENT '用户ID',
-  `status` tinyint(1) DEFAULT '1' COMMENT '1:成功 0:失败',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
-  `tmp` bigint(20) DEFAULT '0' COMMENT '记录是否是采集调用的日志',
-  PRIMARY KEY (`id`),
-  KEY `idx` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信用认证Face++认证记录';
-
-
-
-# Dump of table user_auth_identity
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_auth_identity`;
-
-CREATE TABLE `user_auth_identity` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL COMMENT '用户id',
-  `realname` varchar(120) DEFAULT '' COMMENT '真实姓名（识别结果）',
-  `idcard_type` varchar(20) DEFAULT NULL COMMENT '身份证发放机构',
-  `idcard_no` varchar(40) DEFAULT '' COMMENT '身份证号码',
-  `front_pic` varchar(200) NOT NULL DEFAULT '' COMMENT '身份证正面照片',
-  `back_pic` varchar(200) DEFAULT NULL COMMENT '身份证背面照片',
-  `hand_pic` varchar(200) DEFAULT '' COMMENT '身份证手持照片',
-  `authorized` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '认证状态:(0.未认证 1.认证中 2.认证成功 3.认证失败 4.重新认证)',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `birthday` varchar(40) DEFAULT '' COMMENT '生日日期（识别结果）例如 1990-10-2',
-  `sex` enum('hide','male','female','other','') DEFAULT 'hide' COMMENT '性别: 男 male 女 female 隐藏 hide 其他 other 不填 空字符串（识别结果）',
-  `province` varchar(40) DEFAULT NULL COMMENT '省份（识别结果）',
-  `city` varchar(40) DEFAULT NULL COMMENT '城市（识别结果）',
-  `country` varchar(40) DEFAULT NULL COMMENT '区域（识别结果）',
-  `address` varchar(200) DEFAULT NULL COMMENT '详细地址（识别结果）',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户个人身份认证';
-
-
-
-# Dump of table user_device
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_device`;
-
-CREATE TABLE `user_device` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增长ID',
-  `user_id` bigint(20) unsigned NOT NULL COMMENT '用户ID',
-  `did` varchar(40) DEFAULT NULL COMMENT '设备ID Mac App Copy 自idfa存在硬盘的值 ； Android 里面用 AndroidId： 808f8ed3f44965b6',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `ip` varchar(40) DEFAULT NULL COMMENT '创建记录的IP',
-  `bundle_id` varchar(40) DEFAULT NULL COMMENT '包名',
-  `channel` varchar(40) DEFAULT NULL COMMENT '渠道号',
-  PRIMARY KEY (`id`),
-  KEY `search_index` (`user_id`,`did`,`bundle_id`,`channel`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table user_feedback
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_feedback`;
-
-CREATE TABLE `user_feedback` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `type` varchar(8) NOT NULL COMMENT '类型 (advisory; suggest; other)',
-  `content` varchar(200) NOT NULL DEFAULT '' COMMENT '内容',
-  `reply` varchar(255) NOT NULL DEFAULT '' COMMENT '回复',
-  `admin_id` bigint(20) DEFAULT '0' COMMENT '处理人id',
-  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT ' 用户ID',
-  `email` varchar(50) NOT NULL DEFAULT '' COMMENT '邮箱',
-  `other` varchar(100) NOT NULL DEFAULT '' COMMENT '微信或手机号',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  `version` varchar(10) DEFAULT NULL COMMENT '客户端版本',
-  `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未处理；1 已处理, 默认0)',
-  `handle_at` bigint(20) DEFAULT NULL COMMENT '处理Unix时间戳毫秒单位',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='意见反馈';
-
-
-
-# Dump of table user_level
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_level`;
-
-CREATE TABLE `user_level` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name` varchar(80) NOT NULL COMMENT '等级名称',
-  `overdue_day` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '逾期天数',
-  `pay_off_num` smallint(6) unsigned NOT NULL DEFAULT '0' COMMENT '当前等级还清几次升级',
-  `intro` varchar(255) NOT NULL COMMENT '等级简介',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='会员等级';
-
-LOCK TABLES `user_level` WRITE;
-/*!40000 ALTER TABLE `user_level` DISABLE KEYS */;
-
-INSERT INTO `user_level` (`id`, `name`, `overdue_day`, `pay_off_num`, `intro`, `status`, `created_at`)
-VALUES
-	(1,'level0',1,1,'2000-3000, 40%',1,1560044975),
-	(2,'level1',1,1,'3000-3500, 40%',1,1555040602),
-	(3,'level2',1,1,'4000, 40%',1,1555040602),
-	(4,'level3',1,1,'5000, 40%',1,1555040602),
-	(5,'level4',1,1,'5000, 35%',1,1555040602),
-	(6,'level5',1,1,'6000, 35%',1,1555040602),
-	(7,'level6',1,1,'6000, 30+5%',1,1555040602),
-	(8,'level7',1,1,'7000, 30+5%',1,1555040602),
-	(9,'level8',1,1,'7000, 30+5%',1,1555040602),
-	(10,'level9',1,1,'7500, 30+5%',1,1555040602);
-
-/*!40000 ALTER TABLE `user_level` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table user_login_log
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_login_log`;
-
-CREATE TABLE `user_login_log` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
-  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会员登录日志';
-
-
-
-# Dump of table user_login_state
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_login_state`;
-
-CREATE TABLE `user_login_state` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
-  `active_token` tinyint(1) DEFAULT '1' COMMENT '活跃的token，校验token的时候判断是否为1；退出登录设置为0',
-  `client` varchar(20) DEFAULT '' COMMENT '客户端：web wechat android ios mobile',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_client_uid` (`client`,`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='用户登录状态表';
-
-
-
-# Dump of table user_sms_code
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_sms_code`;
-
-CREATE TABLE `user_sms_code` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `platform` varchar(20) DEFAULT NULL COMMENT '短信平台标识',
-  `mobile` varchar(20) DEFAULT NULL COMMENT '手机号码',
-  `code` varchar(10) DEFAULT NULL COMMENT '短信验证码',
-  `user_id` bigint(20) DEFAULT NULL COMMENT '会员ID',
-  `message` varchar(150) DEFAULT NULL COMMENT '验证码信息',
-  `expire_time` bigint(20) DEFAULT NULL COMMENT '过期时间 单位秒',
-  `ip` varchar(15) DEFAULT NULL,
-  `created_at` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户短信验证码';
-
 
 
 
@@ -4523,7 +4466,7 @@ DELIMITER ;;
 
 /*!50003 DROP FUNCTION IF EXISTS `currval` */;;
 /*!50003 SET SESSION SQL_MODE="NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 FUNCTION `currval`(`seq_name` VARCHAR(40)) RETURNS int(11)
+/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 FUNCTION `currval`(`seq_name` VARCHAR(40)) RETURNS bigint(20)
     SQL SECURITY INVOKER
 BEGIN
 DECLARE ret_value INTEGER;
@@ -4540,7 +4483,7 @@ END */;;
 
 /*!50003 DROP FUNCTION IF EXISTS `nextval` */;;
 /*!50003 SET SESSION SQL_MODE="NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 FUNCTION `nextval`(`seq_name` VARCHAR(40), `incr` INT(11)) RETURNS int(11)
+/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 FUNCTION `nextval`(`seq_name` VARCHAR(40), `incr` bigint(20)) RETURNS bigint(20)
     SQL SECURITY INVOKER
 BEGIN
     UPDATE `sys_sequence` SET `value` = `value` + incr where `key`=seq_name;

@@ -20,7 +20,7 @@ from trest.utils.encrypter import aes_encrypt
 
 from trest.settings_manager import settings
 from trest.logger.client import SysLogger
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 
 from ..models import Member
 from ..models import MemberOperationLog
@@ -154,8 +154,8 @@ class RegisterHandler(CommonHandler):
             'password': make_password(password),
             'status': 1,
             'avatar': 'image/default_avatar.jpg',
-            'register_ip': self.request.remote_ip,
-            'register_client': client,
+            'reg_ip': self.request.remote_ip,
+            'reg_client': client,
         }
         if email:
             params['email'] = email

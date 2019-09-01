@@ -3,7 +3,7 @@
 """
 
 
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 from trest.utils import Func
 
 

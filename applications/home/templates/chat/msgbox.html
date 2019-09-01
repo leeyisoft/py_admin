@@ -1,0 +1,145 @@
+{% extends "../base.html" %}
+
+{% block title %} 消息盒子 {% end %}
+{% block css %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style type="text/css">
+    .layim-msgbox{margin: 15px;}
+    .layim-msgbox li{position: relative; margin-bottom: 10px; padding: 0 130px 10px 60px; padding-bottom: 10px; line-height: 22px; border-bottom: 1px dotted #e2e2e2;}
+    .layim-msgbox .layim-msgbox-tips{margin: 0; padding: 10px 0; border: none; text-align: center; color: #999;}
+    .layim-msgbox .layim-msgbox-system{padding: 0 10px 10px 10px;}
+    .layim-msgbox li p span{padding-left: 5px; color: #999;}
+    .layim-msgbox li p em{font-style: normal; color: #FF5722;}
+    .layim-msgbox-avatar{position: absolute; left: 0; top: 0; width: 50px; height: 50px;}
+    .layim-msgbox-user{padding-top: 5px;}
+    .layim-msgbox-content{margin-top: 3px;}
+    .layim-msgbox .layui-btn-small{padding: 0 15px; margin-left: 5px;}
+    .layim-msgbox-btn{position: absolute; right: 0; top: 12px; color: #999;}
+</style>
+{% end %}
+{% block body %}
+<ul class="layim-msgbox" id="LAY_view"></ul>
+{% end %}
+
+{% block javascript %}
+<script type="text/javascript">
+    //layui绑定扩展
+    layui.config({
+        base: '/static/home/js/'
+    }).extend({
+        chat: 'chat',
+    })
+    layui.use([ 'layim', 'laytpl','flow','form', 'chat',], function(){
+        var layim = layui.layim
+        var layer = layui.layer
+        var laytpl = layui.laytpl
+        var $ = layui.jquery
+        var flow = layui.flow
+        var chat = layui.chat
+        var im = layui.im
+
+        var msg_ids = []
+
+        var cache = parent.layui.layim.cache()
+        // console.log('cache', cache)
+
+        var formatDate = function (now) {
+             var myDate = new Date(now)
+             var month = myDate.getMonth()+1;
+             var date = myDate.getDate()
+             return month + '月' + date + '日';
+        }
+        //请求消息
+        var renderMsg = function (page, callback){
+            //实际部署时，请将下述 getmsg.json 改为你的接口地址
+            var url = cache.base.msg_url
+            var params = {
+                page: page || 1,
+            }
+            console.log('url ', url, cache.base)
+            api_ajax(url, 'get', params, function(res) {
+                layui.each(res.data, function(index, item){
+                    // console.log('item.id', item.id)
+                    if (item.status==0) {
+                        msg_ids.push(item.id)
+                    }
+                    res.data[index]['created_at'] =  formatDate(item.created_at)
+                    res.data[index]['read_at'] =  formatDate(item.read_at)
+                })
+                callback && callback(res.data, res.pages, res.curr_user_id, res.tpl)
+            }, default_error_callback)
+        };
+
+        //消息信息流
+        flow.load({
+            elem: '#LAY_view' //流加载容器
+            , isAuto: false
+            , end: '<li class="layim-msgbox-tips">暂无更多新消息</li>'
+            , done: function (page, next) { //加载下一页
+                // console.log("page: ", page)
+                renderMsg(page, function (data, pages, curr_user_id, tpl) {
+                    var html = laytpl(tpl).render({
+                        data: data
+                        , page: page
+                        , curr_user_id: curr_user_id
+                    })
+                    // console.log("data: ", data)
+                    // console.log("html", html)
+                    next(html, page < pages)
+                })
+            }
+        })
+
+        //操作
+        var active = {
+            IsExist: function (avatar){ //判断头像是否存在
+                var ImgObj=new Image()
+                ImgObj.src= avatar;
+                 if(ImgObj.fileSize > 0 || (ImgObj.width > 0 && ImgObj.height > 0))
+                 {
+                   return true;
+                 } else {
+                   return false;
+                }
+            },
+            agree: function (othis) {
+                im.receiveAapplyFriend(othis, 'agree')
+                // parent.im_events.addFriend.call(othis, 'agree')
+            }
+            //拒绝
+            , refuse: function (othis) {
+                im.receiveAapplyFriend(othis, 'refuse')
+                // parent.im_events.addFriend.call(othis, 'refuse')
+            },
+            //发起好友聊天
+            chat: function(othis){
+                var uid = othis.data('uid')
+                var avatar = othis.data('avatar')
+                parent.layui.layim.chat({
+                    name: othis.data('name')
+                    ,type: othis.data('chattype')
+                    ,avatar: avatar
+                    ,id: uid
+                })
+            }
+
+        };
+        //打开页面即把系统消息标记为已读
+        $(function(){
+            setTimeout(function() {
+                console.log('msg_ids: ', msg_ids)
+                if (msg_ids.length>0) {
+                    // parent.im_events.readMsg.call(this, msg_ids)
+                    im.readMsg(this, msg_ids)
+                }
+            }, 100)
+        })
+        $('body').on('click', '.layui-btn', function () {
+            var othis = $(this)
+            var type = othis.data('type')
+            active[type] ? active[type].call(this, othis) : ''
+        })
+    })
+</script>
+{% end %}

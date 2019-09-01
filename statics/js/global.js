@@ -87,6 +87,20 @@ layui.define(['element', 'form', 'jquery', 'layer'], function(exports) {
     })
 })
 
+/**
+ * 将API响应的数据解析成 table 组件所规定的数据
+ * @param object result 即API响应为原始返回的数据
+ * @return object
+ * @link https://www.layui.com/doc/modules/table.html#response
+ */
+function parse_data(result) {
+    return {
+      "code": result.code, //解析接口状态
+      "msg": result.msg, //解析提示文本
+      "count": result.total, //解析数据长度
+      "data": result.data.items //解析数据列表
+    }
+}
 function default_error_callback(xhr, res) {
     console.log('xhr ', xhr, 'res ', res)
     if (res && res.msg) {

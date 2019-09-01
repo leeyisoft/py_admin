@@ -4,14 +4,14 @@
 
 [description]
 """
-import os
 import tornado
 
-from trest.exception import JsonError
 from trest.router import get
-from trest.router import delete
-from trest.router import post
 from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
+from trest.settings_manager import settings
 
 from applications.admin.services.advertise import AdvertisingService
 from applications.admin.utils import required_permissions

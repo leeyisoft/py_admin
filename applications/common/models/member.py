@@ -10,8 +10,8 @@ from trest.settings_manager import settings
 from trest.cache import cache
 
 from trest.logger.client import SysLogger
-from trest.utils import func
-from trest.models import BaseModel
+from trest.utils import utime
+from trest.db import Model as BaseModel
 
 from sqlalchemy.types import Integer
 from sqlalchemy.types import Numeric
@@ -21,6 +21,8 @@ from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
+from sqlalchemy_utils import ChoiceType
+from applications.common import const
 
 
 class MemberOperationLog(BaseModel):
@@ -37,11 +39,7 @@ class MemberOperationLog(BaseModel):
     action = Column(String(20), nullable=False)
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
-
-    @property
-    def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
     @staticmethod
     def add_log(params):
@@ -65,11 +63,7 @@ class MemberLoginLog(BaseModel):
     user_id = Column(Integer, ForeignKey('member.id'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
-
-    @property
-    def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
 
 class Member(BaseModel):
@@ -97,12 +91,12 @@ class Member(BaseModel):
     deleted = Column(Integer, nullable=False, default=0)
     # 用户状态:(0 锁定, 1正常, 默认1)
     status = Column(Integer, nullable=False, default=1)
-    utc_last_login_at = Column(TIMESTAMP, nullable=True)
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
+    last_login_at = Column(TIMESTAMP, nullable=True)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
     ref_user_id = Column(Integer, default='')
-    register_ip = Column(String(40), nullable=False, default='')
+    reg_ip = Column(String(40), nullable=False, default='')
     # 客户端：web wechat android ios mobile
-    register_client = Column(String(40), nullable=False, default='')
+    reg_client = Column(String(40), nullable=False, default='')
 
     sex_options = {
         'hide': '保密',
@@ -126,11 +120,11 @@ class Member(BaseModel):
 
     @property
     def last_login_at(self):
-        return func.dt_to_timezone(self.utc_last_login_at)
+        return func.dt_to_timezone(self.last_login_at)
 
     @property
     def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+        return func.dt_to_timezone(self.created_at)
 
     @property
     def email_activated(self):
@@ -187,7 +181,7 @@ class Member(BaseModel):
         login_count = member.login_count if member.login_count else 0
         params = {
             'login_count': login_count+1,
-            'utc_last_login_at': func.utc_now(),
+            'last_login_at': utime.timestamp(3),
             'last_login_ip': handler.request.remote_ip,
         }
         Member.Q.filter(Member.id==user_id).update(params)
@@ -218,6 +212,20 @@ class Member(BaseModel):
             SysLogger.info(e)
             return (500, str(e))
 
+class MemberLevel(BaseModel):
+    """
+    会员级别表
+    """
+    __tablename__ = 'member_level'
+    id = Column(Integer, primary_key=True, nullable=False, default=None)
+    name = Column(String(80), nullable=False)
+    min_exper = Column(Integer, nullable=False, default=1)
+    max_exper = Column(Integer, nullable=False, default=1)
+    intro = Column(String(255), nullable=False)
+    default = Column(Integer, nullable=False, default=1)
+    expire = Column(Integer, nullable=False, default=1)
+    status = Column(ChoiceType(const.COMMON_STATUS2), default=1)
+    created_at = Column(Integer, default=utime.timestamp(3))
 
 class MemberFriend(BaseModel):
     """
@@ -232,16 +240,16 @@ class MemberFriend(BaseModel):
     remark = Column(String(200), nullable=True, default='')
     # `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
     status = Column(Integer, nullable=True, default=0)
-    utc_updated_at = Column(TIMESTAMP, nullable=True)
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
+    updated_at = Column(TIMESTAMP, nullable=True)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
     @property
     def updated_at(self):
-        return func.dt_to_timezone(self.utc_updated_at)
+        return func.dt_to_timezone(self.updated_at)
 
     @property
     def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+        return func.dt_to_timezone(self.created_at)
 
     @staticmethod
     def _friend_list(user_id, where=''):
@@ -314,11 +322,11 @@ class Friendgroup(BaseModel):
     id = Column(Integer, primary_key=True, nullable=False, default=None)
     groupname = Column(String(40), nullable=False, default='')
     owner_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
     @property
     def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+        return func.dt_to_timezone(self.created_at)
 
 
 class MemberFriendNotice(BaseModel):
@@ -337,18 +345,18 @@ class MemberFriendNotice(BaseModel):
     # 消息接收者 Member 用户ID
     to_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
 
-    utc_read_at = Column(TIMESTAMP, nullable=True)
+    read_at = Column(TIMESTAMP, nullable=True)
     # 状态:( 0 未读；1 已读 11 接受 12 拒绝请求)
     status = Column(Integer, nullable=False, default=0)
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
     @property
     def read_at(self):
-        return func.dt_to_timezone(self.utc_read_at)
+        return func.dt_to_timezone(self.read_at)
 
     @property
     def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+        return func.dt_to_timezone(self.created_at)
 
 
 class Online:
@@ -388,8 +396,8 @@ class MemberCertification(BaseModel):
     authorized_user_id = Column(Integer, nullable=False, default='')
     client = Column(String(20), nullable=True, default='web')
     ip = Column(String(40), nullable=False)
-    utc_updated_at = Column(TIMESTAMP, default=None)
-    utc_created_at = Column(TIMESTAMP, default=func.utc_now)
+    updated_at = Column(TIMESTAMP, default=None)
+    created_at = Column(TIMESTAMP, default=utime.timestamp(3))
     # 状态:( 0 禁用；1 启用, 默认1)
     status = Column(Integer, nullable=False, default=1)
     # 备注；如果审核不通过，填写原因
@@ -407,8 +415,8 @@ class MemberCertification(BaseModel):
 
     @property
     def updated_at(self):
-        return func.dt_to_timezone(self.utc_updated_at)
+        return func.dt_to_timezone(self.updated_at)
 
     @property
     def created_at(self):
-        return func.dt_to_timezone(self.utc_created_at)
+        return func.dt_to_timezone(self.created_at)

@@ -1,0 +1,102 @@
+{% extends "../base.html" %}
+
+{% block title %} {% end %}
+{% block css %}
+
+{% end %}
+{% block body %}
+
+{% include ../common/header.html %}
+
+<div class="layui-container fly-marginTop fly-user-main">
+    {% include left_nav.html %}
+
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title">
+                <li class="layui-this">
+                    激活邮箱
+                </li>
+            </ul>
+            <div class="layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+                <ul class="layui-form">
+                    <li class="layui-form-li">
+                        <label for="activate">您的邮箱：</label>
+                        <span class="layui-form-text">
+                            {{ member.email }}
+                            {% if member.email_activated is True %}
+                            <em style="color:#999;">（已成功激活）</em>
+                            {% else %}
+                            <em style="color:#c00;">（尚未激活）</em>
+                            {% end %}
+                        </span>
+                    </li>
+                    <li class="layui-form-li" style="margin-top: 20px; line-height: 26px;">
+                        <div>
+                            1. 如果您未收到邮件，或激活链接失效，您可以
+                            <a class="layui-form-a" style="color:#4f99cf;" id="lay-activate" href="javascript:;" email="{{ member.email }}">重新发送邮件</a>，或者
+                            <a class="layui-form-a" style="color:#4f99cf;" href="set.html">更换邮箱</a>；
+                        </div>
+                        <div>
+                            2. 如果您始终没有收到 Fly 发送的邮件，请注意查看您邮箱中的垃圾邮件；
+                        </div>
+                        <div>
+                            3. 如果你实在无法激活邮件，您还可以联系：admin@xx.com
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% include ../common/footer.html %}
+
+{% end %}
+{% block javascript %}
+<script type="text/javascript">
+layui.use(['form'], function() {
+    var $ = layui.jquery, form = layui.form
+
+    {% if member.email_activated is True %}
+    location.href='/member/set'
+    {% else %}
+    var sendmail = function(email) {
+        var url = '/member/sendmail'
+        var params = {account: email, action: 'activate_email'}
+        params['_xsrf'] = get_xsrf()
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: params,
+            success: function(res) {
+                if (res.code==0) {
+                    layer.msg('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。', {icon: 1, time: 2000})
+                } else if(res.msg) {
+                    layer.msg(res.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}')
+                    setTimeout(function(){
+                        location.reload()
+                    }, 3000)
+                }
+            },
+            error: function(xhr){
+                console.log(xhr)
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    layer.msg(xhr.responseJSON.msg)
+                } else {
+                    layer.msg('{{ _('未知错误') }}.')
+                }
+            }
+        })
+    }
+    sendmail('{{ member.email }}')
+    $('#lay-activate').click(function(){
+        sendmail($(this).attr('email'))
+    })
+    {% end %}
+})
+</script>
+{% end %}

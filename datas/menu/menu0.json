@@ -6,7 +6,7 @@
         "name": "admin:main",
         "title": "首页",
         "icon": "",
-        "path": "/admin/main",
+        "path": "/admin/main.html",
         "param": "",
         "children": [
             {
@@ -16,7 +16,7 @@
                 "name": "admin:quick",
                 "title": "快捷菜单",
                 "icon": "fa fa-motorcycle",
-                "path": "/admin/quick",
+                "path": "/admin/quick.html",
                 "param": "",
                 "children": [
                     {
@@ -26,7 +26,7 @@
                         "name": "quick:admin:article:product",
                         "title": "产品展示",
                         "icon": "aicon ai-xitonggongneng",
-                        "path": "/admin/article/index",
+                        "path": "/admin/article/index.html",
                         "param": "category=product",
                         "children": []
                     },
@@ -37,7 +37,7 @@
                         "name": "quick:admin:article:regulation",
                         "title": "政策法规",
                         "icon": "fa fa-tv",
-                        "path": "/admin/article/index",
+                        "path": "/admin/article/index.html",
                         "param": "category=regulation",
                         "children": []
                     },
@@ -48,7 +48,7 @@
                         "name": "quick:admin:article:activity",
                         "title": "新闻活动",
                         "icon": "typcn typcn-news",
-                        "path": "/admin/article/index",
+                        "path": "/admin/article/index.html",
                         "param": "category=activity",
                         "children": []
                     },
@@ -59,7 +59,7 @@
                         "name": "shortcut:admin:user:info",
                         "title": "个人信息设置",
                         "icon": "",
-                        "path": "/admin/user/info",
+                        "path": "/admin/user/info.html",
                         "param": "",
                         "children": []
                     }
@@ -74,7 +74,7 @@
         "name": "admin:system",
         "title": "系统",
         "icon": "",
-        "path": "/admin/system",
+        "path": "/admin/system.html",
         "param": "",
         "children": [
             {
@@ -84,7 +84,7 @@
                 "name": "admin:system:function",
                 "title": "系统功能",
                 "icon": "aicon ai-shezhi",
-                "path": "/admin/system",
+                "path": "/admin/system.html",
                 "param": "",
                 "children": [
                     {
@@ -94,7 +94,7 @@
                         "name": "admin:config:index",
                         "title": "配置管理",
                         "icon": "aicon ai-peizhiguanli",
-                        "path": "/admin/config.page",
+                        "path": "/admin/config.html",
                         "param": "",
                         "children": [
                             {
@@ -104,7 +104,7 @@
                                 "name": "admin:config:add",
                                 "title": "添加配置",
                                 "icon": "",
-                                "path": "/admin/config/add",
+                                "path": "/admin/config/add.html",
                                 "param": "",
                                 "children": []
                             },
@@ -115,7 +115,7 @@
                                 "name": "admin:config:edit",
                                 "title": "修改配置",
                                 "icon": "",
-                                "path": "/admin/config/edit",
+                                "path": "/admin/config/edit.html",
                                 "param": "",
                                 "children": []
                             },
@@ -126,7 +126,7 @@
                                 "name": "admin:config:del",
                                 "title": "删除配置",
                                 "icon": "",
-                                "path": "/admin/config/del",
+                                "path": "/admin/config/del.html",
                                 "param": "",
                                 "children": []
                             },
@@ -137,7 +137,7 @@
                                 "name": "admin:config:status",
                                 "title": "状态设置",
                                 "icon": "",
-                                "path": "/admin/config/status",
+                                "path": "/admin/config/status.html",
                                 "param": "",
                                 "children": []
                             },
@@ -148,7 +148,7 @@
                                 "name": "admin:config:sort",
                                 "title": "排序设置",
                                 "icon": "",
-                                "path": "/admin/config/sort",
+                                "path": "/admin/config/sort.html",
                                 "param": "",
                                 "children": []
                             }
@@ -158,10 +158,10 @@
                         "nav": 0,
                         "status": 1,
                         "system": 1,
-                        "name": "admin:menu:index.page",
+                        "name": "admin:menu:index",
                         "title": "系统菜单",
                         "icon": "aicon ai-xitongrizhi-tiaoshi",
-                        "path": "/admin/menu/index.page",
+                        "path": "/admin/menu/index.html",
                         "param": "",
                         "children": [
                             {
@@ -171,7 +171,7 @@
                                 "name": "admin:menu:add",
                                 "title": "添加菜单",
                                 "icon": "",
-                                "path": "/admin/menu/add",
+                                "path": "/admin/menu/add.html",
                                 "param": "",
                                 "children": []
                             },
@@ -182,7 +182,7 @@
                                 "name": "admin:menu:edit",
                                 "title": "修改菜单",
                                 "icon": "",
-                                "path": "/admin/menu/edit",
+                                "path": "/admin/menu/edit.html",
                                 "param": "",
                                 "children": []
                             },
@@ -193,7 +193,7 @@
                                 "name": "admin:menu:del",
                                 "title": "删除菜单",
                                 "icon": "",
-                                "path": "/admin/menu/del",
+                                "path": "/admin/menu/del.html",
                                 "param": "",
                                 "children": []
                             },
@@ -204,7 +204,7 @@
                                 "name": "admin:menu:status",
                                 "title": "状态设置",
                                 "icon": "",
-                                "path": "/admin/menu/status",
+                                "path": "/admin/menu/status.html",
                                 "param": "",
                                 "children": []
                             },
@@ -215,7 +215,7 @@
                                 "name": "admin:menu:sort",
                                 "title": "排序设置",
                                 "icon": "",
-                                "path": "/admin/menu/sort",
+                                "path": "/admin/menu/sort.html",
                                 "param": "",
                                 "children": []
                             },
@@ -226,7 +226,7 @@
                                 "name": "admin:menu:quick",
                                 "title": "添加快捷菜单",
                                 "icon": "",
-                                "path": "/admin/menu/quick",
+                                "path": "/admin/menu/quick.html",
                                 "param": "",
                                 "children": []
                             },
@@ -237,7 +237,7 @@
                                 "name": "admin:menu:export",
                                 "title": "导出菜单",
                                 "icon": "",
-                                "path": "/admin/menu/export",
+                                "path": "/admin/menu/export.html",
                                 "param": "",
                                 "children": []
                             }
@@ -250,7 +250,7 @@
                         "name": "admin:user:index",
                         "title": "系统管理员",
                         "icon": "aicon ai-tubiao05",
-                        "path": "/admin/user/index",
+                        "path": "/admin/user/index.html",
                         "param": "",
                         "children": [
                             {
@@ -260,7 +260,7 @@
                                 "name": "admin:user:adduser",
                                 "title": "添加管理员",
                                 "icon": "",
-                                "path": "/admin/user/adduser",
+                                "path": "/admin/user/adduser.html",
                                 "param": "",
                                 "children": []
                             },
@@ -271,7 +271,7 @@
                                 "name": "admin:user:edituser",
                                 "title": "修改管理员",
                                 "icon": "",
-                                "path": "/admin/user/edituser",
+                                "path": "/admin/user/edituser.html",
                                 "param": "",
                                 "children": []
                             },
@@ -282,7 +282,7 @@
                                 "name": "admin:user:deluser",
                                 "title": "删除管理员",
                                 "icon": "",
-                                "path": "/admin/user/deluser",
+                                "path": "/admin/user/deluser.html",
                                 "param": "",
                                 "children": []
                             },
@@ -293,7 +293,7 @@
                                 "name": "admin:user:status2",
                                 "title": "状态设置",
                                 "icon": "",
-                                "path": "/admin/user/status",
+                                "path": "/admin/user/status.html",
                                 "param": "",
                                 "children": []
                             },
@@ -304,7 +304,7 @@
                                 "name": "admin:user:info",
                                 "title": "个人信息设置",
                                 "icon": "",
-                                "path": "/admin/user/info",
+                                "path": "/admin/user/info.html",
                                 "param": "",
                                 "children": []
                             }
@@ -317,7 +317,7 @@
                         "name": "admin:role:index",
                         "title": "角色管理",
                         "icon": "fa fa-users",
-                        "path": "/admin/role/index",
+                        "path": "/admin/role/index.html",
                         "param": "",
                         "children": []
                     }
@@ -330,7 +330,7 @@
                 "name": "admin:member",
                 "title": "会员管理",
                 "icon": "aicon ai-huiyuanliebiao",
-                "path": "/admin/member",
+                "path": "/admin/member.html",
                 "param": "",
                 "children": [
                     {
@@ -340,7 +340,7 @@
                         "name": "admin:member:index",
                         "title": "会员列表",
                         "icon": "aicon ai-huiyuanliebiao",
-                        "path": "/admin/member/index",
+                        "path": "/admin/member/index.html",
                         "param": "",
                         "children": [
                             {
@@ -350,7 +350,7 @@
                                 "name": "admin:member:add",
                                 "title": "添加会员",
                                 "icon": "",
-                                "path": "/admin/member/add",
+                                "path": "/admin/member/add.html",
                                 "param": "",
                                 "children": []
                             },
@@ -361,7 +361,7 @@
                                 "name": "admin:member:edit",
                                 "title": "修改会员",
                                 "icon": "",
-                                "path": "/admin/member/edit",
+                                "path": "/admin/member/edit.html",
                                 "param": "",
                                 "children": []
                             },
@@ -372,7 +372,7 @@
                                 "name": "admin:member:del",
                                 "title": "删除会员",
                                 "icon": "",
-                                "path": "/admin/member/del",
+                                "path": "/admin/member/del.html",
                                 "param": "table=admin_member",
                                 "children": []
                             },
@@ -383,7 +383,7 @@
                                 "name": "admin:member:status",
                                 "title": "状态设置",
                                 "icon": "",
-                                "path": "/admin/member/status",
+                                "path": "/admin/member/status.html",
                                 "param": "",
                                 "children": []
                             },
@@ -394,7 +394,7 @@
                                 "name": "admin:member:pop",
                                 "title": "[弹窗]会员选择",
                                 "icon": "",
-                                "path": "/admin/member/pop",
+                                "path": "/admin/member/pop.html",
                                 "param": "",
                                 "children": []
                             }
@@ -407,7 +407,7 @@
                         "name": "admin:member:authorize",
                         "title": "会员认证",
                         "icon": "aicon ai-huiyuandengji",
-                        "path": "/admin/member/authorize",
+                        "path": "/admin/member/authorize.html",
                         "param": "",
                         "children": []
                     }
@@ -422,7 +422,7 @@
         "name": "admin:content:index",
         "title": "内容",
         "icon": "aicon ai-xitonggongneng",
-        "path": "/admin/content/index",
+        "path": "/admin/content/index.html",
         "param": "",
         "children": [
             {
@@ -432,7 +432,7 @@
                 "name": "admin:article:index",
                 "title": "文章管理",
                 "icon": "typcn typcn-contacts",
-                "path": "/admin/article/index",
+                "path": "/admin/article/index.html",
                 "param": "",
                 "children": [
                     {
@@ -442,7 +442,7 @@
                         "name": "admin:article:activity",
                         "title": "新闻活动",
                         "icon": "typcn typcn-news",
-                        "path": "/admin/article/index",
+                        "path": "/admin/article/index.html",
                         "param": "category=activity",
                         "children": []
                     },
@@ -453,7 +453,7 @@
                         "name": "admin:article:regulation",
                         "title": "政策法规",
                         "icon": "fa fa-tv",
-                        "path": "/admin/article/index",
+                        "path": "/admin/article/index.html",
                         "param": "category=regulation",
                         "children": []
                     }
@@ -466,7 +466,7 @@
                 "name": "admin:article:product",
                 "title": "产品展示",
                 "icon": "aicon ai-xitonggongneng",
-                "path": "/admin/article/index",
+                "path": "/admin/article/index.html",
                 "param": "category=product",
                 "children": []
             },
@@ -477,7 +477,7 @@
                 "name": "admin:company:team",
                 "title": "工作团队",
                 "icon": "aicon ai-huiyuanliebiao",
-                "path": "/admin/company/team",
+                "path": "/admin/company/team.html",
                 "param": "",
                 "children": []
             }

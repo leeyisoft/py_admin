@@ -76,7 +76,7 @@ class MoveHandler(CommonHandler):
 
             data = {
                 'group_id': groupid,
-                'utc_updated_at': Func.utc_now(),
+                'updated_at': utime.timestamp(3),
                 'status': 1,
             }
             MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.to_user_id==friend_id).update(data)
@@ -207,7 +207,7 @@ class AddFriendHandler(CommonHandler):
         status = 1 if action=='agree' else 2
         params = {
             'id': friend_id,
-            'utc_updated_at': Func.utc_now(),
+            'updated_at': utime.timestamp(3),
             'status': status,
         }
         MemberFriend.Q.filter(MemberFriend.id==friend_id).update(params)

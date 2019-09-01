@@ -4,12 +4,14 @@
 黑名单控制器
 """
 import tornado
-from trest.router import get
-from trest.router import post
-from trest.router import put
-from trest.router import delete
 
+from trest.router import get
+from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
 from trest.settings_manager import settings
+
 from applications.admin.utils import required_permissions
 from applications.admin.services.blacklist import BlackListService
 from .common import CommonHandler

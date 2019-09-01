@@ -5,7 +5,7 @@
 {% block body %}
 <div class="layui-body">
     <div class="layui-card" id="search_box" style="display: ;">
-        <form class="layui-form layui-card-header" action="/admin/member/list">
+        <form class="layui-form layui-card-header" action="/admin/member">
             <div class="layui-inline">
                 <label class="layui-form-label">登录名</label>
                 <div class="layui-input-block">
@@ -82,7 +82,7 @@
 var edit_curent_obj = false
 
 var edit_success = function(data) {
-    if (edit_curent_obj) {
+    if (edit_curent_obj && data) {
         edit_curent_obj.update({
             username: data.username,
             email: data.email,
@@ -132,7 +132,7 @@ layui.use(['table','form'], function() {
                 shade: false,
                 maxmin: false,
                 area: ['50em', '40em'],
-                content: '/admin/member/add',
+                content: '/admin/member/add.html',
             })
         },
         getCheckData: function(){ //获取选中数据
@@ -165,13 +165,13 @@ layui.use(['table','form'], function() {
             shade: false,
             maxmin: false,
             area: ['50em', '40em'],
-            content: '/admin/member/edit?id=' + data.id,
+            content: '/admin/member/edit.html?id=' + data.id,
         })
     }
 
     // 删除
     var del = function(id, obj, index) {
-        var next = '/admin/member/delete'
+        var next = '/admin/member'
         $.ajax({
             type: 'DELETE',
             url: next,
@@ -210,8 +210,8 @@ layui.use(['table','form'], function() {
         params['_xsrf'] = get_xsrf()
 
         $.ajax({
-            type: "POST",
-            url: '/admin/member/edit',
+            type: "PUT",
+            url: '/admin/member',
             data: params,
             success: function(res) {
                 if (res.code==0) {
@@ -249,9 +249,9 @@ layui.use(['table','form'], function() {
                 ,{field:'sex_option', width:80, title: '性别', sort: true}
                 ,{field:'login_count', width:80, title: '登录次数', sort: true}
                 ,{field:'sign', title: '签名', minWidth: 150}
-                ,{field:'utc_last_login_at', width:180, title: '最后登录', sort: true}
+                ,{field:'last_login_at', width:180, title: '最后登录', sort: true}
                 ,{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}
-                ,{field:'utc_created_at', width:135, title: '添加时间', sort: true}
+                ,{field:'created_at', width:135, title: '添加时间', sort: true}
                 ,{fixed: 'right', width:178, align:'center', toolbar: '#user_list_bar'}
             ]]
             ,page: true
@@ -279,7 +279,7 @@ layui.use(['table','form'], function() {
         })
         return false
     }
-    table_load('/admin/member/list', {})
+    table_load('/admin/member', {})
     form.on('submit(searchSubmit)', function(obj) {
         layer.msg('数据提交中...',{time:50000})
         // console.log('obj.field', obj.field)

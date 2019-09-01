@@ -74,7 +74,7 @@ class ChartNoticeHandler(CommonHandler):
         query = query.filter(MemberFriendNotice.msgtype!=None)
         query = query.filter(MemberFriendNotice.to_user_id==user_id)
         query = query.filter(MemberFriendNotice.to_user_id==user_id)
-        query = query.order_by(desc(MemberFriendNotice.utc_created_at))
+        query = query.order_by(desc(MemberFriendNotice.created_at))
         msg_li = query.all()
         # print(query.statement)
         data = []

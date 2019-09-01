@@ -9,6 +9,7 @@ from trest.settings_manager import settings
 from trest.handler import BaseHandler
 from trest.cache import cache
 
+from applications.common.utils import sys_config
 from applications.admin.services.user import AdminUserService
 
 from ..models import AdminUser
@@ -16,6 +17,11 @@ from ..models import AdminUser
 
 class CommonHandler(BaseHandler):
     format = 'json'
+
+    def get_template_namespace(self):
+        namespace = super().get_template_namespace()
+        namespace['sys_config'] = sys_config
+        return namespace
 
     def get_current_user(self):
         cache_key = self.get_secure_cookie(settings.admin_session_key)

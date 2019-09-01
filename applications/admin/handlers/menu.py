@@ -6,11 +6,12 @@
 """
 import tornado
 
-from trest.exception import JsonError
 from trest.router import get
-from trest.router import delete
-from trest.router import post
 from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
+from trest.settings_manager import settings
 
 from applications.admin.utils import admin_required_login
 from applications.admin.utils import required_permissions
@@ -18,8 +19,9 @@ from applications.admin.services.menu import AdminMenuService
 
 from .common import CommonHandler
 
+
 class MenuPageHandler(CommonHandler):
-    @get('/admin/menu/index.page')
+    @get('/admin/menu/index.html')
     @tornado.web.authenticated
     @required_permissions()
     def menu_page(self):
@@ -32,7 +34,7 @@ class MenuPageHandler(CommonHandler):
         }
         self.render('menu/index.html', **params)
 
-    @get('/admin/menu/edit.page')
+    @get('/admin/menu/edit.html')
     @tornado.web.authenticated
     @required_permissions()
     def eidt_page(self):

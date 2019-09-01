@@ -4,17 +4,16 @@
 
 [description]
 """
-
 import tornado
 
-from trest.exception import JsonError
 from trest.router import get
-from trest.router import delete
-from trest.router import post
 from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
+from trest.settings_manager import settings
 
 from applications.admin.services.config import ConfigService
-from trest.settings_manager import settings
 from applications.admin.utils import required_permissions
 from applications.common.models.base import Config
 
@@ -24,17 +23,28 @@ from .common import CommonHandler
 class ConfigPageHandler(CommonHandler):
     """docstring for Passport"""
 
-    @get('/admin/config.page')
+    @get('/admin/config.html')
     @tornado.web.authenticated
     @required_permissions()
-    def config_page(self, *args, **kwargs):
+    def config_html(self, *args, **kwargs):
         params = {}
         self.render('config/index.html', **params)
 
-    @get('/admin/config/edit.page')
+    @get('/admin/config/add.html')
     @tornado.web.authenticated
     @required_permissions()
-    def edit_page(self, *args, **kwargs):
+    def add_html(self, *args, **kwargs):
+        params = {
+            'config':  Config(),
+            'data_info': {},
+            'method': 'post',
+        }
+        self.render('config/edit.html', **params)
+
+    @get('/admin/config/edit.html')
+    @tornado.web.authenticated
+    @required_permissions()
+    def edit_html(self, *args, **kwargs):
         key = self.get_argument('key', None)
         config = Config.Q.filter(Config.key==key).first()
         if config is None:
@@ -43,6 +53,7 @@ class ConfigPageHandler(CommonHandler):
         params = {
             'config': config,
             'data_info': data_info,
+            'method': 'put'
         }
         self.render('config/edit.html', **params)
 
@@ -72,7 +83,7 @@ class ConfigHandler(CommonHandler):
             'system':system,
             'status':status
         }
-        ConfigService.save_data(title, key,params)
+        ConfigService.insert_data(title, key,params)
         return self.success()
 
     @put('/admin/config')
@@ -98,7 +109,7 @@ class ConfigHandler(CommonHandler):
             'status':status
         }
         ConfigService.update_data(param)
-        return self.success()
+        return self.success(data = param)
 
     @get('/admin/config3')
     @tornado.web.authenticated

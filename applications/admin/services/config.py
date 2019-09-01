@@ -6,7 +6,7 @@
 from trest.exception import JsonError
 from applications.common.models.base import Config
 from trest.settings_manager import settings
-from trest.utils import sys_config
+from applications.common.utils import sys_config
 
 class ConfigService:
     @staticmethod
@@ -76,7 +76,7 @@ class ConfigService:
         return False
 
     @staticmethod
-    def save_data(title, key, param):
+    def insert_data(title, key, param):
         """
         保存配置信息
         :param title:
@@ -85,7 +85,7 @@ class ConfigService:
         :return:
         """
         if ConfigService.check_title(title):
-            raise JsonError('名称已被占用')
+            raise JsonError('Title已被占用')
 
         if ConfigService.check_key(key):
             raise JsonError('KEY已被占用')
