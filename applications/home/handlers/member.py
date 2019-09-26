@@ -11,7 +11,7 @@ import datetime
 
 from tornado.escape import json_decode
 
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
 from applications.common.utils import sys_config
 from applications.admin.utils import required_permissions

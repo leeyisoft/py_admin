@@ -10,7 +10,6 @@ from sqlalchemy.types import Text
 from sqlalchemy import Column, Enum
 from sqlalchemy import ForeignKey
 
-from trest.settings_manager import settings
 from trest.utils import utime
 from applications.common.utils import mysqldb
 from trest.db import Model as BaseModel

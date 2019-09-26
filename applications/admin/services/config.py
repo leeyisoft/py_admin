@@ -5,7 +5,7 @@
 """
 from trest.exception import JsonError
 from applications.common.models.base import Config
-from trest.settings_manager import settings
+from trest.config import settings
 from applications.common.utils import sys_config
 
 class ConfigService:

@@ -5,7 +5,7 @@
 """
 from trest.exception import JsonError
 
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.utils.encrypter import RSAEncrypter
 from trest.utils import utime
 from applications.common.utils import sys_config
@@ -61,7 +61,7 @@ class AdminUserService:
         :param page:
         :return:
         """
-        pagelist_obj = AdminUser.Q.filter().paginate(page=page, per_page=limit)
+        pagelist_obj = AdminUser.Q.filter(AdminUser.status!=-1).paginate(page=page, per_page=limit)
         if pagelist_obj is None:
             raise JsonError('暂无数据')
         return pagelist_obj
@@ -152,31 +152,35 @@ class AdminUserService:
         :param user_id:
         :return:
         """
-        if user['username']:
-            if AdminUserService.check_username(user['username'], user_id):
-                raise JsonError('名称已被占用')
-        else:
-            del user['username']
+        if 'username' in user.keys():
+            if user['username']:
+                if AdminUserService.check_username(user['username'], user_id):
+                    raise JsonError('名称已被占用')
+            else:
+                del user['username']
 
-        # if user['password']:
-        #     if settings.login_pwd_rsa_encrypt and int(rsa_encrypt) == 1 and len(user['password']) > 4:
-        #         private_key = sys_config('sys_login_rsa_priv_key')
-        #         user['password'] = RSAEncrypter.decrypt(user['password'], private_key)
-        #     user['password'] = make_password(user['password'])
-        # else:
-            # del user['password']
+        if 'password' in user.keys():
+            if user['password']:
+                if settings.login_pwd_rsa_encrypt and int(rsa_encrypt) == 1 and len(user['password']) > 4:
+                    private_key = sys_config('sys_login_rsa_priv_key')
+                    user['password'] = RSAEncrypter.decrypt(user['password'], private_key)
+                user['password'] = make_password(user['password'])
+            else:
+                del user['password']
 
-        if user['email']:
-            if AdminUserService.check_email(user['email'], user_id):
-                raise JsonError('邮箱已被占用')
-        else:
-            user['email'] = None
+        if 'email' in user.keys():
+            if user['email']:
+                if AdminUserService.check_email(user['email'], user_id):
+                    raise JsonError('邮箱已被占用')
+            else:
+                user['email'] = None
 
-        if user['mobile']:
-            if AdminUserService.check_mobile(user['mobile'], user_id):
-                raise JsonError('电话号码已被占用')
-        else:
-            user['mobile'] = None
+        if 'mobile' in user.keys():
+            if user['mobile']:
+                if AdminUserService.check_mobile(user['mobile'], user_id):
+                    raise JsonError('电话号码已被占用')
+            else:
+                user['mobile'] = None
 
         try:
             if user_id:

@@ -5,8 +5,8 @@
 [description]
 """
 from trest.exception import JsonError
-from trest.settings_manager import settings
-from trest.handler import BaseHandler
+from trest.config import settings
+from trest.handler import Handler
 from trest.cache import cache
 
 from applications.common.utils import sys_config
@@ -15,7 +15,7 @@ from applications.admin.services.user import AdminUserService
 from ..models import AdminUser
 
 
-class CommonHandler(BaseHandler):
+class CommonHandler(Handler):
     format = 'json'
 
     def get_template_namespace(self):

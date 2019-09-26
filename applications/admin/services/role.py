@@ -6,7 +6,7 @@
 from trest.exception import JsonError
 from applications.common.models import Company
 from applications.admin.models import Role
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.utils import func
 
 

@@ -7,7 +7,7 @@
 import tornado
 
 from applications.common.utils import sys_config
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
 
 from .common import CommonHandler

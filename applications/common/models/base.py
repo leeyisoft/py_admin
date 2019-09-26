@@ -12,7 +12,7 @@ from sqlalchemy_utils import ChoiceType
 
 from applications.common import const
 from trest.utils import utime
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.db import Model as BaseModel
 
 

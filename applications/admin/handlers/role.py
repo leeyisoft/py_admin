@@ -11,7 +11,7 @@ from trest.router import put
 from trest.router import post
 from trest.router import delete
 from trest.exception import JsonError
-from trest.settings_manager import settings
+from trest.config import settings
 
 from applications.admin.services.role import RoleService
 from applications.admin.services.menu import AdminMenuService

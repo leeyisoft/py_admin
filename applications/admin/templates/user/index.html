@@ -19,16 +19,16 @@
       <i class="layui-icon">&#xe640;</i>删除
     </a>
   </div>
-  <table id="user_list" class="layui-hiden"></table>
+  <table id="user_list" lay-filter="user_list" class="layui-hiden"></table>
 </div>
 {% end %}
 
 {% block javascript %}
 <script type="text/html" id="user_list_bar">
-  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" title="查看">
+<!--   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" title="查看">
     <i class="layui-icon">&#xe705;</i>
   </a>
-  <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑">
+ -->  <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑">
     <i class="layui-icon">&#xe642;</i>
   </a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" title="删除">
@@ -70,6 +70,7 @@ layui.use(['table','form'], function() {
   });
   //监听工具条
   table.on('tool(user_list)', function(obj){
+    console.log('obj', obj)
     var data = obj.data;
     switch(obj.event) {
       case 'edit':
@@ -119,6 +120,7 @@ layui.use(['table','form'], function() {
 
   // 编辑
   var edit = function(data) {
+    console.log('edit ', data)
     layer.open({
       type: 2,
       title: ['编辑用户', 'background-color: #00bb9d;text-align:center;font-size:18px;color:#fff;'],
@@ -126,17 +128,17 @@ layui.use(['table','form'], function() {
       shade: false,
       maxmin: false,
       area: ['50em', '40em'],
-      content: '/admin/user/edit?id=' + data.id,
+      content: '/admin/user/edit.html?id=' + data.id,
     })
   }
 
   // 删除
   var del = function(id, obj, index) {
-    var next = '/admin/user'
+    var url = '/admin/user/' + id
     $.ajax({
       type: 'DELETE',
-      url: next,
-      data: {id: id, _xsrf: get_xsrf()},
+      url: url,
+      data: {_xsrf: get_xsrf()},
       dataType: 'json',
       success: function(data) {
         obj.del();
@@ -167,7 +169,7 @@ layui.use(['table','form'], function() {
     var status = this.checked ? 1 : 0
     var id = $(this).parent().parent().parent().children('td[data-field="id"]').children('div').html()
 
-    var params = {id: id, status:status, }
+    var params = {user_id: id, status:status, }
     params['_xsrf'] = get_xsrf()
 
     $.ajax({
@@ -210,7 +212,7 @@ layui.use(['table','form'], function() {
         ,{field:'email', width:80, title: '邮箱'}
         ,{field:'login_count', width:80, title: '登录次数', sort: true}
         ,{field:'last_login_at', width:180, title: '最后登录', sort: true}
-        ,{field:'status', title:'状态', width:80, templet: '#switchStatus', unresize: true}
+        ,{field:'status', title:'状态', width:88, templet: '#switchStatus', unresize: true}
         ,{field:'last_login_ip', width:135, title: '最后登录IP', sort: true}
         ,{field:'created_at', width:135, title: '添加时间', sort: true}
         ,{fixed: 'right', width:178, align:'center', toolbar: '#user_list_bar'}

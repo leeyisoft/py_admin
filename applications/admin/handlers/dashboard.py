@@ -11,7 +11,7 @@ from trest.router import put
 from trest.router import post
 from trest.router import delete
 from trest.exception import JsonError
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
 from trest.utils.hasher import make_password
 
@@ -25,6 +25,7 @@ from .common import CommonHandler
 
 
 class MainHandler(CommonHandler):
+    @get(['/', '/admin', '/admin/', 'main', 'main/', 'index'])
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         """后台首页
@@ -38,7 +39,7 @@ class MainHandler(CommonHandler):
         _admin_menu_parents = {
             'name': ''
         }
-
+        # print(_admin_menu)
         params = {
             '_admin_menu': _admin_menu,
             '_admin_menu_parents': _admin_menu_parents,

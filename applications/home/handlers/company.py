@@ -6,7 +6,7 @@
 """
 import tornado
 from trest.db.dbalchemy import Connector
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
 from applications.common.utils import sys_config
 from trest.utils import Func

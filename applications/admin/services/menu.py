@@ -21,7 +21,7 @@ import inspect
 from tornado.util import import_object
 from trest.exception import JsonError
 from trest.utils import func
-from trest.settings_manager import settings
+from trest.config import settings
 from applications.admin.models import AdminUser
 from applications.admin.services.user import AdminUserService
 
@@ -81,10 +81,10 @@ class AdminMenuService:
         """
         if not(uid>0):
             raise JsonError('请登录', 706)
-        menu0 = os.path.join(settings.ROOT_PATH, 'datas', 'menu', 'menu0.json')
+        menu_json = os.path.join(settings.ROOT_PATH, 'datas', 'json', 'menu.json')
         menus = []
         try:
-            with open(menu0) as f:
+            with open(menu_json) as f:
                 menus = json.loads(f.read())
         except Exception as e:
             pass

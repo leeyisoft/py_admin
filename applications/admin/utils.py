@@ -11,7 +11,6 @@ from typing import Awaitable
 from trest.exception import HTTPError
 
 from trest.utils.encrypter import RSAEncrypter
-from trest.settings_manager import settings
 
 
 def required_permissions(*dargs, **dkargs):

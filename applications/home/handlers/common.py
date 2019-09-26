@@ -10,14 +10,14 @@ import tornado
 from tornado.escape import json_decode
 
 from trest.cache import cache
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
-from trest.handler import BaseHandler
+from trest.handler import Handler
 
 from ..models import Member
 
 
-class CommonHandler(BaseHandler):
+class CommonHandler(Handler):
     def get_current_user(self):
         cache_key = self.get_secure_cookie(settings.front_session_key)
         if cache_key is None:

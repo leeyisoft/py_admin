@@ -9,6 +9,8 @@ verify_ssl = true
 trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "master"}
 qrcode = "*"
 oss2 = "*"
+PyJWT = "*"
+sqlalchemy-utils = "*"
 
 [requires]
 python_version = "3.7"

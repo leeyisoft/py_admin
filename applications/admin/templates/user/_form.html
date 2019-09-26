@@ -1,4 +1,4 @@
-<form class="layui-form" action="{{ request.uri }}" method="post" id="editForm">
+<form class="layui-form" action="/admin/user" method="post" id="editForm">
     {% raw xsrf_form_html() %}
     <input type="hidden" name="rsa_encrypt" value="{{ rsa_encrypt }}">
     <input type="hidden" name="id" value="{{ user.id }}">
@@ -63,23 +63,23 @@
                     {% for v in menu_list %}
                     <dl class="role-list-form-top">
                         <dt>
-                            <input type="checkbox" name="permission" value="{{ v['code'] }}" lay-filter="userPermission" data-parent="0" data-level="1" lay-skin="primary" title="{{ v['title'] }}"/>
+                            <input type="checkbox" name="permission" value="{{ v['name'] }}" lay-filter="userPermission" data-parent="0" data-level="1" lay-skin="primary" title="{{ v['title'] }}"/>
                         </dt>
                         <dd>
                             {% for vv in v['children'] %}
                             <dl>
                                 <dt>
-                                    <input type="checkbox" name="permission" value="{{ vv['code'] }}" lay-filter="userPermission" data-pid="{{ vv['parent_id'] }}" data-level="2" lay-skin="primary" title="{{ vv['title'] }}">
+                                    <input type="checkbox" name="permission" value="{{ vv['name'] }}" lay-filter="userPermission" data-pid="{{ vv.get('parent_name', '') }}" data-level="2" lay-skin="primary" title="{{ vv['title'] }}">
                                 </dt>
                                 <dd>
                                     {% for vvv in vv['children'] %}
                                     <dl>
                                         <dt style="float: left;">
-                                            <input type="checkbox" name="permission" value="{{ vvv['code'] }}" lay-filter="userPermission" data-pid="{{ vvv['parent_id'] }}" data-level="3" lay-skin="primary" title="{{ vvv['title'] }}">
+                                            <input type="checkbox" name="permission" value="{{ vvv['name'] }}" lay-filter="userPermission" data-pid="{{ vvv.get('parent_name', '') }}" data-level="3" lay-skin="primary" title="{{ vvv['title'] }}">
                                         </dt>
                                         <dd>
                                             {% for vvvv in vvv['children'] %}
-                                                <input type="checkbox" name="permission" value="{{ vvvv['code'] }}" lay-filter="userPermission" data-pid="{{ vvvv['parent_id'] }}" data-level="4" lay-skin="primary" title="{{ vvvv['title'] }}">
+                                                <input type="checkbox" name="permission" value="{{ vvvv['name'] }}" lay-filter="userPermission" data-pid="{{ vvvv.get('parent_name', '') }}" data-level="4" lay-skin="primary" title="{{ vvvv['title'] }}">
                                             {% end %}
                                         </dd>
                                     </dl>
@@ -103,8 +103,4 @@
 var rsa_encrypt = '{{ rsa_encrypt }}'
 var public_key = '{{ public_key.replace('\n', '')[26:-24] }}'
 var formData = {% raw data_info %}
-
-$( document ).ready(function() {
-    set_form_data(formData)
-});
 </script>

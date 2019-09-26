@@ -13,6 +13,15 @@
 <script type="text/javascript">
 layui.use(['form'], function() {
     var $ = layui.jquery, form = layui.form
+    /* 权限赋值 */
+    if (formData) {
+        set_form_data(formData)
+
+        for(var i in formData['permission']) {
+            $('.role-list-form input[value="'+formData['permission'][i]+'"]').prop('checked', true)
+        }
+        form.render('checkbox')
+    }
 
     form.on('checkbox(userPermission)', function(data) {
         var child = $(data.elem).parent('dt').siblings('dd').find('input')
@@ -33,14 +42,6 @@ layui.use(['form'], function() {
         check_parent($(data.elem).attr('data-pid'))
         form.render('checkbox')
     })
-
-    /* 权限赋值 */
-    if (formData) {
-        for(var i in formData['permission']) {
-            $('.role-list-form input[value="'+formData['permission'][i]+'"]').prop('checked', true)
-        }
-        form.render('checkbox')
-    }
 
     // 表单验证
     form.verify({

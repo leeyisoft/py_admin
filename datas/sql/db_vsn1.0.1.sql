@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2019-09-01 09:59:06 +0000
+# Generation Time: 2019-09-26 15:00:20 +0000
 # ************************************************************
 
 
@@ -34,7 +34,7 @@ CREATE TABLE `member` (
   `mobile` varchar(11) DEFAULT NULL,
   `email` varchar(80) DEFAULT NULL,
   `experience` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '经验值',
-  `sex` enum('hide','male','female') NOT NULL DEFAULT 'hide' COMMENT '性别(男 male ，女 female 隐藏 hide)',
+  `sex` enum('hide','male','female','other') NOT NULL DEFAULT 'hide' COMMENT '性别(男 male ，女 female 隐藏 hide)',
   `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
   `sign` varchar(255) DEFAULT '' COMMENT '会员签名',
   `login_count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '登陆次数',
@@ -50,8 +50,17 @@ CREATE TABLE `member` (
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
 
+LOCK TABLES `member` WRITE;
+/*!40000 ALTER TABLE `member` DISABLE KEYS */;
+
+INSERT INTO `member` (`id`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `last_login_at`, `ref_user_id`, `status`, `deleted`, `created_at`, `reg_ip`, `reg_client`)
+VALUES
+	(1,0,'',NULL,NULL,NULL,0,'hide','','',0,'',NULL,NULL,1,0,NULL,NULL,NULL);
+
+/*!40000 ALTER TABLE `member` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table member_binding
@@ -315,9 +324,9 @@ LOCK TABLES `sys_admin_user` WRITE;
 
 INSERT INTO `sys_admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1237,'127.0.0.1',1567241400,1,0,'cd'),
-	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2','1111','1111','[]',0,'',NULL,0,1553759714,''),
-	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213','213','213','[]',0,'',NULL,-1,1553761927,''),
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1245,'127.0.0.1',1569426538631,1,0,'cd'),
+	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2',NULL,NULL,'[]',0,'',NULL,0,1553759714,''),
+	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213',NULL,NULL,'[]',0,'',NULL,-1,1553761927,''),
 	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
 	(5,3,'pbkdf2_sha256$100000$AsufhuaOblLpLO9f$Y6f8c+z5dFWWcLGBudin9chVYoD+Aecvqt6+Fkj1WXk=','2yy0','yyy','yyy','[]',0,'',NULL,-1,1553764642,''),
 	(6,3,'pbkdf2_sha256$100000$kiQ1wKJLc2NdErll$LtHhdCNjL1u7ijB0vkercWTYvuIza1KLu0QPhiCS+3U=','1113150','21312','31','[]',0,'',NULL,-1,1553764672,''),
@@ -384,7 +393,7 @@ CREATE TABLE `sys_admin_user_login_log` (
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
 LOCK TABLES `sys_admin_user_login_log` WRITE;
 /*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
@@ -400,7 +409,15 @@ VALUES
 	(7,1,'127.0.0.1','web',1567086596),
 	(8,1,'127.0.0.1','web',1567086596),
 	(9,1,'127.0.0.1','web',1567087804),
-	(10,1,'127.0.0.1','web',1567241400);
+	(10,1,'127.0.0.1','web',1567241400),
+	(11,1,'127.0.0.1','web',1567333894),
+	(12,1,'127.0.0.1','web',1567347204228),
+	(13,1,'127.0.0.1','web',1567861754454),
+	(14,1,'127.0.0.1','web',1567923669798),
+	(15,1,'127.0.0.1','web',1567947623633),
+	(16,1,'127.0.0.1','web',1569339039068),
+	(17,1,'127.0.0.1','web',1569339105654),
+	(18,1,'127.0.0.1','web',1569426522601);
 
 /*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -4401,103 +4418,6 @@ VALUES
 UNLOCK TABLES;
 
 
-
---
--- Dumping routines (PROCEDURE) for database 'db_py_admin'
---
-DELIMITER ;;
-
-# Dump of PROCEDURE get_order_basic_info
-# ------------------------------------------------------------
-
-/*!50003 DROP PROCEDURE IF EXISTS `get_order_basic_info` */;;
-/*!50003 SET SESSION SQL_MODE="NO_AUTO_VALUE_ON_ZERO"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `get_order_basic_info`(IN order_id INT)
-BEGIN
-  select
-  t1.id as id,
-  t1.`status` as `status`,
-  t1.product_name as product_name,
-  t1.bundle_id as bundle_id,
-  t1.privacy_data,
-  t1.apply_source as apply_source,
-  t1.flag as flag,
-  t1.channel as channel,
-  t1.created_at as apply_at,
-  t2.mobile as mobile,
-  t2.platform as in_goods_platform,
-  t4.username as operator_name,
-  t5.`name` as user_level,
-  t6.from_status as system_refuse_type,
-  t6.refuse_reason as system_refuse_reason,
-  t7.created_at as in_review_time_at
-  from loan_order as t1
-  left join `user` as t2 on t1.user_id = t2.id
-  left join (SELECT id, loan_order_id, admin_id from loan_order_assignment WHERE id in (SELECT max(id) as max_id from loan_order_assignment WHERE `status` =1 GROUP BY loan_order_id)) as t3 on t1.id = t3.loan_order_id
-  left join sys_admin_user as t4 on t3.admin_id = t4.id
-  left join user_level as t5 on t2.level_id = t5.id
-  left join (SELECT a.loan_order_id, a.from_status, a.refuse_reason  from loan_order_log as a INNER JOIN (select max(id) as max_id, loan_order_id from loan_order_log GROUP BY loan_order_id) as b on a.id=b.max_id WHERE a.to_status =14 ) as t6 on t1.id = t6.loan_order_id
-  left join (select  min(created_at) as created_at  ,loan_order_id from loan_order_assignment GROUP BY loan_order_id) as t7 on t1.id = t7.loan_order_id where t1.id = order_id;
-END */;;
-
-/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
-# Dump of PROCEDURE get_phone_sms_log_card
-# ------------------------------------------------------------
-
-/*!50003 DROP PROCEDURE IF EXISTS `get_phone_sms_log_card` */;;
-/*!50003 SET SESSION SQL_MODE="NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 PROCEDURE `get_phone_sms_log_card`(IN account_id INT, IN match_string TEXT, IN page_size INT, IN page INT)
-BEGIN
-  DECLARE page_num int;
-  set page_num = (page - 1) * page_size;
-  SELECT * , IF(id in (SELECT id from loan_device_record_sms WHERE user_id=account_id and match(content) AGAINST(match_string IN BOOLEAN MODE)), '1', '2') as ranking  from loan_device_record_sms WHERE user_id = account_id ORDER BY ranking, id DESC limit  page_num, page_size;
-END */;;
-
-/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
-DELIMITER ;
-
---
--- Dumping routines (FUNCTION) for database 'db_py_admin'
---
-DELIMITER ;;
-
-# Dump of FUNCTION currval
-# ------------------------------------------------------------
-
-/*!50003 DROP FUNCTION IF EXISTS `currval` */;;
-/*!50003 SET SESSION SQL_MODE="NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 FUNCTION `currval`(`seq_name` VARCHAR(40)) RETURNS bigint(20)
-    SQL SECURITY INVOKER
-BEGIN
-DECLARE ret_value INTEGER;
-SET ret_value=0;
-SELECT `value` INTO ret_value
-FROM sys_sequence
-WHERE `key`=seq_name;
-RETURN ret_value;
-END */;;
-
-/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
-# Dump of FUNCTION nextval
-# ------------------------------------------------------------
-
-/*!50003 DROP FUNCTION IF EXISTS `nextval` */;;
-/*!50003 SET SESSION SQL_MODE="NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"*/;;
-/*!50003 CREATE*/ /*!50020 DEFINER=`user_cashloan`@`%`*/ /*!50003 FUNCTION `nextval`(`seq_name` VARCHAR(40), `incr` bigint(20)) RETURNS bigint(20)
-    SQL SECURITY INVOKER
-BEGIN
-    UPDATE `sys_sequence` SET `value` = `value` + incr where `key`=seq_name;
-
-    set @val = currval(seq_name);
-    if @val = 0 then
-        insert into sys_sequence (`key`, `value`) value (seq_name, incr);
-        set @val = incr;
-    end if;
-    return @val;
-END */;;
-
-/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;;
-DELIMITER ;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

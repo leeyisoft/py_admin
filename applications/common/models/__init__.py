@@ -11,7 +11,7 @@ from sqlalchemy.types import Enum
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy_utils import ChoiceType
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.utils import utime
 from trest.db import Model as BaseModel
 

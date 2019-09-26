@@ -18,7 +18,7 @@ from trest.utils import Func
 from trest.utils.encrypter import aes_decrypt
 from trest.utils.encrypter import aes_encrypt
 
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
 from applications.common.utils import sys_config
 

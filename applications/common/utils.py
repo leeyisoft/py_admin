@@ -4,7 +4,7 @@ import os
 import redis
 import random
 
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.db.dbalchemy import Connector
 
 
@@ -13,11 +13,11 @@ def mysqldb(dbt='master'):
     return sess.get(dbt, False)
 
 redisdb = redis.StrictRedis(
-    host=settings.redis_config.get('host', '127.0.0.1'),
-    port=settings.redis_config.get('port', 6379),
-    password=settings.redis_config.get('password', ''),
-    charset=settings.redis_config.get('charset', 'utf-8'),
-    db=settings.redis_config.get('db', 0),
+    host=settings.redis.get('host', settings.local_ip),
+    port=settings.redis.get('port', 6379),
+    password=settings.redis.get('password', ''),
+    charset=settings.redis.get('charset', 'utf-8'),
+    db=settings.redis.get('db', 0),
     decode_responses=True)
 
 def sys_config(key, field='value'):

@@ -6,7 +6,7 @@ import os
 
 from tornado.escape import json_decode
 
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.cache import cache
 
 from trest.logger.client import SysLogger

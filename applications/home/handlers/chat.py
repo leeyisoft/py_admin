@@ -7,7 +7,7 @@ from tornado.escape import json_decode
 
 from sqlalchemy import desc
 
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.logger.client import SysLogger
 from trest.utils import Func
 from trest.cache import cache

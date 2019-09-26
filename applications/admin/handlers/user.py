@@ -11,7 +11,7 @@ from trest.router import put
 from trest.router import post
 from trest.router import delete
 from trest.exception import JsonError
-from trest.settings_manager import settings
+from trest.config import settings
 from trest.utils.hasher import check_password
 from trest.utils.encrypter import RSAEncrypter
 
@@ -20,61 +20,35 @@ from applications.admin.utils import required_permissions
 
 from ..services.role import RoleService
 from ..services.user import AdminUserService
+from ..services.menu import AdminMenuService
+from ..models import Role
 from ..models import AdminUser
 from .common import CommonHandler
 
 
 class UserHandler(CommonHandler):
     """docstring for Passport"""
-    @delete('/admin/user')
+    @delete('/admin/user/(?P<uid>\d*)')
     @tornado.web.authenticated
     @required_permissions()
-    def delete(self):
+    def user_delete(self, uid):
         """删除用户
         """
-        uid = self.get_argument('user_id', None)
         AdminUserService.delete_data(uid)
         return self.success()
-
-    @post('/admin/user/unlocked')
-    @tornado.web.authenticated
-    def unlocked(self):
-        """锁屏解锁"""
-        password = self.get_argument('password', None)
-
-        if not password:
-            return self.error('请输入密码')
-
-        is_rsa=sys_config('login_pwd_rsa_encrypt')
-        if  int(is_rsa) == 1:
-            private_key = sys_config('sys_login_rsa_priv_key')
-            try:
-                password = RSAEncrypter.decrypt(password, private_key)
-            except Exception:
-                return self.error(msg='签名失败',code=11)
-        user_info=self.get_current_user()
-        check=AdminUser.Q.filter(AdminUser.id == user_info['id']).first()
-        if check is None:
-            return self.error('用户信息出错')
-
-        if check_password(password,check.password)==False:
-            return self.error('密码错误')
-
-        return self.success()
-
 
     @get('/admin/user')
     @tornado.web.authenticated
     @required_permissions()
-    def index(self):
+    def user_get(self, *args, **kwargs):
         """管理员列表"""
         limit = self.get_argument('limit', 10)
         page = self.get_argument('page', 1)
 
         pagelist_obj = AdminUserService.get_data(limit, page)
         items2=[]
-        for config in pagelist_obj.items:
-            val=config.as_dict()
+        for item in pagelist_obj.items:
+            val = item.as_dict()
             if not val['permission'] or val['permission']=='':
                 val['permission']=[]
             else:
@@ -89,10 +63,40 @@ class UserHandler(CommonHandler):
         }
         return self.success(data=params)
 
+    @get('/admin/user/add')
+    @tornado.web.authenticated
+    def user_add(self, *args, **kwargs):
+        role_id = settings.DEFAULT_ROLE_ID
+        menu_list = AdminMenuService.menu_list(1)
+        params = {
+            'status':1,
+            'role_id':role_id,
+            'username':'',
+            'mobile': '',
+            'email': '',
+        }
+        user = AdminUser(**params)
+
+        data_info = user.as_dict()
+        try:
+            data_info['permission'] = json.loads(user.permission)
+        except Exception as e:
+            data_info['permission'] = []
+
+        params = {
+            'user': user,
+            'role_option': Role.option_html(role_id),
+            'menu_list': menu_list,
+            'data_info': data_info,
+            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+        }
+        self.render('user/add.html', **params)
+
     @post('/admin/user')
     @tornado.web.authenticated
     @required_permissions()
-    def add(self):
+    def user_post(self):
         """新增管理员"""
         role_id = self.get_argument('role_id', None)
         username = self.get_argument('username', None)
@@ -120,7 +124,36 @@ class UserHandler(CommonHandler):
         AdminUserService.save_data(user, rsa_encrypt, None)
         return self.success()
 
-    @put('/admin/user',_catch_fire=settings.debug)
+    @get('/admin/user/edit.html')
+    @tornado.web.authenticated
+    def user_edit(self, *args, **kwargs):
+        id = self.get_argument('id', None)
+
+        menu_list = AdminMenuService.menu_list(1)
+        user = AdminUser.Q.filter(AdminUser.id==id).first()
+
+
+        user.mobile = user.mobile if user.mobile else ''
+        user.email = user.email if user.email else ''
+
+        data_info = user.as_dict()
+        # SysLogger.debug(data_info)
+        try:
+            data_info['permission'] = json.loads(user.permission)
+        except Exception as e:
+            data_info['permission'] = []
+
+        params = {
+            'user': user,
+            'role_option': Role.option_html(user.role_id),
+            'menu_list': menu_list,
+            'data_info': data_info,
+            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
+        }
+        self.render('user/edit.html', **params)
+
+    @put('/admin/user')
     @tornado.web.authenticated
     @required_permissions()
     def user_put(self):
@@ -159,11 +192,38 @@ class UserHandler(CommonHandler):
         data = RoleService.get_valid_role()
         return self.success(data=data)
 
+class UnlockUserHandler(CommonHandler):
+    @put('/admin/user/unlocked')
+    @tornado.web.authenticated
+    def unlock_user(self):
+        """锁屏解锁"""
+        password = self.get_argument('password', None)
 
-    @put('/admin/user/change_pwd',_catch_fire=settings.debug)
+        if not password:
+            return self.error('请输入密码')
+
+        is_rsa=sys_config('login_pwd_rsa_encrypt')
+        if  int(is_rsa) == 1:
+            private_key = sys_config('sys_login_rsa_priv_key')
+            try:
+                password = RSAEncrypter.decrypt(password, private_key)
+            except Exception:
+                return self.error(msg='签名失败',code=11)
+        user_info=self.get_current_user()
+        check=AdminUser.Q.filter(AdminUser.id == user_info['id']).first()
+        if check is None:
+            return self.error('用户信息出错')
+
+        if check_password(password,check.password)==False:
+            return self.error('密码错误')
+
+        return self.success()
+
+class UserChangePwdHandler(CommonHandler):
+    @put('/admin/user/change_pwd')
     @tornado.web.authenticated
     @required_permissions()
-    def change_pwd(self):
+    def use_change_pwd(self):
         """
         修改密码
         :return:
