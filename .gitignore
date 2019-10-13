@@ -19,3 +19,4 @@ applications/statics/layui/lay/modules/layim.js
 Pipfile.lock
 local.yaml
 .env
+statics/upload

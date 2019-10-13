@@ -25,14 +25,14 @@ from sqlalchemy_utils import ChoiceType
 from applications.common import const
 
 
-class MemberOperationLog(BaseModel):
+class UserOperationLog(BaseModel):
     """
     user model
     """
-    __tablename__ = 'member_operation_log'
+    __tablename__ = 'user_operation_log'
 
     id = Column(Integer, primary_key=True, nullable=False, default=None)
-    user_id = Column(Integer, ForeignKey('member.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     # 用户账号： email or mobile or username
     account = Column(String(80), nullable=False)
     # 会员操作类型： email_reset_pwd mobile_reset_pwd username_reset_pwd activate_email
@@ -48,29 +48,29 @@ class MemberOperationLog(BaseModel):
         Arguments:
             params {[type]} -- [description]
         """
-        log = MemberOperationLog(**params)
-        MemberOperationLog.session.add(log)
-        MemberOperationLog.session.commit()
+        log = UserOperationLog(**params)
+        UserOperationLog.session.add(log)
+        UserOperationLog.session.commit()
 
 
-class MemberLoginLog(BaseModel):
+class UserLoginLog(BaseModel):
     """
     user model
     """
-    __tablename__ = 'member_login_log'
+    __tablename__ = 'user_login_log'
 
     id = Column(Integer, primary_key=True, nullable=False, default=None)
-    user_id = Column(Integer, ForeignKey('member.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     ip = Column(String(40), nullable=False)
     client = Column(String(20), nullable=True, default='web')
     created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
 
-class Member(BaseModel):
+class User(BaseModel):
     """
     user model
     """
-    __tablename__ = 'member'
+    __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, nullable=False, default=None)
     password = Column(String(128), nullable=False, default='')
@@ -110,13 +110,13 @@ class Member(BaseModel):
 
     @property
     def authorized(self):
-        obj = MemberCertification.Q.filter(MemberCertification.user_id==self.id).first()
-        # print('MemberCertification : ', MemberCertification.Q.statement)
+        obj = UserCertification.Q.filter(UserCertification.user_id==self.id).first()
+        # print('UserCertification : ', UserCertification.Q.statement)
         return True if obj and obj.authorized==1 else False
 
     @property
     def authorize_info(self):
-        return MemberCertification.Q.filter(MemberCertification.user_id==self.id).first()
+        return UserCertification.Q.filter(UserCertification.user_id==self.id).first()
 
     @property
     def last_login_at(self):
@@ -134,57 +134,57 @@ class Member(BaseModel):
     def sex_options_html(sex=''):
         html = '<option value="">请选择性别</option>'
         option = '<option value="%s" %s>%s</option>'
-        for key in Member.sex_options:
+        for key in User.sex_options:
             selected = 'selected="true"' if sex==key else ''
-            html += option % (key, selected, Member.sex_options[key])
+            html += option % (key, selected, User.sex_options[key])
         # print("html", sex, html)
         return html
 
 
     def cache_info(self, handler):
-        """cache member info"""
+        """cache user info"""
         fileds = ['id','username','mobile','avatar','sign']
-        member_dict = self.as_dict(fileds)
+        user_dict = self.as_dict(fileds)
 
-        if not member_dict['username']:
-            member_dict['username'] = member_dict.get('mobile', '--')
-        avatar = member_dict.get('avatar', None)
+        if not user_dict['username']:
+            user_dict['username'] = user_dict.get('mobile', '--')
+        avatar = user_dict.get('avatar', None)
         if avatar:
-            member_dict['avatar'] = handler.static_url(member_dict['avatar'])
+            user_dict['avatar'] = handler.static_url(user_dict['avatar'])
         else:
-            member_dict['avatar'] = handler.static_url('image/default_avatar.jpg')
-        cache_key = '%s%s' % (settings.member_cache_prefix, self.id)
-        cache.set(cache_key, member_dict, timeout=86400)
+            user_dict['avatar'] = handler.static_url('image/default_avatar.jpg')
+        cache_key = '%s%s' % (settings.user_cache_prefix, self.id)
+        cache.set(cache_key, user_dict, timeout=86400)
         return cache_key
 
     @staticmethod
     def get_info(user_id, fields='id,username,avatar,sign', scalar=False):
-        query = "select %s from member where id='%s'" % (fields, user_id, )
-        info = Member.session.execute(query).first()
+        query = "select %s from user where id='%s'" % (fields, user_id, )
+        info = User.session.execute(query).first()
         # print("info2", info)
         info = dict(info) if info else {}
         return info.get(fields, '') if scalar is True else info
 
     @staticmethod
     def check_email_activated(user_id, email):
-        query = "select count(*) from member_operation_log where user_id='%s' and account='%s' and action='activate_email'" % (user_id, email)
+        query = "select count(*) from user_operation_log where user_id='%s' and account='%s' and action='activate_email'" % (user_id, email)
         # print("query: ", query)
-        value = Member.session.execute(query).scalar()
+        value = User.session.execute(query).scalar()
         return True if value>0 else False
 
     @staticmethod
-    def login_success(member, handler, client='web'):
+    def login_success(user, handler, client='web'):
         # 设置登录用户cookiex信息
-        handler.set_curent_user(member)
+        handler.set_curent_user(user)
 
-        user_id = member.id
-        login_count = member.login_count if member.login_count else 0
+        user_id = user.id
+        login_count = user.login_count if user.login_count else 0
         params = {
             'login_count': login_count+1,
             'last_login_at': utime.timestamp(3),
             'last_login_ip': handler.request.remote_ip,
         }
-        Member.Q.filter(Member.id==user_id).update(params)
+        User.Q.filter(User.id==user_id).update(params)
 
         # 写登录日志
         params2 = {
@@ -192,31 +192,31 @@ class Member(BaseModel):
             'client': client,
             'ip': handler.request.remote_ip,
         }
-        log = MemberLoginLog(**params2)
-        MemberLoginLog.session.add(log)
+        log = UserLoginLog(**params2)
+        UserLoginLog.session.add(log)
 
-        MemberLoginLog.session.commit()
+        UserLoginLog.session.commit()
 
     @staticmethod
     def register(params):
         """用户注册事务"""
         try:
-            member = Member(**params)
-            member.id = Member.session.add(member)
+            user = User(**params)
+            user.id = User.session.add(user)
 
-            Member.session.commit()
-            # print('register: ', type(member.id), member.id)
-            return (0, member)
+            User.session.commit()
+            # print('register: ', type(user.id), user.id)
+            return (0, user)
         except Exception as e:
-            Member.session.rollback()
+            User.session.rollback()
             SysLogger.info(e)
             return (500, str(e))
 
-class MemberLevel(BaseModel):
+class UserLevel(BaseModel):
     """
     会员级别表
     """
-    __tablename__ = 'member_level'
+    __tablename__ = 'user_level'
     id = Column(Integer, primary_key=True, nullable=False, default=None)
     name = Column(String(80), nullable=False)
     min_exper = Column(Integer, nullable=False, default=1)
@@ -227,15 +227,15 @@ class MemberLevel(BaseModel):
     status = Column(ChoiceType(const.COMMON_STATUS2), default=1)
     created_at = Column(Integer, default=utime.timestamp(3))
 
-class MemberFriend(BaseModel):
+class UserFriend(BaseModel):
     """
-    聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 member表的主键）
+    聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 user表的主键）
     """
-    __tablename__ = 'member_friend'
+    __tablename__ = 'user_friend'
 
     id = Column(Integer, primary_key=True, nullable=False, default=None)
-    from_user_id = Column(Integer, ForeignKey('member.id'))
-    to_user_id = Column(Integer, ForeignKey('member.id'))
+    from_user_id = Column(Integer, ForeignKey('user.id'))
+    to_user_id = Column(Integer, ForeignKey('user.id'))
     group_id = Column(Integer, nullable=True, default='0')
     remark = Column(String(200), nullable=True, default='')
     # `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
@@ -253,8 +253,8 @@ class MemberFriend(BaseModel):
 
     @staticmethod
     def _friend_list(user_id, where=''):
-        query = "select m.id,m.username,m.avatar,m.sign,f.group_id from member m left join member_friend f on m.id=f.to_user_id where f.from_user_id='%s' and m.status=1 and f.status=1 %s" % (user_id, where)
-        rows = Member.session.execute(query).fetchall()
+        query = "select m.id,m.username,m.avatar,m.sign,f.group_id from user m left join user_friend f on m.id=f.to_user_id where f.from_user_id='%s' and m.status=1 and f.status=1 %s" % (user_id, where)
+        rows = User.session.execute(query).fetchall()
         items = []
         if rows:
             for row in rows:
@@ -264,17 +264,17 @@ class MemberFriend(BaseModel):
     @staticmethod
     def _friends_no_grouping(user_id):
         where = " and f.group_id='0'"
-        return MemberFriend._friend_list(user_id, where)
+        return UserFriend._friend_list(user_id, where)
 
     @staticmethod
     def friends_by_group(user_id, static_url):
         """
         按分组获取好友
         """
-        _friend_list = MemberFriend._friend_list(user_id)
+        _friend_list = UserFriend._friend_list(user_id)
         # print('_friend_list: ', _friend_list)
-        query = "select id, groupname from member_friendgroup where owner_user_id='%s'" % user_id
-        grows = MemberFriend.session.execute(query).fetchall()
+        query = "select id, groupname from user_friendgroup where owner_user_id='%s'" % user_id
+        grows = UserFriend.session.execute(query).fetchall()
         grows = grows if grows else []
         # print("grows: ", type(grows), grows)
         f_g_li = []
@@ -285,7 +285,7 @@ class MemberFriend(BaseModel):
                 'status': Online.get_online(fnd.get('id')),
                 'sign':fnd.get('sign'),
                 'avatar':static_url(fnd.get('avatar'))
-            } for fnd in MemberFriend._friends_no_grouping(user_id)]}]
+            } for fnd in UserFriend._friends_no_grouping(user_id)]}]
 
             if len(grows)>0:
                 f_g_li += [{
@@ -312,16 +312,16 @@ class MemberFriend(BaseModel):
         返回 [1,2,3,]
         """
         # user_id 的 好友
-        _friend_list = MemberFriend._friend_list(user_id)
+        _friend_list = UserFriend._friend_list(user_id)
         # 过滤掉离线好友
         return [friend for friend in _friend_list if Online.get_online(friend['id'])=='online']
 
 class Friendgroup(BaseModel):
-    __tablename__ = 'member_friendgroup'
+    __tablename__ = 'user_friendgroup'
 
     id = Column(Integer, primary_key=True, nullable=False, default=None)
     groupname = Column(String(40), nullable=False, default='')
-    owner_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
+    owner_user_id = Column(Integer, ForeignKey('user.id'), nullable=False, default=0)
     created_at = Column(TIMESTAMP, default=utime.timestamp(3))
 
     @property
@@ -329,21 +329,21 @@ class Friendgroup(BaseModel):
         return func.dt_to_timezone(self.created_at)
 
 
-class MemberFriendNotice(BaseModel):
+class UserFriendNotice(BaseModel):
     """
-    member_friend_notice model
+    user_friend_notice model
     """
-    __tablename__ = 'member_friend_notice'
+    __tablename__ = 'user_friend_notice'
 
     id = Column(Integer, primary_key=True, nullable=False, default=None)
     # 消息类型 'apply_friend','system'
     msgtype = Column(String(40), nullable=False)
     related_id = Column(Integer, nullable=False, default='')
     message = Column(String(200), nullable=False, default='')
-    # Member 用户ID 消息发送者 0表示为系统消息
-    from_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
-    # 消息接收者 Member 用户ID
-    to_user_id = Column(Integer, ForeignKey('member.id'), nullable=False, default=0)
+    # User 用户ID 消息发送者 0表示为系统消息
+    from_user_id = Column(Integer, ForeignKey('user.id'), nullable=False, default=0)
+    # 消息接收者 User 用户ID
+    to_user_id = Column(Integer, ForeignKey('user.id'), nullable=False, default=0)
 
     read_at = Column(TIMESTAMP, nullable=True)
     # 状态:( 0 未读；1 已读 11 接受 12 拒绝请求)
@@ -360,7 +360,7 @@ class MemberFriendNotice(BaseModel):
 
 
 class Online:
-    cache_key = 'member_online:%s'
+    cache_key = 'user_online:%s'
 
     @classmethod
     def get_online(cls, user_id):
@@ -381,11 +381,11 @@ class Online:
         return cache.set(cache_key, state, timeout=86400)
 
 
-class MemberCertification(BaseModel):
+class UserCertification(BaseModel):
     """
     会员出售球币
     """
-    __tablename__ = 'member_certification'
+    __tablename__ = 'user_certification'
     user_id = Column(Integer, primary_key=True, nullable=False)
     realname = Column(String(40), nullable=False)
     idcardno = Column(String(40), nullable=False)

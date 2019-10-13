@@ -54,14 +54,24 @@ class AdminUserService:
         return True
 
     @staticmethod
-    def get_data(limit, page):
+    def get_data(params, limit, page):
         """
         获取数据列表
         :param limit:
         :param page:
         :return:
         """
-        pagelist_obj = AdminUser.Q.filter(AdminUser.status!=-1).paginate(page=page, per_page=limit)
+        query = AdminUser.Q
+        if params['username']:
+            query = query.filter(AdminUser.username.like(f"%{params.get('username')}%"))
+        if params['mobile']:
+            query = query.filter(AdminUser.mobile.like(f"%{params.get('mobile')}%"))
+        if 'status' in params and params['status'] is not None:
+            query = query.filter(AdminUser.status == params['status'])
+        if params['role_id']:
+            query = query.filter(AdminUser.role_id == params['role_id'])
+        query = query.filter(AdminUser.status != -1).order_by(AdminUser.id.desc())
+        pagelist_obj = query.paginate(page=page, per_page=limit)
         if pagelist_obj is None:
             raise JsonError('暂无数据')
         return pagelist_obj

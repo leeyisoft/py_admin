@@ -62,16 +62,17 @@ class AdminMenuService:
         """
         保存菜单树
         """
-        menu0 = os.path.join(settings.ROOT_PATH, 'datas', 'menu', 'menu0.json')
+        fpath = os.path.join(settings.ROOT_PATH, 'datas', 'json', 'menu.json')
         formatted_json = json.dumps(tree, ensure_ascii=False, indent = 4, sort_keys=False)
 
-        with open(menu0) as f:
+        with open(fpath) as f:
             md50 = func.md5(formatted_json)
             md51 = func.md5(f.read())
             if md50==md51:
                 raise JsonError('数据没有变化', 0)
-        with open(menu0, 'w', encoding='utf-8') as f:
+        with open(fpath, 'w', encoding='utf-8') as f:
             f.write(formatted_json)
+            f.write("\n")
         return True
 
     @staticmethod

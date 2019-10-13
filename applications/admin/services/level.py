@@ -3,7 +3,7 @@
 """
 会员级别
 """
-from applications.common.models.member import MemberLevel
+from applications.common.models.user import UserLevel
 
 
 class LevelService:
@@ -12,12 +12,12 @@ class LevelService:
         code=0
         msg=''
         try:
-            data=MemberLevel(**param)
-            MemberLevel.session.add(data)
-            MemberLevel.session.commit()
+            data=UserLevel(**param)
+            UserLevel.session.add(data)
+            UserLevel.session.commit()
             return (code,msg)
         except Exception:
-            MemberLevel.session.rollback()
+            UserLevel.session.rollback()
             code=1
             msg='出错'
             return (code,msg)
@@ -27,14 +27,14 @@ class LevelService:
     def data_list(param,page,limit):
         code=0
         msg=''
-        query=MemberLevel.Q
+        query=UserLevel.Q
         if param['name']:
-            query=query.filter(MemberLevel.name==param['name'])
+            query=query.filter(UserLevel.name==param['name'])
 
         if param['status']:
-            query=query.filter(MemberLevel.status==param['status'])
+            query=query.filter(UserLevel.status==param['status'])
 
-        query=query.filter(MemberLevel.status!=-1)
+        query=query.filter(UserLevel.status!=-1)
         pagelist_obj = query.paginate(page=page, per_page=limit)
         if pagelist_obj is None:
             code = 1
@@ -49,11 +49,11 @@ class LevelService:
          code=0
          msg=''
          try:
-            MemberLevel.Q.filter(MemberLevel.id==advertise_id).update(param)
-            MemberLevel.session.commit()
+            UserLevel.Q.filter(UserLevel.id==advertise_id).update(param)
+            UserLevel.session.commit()
             return (code,msg)
          except Exception:
-            MemberLevel.session.rollback()
+            UserLevel.session.rollback()
             code=1
             msg='出错'
             return (code,msg)
@@ -63,7 +63,7 @@ class LevelService:
         code=0
         msg=''
         res_data=[]
-        query=MemberLevel.Q.filter(MemberLevel.status==param['status']).all()
+        query=UserLevel.Q.filter(UserLevel.status==param['status']).all()
         for val in query:
             middle=val.as_dict()
             res_data.append(middle)
@@ -75,8 +75,8 @@ class LevelService:
         用户等级选项列表
         :return:
         """
-        data = MemberLevel.session.query(MemberLevel.id, MemberLevel.name)\
-            .filter(MemberLevel.status == 1).all()
+        data = UserLevel.session.query(UserLevel.id, UserLevel.name)\
+            .filter(UserLevel.status == 1).all()
         item_dict = {}
         item_list = []
         if not data:

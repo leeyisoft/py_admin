@@ -4,8 +4,9 @@
 
 [description]
 """
-import tornado
 
+import tornado
+from tornado.escape import json_decode
 from trest.router import get
 from trest.router import put
 from trest.router import post
@@ -16,13 +17,13 @@ from trest.utils.hasher import check_password
 from trest.utils.encrypter import RSAEncrypter
 
 from applications.common.utils import sys_config
-
+from applications.admin.utils import admin_required_login
 from ..services.user import AdminUserService
 from ..models import AdminUser
 from .common import CommonHandler
 
 
-class LoginHandler(CommonHandler):
+class AdminLoginHandler(CommonHandler):
     """docstring for Passport"""
 
     def __invalid_img_captcha(self, code):
@@ -31,33 +32,38 @@ class LoginHandler(CommonHandler):
         valid_code = valid_code.decode('utf-8') if valid_code else ''
         return valid_code.lower()!=code.lower()
 
-    @get('login/?(.html)?')
-    def login_page(self, *args, **kwargs):
-        next = self.get_argument('next', '')
-        params = {
-            'public_key': sys_config('sys_login_rsa_pub_key'),
-            'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
-            'next': next,
-            'message': '',
-        }
-        self.render('passport/login.html', **params)
+    @get('login')
+    def login_get(self, *args, **kwargs):
+        return self.success()
 
-    @post('login/?(.html)?')
-    def post(self, *args, **kwargs):
+    @post('login')
+    def login_post(self, *args, **kwargs):
         username = self.get_argument('username', '')
         password = self.get_argument('password', '')
-        rsa_encrypt = self.get_argument('rsa_encrypt', '0')
         code = self.get_argument('code', '')
-
-        if not username or not password or not rsa_encrypt or not code:
+        # print('login_post self.request.arguments ', type(self.request.arguments), self.request.arguments)
+        if not username:
+            post_data = self.request.body.decode('utf-8')
+            try:
+                post_data = json_decode(post_data)
+                username = post_data.get('username', '')
+                password = post_data.get('password', '')
+                code = post_data.get('code', '')
+            except Exception as e:
+                pass
+            # print('login_post data ', type(post_data), post_data)
+        # print('login_post ', self.request.headers)
+        if not username or not password:
             return self.error('参数必须')
 
         test_verify_switch = sys_config('test_verify_switch')
         test_verify_switch = 1 if test_verify_switch else 0
+
         if int(test_verify_switch)==1:
             if self.__invalid_img_captcha(code):
                 return self.error('验证码错误')
 
+        rsa_encrypt = sys_config('login_pwd_rsa_encrypt')
         if  int(rsa_encrypt) == 1:
             private_key = sys_config('sys_login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
@@ -80,15 +86,18 @@ class LoginHandler(CommonHandler):
             'last_login_at':user.last_login_at,
             'login_count':user.login_count,
             'is_superadmin':self.super_role(),
+            'token': 'token'
         }
         return self.success('成功',data=data)
 
-    @get('logout/?(.html)?')
-    @tornado.web.authenticated
-    def get(self, *args, **kwargs):
-        cache_key = self.get_secure_cookie(settings.admin_session_key)
-        self.clear_cookie(cache_key)
-        self.redirect(self.get_login_url())
+
+class AdminLogoutHandler(CommonHandler):
+    @post('logout')
+    @admin_required_login
+    def admin_logout_post(self):
+        self.clear_cookie(settings.admin_session_key)
+        self.set_cookie('_xsrf', self.xsrf_token.decode("utf-8"))
+        return self.success()
 
 class CaptchaHandler(CommonHandler):
     @get('captcha/?(.png)?')

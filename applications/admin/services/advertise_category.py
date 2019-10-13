@@ -28,9 +28,6 @@ class AdvertisingCategoryService:
         if param['status']:
             query = query.filter(AdvertisingCategory.status == param['status'])
 
-        if param['lang']:
-            query = query.filter(AdvertisingCategory.lang == param['lang'])
-
         query = query.filter(AdvertisingCategory.status != -1)
         pagelist_obj = query.paginate(page=page, per_page=limit)
         if pagelist_obj is None:

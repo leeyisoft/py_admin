@@ -21,17 +21,14 @@ class AdvertisingService:
 
     @staticmethod
     def data_list(param,page,limit):
-        query=Advertising.Q
+        query = Advertising.Q
         if 'title' in param.keys():
-            query=query.filter(Advertising.title==param['title'])
+            query = query.filter(Advertising.title==param['title'])
 
         if 'status' in param.keys():
-            query=query.filter(Advertising.status==param['status'])
+            query = query.filter(Advertising.status==param['status'])
 
-        if 'lang' in param.keys():
-            query=query.filter(Advertising.lang==param['lang'])
-
-        query=query.filter(Advertising.status!=-1)
+        query = query.filter(Advertising.status!=-1)
         pagelist_obj = query.order_by(Advertising.created_at.desc()).paginate(page=page, per_page=limit)
         if pagelist_obj is None:
             raise JsonError('暂无数据')

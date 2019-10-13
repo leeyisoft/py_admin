@@ -45,13 +45,17 @@ pipenv install --skip-lock
 pipenv install --dev --skip-lock
 
 // 配置本地开发环境变量，然后启动
-cp applications/configs/dev.py applications/configs/local.py
+cp applications/configs/dev.yaml applications/configs/local.yaml
+echo '# TREST_ENV is not one of the local, dev, test, or product
+TREST_ENV : local' > .env
+
+// 开启虚拟环境
 pipenv shell
 // 启动项目
 python server.py --port=5080
 
-// 退出虚拟环境
-deactivate
+// 退出pipenv
+exit
 ```
 pipenv install -e git+https://gitee.com/leeyi/trest.git@master#egg=trest
 

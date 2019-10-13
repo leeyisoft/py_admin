@@ -1,4 +1,4 @@
-# ************************************************************
+﻿# ************************************************************
 # Sequel Pro SQL dump
 # Version 5446
 #
@@ -7,206 +7,18 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2019-09-26 15:00:20 +0000
+# Generation Time: 2019-11-03 13:54:37 +0000
 # ************************************************************
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 SET NAMES utf8mb4;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
-# Dump of table member
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member`;
-
-CREATE TABLE `member` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `level_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '会员等级ID',
-  `password` varchar(128) NOT NULL,
-  `username` varchar(40) DEFAULT NULL COMMENT '登录名、昵称',
-  `mobile` varchar(11) DEFAULT NULL,
-  `email` varchar(80) DEFAULT NULL,
-  `experience` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '经验值',
-  `sex` enum('hide','male','female','other') NOT NULL DEFAULT 'hide' COMMENT '性别(男 male ，女 female 隐藏 hide)',
-  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
-  `sign` varchar(255) DEFAULT '' COMMENT '会员签名',
-  `login_count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '登陆次数',
-  `last_login_ip` varchar(40) NOT NULL DEFAULT '' COMMENT '最后登陆IP',
-  `last_login_at` bigint(13) DEFAULT NULL COMMENT '最后登录UTC时间',
-  `ref_user_id` char(32) DEFAULT NULL COMMENT '推荐人ID，空字符串表示为推荐人',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
-  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '已删除的 1 是 0 否 默认 0',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
-  `reg_ip` varchar(40) DEFAULT NULL COMMENT '注册IP',
-  `reg_client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_username` (`username`),
-  UNIQUE KEY `uk_email` (`email`),
-  UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
-
-LOCK TABLES `member` WRITE;
-/*!40000 ALTER TABLE `member` DISABLE KEYS */;
-
-INSERT INTO `member` (`id`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `last_login_at`, `ref_user_id`, `status`, `deleted`, `created_at`, `reg_ip`, `reg_client`)
-VALUES
-	(1,0,'',NULL,NULL,NULL,0,'hide','','',0,'',NULL,NULL,1,0,NULL,NULL,NULL);
-
-/*!40000 ALTER TABLE `member` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table member_binding
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_binding`;
-
-CREATE TABLE `member_binding` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
-  `type` enum('QQ','WECHAT','MOBILE','EMAIL','ALIPAY') DEFAULT NULL COMMENT '绑定类型',
-  `openid` varchar(80) DEFAULT NULL COMMENT '第三方平台openid',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table member_certification
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_certification`;
-
-CREATE TABLE `member_certification` (
-  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键，member表 id',
-  `realname` varchar(40) NOT NULL DEFAULT '' COMMENT '登录名、昵称',
-  `idcardno` varchar(40) NOT NULL DEFAULT '' COMMENT '身份证号码',
-  `idcard_img` varchar(200) NOT NULL DEFAULT '' COMMENT '手持身份证照片一张（要求头像清晰，身份证号码清晰）',
-  `authorized` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '认证状态:( 0 待审核；1 审核通过, 2 审核失败)',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
-  `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
-  `updated_at` bigint(13) DEFAULT NULL COMMENT '更新记录UTC时间',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
-  `remark` varchar(200) DEFAULT NULL COMMENT '备注；如果审核不通过，填写原因',
-  `authorized_user_id` bigint(20) DEFAULT NULL COMMENT '审核管理员ID，user 表 uuid',
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员实名认证信息';
-
-
-
-# Dump of table member_friend
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_friend`;
-
-CREATE TABLE `member_friend` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `from_user_id` bigint(20) NOT NULL COMMENT '发起人',
-  `to_user_id` bigint(20) NOT NULL COMMENT '接受人',
-  `group_id` bigint(20) DEFAULT '0' COMMENT '用户分组ID friendgroup主键',
-  `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
-  `updated_at` bigint(13) DEFAULT NULL COMMENT '记录更新时间',
-  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
-  `remark` varchar(200) NOT NULL DEFAULT '' COMMENT '申请好友的验证消息',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 member表的主键）';
-
-
-
-# Dump of table member_friend_notice
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_friend_notice`;
-
-CREATE TABLE `member_friend_notice` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `msgtype` enum('apply_friend','system') DEFAULT NULL COMMENT '消息类型',
-  `related_id` bigint(20) DEFAULT NULL COMMENT '关联业务主键',
-  `message` varchar(200) DEFAULT '' COMMENT '附加消息',
-  `from_user_id` bigint(20) DEFAULT NULL COMMENT 'Member 用户ID 消息发送者 0表示为系统消息',
-  `to_user_id` bigint(20) DEFAULT NULL COMMENT '消息接收者 Member 用户ID',
-  `read_at` bigint(13) DEFAULT NULL COMMENT '读消息UTC时间',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未读；1 已读 11 接受 12 拒绝请求)',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='添加好友状态通知，定时删除60天内的已读消息';
-
-
-
-# Dump of table member_friendgroup
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_friendgroup`;
-
-CREATE TABLE `member_friendgroup` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `groupname` varchar(40) NOT NULL DEFAULT '' COMMENT '分组名称',
-  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
-  `owner_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分组所属用户ID',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友分组表';
-
-
-
-# Dump of table member_level
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_level`;
-
-CREATE TABLE `member_level` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name` varchar(80) NOT NULL COMMENT '等级名称',
-  `min_exper` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最小经验值',
-  `max_exper` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最大经验值',
-  `intro` varchar(255) NOT NULL COMMENT '等级简介',
-  `default` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '默认等级',
-  `expire` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '会员有效期(天)',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员等级';
-
-
-
-# Dump of table member_login_log
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_login_log`;
-
-CREATE TABLE `member_login_log` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
-  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='会员登录日志';
-
-
-
-# Dump of table member_operation_log
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `member_operation_log`;
-
-CREATE TABLE `member_operation_log` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
-  `account` varchar(40) NOT NULL DEFAULT '' COMMENT '用户账号： email or mobile or username',
-  `action` varchar(20) DEFAULT NULL COMMENT '会员操作类型： email_reset_pwd mobile_reset_pwd activate_email',
-  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
-  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='会议操作日志记录表(操作成功的时候插入)';
-
 
 
 # Dump of table sys_address
@@ -242,8 +54,6 @@ CREATE TABLE `sys_admin_role` (
   `sort` bigint(20) unsigned NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `category` tinyint(1) DEFAULT '0' COMMENT '角色分类： 0 默认 1 催收组 2 管理组',
-  `company_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '所属公司',
   `description` varchar(100) NOT NULL COMMENT '描述',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_rolename` (`rolename`)
@@ -252,43 +62,43 @@ CREATE TABLE `sys_admin_role` (
 LOCK TABLES `sys_admin_role` WRITE;
 /*!40000 ALTER TABLE `sys_admin_role` DISABLE KEYS */;
 
-INSERT INTO `sys_admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `created_at`, `category`, `company_id`, `description`)
+INSERT INTO `sys_admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `created_at`, `description`)
 VALUES
-	(1,'超级管理员','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"reviewl_list\",\"admin:loan_order:review_record\",\"admin:loan_order:order_general_info\",\"admin:loan_order:message_record\",\"admin:loan_order:callrecord\",\"admin:loan_order:book_address\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\",\"admin:loan_order:other_info\",\"admin:loan_order:loan_info\",\"admin:loan_order:loan_config_info\",\"all_application\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\",\"admin:loan_order:first_review\",\"admin:loan_order:first_review_list\",\"first_review\",\"admin:loan_order:second_review_list\",\"second_review\",\"admin:loan_order:final_review_list\",\"final_review\",\"admin:application:reviewHistoryCases\",\"admin:customer:index\",\"admin:customer:all\",\"admin:customer:customerAuthenticationa\",\"admin:finance:index\",\"admin:finance:deposits\",\"admin:finance:loanIssues\",\"admin:finance:balance\",\"admin:finance:offlineIssue\",\"admin:finance:balanceIssuesLog\",\"admin:report:index\",\"admin:report:financeReport\",\"admin:report:isssuesReport\",\"admin:report:depositsReport\",\"admin:report:financeInout\",\"admin:report:fundPeriodTable\",\"admin:report:financeTotalAssets\",\"admin:report:technicalService\",\"admin:report:operation\",\"admin:statistic:register\",\"admin:statistic:day_count\",\"admin:statistic:issue\",\"admin:statistic:again_loan\",\"admin:report:customerInformation\",\"admin:report:loanInfomation\",\"admin:statistic:conversion\",\"admin:report:loanOperation\",\"admin:report:loanRepayment\",\"admin:report:platformRate\",\"admin:report:processRejectRate\",\"admin:statistic:over_period\",\"admin:\",\"admin:report:collectionReport\",\"admin:collection_case_log:list\",\"admin:collection_case_log:add\",\"admin:collection_case_log:index\",\"admin:report:collectionEffect\",\"admin:report:collectionEfficiency\",\"admin:report:sendSmsDetail\",\"admin:report:snedSmsStatistics\",\"admin:report:rollover\",\"admin:report:recallAmount\",\"admin:report:application\",\"admin:statistic:deal\",\"admin:statistic:deal_efficiency\",\"admin:report:allReviewReport\",\"admin:statistic:trial\",\"admin:operation:approvalHistory\",\"admin:loan_order_log:index\",\"admin:loan_order_log:order_refuse_log\",\"admin:report:performanceReport\",\"admin:report:myCollectionPerformance\",\"admin:report:myApplicationPerformance\",\"admin:report:exportResult\",\"admin:operate:index\",\"admin:operation:accountRole\",\"admin:operation:accountManagement\",\"admin:operation:roleManagement\",\"admin:operation:applyConfiguration\",\"admin:operation:ruleManagement\",\"admin:blacklist:index\",\"admin:blacklist:add\",\"admin:blacklist:edit\",\"admin:blacklist:delete\",\"admin:operation:stepManagement\",\"admin:operation:labelManagement\",\"admin:page:index\",\"admin:operation:contract\",\"admin:operation:appNoticeManagement\",\"admin:operation:issueManagement\",\"admin:operation:amountControlManagement\",\"admin:operation:lendingFailureOrder\",\"admin:operation:batchIssue\",\"admin:operation:handleFailedIssue\",\"admin:operation:skypayCancel\",\"admin:operation:smsManagement\",\"admin:operation:smsSendTime\",\"admin:sms_template:index\",\"admin:operation:smsRecord\",\"admin:sms:batchSend\",\"admin:sms:index\",\"admin:sms:contact_phone\",\"admin:sms:add\",\"admin:operation:customerProduct\",\"admin:operation:customerGrade\",\"admin:operaion:customerGradeManagement\",\"admin:operation:productManagement\",\"admin:operation:productGrade\",\"admin:help:index\",\"admin:operation:bannerMangement\",\"admin:advertise:index\",\"admin:advertise:add\",\"admin:advertise:edit\",\"admin:advertise:delete\",\"admin:advertise_cat:index\",\"admin:advertise_cat:add\",\"admin:advertise_cat:edit\",\"admin:advertise_cat:delete\",\"admin:operation:task\",\"admin:operation:bankChannel\",\"admin:collection_category:index\",\"admin:collection_category:add\",\"admin:collection_category:edit\",\"admin:collection_category:delete\",\"admin:collection_case_log:index\",\"admin:system:function\",\"admin:system:setting\",\"admin:system:base\",\"admin:system:index\",\"admin:config:pagelist\",\"admin:config:delete_one\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:pagelist\",\"admin:menu:pagelist\",\"other\",\"collection\",\"admin:collection_case:index\",\"admin:collection_case:current\",\"admin:collection_case:overdue\",\"admin:collection_case:assign\",\"admin:collection_case:do_assign\",\"admin:collection_case:mine\",\"collector_collection_detail\",\"admin:collection_case:workbench\",\"admin:collection_call_record:index\",\"admin:collection_voice_record:index\",\"admin:collection_stage:index\",\"admin:collection_stage:add\",\"admin:collection_stage:edit\",\"admin:collection_stage:delete\",\"admin:collection_group:index\",\"admin:collection_group:add\",\"admin:collection_group:edit\",\"admin:collection_group:delete\",\"admin:collection_stage_group:index\",\"admin:collection_stage_group:add\",\"admin:collection_stage_group:edit\",\"admin:collection_stage_group:delete\",\"admin:company:index\",\"admin:company:add\",\"admin:company:edit\",\"admin:company:delete\",\"admin:collection_collector:index\",\"admin:collection_collector:add\",\"admin:collection_collector:edit\",\"admin:collection_collector:delete\"]',1,1,1555310106,0,1,''),
-	(2,'默认角色','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\"]',20,1,1555310106,0,1,''),
-	(3,'company collector manage','[\"application\",\"loan_order_list\",\"product_valid_list\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"collection\",\"collection_voicerecord_list\"]',20,1,1556189858,0,1,'外包公司管理账号角色 基本的催收员权限 + 催收员管理权限'),
-	(4,'collector','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',1,1,1556189840,0,1,'普通催收角色'),
-	(5,'basic collector','',20,1,1556189847,0,1,'基本的催收员权限 管理催收员中 新建催收员的权限'),
-	(6,'first reviewer','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1561518147,0,1,'初审角色'),
-	(7,'second reviewer','[\"application\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1556189696,0,1,'复审角色'),
-	(8,'final reviewer','[\"application\",\"mine_case_menu\",\"final_review_list\",\"final_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"404\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1561518147,0,1,'终审角色'),
-	(16,'COLLECTION_A3','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556181211,1,1,'COLLECTION_A3'),
-	(17,'COLLECTION_A1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556181547,1,1,'COLLECTION_A1'),
-	(18,'COLLECTION_A2','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188425,1,1,''),
-	(19,'CS','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,-1,1556188439,1,1,'测试'),
-	(20,'COLLECTION_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188449,1,1,''),
-	(21,'COLLECTION_S1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188466,1,1,''),
-	(22,'COLLECTION_S2','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188478,1,1,''),
-	(25,'finance','',20,1,1556189668,0,1,'财务角色'),
-	(26,'operation','[\"operation\"]',20,1,1556189677,0,1,'运营角色'),
-	(27,'risk','',20,1,1556189685,0,1,'风控角色'),
-	(29,'collection manager','',20,1,1556189709,0,1,'催收经理角色'),
-	(30,'marketing manager','',20,1,1556189733,0,1,'市场经理角色'),
-	(34,'customer service','',20,1,1556189876,0,1,'customer service'),
-	(35,'review manager','',20,1,1556189884,0,1,'review manager'),
-	(36,'Mkt','',20,1,1556189892,0,1,'Mkt'),
-	(37,'AccountManager','',20,1,1556189910,0,1,'AccountManager'),
-	(50,'test_admin_0','[]',20,-1,1559791773,0,1,''),
-	(51,'test_admin_1','[\"application\",\"loan_order_list\",\"product_valid_list\",\"loan_order_assignment_list\",\"assign_post\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"second_review_list\",\"second_review_put\",\"final_review_list\",\"final_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"force_pass_put\",\"system_close_put\",\"customer\",\"index\",\"change_status_put\",\"valid_role_get\",\"loan_user_del\",\"user_sms_list\",\"customerAuthentication\",\"verify_list\",\"404\"]',20,-1,1559791847,0,1,''),
-	(53,'Assistant Admin',NULL,20,1,1561517918,0,1,'次级管理员'),
-	(54,'Resignation',NULL,20,1,1561517985,0,1,'Resignation'),
-	(55,'collector_os',NULL,20,1,1561518044,0,1,'外包催收角色'),
-	(56,'OLE',NULL,20,1,1561518078,0,1,'OLE'),
-	(57,'channel provider','[]',20,1,1561518147,0,1,'渠道方角色'),
-	(58,'AdminOfficer','[]',20,1,1561518147,0,1,'AdminOfficer'),
-	(59,'COLLECTION_S3','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561530972,1,1,'COLLECTION_S3'),
-	(60,'JKSky_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561531035,1,7,'JKSky_S0'),
-	(61,'JKSky_S1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561531051,1,7,'JKSky_S1');
+	(1,'超级管理员','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"reviewl_list\",\"admin:loan_order:review_record\",\"admin:loan_order:order_general_info\",\"admin:loan_order:message_record\",\"admin:loan_order:callrecord\",\"admin:loan_order:book_address\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\",\"admin:loan_order:other_info\",\"admin:loan_order:loan_info\",\"admin:loan_order:loan_config_info\",\"all_application\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\",\"admin:loan_order:first_review\",\"admin:loan_order:first_review_list\",\"first_review\",\"admin:loan_order:second_review_list\",\"second_review\",\"admin:loan_order:final_review_list\",\"final_review\",\"admin:application:reviewHistoryCases\",\"admin:customer:index\",\"admin:customer:all\",\"admin:customer:customerAuthenticationa\",\"admin:finance:index\",\"admin:finance:deposits\",\"admin:finance:loanIssues\",\"admin:finance:balance\",\"admin:finance:offlineIssue\",\"admin:finance:balanceIssuesLog\",\"admin:report:index\",\"admin:report:financeReport\",\"admin:report:isssuesReport\",\"admin:report:depositsReport\",\"admin:report:financeInout\",\"admin:report:fundPeriodTable\",\"admin:report:financeTotalAssets\",\"admin:report:technicalService\",\"admin:report:operation\",\"admin:statistic:register\",\"admin:statistic:day_count\",\"admin:statistic:issue\",\"admin:statistic:again_loan\",\"admin:report:customerInformation\",\"admin:report:loanInfomation\",\"admin:statistic:conversion\",\"admin:report:loanOperation\",\"admin:report:loanRepayment\",\"admin:report:platformRate\",\"admin:report:processRejectRate\",\"admin:statistic:over_period\",\"admin:\",\"admin:report:collectionReport\",\"admin:collection_case_log:list\",\"admin:collection_case_log:add\",\"admin:collection_case_log:index\",\"admin:report:collectionEffect\",\"admin:report:collectionEfficiency\",\"admin:report:sendSmsDetail\",\"admin:report:snedSmsStatistics\",\"admin:report:rollover\",\"admin:report:recallAmount\",\"admin:report:application\",\"admin:statistic:deal\",\"admin:statistic:deal_efficiency\",\"admin:report:allReviewReport\",\"admin:statistic:trial\",\"admin:operation:approvalHistory\",\"admin:loan_order_log:index\",\"admin:loan_order_log:order_refuse_log\",\"admin:report:performanceReport\",\"admin:report:myCollectionPerformance\",\"admin:report:myApplicationPerformance\",\"admin:report:exportResult\",\"admin:operate:index\",\"admin:operation:accountRole\",\"admin:operation:accountManagement\",\"admin:operation:roleManagement\",\"admin:operation:applyConfiguration\",\"admin:operation:ruleManagement\",\"admin:blacklist:index\",\"admin:blacklist:add\",\"admin:blacklist:edit\",\"admin:blacklist:delete\",\"admin:operation:stepManagement\",\"admin:operation:labelManagement\",\"admin:page:index\",\"admin:operation:contract\",\"admin:operation:appNoticeManagement\",\"admin:operation:issueManagement\",\"admin:operation:amountControlManagement\",\"admin:operation:lendingFailureOrder\",\"admin:operation:batchIssue\",\"admin:operation:handleFailedIssue\",\"admin:operation:skypayCancel\",\"admin:operation:smsManagement\",\"admin:operation:smsSendTime\",\"admin:sms_template:index\",\"admin:operation:smsRecord\",\"admin:sms:batchSend\",\"admin:sms:index\",\"admin:sms:contact_phone\",\"admin:sms:add\",\"admin:operation:customerProduct\",\"admin:operation:customerGrade\",\"admin:operaion:customerGradeManagement\",\"admin:operation:productManagement\",\"admin:operation:productGrade\",\"admin:help:index\",\"admin:operation:bannerMangement\",\"admin:advertise:index\",\"admin:advertise:add\",\"admin:advertise:edit\",\"admin:advertise:delete\",\"admin:advertise_cat:index\",\"admin:advertise_cat:add\",\"admin:advertise_cat:edit\",\"admin:advertise_cat:delete\",\"admin:operation:task\",\"admin:operation:bankChannel\",\"admin:collection_category:index\",\"admin:collection_category:add\",\"admin:collection_category:edit\",\"admin:collection_category:delete\",\"admin:collection_case_log:index\",\"admin:system:function\",\"admin:system:setting\",\"admin:system:base\",\"admin:system:index\",\"admin:config:pagelist\",\"admin:config:delete_one\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:pagelist\",\"admin:menu:pagelist\",\"other\",\"collection\",\"admin:collection_case:index\",\"admin:collection_case:current\",\"admin:collection_case:overdue\",\"admin:collection_case:assign\",\"admin:collection_case:do_assign\",\"admin:collection_case:mine\",\"collector_collection_detail\",\"admin:collection_case:workbench\",\"admin:collection_call_record:index\",\"admin:collection_voice_record:index\",\"admin:collection_stage:index\",\"admin:collection_stage:add\",\"admin:collection_stage:edit\",\"admin:collection_stage:delete\",\"admin:collection_group:index\",\"admin:collection_group:add\",\"admin:collection_group:edit\",\"admin:collection_group:delete\",\"admin:collection_stage_group:index\",\"admin:collection_stage_group:add\",\"admin:collection_stage_group:edit\",\"admin:collection_stage_group:delete\",\"admin:company:index\",\"admin:company:add\",\"admin:company:edit\",\"admin:company:delete\",\"admin:collection_collector:index\",\"admin:collection_collector:add\",\"admin:collection_collector:edit\",\"admin:collection_collector:delete\"]',1,1,1555310106,''),
+	(2,'默认角色','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\"]',20,1,1555310106,''),
+	(3,'company collector manage','[\"application\",\"loan_order_list\",\"product_valid_list\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"collection\",\"collection_voicerecord_list\"]',20,1,1556189858,'外包公司管理账号角色 基本的催收员权限 + 催收员管理权限'),
+	(4,'collector','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',1,1,1556189840,'普通催收角色'),
+	(5,'basic collector','',20,1,1556189847,'基本的催收员权限 管理催收员中 新建催收员的权限'),
+	(6,'first reviewer','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1561518147,'初审角色'),
+	(7,'second reviewer','[\"application\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1556189696,'复审角色'),
+	(8,'final reviewer','[\"application\",\"mine_case_menu\",\"final_review_list\",\"final_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"404\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1561518147,'终审角色'),
+	(16,'COLLECTION_A3','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556181211,'COLLECTION_A3'),
+	(17,'COLLECTION_A1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556181547,'COLLECTION_A1'),
+	(18,'COLLECTION_A2','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188425,''),
+	(19,'CS','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,-1,1556188439,'测试'),
+	(20,'COLLECTION_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188449,''),
+	(21,'COLLECTION_S1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188466,''),
+	(22,'COLLECTION_S2','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188478,''),
+	(25,'finance','',20,1,1556189668,'财务角色'),
+	(26,'operation','[\"operation\"]',20,1,1556189677,'运营角色'),
+	(27,'risk','',20,1,1556189685,'风控角色'),
+	(29,'collection manager','',20,1,1556189709,'催收经理角色'),
+	(30,'marketing manager','',20,1,1556189733,'市场经理角色'),
+	(34,'customer service','',20,1,1556189876,'customer service'),
+	(35,'review manager','',20,1,1556189884,'review manager'),
+	(36,'Mkt','',20,1,1556189892,'Mkt'),
+	(37,'AccountManager','',20,1,1556189910,'AccountManager'),
+	(50,'test_admin_0','[]',20,-1,1559791773,''),
+	(51,'test_admin_1','[\"application\",\"loan_order_list\",\"product_valid_list\",\"loan_order_assignment_list\",\"assign_post\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"second_review_list\",\"second_review_put\",\"final_review_list\",\"final_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"force_pass_put\",\"system_close_put\",\"customer\",\"index\",\"change_status_put\",\"valid_role_get\",\"loan_user_del\",\"user_sms_list\",\"customerAuthentication\",\"verify_list\",\"404\"]',20,-1,1559791847,''),
+	(53,'Assistant Admin',NULL,20,1,1561517918,'次级管理员'),
+	(54,'Resignation',NULL,20,1,1561517985,'Resignation'),
+	(55,'collector_os',NULL,20,1,1561518044,'外包催收角色'),
+	(56,'OLE',NULL,20,1,1561518078,'OLE'),
+	(57,'57channel provider','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\",\"admin:menu:index\",\"admin:menu:edit\",\"admin:menu:export\"]',20,1,1561518147,'渠道方角色'),
+	(58,'AdminOfficer','[]',20,-1,1561518147,'AdminOfficer'),
+	(59,'COLLECTION_S3','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561530972,'COLLECTION_S3'),
+	(60,'JKSky_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561531035,'JKSky_S0'),
+	(61,'JKSky_S1','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\"]',20,1,1561531051,'JKSky_S1');
 
 /*!40000 ALTER TABLE `sys_admin_role` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -324,7 +134,7 @@ LOCK TABLES `sys_admin_user` WRITE;
 
 INSERT INTO `sys_admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1245,'127.0.0.1',1569426538631,1,0,'cd'),
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1307,'127.0.0.1',1572780411398,1,0,'cd'),
 	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2',NULL,NULL,'[]',0,'',NULL,0,1553759714,''),
 	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213',NULL,NULL,'[]',0,'',NULL,-1,1553761927,''),
 	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
@@ -374,8 +184,8 @@ VALUES
 	(55,8,'pbkdf2_sha256$100000$Qtjtucs8yR88P4Lw$3UpnO5PT8OQB+jSKUNkaWSfiGVlW+bXFCKJSUbYq6kw=','duke_3_3','15500000033','duke_3_3@163.com','[\"final_review_list\",\"final_review_put\",\"history_review_list\",\"404\"]',0,'',NULL,1,1561515272,''),
 	(56,60,'pbkdf2_sha256$100000$r45QyLGTlKKxGKlr$5oRc/fXtqMWFXhYr0raEgNhKfAYt4MsHAp37RcGOELs=','test_S0_jk','15526666669',NULL,'',0,'',NULL,1,1561531445,''),
 	(57,61,'pbkdf2_sha256$100000$ZbADIk4AQ2gcODR2$BtzGIvJBXfJvBfPpx+k2U9k2Dz+JeKAsfhi8Zp1AIHs=','test_S1_jk','15527000000',NULL,'',0,'',NULL,1,1561531495,''),
-	(58,17,'pbkdf2_sha256$100000$TvZYyh8ZCHl23tpX$O72+aFvD0ngrUKX/XTrSvTMRzLY/wLGCuNv0AspafY4=','test_A1_1','15527000001',NULL,'',0,'',NULL,1,1561531539,''),
-	(59,18,'pbkdf2_sha256$100000$P3HaQEC4RZBwr6L6$NcAQSWFfBzpjqW0eKVDLsVCpw/6CbskI+bKJMD1W5GQ=','test_A2_1','15527000002',NULL,'',0,'',NULL,1,1561531591,'');
+	(58,17,'pbkdf2_sha256$100000$ssNBSwY0l3xP2xtu$ii2mh7jPM5R6/s412A5Ooy2N1+jOPDJlCxVBMtrZ3Cc=','editor','15527000001','leeyisoft@qq.com','\"[\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\"]\"',1,'127.0.0.1',1571494031149,1,1561531539,''),
+	(59,18,'pbkdf2_sha256$100000$P3HaQEC4RZBwr6L6$NcAQSWFfBzpjqW0eKVDLsVCpw/6CbskI+bKJMD1W5GQ=','test_A2_1','15527000002',NULL,'[]',0,'',NULL,-1,1561531591,'');
 
 /*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -393,7 +203,7 @@ CREATE TABLE `sys_admin_user_login_log` (
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
 LOCK TABLES `sys_admin_user_login_log` WRITE;
 /*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
@@ -417,7 +227,70 @@ VALUES
 	(15,1,'127.0.0.1','web',1567947623633),
 	(16,1,'127.0.0.1','web',1569339039068),
 	(17,1,'127.0.0.1','web',1569339105654),
-	(18,1,'127.0.0.1','web',1569426522601);
+	(18,1,'127.0.0.1','web',1569426522601),
+	(19,1,'127.0.0.1','web',1570964794580),
+	(20,1,'127.0.0.1','web',1570979752945),
+	(21,1,'127.0.0.1','web',1570979989963),
+	(22,1,'127.0.0.1','web',1570980205007),
+	(23,1,'127.0.0.1','web',1570980361725),
+	(24,1,'127.0.0.1','web',1570980361725),
+	(25,1,'127.0.0.1','web',1570980361725),
+	(26,1,'127.0.0.1','web',1570980361725),
+	(27,1,'127.0.0.1','web',1570980361725),
+	(28,1,'127.0.0.1','web',1570980361725),
+	(29,1,'127.0.0.1','web',1570980361725),
+	(30,1,'127.0.0.1','web',1570980361725),
+	(31,1,'127.0.0.1','web',1570980361725),
+	(32,1,'127.0.0.1','web',1570980361725),
+	(33,1,'127.0.0.1','web',1570980361725),
+	(34,1,'127.0.0.1','web',1570981198929),
+	(35,1,'127.0.0.1','web',1571316759974),
+	(36,1,'127.0.0.1','web',1571405655910),
+	(37,1,'127.0.0.1','web',1571452621415),
+	(38,1,'127.0.0.1','web',1571452621415),
+	(39,1,'127.0.0.1','web',1571452621415),
+	(40,1,'127.0.0.1','web',1571452621415),
+	(41,1,'127.0.0.1','web',1571452621415),
+	(42,1,'127.0.0.1','web',1571456479309),
+	(43,1,'127.0.0.1','web',1571456545317),
+	(44,1,'127.0.0.1','web',1571456545317),
+	(45,1,'127.0.0.1','web',1571456620817),
+	(46,1,'127.0.0.1','web',1571456953368),
+	(47,1,'127.0.0.1','web',1571456989379),
+	(48,1,'127.0.0.1','web',1571457978089),
+	(49,1,'127.0.0.1','web',1571457978089),
+	(50,1,'127.0.0.1','web',1571457978089),
+	(51,1,'127.0.0.1','web',1571457978089),
+	(52,58,'127.0.0.1','web',1571493748698),
+	(53,1,'127.0.0.1','web',1571662412834),
+	(54,1,'127.0.0.1','web',1571662412834),
+	(55,1,'127.0.0.1','web',1571662412834),
+	(56,1,'127.0.0.1','web',1571662412834),
+	(57,1,'127.0.0.1','web',1571752111604),
+	(58,1,'127.0.0.1','web',1571757328367),
+	(59,1,'127.0.0.1','web',1572091841321),
+	(60,1,'127.0.0.1','web',1572091841321),
+	(61,1,'127.0.0.1','web',1572094998676),
+	(62,1,'127.0.0.1','web',1572095126197),
+	(63,1,'127.0.0.1','web',1572095126197),
+	(64,1,'127.0.0.1','web',1572095126197),
+	(65,1,'127.0.0.1','web',1572095389770),
+	(66,1,'127.0.0.1','web',1572095389770),
+	(67,1,'127.0.0.1','web',1572095604402),
+	(68,1,'127.0.0.1','web',1572095604402),
+	(69,1,'127.0.0.1','web',1572095604402),
+	(70,1,'127.0.0.1','web',1572095720365),
+	(71,1,'127.0.0.1','web',1572095807980),
+	(72,1,'127.0.0.1','web',1572095829964),
+	(73,1,'127.0.0.1','web',1572095829964),
+	(74,1,'127.0.0.1','web',1572095894020),
+	(75,1,'127.0.0.1','web',1572095906004),
+	(76,1,'127.0.0.1','web',1572095906004),
+	(77,1,'127.0.0.1','web',1572095906004),
+	(78,1,'127.0.0.1','web',1572313927266),
+	(79,1,'127.0.0.1','web',1572487246897),
+	(80,1,'127.0.0.1','web',1572748378825),
+	(81,1,'127.0.0.1','web',1572748378825);
 
 /*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -430,16 +303,15 @@ DROP TABLE IF EXISTS `sys_advertising`;
 
 CREATE TABLE `sys_advertising` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '标题',
+  `description` varchar(255) DEFAULT NULL COMMENT '描述',
   `start_at` bigint(13) DEFAULT NULL COMMENT '投放开始Unix时间戳毫秒单位',
   `end_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
   `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
-  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 0内部网页 1外部网页',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 1 内部网页 2外部网页',
   `client` varchar(40) NOT NULL DEFAULT '' COMMENT '客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ',
   `img` varchar(255) NOT NULL COMMENT '图片链接',
   `link` varchar(255) DEFAULT NULL COMMENT '跳转地址链接',
-  `effects` varchar(20) DEFAULT NULL COMMENT '特效',
   `category_id` bigint(20) NOT NULL COMMENT '广告分类 投放位置',
   `status` tinyint(1) DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`)
@@ -448,14 +320,14 @@ CREATE TABLE `sys_advertising` (
 LOCK TABLES `sys_advertising` WRITE;
 /*!40000 ALTER TABLE `sys_advertising` DISABLE KEYS */;
 
-INSERT INTO `sys_advertising` (`id`, `lang`, `title`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `effects`, `category_id`, `status`)
+INSERT INTO `sys_advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `category_id`, `status`)
 VALUES
-	(1,'cn','banner1 cn',0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide','',1,1),
-	(2,'cn','banner2 cn',0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide','',1,1),
-	(3,'cn','ad1 cn',0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide','',2,1),
-	(4,'en','banner1 en',0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide','',1,1),
-	(5,'en','banner2 en',0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide','',1,1),
-	(6,'en','ad1 en',0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide','',2,1);
+	(1,'banner1 cn 3333',NULL,1570521600000,1571817600000,0,1,'web,wechat,android,ios','upload/advertising/652c09da07addae0022f4921d647a102.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
+	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
+	(3,'ad1 cn',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,1),
+	(4,'banner1 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
+	(5,'banner2 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
+	(6,'ad1 en',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,-1);
 
 /*!40000 ALTER TABLE `sys_advertising` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -468,66 +340,24 @@ DROP TABLE IF EXISTS `sys_advertising_category`;
 
 CREATE TABLE `sys_advertising_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
-  `name` varchar(80) NOT NULL DEFAULT '' COMMENT '分类名称',
+  `name` varchar(40) DEFAULT NULL COMMENT '唯一标识',
+  `title` varchar(80) NOT NULL DEFAULT '' COMMENT '分类名称',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
 
 LOCK TABLES `sys_advertising_category` WRITE;
 /*!40000 ALTER TABLE `sys_advertising_category` DISABLE KEYS */;
 
-INSERT INTO `sys_advertising_category` (`id`, `lang`, `name`, `status`)
+INSERT INTO `sys_advertising_category` (`id`, `name`, `title`, `status`)
 VALUES
-	(1,'en','主页顶部banner',1),
-	(2,'en','主页底部滚动广告',1);
+	(1,'index_banner','主页顶部banner',1),
+	(2,'index_bottom','主页底部滚动广告',1),
+	(3,'index_banner2','首页第二横幅',1),
+	(4,NULL,'ABC',0);
 
 /*!40000 ALTER TABLE `sys_advertising_category` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table sys_advertising_log
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_advertising_log`;
-
-CREATE TABLE `sys_advertising_log` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `ad_id` bigint(20) NOT NULL COMMENT '广告的id',
-  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `uid` bigint(20) DEFAULT NULL COMMENT '点击用户的 id（如果有的话）',
-  `ip` varchar(20) DEFAULT NULL COMMENT '点击客户端IP',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='广告点击记录';
-
-
-
-# Dump of table sys_api_vsn
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_api_vsn`;
-
-CREATE TABLE `sys_api_vsn` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `master_vsn` char(8) DEFAULT NULL COMMENT '当前版本格式如 X.Y.Z',
-  `sub_vsn` varchar(400) DEFAULT NULL COMMENT '["X.Y.Z"]',
-  `pubkeyser` varchar(400) DEFAULT NULL COMMENT '公钥',
-  `prikeyser` varchar(1200) DEFAULT NULL COMMENT '私钥',
-  `remark` varchar(400) DEFAULT NULL COMMENT '版本说明',
-  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `status` tinyint(1) DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_vsn` (`master_vsn`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-
-LOCK TABLES `sys_api_vsn` WRITE;
-/*!40000 ALTER TABLE `sys_api_vsn` DISABLE KEYS */;
-
-INSERT INTO `sys_api_vsn` (`id`, `master_vsn`, `sub_vsn`, `pubkeyser`, `prikeyser`, `remark`, `created_at`, `status`)
-VALUES
-	(1,'1.0.0','[\'1.0.0\']','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8C32dVl6/URiWZbpW1bc2aJma\nGgEghXeR6//bmQhnLOp1FSjPjaYA9s+ru38wnp1Y0ZhcCfk33AoF4qZ4xRuwuVv5\n3T15mM3IUgFx/34DUoaFGr7jz+mGk4AubfNpcnGThY3xJmzag68tGdBY9jYxL7o9\nHAPaFrfGcBf7SFQJmwIDAQAB\n-----END PUBLIC KEY-----\n','-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQC8C32dVl6/URiWZbpW1bc2aJmaGgEghXeR6//bmQhnLOp1FSjP\njaYA9s+ru38wnp1Y0ZhcCfk33AoF4qZ4xRuwuVv53T15mM3IUgFx/34DUoaFGr7j\nz+mGk4AubfNpcnGThY3xJmzag68tGdBY9jYxL7o9HAPaFrfGcBf7SFQJmwIDAQAB\nAoGBAIl7cTSWUCFaPjq/V3RjPldGNH8pYgeP7TK/s8mu4ijk+untNXBB5Muxp3Ws\nWLqITQwB+X3ZQN9pPd69re6AVdQm+eYHxOtWsY6GljPop1WcVIus1lg1TEd+QgzL\nqBZR8fcIqP/e8OIo47X1DywVo2KTGbIoAzDwx6QynfV9CIghAkEA51hBJaDn5jdh\nsB8IM+uOwaKN6ssIIWM5sFMFoidb+uBD8twGNLep6+D1wy8kBmGDgl6eIfktNOeQ\niToLfGzIywJBANAV5HHGtQlzguO/Gv1gVqinhyF+r2A3z3p8nfstd8h88bfZPkPv\nSA9MPimRYXLcPMKNIvuSvvDdv9Mef5vJOHECQQDZtkFg0wNJsPa60wlaKyTmbz7V\nJgrZuNJycD8N8bJq7yCi7ZLdi7ZaaBOAgt2JL72eM8LnP+LeNcncioaCqrFvAkB3\n7EYONGDdo47Jxre9UypeZL6CVUqpf0C57Nv3iIrCJw//ztoNuPekqWIh/sFUuwzh\nawnARyB4HLSS7b7Jf7xhAkEAnfnOQ6wn63nmMsZPG3T8SIp8jikZDHmaqNSwvmb/\nG4ODaDmJ09wF2Wo6a6LjJTlT2t61AT5/w4DM9rIaCFsrPA==\n-----END RSA PRIVATE KEY-----\n','1',1,1);
-
-/*!40000 ALTER TABLE `sys_api_vsn` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -4074,7 +3904,7 @@ DROP TABLE IF EXISTS `sys_article`;
 
 CREATE TABLE `sys_article` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(20) DEFAULT '' COMMENT '文章分类',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '文章分类ID',
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '发布用户',
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '文章标题',
@@ -4083,17 +3913,26 @@ CREATE TABLE `sys_article` (
   `external_url` varchar(255) NOT NULL DEFAULT '' COMMENT '外链地址',
   `thumb` varchar(255) NOT NULL DEFAULT '' COMMENT '缩略图',
   `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO关键词',
-  `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO描述',
-  `publish_date` date NOT NULL COMMENT '发布日期',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '文章摘要 SEO描述',
+  `publish_date` bigint(13) NOT NULL COMMENT '发布日期Unix时间戳毫秒单位',
   `hits` bigint(20) DEFAULT '0' COMMENT '点击数量',
-  `content` text COMMENT '文章内容（如果是产品的话，为json格式数据）',
+  `content` longtext COMMENT '文章内容（如果是产品的话，为json格式数据）',
   `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
   `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
+LOCK TABLES `sys_article` WRITE;
+/*!40000 ALTER TABLE `sys_article` DISABLE KEYS */;
+
+INSERT INTO `sys_article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`, `source`, `external_url`, `thumb`, `keyword`, `description`, `publish_date`, `hits`, `content`, `ip`, `updated_at`, `created_at`, `status`)
+VALUES
+	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','','','abcd','aaa',1572451200000,123,'','',0,1572006527197,1);
+
+/*!40000 ALTER TABLE `sys_article` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table sys_article_category
@@ -4104,9 +3943,22 @@ DROP TABLE IF EXISTS `sys_article_category`;
 CREATE TABLE `sys_article_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
+  `title` varchar(64) DEFAULT NULL COMMENT '分类名称',
+  `name` varchar(40) DEFAULT NULL COMMENT '分类唯一标示',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
 
+LOCK TABLES `sys_article_category` WRITE;
+/*!40000 ALTER TABLE `sys_article_category` DISABLE KEYS */;
+
+INSERT INTO `sys_article_category` (`id`, `lang`, `title`, `name`)
+VALUES
+	(1,'cn','政策法规','regulation'),
+	(2,'cn','新闻活动','news');
+
+/*!40000 ALTER TABLE `sys_article_category` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table sys_blacklist
@@ -4145,38 +3997,6 @@ VALUES
 	(13,1,'mobile','11111','33333',1559614102,0,65);
 
 /*!40000 ALTER TABLE `sys_blacklist` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table sys_client_vsn
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_client_vsn`;
-
-CREATE TABLE `sys_client_vsn` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `client` varchar(20) DEFAULT '' COMMENT '客户端：web wechat android ios mobile',
-  `vsn` char(8) DEFAULT NULL COMMENT '客户端版本，格式如 X.Y.Z ',
-  `signkey` char(32) DEFAULT NULL COMMENT '签名key',
-  `pubkeycli` varchar(400) DEFAULT NULL COMMENT '客服端公钥',
-  `remark` varchar(400) DEFAULT NULL COMMENT '版本说明',
-  `apk_url` varchar(255) DEFAULT NULL COMMENT 'apk包下载地址',
-  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `status` tinyint(1) DEFAULT '0' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_cli_vsn` (`client`,`vsn`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
-
-LOCK TABLES `sys_client_vsn` WRITE;
-/*!40000 ALTER TABLE `sys_client_vsn` DISABLE KEYS */;
-
-INSERT INTO `sys_client_vsn` (`id`, `client`, `vsn`, `signkey`, `pubkeycli`, `remark`, `apk_url`, `created_at`, `status`)
-VALUES
-	(1,'iOS','1.0.0','nymiPvtx3vkfevXUbdJnBNuU97EtBKQp','',NULL,NULL,1554091828,1),
-	(2,'Android','1.0.0','nymiPvtx3vkfevXUbdJnBNuU97EtBKQp',NULL,NULL,NULL,1554091828,1),
-	(3,'async_task','1.0.0',NULL,'-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKjTvJ/6uaW4oCGCt4aMGhrfJz\nSv/tBwSzefBmVVVbfJSZn/GRuHdqfrvAenylig4frppU3h+pboDy6m3VDREv2W2/\nQCjFmGdsKs+hRYpTfoH7JPilQ2iKQAtpBGPZWcpbOtlmzOCQAOIy/h5v4q8EpzWA\n8akOgUPMGbiWDdLs2QIDAQAB\n-----END PUBLIC KEY-----\n',NULL,NULL,1554091828,1);
-
-/*!40000 ALTER TABLE `sys_client_vsn` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -4235,7 +4055,7 @@ INSERT INTO `sys_config` (`tab`, `key`, `value`, `title`, `sort`, `remark`, `sys
 VALUES
 	('sys','login_pwd_rsa_encrypt','1','登录密码使用RSA算法加密',1,'系统登录开启RSA加密',1,1,0,0),
 	('sys','sys_login_rsa_priv_key','-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQDxKL1RrEcd4szM8Df4HqsJdOvKrSQO7BBvBVsvXKfpWrM+8XGL\n1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr1dWoBVabqDFZgZ2awB7iTk4k\n/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO/xtHnso3I6penSvRawIDAQAB\nAoGAQKctalIHlumRAnh8aNa///8KoAGfIykCluEWuzHaCmO4nm1YhaaUyQadiW91\na6iM0YgL4e+7MhskaXnrurJKRAweJP49OHz2JbLwyE7N7FWlY++1RVwWE32645CT\nt8hkAyFBBBR0J1by8HdGnPa69sJ6wwBYoh3SeCM8R92cfsECQQD+TbbYV/lw9KQD\nju+18bWpAyQeMBdx11OfgN3fBkRwrl9M0DHzwFKwDY7zFxPuYKD5I39wNeSbYYHJ\n9my6/JybAkEA8sST9CmwLgCoRwciUdxH4hOW8uAdGC9T2VYSo/BbO/geF09c+Ggx\nSoyEFIoAUMDC53Yj4dXgks0gnwWygRyjcQJBAN/P59+qNbgLJ5qWHzTDYX05bX1A\nGDIyL7/Ou/bAXlXJscg55+y+VEfr9ubNZdZDpwj+C/fnBqcV/xOP1QwQrYcCQQC+\ncO0rxaQ6gjN//J20n9wYAowQnTTVqxLY1Ies6Tl40swwNwbUq0+3joFyZ0uWDZEX\n5/qAB7qzDo1/kgWU+TVRAkAwAdK+p5ippKmp2efsdqRjb/71n+EX9adpo/Wh5Ece\nVp+MQkKMwNsQCkEthc/jEv4eG/urmWkLxaISAJRNegN2\n-----END RSA PRIVATE KEY-----','登录RSA算法加密私钥',3,'',1,1,0,0),
-	('sys','site_name','py_admin','前端站点名称',20,'',1,1,0,0),
+	('sys','site_name','py_admin','前端站点名称',20,'ddd3',1,1,0,0),
 	('sys','sys_login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----','登录RSA算法加密公钥',2,'系统登录RSA加密公钥',1,1,0,0),
 	('sys','system.name','py_admin','系统名称',20,'',1,1,0,0),
 	('sys','system.version','1.0.1','软件版本',20,'',1,1,0,0),
@@ -4252,38 +4072,6 @@ VALUES
 	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,0);
 
 /*!40000 ALTER TABLE `sys_config` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table sys_contract
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_contract`;
-
-CREATE TABLE `sys_contract` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(80) DEFAULT NULL,
-  `content` text,
-  `type` tinyint(4) DEFAULT NULL COMMENT '类型（1contract，2agreement，3privacy，4account_fee）',
-  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
-  `status` tinyint(1) DEFAULT NULL,
-  `operate_id` bigint(20) DEFAULT NULL,
-  `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='合同模板管理';
-
-LOCK TABLES `sys_contract` WRITE;
-/*!40000 ALTER TABLE `sys_contract` DISABLE KEYS */;
-
-INSERT INTO `sys_contract` (`id`, `name`, `content`, `type`, `created_at`, `updated_at`, `status`, `operate_id`, `lang`)
-VALUES
-	(1,'agreement-detail','<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">Terms and conditions</span></span><br /> <br /> <br /> <span style=\"font-size: 13px;\"><strong><span style=\"color: #000000;\">1:Definitions</span></strong></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Account\" means the loan account in respect of this Agreement;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> &ldquo;Lending Cash\", \"we\", \"us\" or \"our\" means Lending Cash Global Lending Inc;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Borrower\", \"you\" or \"your\" means the person described as the Borrower in our application;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Business days\" means any days other than a Saturday, Sunday or a public holiday in the Philipines;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Credit limit\" means the amount of the loan that is available for use by you in terms of this Agreement;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> \"Current account\" means an active account into which deposits to and withdrawals from can be made by way of bank,ATM or other methods we provided;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Loan\" means the amount we have agreed to lend you in terms of this Agreement;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Minimum repayment\" means the amount reflected on your statement;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Natural person\" means a private individual, and for purposes of this definition, a trust with less than three trustees, all of whom are private individuals;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Payment date\" means the due date for payment of all amounts due and payable as shown on your account;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Repayment\"means a payment made by you to us to pay off the loan;</span></span><br /> <br /> <span style=\"color: #000000;\"><span style=\"font-size: 13px;\"><strong>2:Provision of financial information</strong></span></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> At our request, you will be required to provide us with your latest financial statements, contingent liability details and any other reasonable information relating to you and/or your financial affairs. This information may also be required from any surety for this Agreement.</span></span><br /> <br /> <strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">3:Payments</span></span></strong><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> If you keep to the terms of this agreement you\'ll make xx daily payments of PHPxx (as detailed in your own agreement).Please note that the day we send the funds may be different to the day the funds arrive in your account. You must then make payments on the due date,if you don\'t make payments in full and on time,you\'ll pay more interest overall. You\'ll normally have to make an additional payment at the end of the term to cover the increased cost (although you can pay it at any time and will pay less interest overall if you pay it sooner).</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>4:Interest and Service fee</strong></span></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> The interest rate on your loan is fixed. We charge interest on the outstanding balance from the day we send the loan funds to you.We calculate interest daily and add it to your account each day on your due repayment date. Normally,if you don\'t make your payments in full and on time, you won\'t reduce the balance as quickly (and it may even increase) which means you\'ll pay more interest overall.</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">Service fee will be charged and deducted from principal amount UPON DISBURSEMENT.The fee is paid to Lending Cash for managing borrower\'s account,processing the application and so on.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>5.Personally identifiable information</strong></span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:By registering for an account with us, you are accepting the terms of these Terms and Conditions and consenting to our collection, use, disclosure, retention, and protection of your personal information as described herein;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> b:Your name, address, phone number, birth date, email address, credit card, or other financial account information pertaining to any potential Loan Offer or Loan Contract;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> c:Other information that you provide to us but that does not identify you personally, such as records of your visits and information that you submit when using the website.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>6. You as a</strong></span></span> <span style=\"font-size: 13px;\"><strong><span style=\"color: #000000;\">borrower</span></strong></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> You agree to the processes for becoming a borrower as fully described here:</span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:You understand and agree that any loan you apply for shall be funded by Lending Cash global lending inc;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:When assessing your application for a Loan, the credit score provided by the third party shall be taken from information that you provide, and, in this connection, is only a guide that is calculated solely from information provided for by you, and you authorize and instruct the Company to obtain, monitor, and compile your credit information in order to provide the Credit Score for your loan application to you and for its publishing on the Site;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> c:This Credit Score is for informational purposes only, and is intended to provide helpful and informative material on the subjects addressed. The Company does not provide legal or accounting advice and any information you obtain through this Service should not be perceived as such. The Company does not control your credit score, which is a statistical analysis of information contained in your file, and we cannot change that information for you even upon your request;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> d:You agree that the Credit Score is provided for informational purposes only and is intended to provide helpful information concerning the subjects that it addresses. You agree that by processing your request for the Credit Rating as provided herein, the Company and its affiliates are not acting as a credit reporting agency or a credit repair organization and are not offering to sell, provide or perform any service to you for the express or implied purpose of either improving your credit record, credit history or credit rating or providing advice or assistance to you with regard to improving your credit record, credit history or credit rating;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> e:The Company does not and will not make loans or credit decisions based on the information delivered to you through this Service. Since everyone\'s financial circumstances are different and can change daily, rates and terms offered by the Company will be determined by obtaining a new Credit Score at the time of application. In addition, currently held rates and terms cannot and will not be adjusted based on information displayed within this Service;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> f:In the course of generating and managing your Loan Contracts, and operating Your Account and the Site, we may also send to lenders and their assignees, or to borrowers, as the case may be, certain transactional data (for example, Site Identification Number, name, loan amount and repayment details) but not your personal address or payment details;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> g:We may at any time, without notice to you, set off any liability owed to us or to our members by you, including (without limitation) in relation to any Account in your name or which we believe to be under your control, against any funds held in another Account in your name or which we believe to be under your control.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>7:Use of service</strong></span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> By continuing accessing our Service means You represent and warrant to Us that:</span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:You will not defame, stalk, bully, abuse, harass, threaten, impersonate, or intimidate people or entities.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:You will not do illegal or unauthorized action through the Service. You agree to comply with all laws, rules, and regulations (for example, central, local, and autonomic) applicable to the use of the Service and Content, including but limited to, intellectual property laws, banking laws, and other prevailing laws in the Philippines.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> c:You will not change, modify, adapt, or alter any Service or change, modify, or alter another website so as to falsely imply that it is associated with Us.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> d:You will not access Our private API by means other than those We permitted.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> e:You will not create or submit unwanted comments, likes, or other forms of commercial or harassing communications (&ldquo;Spam&rdquo;) via the Service.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> f:You will not use Our domain names or web URLs in any username or in any other place without Our express consent.</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> g:You will not interfere or disrupt the Service or servers or networks connected to the Service, through different means including, but not limited to, transmission of worms, viruses, spyware, malware, or any other code that is destructive or disruptive in nature. Furthermore, you may not inject content or code or otherwise alter or interfere in any way the Site or other page that is rendered or displayed in a User&rsquo;s browser or device.</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> h:You will not attempt to restrict another User from using or enjoying the Service. Furthermore, you must not encourage other Users or facilitate violations of these Terms of Use or any other of the Company&rsquo;s terms.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><strong><span style=\"color: #000000;\">8:Termination of this agreement by your</span></strong></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> You may terminate this Agreement, and settle the amount owing to us at any time with or without advance notice to us. The amount required to settle this Agreement will be the total of:</span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:The unpaid balance of the principal debt;</span></span> <br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:The unpaid interest charges and all other fees and charges payable by you up until the settlement date.</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> c:If you would like a statement of the settlement in respect of the amount owing on your account, we will provide such statement, in writing, within 5 (five) business days of your request to do so.</span></span><br /> <br /> <span style=\"color: #000000;\"><strong><span style=\"font-size: 13px;\">9:Default</span></strong></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> Default in terms of this Agreement will occur if:</span></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> a:You fail to make repayment, in full, on or before the payment date, of any amount(s) owing by you;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:You breach this Agreement, or any other Agreement between us, and you fail to remedy the breach within the time period specified in our written notice to you;</span></span> <br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> c:If you are in default and we withdraw your rights in terms of this Agreement and you dispute such withdrawal, you must continue to pay the amounts owing to us. The acceptance of such payments by us will not prejudice our claim of withdrawal or any other claim which we may have;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> d:In the event of default, we may, at our election and without prejudice to any other remedy which we may have in terms of this Agreement or otherwise, recover from you payment of all amounts owing under this Agreement (whether then owing or not) by adhering to the default procedure described above.</span></span></p>\n<p><strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">10:Governing Law</span></span></strong></p>\n<p><span style=\"color: #000000;\"><span style=\"font-size: 13px;\">This Terms of Use shall be governed and interpreted in accordance to the prevailing Philippines laws and regulations by using English as the prevailing language</span><strong><span style=\"font-size: 5px;\">.</span></strong></span></p>\n<p><strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">11:Unauthorized activity</span></span></strong></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">Our Service may be used and accessed for lawful purposes only. You agree that you will not do any of the following while using or accessing the service:</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">a:Attempt to access or search the Service or download Content from the Service through the use of any engine, software, tool, agent, device or mechanism (including spiders, robots, crawlers, data mining tools or the like) other than the software and/or search agents provided by us or other generally available third party web browsers;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">b:Access, tamper with, or use non-public areas of the Service, our computer systems, or the technical delivery systems of our providers;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">c:Gather and use information, such as other users&rsquo; names, real names, email addresses, available through the Service to transmit any unsolicited advertising, junk mail, spam or other form of solicitation; (iv) use the Service for any commercial purpose or for the benefit of any third party in any manner not by these Terms;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">d:Violate any applicable law or regulation;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">e:encourage or enable any other individual to do any of the foregoing. We reserve the right to investigate and prosecute violations of any of the above and/or involve and cooperate with law enforcement authorities in prosecuting users who violate these Terms of Use.</span></span></p>\n<p><strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">12:Entire Agreement</span></span></strong></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">This Terms of Use (including the Service Agreement for the Registered User only) constitutes and contains the entire agreement and understanding between the User and Us and supersedes any and all prior understandings, agreements, notification, publications, advertisements and arrangements between the User and Us with respect to the subject matter hereof.</span></span></p>\n<p>&nbsp;</p>',2,1557821413,1558663996,1,1,'en'),
-	(2,'Privacy policy','<div class=\"policy\">\n<div class=\"name\">Fast Peso Privacy Policy</div>\n<div class=\"name\">Our policy on collecting information and sharing of customer information, and explaining the process.</div>\n<div class=\"name\">1. What kind of information needs to be collected?</div>\n<div>&bull; Borrower information. When customer registration is required customer identity information (such as SSS), job information, the nearest person who can be contacted in emergency situations and others.</div>\n<div>&bull; Communication information. Call history, sms, contacts and more.</div>\n<div>&bull; Sensitive information. IMEI, GPS, ISP, IP, mobile id, customer\'s mobile number and others.</div>\n<div>&bull; Other information. Accident application usage, catalog of customer information needed to install apps and more.</div>\n<div class=\"name\">2. How to use customer information?</div>\n<div>&bull; Borrower information. Customer will fill in some information that must be completed, the information is required information.</div>\n<div>&bull; Communication information. Based on the consent of the customer, the data reported to the server, the information will be used for anti-fraud services.</div>\n<div>&bull; Facility information. Based on the consent of the customer, the data reported to the server, the information will be used for anti-fraud services.</div>\n<div>&bull; Other information. Based on the permission of the customer, the data reported to the server, the information will be used for anti-fraud services, as well as the program or other problem detection.</div>\n<div class=\"name\">3. How Fast Peso manages your personal information The above-mentioned information we collect about you will be stored electronically and we manage for the following purposes:</div>\n<div>&bull; To check that your submission is using your actual information, not someone else who uses your identity.</div>\n<div>&bull; To determine your eligibility to obtain a loan under applicable terms.</div>\n<div>&bull; To communicate with you about your account, as well as to make identification information when you call or visit our mobile app, and provide updates when changes are made to our services.</div>\n<div>&bull; To process the loan application and secure the transaction process safely to you if your loan is approved.</div>\n<div>&bull; To rate your loan application history and confirm your job data.</div>\n<div>&bull; For the process of eligibility analysis of your loan and to estimate the risk of lending.</div>\n<div>&bull; For the development of our mobile apps that always meet the needs of our clients in the future.</div>\n<div>&bull; To settle our obligations arising from contracts signed between you and us.</div>\n<div>&bull; To facilitate financial institutions such as banks, financial institutions or other third parties authorized to conduct checks are limited to your status in the database or on our services.</div>\n<div class=\"name\">4. How Fast Peso protects Client Personal Information</div>\n<div>Fast Peso is committed to protecting your information with the latest technology.</div>\n<div>We will stick to the applicable provisions to ensure your information is secure and maintained, and restrict access to protect you from any kind of fraud.</div>\n<div>All types of payment transactions as well as inputting personal information on the registration page will be encrypted using 128-bit secure socket layer (SSL) technology.</div>\n<div>When we provide a code that allows you to access our mobile apps, you are responsible for protecting your account\'s access code, including your user ID and password, so that others may not access your account.</div>\n<div>For your information, transmitting information over the internet network is not yet completely safe.</div>\n<div>While we have done our best to protect your Personal Information data, we can not guarantee the security of your data transmitted through our application, the process of transmitting that information is your responsibility.</div>\n<div>When we have received your Personal Information data, we will use strict procedures and security features in an effort to prevent unauthenticated access. Fast Peso uses computer protection such as firewalls and data encryption, and authorizes access to personal information only to our employees who need it to deliver their work.</div>\n<div>Our data is encrypted before, during and after submission, for protection purposes of your Personal Information data.</div>\n<div>Only authorized employees can access the data and they must pass through some form of identity verification before accessing any information.</div>\n<div>Fast Peso is fully compliant and complies with applicable laws and regulations concerning Data Protection in Philippines.</div>\n<div class=\"name\">5. How Fast Peso shares your Personal Information</div>\n<div>From time to time, Fast Peso reserves the right to collect the following information and data: Personal data relating to the owner, principal funder, partner, director, employee or proxy, employee, Borrower, payer, party paid, guarantor, other insurer, other parties related to the Borrower (collectively, all parties mentioned are \"Related Parties\"). Personal data may include name, identity, date of birth, contract details and other relevant personal information; and Information and data obtained from general activities related to Fast Peso.</div>\n<div>Such personal data may include signatures, answers to questions devoted to security verification, emergency contacts or other contact details.</div>\n<div>Personal Data from Related Parties may be processed, stored, transferred, or disclosed in accordance with applicable Law.</div>\n<div>Collective Agreement The Borrower will be deemed to approve (or obtain the approval of the Related Party) on the collection, use, and disclosure of the Related Party\'s Related data specified above by the Borrower continuously, use by Fast Peso services and / or approval of the terms and conditions stipulated.</div>\n<div>All parties, including the Fund, guarantor or institution providing services to Fast Peso, consent to the collection, use, and disclosure of personal data by a person on an ongoing basis, use by Fast Peso services and / or approval of the terms and conditions stipulated.</div>\n<div>Purpose of Use and Disclosure of Information Information and data may be used and disclosed, including places within and outside the Philippines for the following purposes (collectively \"Allowed Objectives\"): To manage the accuracy of \"Know Your Borrower\" information;and To verify the identity or representatives who contacted Fast Peso, or may be contacted by Fast Peso, and to execute or respond to requests, questions or instructions from verified representatives or other individuals following current security procedures.</div>\n<div>Personal data may be disclosed, when permitted by applicable Law, to persons or entities (inside or outside of Philippines) below (please note that this is not an exhaustive list) for Allowed Objectives or for processes that are consistent with the Goals that are permitted in the needs : Any Agent, Contractor, or third party service providers providing banking services, remittances, administration, correspondence, telecommunications, telephone centers, business processes, travel, visas, knowledge management, human resources, data processing, information technology, computers, payments, debt collection, check credit references, or other security or services to Fast Peso in relation to the business operations ofFast Peso;</div>\n<div>Individuals or entities that are part of Fast Peso and under a confidentiality obligation in the disclosure of the Fast Peso entity even if only at the stage required to fulfill the related Licensing Purposes; Individuals or entities in which CashMe has a duty or are obliged to mengengapkan implementation of legal proceedings, or legal obligations at home and abroad, including disclosure to the courts, trial and / or legal, regulatory, tax and government authorities; Any party or candidate transfer from Fast Peso or transfer from Fast Peso in the Borrower\'s relationship, or all or part of Fast Peso\'s assets or business; or parties that provide or submit to provide a guarantee or guarantee of a third party to guarantee or maintain the Borrower\'s obligations.</div>\n<div class=\"name\">6. Age</div>\n<div>To be able to use our services, you must be 18-50 years old. If you do not qualify for usua, then you are not allowed or allowed to use our services.</div>\n<div class=\"name\">7. Changes to the Privacy Policy</div>\n<div>We will notify you via email regarding any kind of change with respect to the Privacy Policy by providing a link to review the new Privacy Policy.</div>\n<div class=\"name\">8. Merger</div>\n<div>To avoid any kind of prejudice and suspicion, this Privacy Policy must be equated with the usage requirements found in our mobile app.If you agree to use our loan service, this Privacy Policy must be consolidated and an integral part of the Loan Agreement of Fast Peso.</div>\n<div>If there are any questions regarding this privacy policy, you may contact us via support@Fast Peso.ph</div>\n<div>&copy;Copyright &copy;2018 All rights reserved by Fast Peso</div>\n</div>',3,1557821478,1557821478,1,0,'en'),
-	(3,'贷款协议','<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">Terms and conditions</span></span><br /> <br /> <br /> <span style=\"font-size: 13px;\"><strong><span style=\"color: #000000;\">1:Definitions</span></strong></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Account\" means the loan account in respect of this Agreement;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> &ldquo;Lending Cash\", \"we\", \"us\" or \"our\" means Lending Cash Global Lending Inc;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Borrower\", \"you\" or \"your\" means the person described as the Borrower in our application;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Business days\" means any days other than a Saturday, Sunday or a public holiday in the Philipines;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Credit limit\" means the amount of the loan that is available for use by you in terms of this Agreement;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> \"Current account\" means an active account into which deposits to and withdrawals from can be made by way of bank,ATM or other methods we provided;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Loan\" means the amount we have agreed to lend you in terms of this Agreement;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Minimum repayment\" means the amount reflected on your statement;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Natural person\" means a private individual, and for purposes of this definition, a trust with less than three trustees, all of whom are private individuals;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Payment date\" means the due date for payment of all amounts due and payable as shown on your account;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> \"Repayment\"means a payment made by you to us to pay off the loan;</span></span><br /> <br /> <span style=\"color: #000000;\"><span style=\"font-size: 13px;\"><strong>2:Provision of financial information</strong></span></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> At our request, you will be required to provide us with your latest financial statements, contingent liability details and any other reasonable information relating to you and/or your financial affairs. This information may also be required from any surety for this Agreement.</span></span><br /> <br /> <strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">3:Payments</span></span></strong><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> If you keep to the terms of this agreement you\'ll make xx daily payments of PHPxx (as detailed in your own agreement).Please note that the day we send the funds may be different to the day the funds arrive in your account. You must then make payments on the due date,if you don\'t make payments in full and on time,you\'ll pay more interest overall. You\'ll normally have to make an additional payment at the end of the term to cover the increased cost (although you can pay it at any time and will pay less interest overall if you pay it sooner).</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>4:Interest and Service fee</strong></span></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> The interest rate on your loan is fixed. We charge interest on the outstanding balance from the day we send the loan funds to you.We calculate interest daily and add it to your account each day on your due repayment date. Normally,if you don\'t make your payments in full and on time, you won\'t reduce the balance as quickly (and it may even increase) which means you\'ll pay more interest overall.</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">Service fee will be charged and deducted from principal amount UPON DISBURSEMENT.The fee is paid to Lending Cash for managing borrower\'s account,processing the application and so on.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>5.Personally identifiable information</strong></span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:By registering for an account with us, you are accepting the terms of these Terms and Conditions and consenting to our collection, use, disclosure, retention, and protection of your personal information as described herein;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> b:Your name, address, phone number, birth date, email address, credit card, or other financial account information pertaining to any potential Loan Offer or Loan Contract;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> c:Other information that you provide to us but that does not identify you personally, such as records of your visits and information that you submit when using the website.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>6. You as a</strong></span></span> <span style=\"font-size: 13px;\"><strong><span style=\"color: #000000;\">borrower</span></strong></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> You agree to the processes for becoming a borrower as fully described here:</span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:You understand and agree that any loan you apply for shall be funded by Lending Cash global lending inc;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:When assessing your application for a Loan, the credit score provided by the third party shall be taken from information that you provide, and, in this connection, is only a guide that is calculated solely from information provided for by you, and you authorize and instruct the Company to obtain, monitor, and compile your credit information in order to provide the Credit Score for your loan application to you and for its publishing on the Site;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> c:This Credit Score is for informational purposes only, and is intended to provide helpful and informative material on the subjects addressed. The Company does not provide legal or accounting advice and any information you obtain through this Service should not be perceived as such. The Company does not control your credit score, which is a statistical analysis of information contained in your file, and we cannot change that information for you even upon your request;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> d:You agree that the Credit Score is provided for informational purposes only and is intended to provide helpful information concerning the subjects that it addresses. You agree that by processing your request for the Credit Rating as provided herein, the Company and its affiliates are not acting as a credit reporting agency or a credit repair organization and are not offering to sell, provide or perform any service to you for the express or implied purpose of either improving your credit record, credit history or credit rating or providing advice or assistance to you with regard to improving your credit record, credit history or credit rating;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> e:The Company does not and will not make loans or credit decisions based on the information delivered to you through this Service. Since everyone\'s financial circumstances are different and can change daily, rates and terms offered by the Company will be determined by obtaining a new Credit Score at the time of application. In addition, currently held rates and terms cannot and will not be adjusted based on information displayed within this Service;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> f:In the course of generating and managing your Loan Contracts, and operating Your Account and the Site, we may also send to lenders and their assignees, or to borrowers, as the case may be, certain transactional data (for example, Site Identification Number, name, loan amount and repayment details) but not your personal address or payment details;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> g:We may at any time, without notice to you, set off any liability owed to us or to our members by you, including (without limitation) in relation to any Account in your name or which we believe to be under your control, against any funds held in another Account in your name or which we believe to be under your control.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><span style=\"color: #000000;\"><strong>7:Use of service</strong></span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> By continuing accessing our Service means You represent and warrant to Us that:</span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:You will not defame, stalk, bully, abuse, harass, threaten, impersonate, or intimidate people or entities.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:You will not do illegal or unauthorized action through the Service. You agree to comply with all laws, rules, and regulations (for example, central, local, and autonomic) applicable to the use of the Service and Content, including but limited to, intellectual property laws, banking laws, and other prevailing laws in the Philippines.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> c:You will not change, modify, adapt, or alter any Service or change, modify, or alter another website so as to falsely imply that it is associated with Us.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> d:You will not access Our private API by means other than those We permitted.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> e:You will not create or submit unwanted comments, likes, or other forms of commercial or harassing communications (&ldquo;Spam&rdquo;) via the Service.</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> f:You will not use Our domain names or web URLs in any username or in any other place without Our express consent.</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> g:You will not interfere or disrupt the Service or servers or networks connected to the Service, through different means including, but not limited to, transmission of worms, viruses, spyware, malware, or any other code that is destructive or disruptive in nature. Furthermore, you may not inject content or code or otherwise alter or interfere in any way the Site or other page that is rendered or displayed in a User&rsquo;s browser or device.</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> h:You will not attempt to restrict another User from using or enjoying the Service. Furthermore, you must not encourage other Users or facilitate violations of these Terms of Use or any other of the Company&rsquo;s terms.</span></span><br /> <br /> <span style=\"font-size: 13px;\"><strong><span style=\"color: #000000;\">8:Termination of this agreement by your</span></strong></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> You may terminate this Agreement, and settle the amount owing to us at any time with or without advance notice to us. The amount required to settle this Agreement will be the total of:</span></span><br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> a:The unpaid balance of the principal debt;</span></span> <br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:The unpaid interest charges and all other fees and charges payable by you up until the settlement date.</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> c:If you would like a statement of the settlement in respect of the amount owing on your account, we will provide such statement, in writing, within 5 (five) business days of your request to do so.</span></span><br /> <br /> <span style=\"color: #000000;\"><strong><span style=\"font-size: 13px;\">9:Default</span></strong></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> Default in terms of this Agreement will occur if:</span></span><br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> a:You fail to make repayment, in full, on or before the payment date, of any amount(s) owing by you;</span></span><br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> b:You breach this Agreement, or any other Agreement between us, and you fail to remedy the breach within the time period specified in our written notice to you;</span></span> <br /> <br /><span style=\"color: #000000;\"><span style=\"font-size: 13px;\"> c:If you are in default and we withdraw your rights in terms of this Agreement and you dispute such withdrawal, you must continue to pay the amounts owing to us. The acceptance of such payments by us will not prejudice our claim of withdrawal or any other claim which we may have;</span></span><br /> <br /><span style=\"font-size: 13px;\"><span style=\"color: #000000;\"> d:In the event of default, we may, at our election and without prejudice to any other remedy which we may have in terms of this Agreement or otherwise, recover from you payment of all amounts owing under this Agreement (whether then owing or not) by adhering to the default procedure described above.</span></span></p>\n<p><strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">10:Governing Law</span></span></strong></p>\n<p><span style=\"color: #000000;\"><span style=\"font-size: 13px;\">This Terms of Use shall be governed and interpreted in accordance to the prevailing Philippines laws and regulations by using English as the prevailing language</span><strong><span style=\"font-size: 5px;\">.</span></strong></span></p>\n<p><strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">11:Unauthorized activity</span></span></strong></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">Our Service may be used and accessed for lawful purposes only. You agree that you will not do any of the following while using or accessing the service:</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">a:Attempt to access or search the Service or download Content from the Service through the use of any engine, software, tool, agent, device or mechanism (including spiders, robots, crawlers, data mining tools or the like) other than the software and/or search agents provided by us or other generally available third party web browsers;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">b:Access, tamper with, or use non-public areas of the Service, our computer systems, or the technical delivery systems of our providers;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">c:Gather and use information, such as other users&rsquo; names, real names, email addresses, available through the Service to transmit any unsolicited advertising, junk mail, spam or other form of solicitation; (iv) use the Service for any commercial purpose or for the benefit of any third party in any manner not by these Terms;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">d:Violate any applicable law or regulation;</span></span></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">e:encourage or enable any other individual to do any of the foregoing. We reserve the right to investigate and prosecute violations of any of the above and/or involve and cooperate with law enforcement authorities in prosecuting users who violate these Terms of Use.</span></span></p>\n<p><strong><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">12:Entire Agreement</span></span></strong></p>\n<p><span style=\"font-size: 13px;\"><span style=\"color: #000000;\">This Terms of Use (including the Service Agreement for the Registered User only) constitutes and contains the entire agreement and understanding between the User and Us and supersedes any and all prior understandings, agreements, notification, publications, advertisements and arrangements between the User and Us with respect to the subject matter hereof.</span></span></p>\n<p>&nbsp;</p>',1,1557822393,1557822393,1,0,'cn'),
-	(4,'隐私策略','<div class=\"policy\">\n<div class=\"name\">Fast Peso Privacy Policy</div>\n<div class=\"name\">Our policy on collecting information and sharing of customer information, and explaining the process.</div>\n<div class=\"name\">1. What kind of information needs to be collected?</div>\n<div>&bull; Borrower information. When customer registration is required customer identity information (such as SSS), job information, the nearest person who can be contacted in emergency situations and others.</div>\n<div>&bull; Communication information. Call history, sms, contacts and more.</div>\n<div>&bull; Sensitive information. IMEI, GPS, ISP, IP, mobile id, customer\'s mobile number and others.</div>\n<div>&bull; Other information. Accident application usage, catalog of customer information needed to install apps and more.</div>\n<div class=\"name\">2. How to use customer information?</div>\n<div>&bull; Borrower information. Customer will fill in some information that must be completed, the information is required information.</div>\n<div>&bull; Communication information. Based on the consent of the customer, the data reported to the server, the information will be used for anti-fraud services.</div>\n<div>&bull; Facility information. Based on the consent of the customer, the data reported to the server, the information will be used for anti-fraud services.</div>\n<div>&bull; Other information. Based on the permission of the customer, the data reported to the server, the information will be used for anti-fraud services, as well as the program or other problem detection.</div>\n<div class=\"name\">3. How Fast Peso manages your personal information The above-mentioned information we collect about you will be stored electronically and we manage for the following purposes:</div>\n<div>&bull; To check that your submission is using your actual information, not someone else who uses your identity.</div>\n<div>&bull; To determine your eligibility to obtain a loan under applicable terms.</div>\n<div>&bull; To communicate with you about your account, as well as to make identification information when you call or visit our mobile app, and provide updates when changes are made to our services.</div>\n<div>&bull; To process the loan application and secure the transaction process safely to you if your loan is approved.</div>\n<div>&bull; To rate your loan application history and confirm your job data.</div>\n<div>&bull; For the process of eligibility analysis of your loan and to estimate the risk of lending.</div>\n<div>&bull; For the development of our mobile apps that always meet the needs of our clients in the future.</div>\n<div>&bull; To settle our obligations arising from contracts signed between you and us.</div>\n<div>&bull; To facilitate financial institutions such as banks, financial institutions or other third parties authorized to conduct checks are limited to your status in the database or on our services.</div>\n<div class=\"name\">4. How Fast Peso protects Client Personal Information</div>\n<div>Fast Peso is committed to protecting your information with the latest technology.</div>\n<div>We will stick to the applicable provisions to ensure your information is secure and maintained, and restrict access to protect you from any kind of fraud.</div>\n<div>All types of payment transactions as well as inputting personal information on the registration page will be encrypted using 128-bit secure socket layer (SSL) technology.</div>\n<div>When we provide a code that allows you to access our mobile apps, you are responsible for protecting your account\'s access code, including your user ID and password, so that others may not access your account.</div>\n<div>For your information, transmitting information over the internet network is not yet completely safe.</div>\n<div>While we have done our best to protect your Personal Information data, we can not guarantee the security of your data transmitted through our application, the process of transmitting that information is your responsibility.</div>\n<div>When we have received your Personal Information data, we will use strict procedures and security features in an effort to prevent unauthenticated access. Fast Peso uses computer protection such as firewalls and data encryption, and authorizes access to personal information only to our employees who need it to deliver their work.</div>\n<div>Our data is encrypted before, during and after submission, for protection purposes of your Personal Information data.</div>\n<div>Only authorized employees can access the data and they must pass through some form of identity verification before accessing any information.</div>\n<div>Fast Peso is fully compliant and complies with applicable laws and regulations concerning Data Protection in Philippines.</div>\n<div class=\"name\">5. How Fast Peso shares your Personal Information</div>\n<div>From time to time, Fast Peso reserves the right to collect the following information and data: Personal data relating to the owner, principal funder, partner, director, employee or proxy, employee, Borrower, payer, party paid, guarantor, other insurer, other parties related to the Borrower (collectively, all parties mentioned are \"Related Parties\"). Personal data may include name, identity, date of birth, contract details and other relevant personal information; and Information and data obtained from general activities related to Fast Peso.</div>\n<div>Such personal data may include signatures, answers to questions devoted to security verification, emergency contacts or other contact details.</div>\n<div>Personal Data from Related Parties may be processed, stored, transferred, or disclosed in accordance with applicable Law.</div>\n<div>Collective Agreement The Borrower will be deemed to approve (or obtain the approval of the Related Party) on the collection, use, and disclosure of the Related Party\'s Related data specified above by the Borrower continuously, use by Fast Peso services and / or approval of the terms and conditions stipulated.</div>\n<div>All parties, including the Fund, guarantor or institution providing services to Fast Peso, consent to the collection, use, and disclosure of personal data by a person on an ongoing basis, use by Fast Peso services and / or approval of the terms and conditions stipulated.</div>\n<div>Purpose of Use and Disclosure of Information Information and data may be used and disclosed, including places within and outside the Philippines for the following purposes (collectively \"Allowed Objectives\"): To manage the accuracy of \"Know Your Borrower\" information;and To verify the identity or representatives who contacted Fast Peso, or may be contacted by Fast Peso, and to execute or respond to requests, questions or instructions from verified representatives or other individuals following current security procedures.</div>\n<div>Personal data may be disclosed, when permitted by applicable Law, to persons or entities (inside or outside of Philippines) below (please note that this is not an exhaustive list) for Allowed Objectives or for processes that are consistent with the Goals that are permitted in the needs : Any Agent, Contractor, or third party service providers providing banking services, remittances, administration, correspondence, telecommunications, telephone centers, business processes, travel, visas, knowledge management, human resources, data processing, information technology, computers, payments, debt collection, check credit references, or other security or services to Fast Peso in relation to the business operations ofFast Peso;</div>\n<div>Individuals or entities that are part of Fast Peso and under a confidentiality obligation in the disclosure of the Fast Peso entity even if only at the stage required to fulfill the related Licensing Purposes; Individuals or entities in which CashMe has a duty or are obliged to mengengapkan implementation of legal proceedings, or legal obligations at home and abroad, including disclosure to the courts, trial and / or legal, regulatory, tax and government authorities; Any party or candidate transfer from Fast Peso or transfer from Fast Peso in the Borrower\'s relationship, or all or part of Fast Peso\'s assets or business; or parties that provide or submit to provide a guarantee or guarantee of a third party to guarantee or maintain the Borrower\'s obligations.</div>\n<div class=\"name\">6. Age</div>\n<div>To be able to use our services, you must be 18-50 years old. If you do not qualify for usua, then you are not allowed or allowed to use our services.</div>\n<div class=\"name\">7. Changes to the Privacy Policy</div>\n<div>We will notify you via email regarding any kind of change with respect to the Privacy Policy by providing a link to review the new Privacy Policy.</div>\n<div class=\"name\">8. Merger</div>\n<div>To avoid any kind of prejudice and suspicion, this Privacy Policy must be equated with the usage requirements found in our mobile app.If you agree to use our loan service, this Privacy Policy must be consolidated and an integral part of the Loan Agreement of Fast Peso.</div>\n<div>If there are any questions regarding this privacy policy, you may contact us via support@Fast Peso.ph</div>\n<div>&copy;Copyright &copy;2018 All rights reserved by Fast Peso</div>\n</div>',3,1557822528,1557822528,1,0,'cn');
-
-/*!40000 ALTER TABLE `sys_contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -4306,69 +4094,6 @@ CREATE TABLE `sys_message` (
 
 
 
-# Dump of table sys_message_template
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_message_template`;
-
-CREATE TABLE `sys_message_template` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(20) DEFAULT NULL COMMENT '模板类型',
-  `content` varchar(400) DEFAULT NULL COMMENT '模板内容',
-  `updated_at` bigint(13) DEFAULT NULL COMMENT '更新记录Unix时间戳毫秒单位',
-  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `status` tinyint(1) DEFAULT NULL COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='消息模板';
-
-LOCK TABLES `sys_message_template` WRITE;
-/*!40000 ALTER TABLE `sys_message_template` DISABLE KEYS */;
-
-INSERT INTO `sys_message_template` (`id`, `category`, `content`, `updated_at`, `created_at`, `status`)
-VALUES
-	(1,'default','{content}',NULL,0,1),
-	(2,'collection','您有1个新增催收案件，贷款编号：{loan_order_id}，案件编号：{case_id}',NULL,0,1),
-	(3,'remind','{content}：{loan_order_id} ',NULL,0,1);
-
-/*!40000 ALTER TABLE `sys_message_template` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table sys_notice
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_notice`;
-
-CREATE TABLE `sys_notice` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `title` varchar(30) DEFAULT NULL COMMENT '公告名称',
-  `content` text COMMENT '公告内容',
-  `sort` bigint(20) unsigned NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
-  `status` tinyint(3) DEFAULT NULL COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
-  `operate_id` bigint(20) DEFAULT NULL COMMENT '操作人',
-  `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COMMENT='系统公告表';
-
-LOCK TABLES `sys_notice` WRITE;
-/*!40000 ALTER TABLE `sys_notice` DISABLE KEYS */;
-
-INSERT INTO `sys_notice` (`id`, `title`, `content`, `sort`, `status`, `created_at`, `updated_at`, `operate_id`, `lang`)
-VALUES
-	(6,'更新版本','<p>本次产品迭代内容：</p>\n<p>1、优化界面，提升用户体验</p>\n<p>2、提升额度，降低利率</p>\n<p>3、修复了部分BUG</p>\n<p>快来更新体验吧！</p>',1,1,1554780721,1554780721,1,'cn'),
-	(7,'updated version','<p>This product iteration content:</p>\n<p>1. Optimize the interface and enhance the user experience</p>\n<p>2. Increase the amount and lower the interest rate</p>\n<p>3, fixed some bugs</p>\n<p>Come and update the experience!</p>',1,1,1554780721,1554780721,1,'en'),
-	(8,'修复BUG','<p>平台要修复一点小BUG，可能在您操作过程中会出现某些问题，欢迎给我们留言，给您造成的不便，敬请谅解！</p>',1,1,1554780721,1554780721,1,'cn'),
-	(9,'Fix bug','<p>The platform needs to fix a little bug, and some problems may occur during your operation. Please leave us a message and give you any inconvenience, please forgive me!</p>',1,1,1554780721,1554780721,1,'en'),
-	(10,'利率调整','<p>为回馈广大用户对本平台的支持，公司决定降低借款利率，希望大家持续关注</p>',1,1,1554780721,1554780721,1,'cn'),
-	(11,'Interest rate adjustment','<p>In order to give back to the support of the majority of users on this platform, the company decided to lower the borrowing rate, I hope everyone will continue to pay attention</p>',1,1,1554780721,1554780721,1,'en'),
-	(14,'新版本升级','<p>船新版本，上线了！！</p>',1,1,1560481644,1560481644,1,'cn');
-
-/*!40000 ALTER TABLE `sys_notice` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
 # Dump of table sys_sequence
 # ------------------------------------------------------------
 
@@ -4382,40 +4107,192 @@ CREATE TABLE `sys_sequence` (
 
 
 
-# Dump of table sys_tag
+# Dump of table user
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_tag`;
+DROP TABLE IF EXISTS `user`;
 
-CREATE TABLE `sys_tag` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(80) NOT NULL DEFAULT '' COMMENT '标签名',
-  `type` enum('loan') DEFAULT NULL COMMENT '类型',
-  `description` varchar(200) NOT NULL DEFAULT '' COMMENT '描述',
-  `status` tinyint(3) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `created_at` bigint(13) unsigned DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `updated_at` bigint(13) unsigned DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COMMENT='标签';
+CREATE TABLE `user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `level_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '会员等级ID',
+  `password` varchar(128) NOT NULL,
+  `username` varchar(40) DEFAULT NULL COMMENT '登录名、昵称',
+  `mobile` varchar(11) DEFAULT NULL,
+  `email` varchar(80) DEFAULT NULL,
+  `experience` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '经验值',
+  `sex` enum('hide','male','female','other') NOT NULL DEFAULT 'hide' COMMENT '性别(男 male ，女 female 隐藏 hide)',
+  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `sign` varchar(255) DEFAULT '' COMMENT '会员签名',
+  `login_count` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '登陆次数',
+  `last_login_ip` varchar(40) NOT NULL DEFAULT '' COMMENT '最后登陆IP',
+  `last_login_at` bigint(13) DEFAULT NULL COMMENT '最后登录UTC时间',
+  `ref_user_id` char(32) DEFAULT NULL COMMENT '推荐人ID，空字符串表示为推荐人',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '已删除的 1 是 0 否 默认 0',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  `reg_ip` varchar(40) DEFAULT NULL COMMENT '注册IP',
+  `reg_client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_username` (`username`),
+  UNIQUE KEY `uk_email` (`email`),
+  UNIQUE KEY `uk_mobile` (`mobile`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
 
-LOCK TABLES `sys_tag` WRITE;
-/*!40000 ALTER TABLE `sys_tag` DISABLE KEYS */;
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
 
-INSERT INTO `sys_tag` (`id`, `name`, `type`, `description`, `status`, `created_at`, `updated_at`)
+INSERT INTO `user` (`id`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `last_login_at`, `ref_user_id`, `status`, `deleted`, `created_at`, `reg_ip`, `reg_client`)
 VALUES
-	(6,'RISK:BLACKLIST:HIT','loan','RISK:BLACKLIST:HIT 100000',1,1558585080,NULL),
-	(7,'RISK:GRAY_LIST:HIT','loan','RISK:GRAY_LIST:HIT',1,1558585103,NULL),
-	(9,'RISK:MULTIPLE_LEVEL:DANGER','loan','RISK:MULTIPLE_LEVEL:DANGER',1,1558585240,1558585599),
-	(10,'RISK:MULTIPLE_LEVEL:SERIOUS','loan','RISK:MULTIPLE_LEVEL:SERIOUS',1,1558585286,NULL),
-	(11,'REVIEW AGAIN','loan','REVIEW AGAIN',1,1558585308,NULL),
-	(12,'TRACKING','loan','TRACKING, VERIFY IF IT WILL BE OVERDUE',1,1558585324,NULL),
-	(13,'RISK:NAME_Multi_ORDERS','loan','RISK:NAME_Multi_ORDERS; 名字对应多个不同的订单——针对初审',1,1558585340,NULL),
-	(14,'RISK:Multi_Device','loan','RISK:Multi_Device，多设备',1,1558585374,NULL),
-	(15,'NO PROOF','loan','no evidence of repayment',1,1558585401,NULL),
-	(16,'LAST_ORDER_OV14','loan','LAST_ORDER_OVerdue days > 14.',1,1558585417,1561343201);
+	(1,0,'',NULL,NULL,NULL,0,'hide','','',0,'',NULL,NULL,1,0,NULL,NULL,NULL);
 
-/*!40000 ALTER TABLE `sys_tag` ENABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table user_binding
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_binding`;
+
+CREATE TABLE `user_binding` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
+  `type` enum('QQ','WECHAT','MOBILE','EMAIL','ALIPAY') DEFAULT NULL COMMENT '绑定类型',
+  `openid` varchar(80) DEFAULT NULL COMMENT '第三方平台openid',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table user_certification
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_certification`;
+
+CREATE TABLE `user_certification` (
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键，user表 id',
+  `realname` varchar(40) NOT NULL DEFAULT '' COMMENT '登录名、昵称',
+  `idcardno` varchar(40) NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `idcard_img` varchar(200) NOT NULL DEFAULT '' COMMENT '手持身份证照片一张（要求头像清晰，身份证号码清晰）',
+  `authorized` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '认证状态:( 0 待审核；1 审核通过, 2 审核失败)',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios mobile',
+  `ip` varchar(40) DEFAULT NULL COMMENT '添加记录的IP地址',
+  `updated_at` bigint(13) DEFAULT NULL COMMENT '更新记录UTC时间',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注；如果审核不通过，填写原因',
+  `authorized_user_id` bigint(20) DEFAULT NULL COMMENT '审核管理员ID，user 表 uuid',
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员实名认证信息';
+
+
+
+# Dump of table user_friend
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_friend`;
+
+CREATE TABLE `user_friend` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `from_user_id` bigint(20) NOT NULL COMMENT '发起人',
+  `to_user_id` bigint(20) NOT NULL COMMENT '接受人',
+  `group_id` bigint(20) DEFAULT '0' COMMENT '用户分组ID friendgroup主键',
+  `status` varchar(16) NOT NULL DEFAULT '0' COMMENT '状态 0 请求中 1 接受 2 拒绝请求',
+  `updated_at` bigint(13) DEFAULT NULL COMMENT '记录更新时间',
+  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
+  `remark` varchar(200) NOT NULL DEFAULT '' COMMENT '申请好友的验证消息',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天好友关系记录表（A请求B为好友，B接受之后，系统要自动加入一条B请求A的记录并且A自动确认 user_id 是 user表的主键）';
+
+
+
+# Dump of table user_friend_notice
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_friend_notice`;
+
+CREATE TABLE `user_friend_notice` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `msgtype` enum('apply_friend','system') DEFAULT NULL COMMENT '消息类型',
+  `related_id` bigint(20) DEFAULT NULL COMMENT '关联业务主键',
+  `message` varchar(200) DEFAULT '' COMMENT '附加消息',
+  `from_user_id` bigint(20) DEFAULT NULL COMMENT 'User 用户ID 消息发送者 0表示为系统消息',
+  `to_user_id` bigint(20) DEFAULT NULL COMMENT '消息接收者 User 用户ID',
+  `read_at` bigint(13) DEFAULT NULL COMMENT '读消息UTC时间',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态:( 0 未读；1 已读 11 接受 12 拒绝请求)',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='添加好友状态通知，定时删除60天内的已读消息';
+
+
+
+# Dump of table user_friendgroup
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_friendgroup`;
+
+CREATE TABLE `user_friendgroup` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `groupname` varchar(40) NOT NULL DEFAULT '' COMMENT '分组名称',
+  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
+  `owner_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分组所属用户ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友分组表';
+
+
+
+# Dump of table user_level
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_level`;
+
+CREATE TABLE `user_level` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(80) NOT NULL COMMENT '等级名称',
+  `min_exper` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最小经验值',
+  `max_exper` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最大经验值',
+  `intro` varchar(255) NOT NULL COMMENT '等级简介',
+  `default` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '默认等级',
+  `expire` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '会员有效期(天)',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员等级';
+
+
+
+# Dump of table user_login_log
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_login_log`;
+
+CREATE TABLE `user_login_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
+  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='会员登录日志';
+
+
+
+# Dump of table user_operation_log
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_operation_log`;
+
+CREATE TABLE `user_operation_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
+  `account` varchar(40) NOT NULL DEFAULT '' COMMENT '用户账号： email or mobile or username',
+  `action` varchar(20) DEFAULT NULL COMMENT '会员操作类型： email_reset_pwd mobile_reset_pwd activate_email',
+  `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
+  `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
+  `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='会议操作日志记录表(操作成功的时候插入)';
+
 
 
 

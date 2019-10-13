@@ -28,20 +28,7 @@ class Role(BaseModel):
     permission = Column(Text, default='')
     sort = Column(Integer, nullable=False, default=20)
     status = Column(Integer, nullable=False, default=1)  # 状态:( 0 禁用；1 启用, 默认1)
-    category = Column(Integer, nullable=False, default=0)
-    company_id = Column(Integer, nullable=False, default=1)
     created_at = Column(Integer, default=utime.timestamp(3))
-
-    @classmethod
-    def option_html(cls, role_id=None):
-        query   = cls.session.query(Role)
-        query   = query.filter(Role.status == 1)
-        rows    = query.order_by(Role.sort.asc()).all()
-        option_str = ''
-        for row in rows:
-            selected = 'selected' if role_id==row.id else ''
-            option_str += '<option value="%s" %s>%s</option>' % (row.id, selected, row.rolename)
-        return option_str
 
     status_options = {
         '1': '激活',

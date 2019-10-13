@@ -4,10 +4,9 @@
 角色管理
 """
 from trest.exception import JsonError
-from applications.common.models import Company
-from applications.admin.models import Role
 from trest.config import settings
 from trest.utils import func
+from applications.admin.models import Role
 
 
 class RoleService:
@@ -23,22 +22,35 @@ class RoleService:
             raise JsonError('角色ID缺失')
         if int(role_id) in settings.SYS_ROLE:
             raise JsonError('角色不允许删除')
-        Role.Q.filter(Role.id == role_id).delete()
-        Role.session.commit()
+        try:
+            Role.Q.filter(Role.id == role_id).update({'status': -1})
+            Role.session.commit()
+        except:
+            raise JsonError('删除失败')
         return True
 
     @staticmethod
-    def get_data(limit, page):
+    def get_data(params, limit, page):
         """
         获取数据列表
         :param limit:
         :param page:
         :return:
         """
-        code = 0
-        msg = ""
-        resdata = (0, None)
-        pagelist_obj = Role.Q.filter().paginate(page=page, per_page=limit)
+        query = Role.Q.filter(Role.status != -1)
+        if params.get('id'):
+            query = query.filter(Role.id == params['id'])
+
+        if params.get('rolename'):
+            query = query.filter(Role.rolename.like(f'%{params["rolename"]}%'))
+
+        if params.get('status'):
+            query = query.filter(Role.status == params['status'])
+
+        # 查询非组角色
+        query = query.order_by(Role.sort.desc()).order_by(Role.id.desc())
+        pagelist_obj = query.paginate(page=page, per_page=limit)
+
         if pagelist_obj is None:
             raise JsonError('暂无数据')
         return pagelist_obj
@@ -105,61 +117,13 @@ class RoleService:
     @staticmethod
     def get_valid_role():
         """获取有效的角色"""
-        data=[]
-        role=Role.Q.filter(Role.status==1).all()
+        data = []
+        role = Role.Q.filter(Role.status==1).all()
         for val in role:
-            val=val.as_dict()
-            if not val['permission'] or val['permission']=='':
-                val['permission']=[]
-            else:
-                val['permission']=val['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
-            data.append(val)
+            # val=val.as_dict()
+            # val.pop('permission')
+            data.append({'id': val.id, 'rolename': val.rolename})
         return data
-
-    @staticmethod
-    def data_list(param, page, limit):
-        """
-        催收组数据列表
-        :param param:
-        :param page:
-        :param limit:
-        :return:
-        """
-        query = Role.session \
-            .query(Role.id, Role.rolename, Role.category, Role.description, Role.status,Company.id, Company.company_name) \
-            .join(Company, Company.id == Role.company_id)
-        if param['company_id']:
-            query = query.filter(Role.company_id == param['company_id'])
-
-        if param['status']:
-            query = query.filter(Role.status == param['status'])
-
-        if param['category']:
-            query = query.filter(Role.category == param['category'])
-
-        pagelist_obj = query.paginate(page=page, per_page=limit)
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
-        return pagelist_obj
-
-    @staticmethod
-    def role_options():
-        """
-        催收组选项列表
-        :return:
-        """
-        data = Role.session.query(Role.id, Role.rolename) \
-            .filter(Role.status == 1).all()
-        item_dict = {}
-        item_list = []
-        if not data:
-            return (item_dict, item_list)
-        for raw in data:
-            temp = {}
-            (temp['value'], temp['label']) = raw
-            item_list.append(temp)
-            item_dict[temp['value']] = temp['label']
-        return (item_dict, item_list)
 
 
     @staticmethod
@@ -170,29 +134,3 @@ class RoleService:
         """
         options = Role.status_options
         return (options, func.option_change(options))
-
-    @staticmethod
-    def collector_role(role,id):
-        """
-        催收员角色权限与 collector角色权限同步
-        :param role:
-        :return:
-        """
-        permission = None
-        if id is None:
-            # 新增
-            if 'category' not in role.keys():
-                return False
-            if int(role['category']) == 1:
-                # 催收员
-                permission = Role.session.query(Role.permission).filter(Role.id == 4).scalar()
-            else:
-                # 管理员
-                # permission = Role.session.query(Role.permission).filter(Role.id == 5).scalar()
-                pass
-        else:
-            if int(id) == 4:
-                permission = role['permission']
-                Role.Q.filter(Role.category == 1).update({'permission': permission})
-                Role.session.commit()
-        return permission

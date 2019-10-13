@@ -270,7 +270,7 @@ class WebRtcRoomHandler(CommonHandler):
             for row in items:
                 user_list.append(row.as_dict(['id', 'username', 'avatar', 'sign']))
         params = {
-            'def_avator': self.static_url('image/default_avatar.jpg'),
+            'default_avatar': self.static_url('image/default_avatar.jpg'),
             'timestamp': Func.unix_time(),
             # 'opponent_uid': opponent_uid,
             'limit': 20,

@@ -14,13 +14,14 @@ from trest.config import settings
 
 from applications.admin.services.level import LevelService
 from applications.admin.utils import required_permissions
+from applications.admin.utils import admin_required_login
 from .common import CommonHandler
 
 
 class LevelHandler(CommonHandler):
 
     @post('/admin/level')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def add_record(self):
 
@@ -51,7 +52,7 @@ class LevelHandler(CommonHandler):
 
 
     @get('/admin/level')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def index(self):
 
@@ -70,7 +71,7 @@ class LevelHandler(CommonHandler):
             notice_data=val.as_dict()
             new.append(notice_data)
         if code==0:
-            res={
+            resp = {
                 'page':page,
                 'per_page':limit,
                 'total':total,
@@ -82,7 +83,7 @@ class LevelHandler(CommonHandler):
 
 
     @get('/admin/level/valid')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def valid(self):
         """
@@ -100,7 +101,7 @@ class LevelHandler(CommonHandler):
 
 
     @put('/admin/level')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def put_record(self):
 
@@ -137,7 +138,7 @@ class LevelHandler(CommonHandler):
 
 
     @delete('/admin/level')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def dels(self):
         level_id=self.get_argument('level_id',None)

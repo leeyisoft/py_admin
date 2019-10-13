@@ -4,7 +4,6 @@
 
 [description]
 """
-import tornado
 
 from trest.router import get
 from trest.router import put
@@ -15,6 +14,7 @@ from trest.config import settings
 
 from applications.admin.services.config import ConfigService
 from applications.admin.utils import required_permissions
+from applications.admin.utils import admin_required_login
 from applications.common.models.base import Config
 
 from .common import CommonHandler
@@ -24,14 +24,14 @@ class ConfigPageHandler(CommonHandler):
     """docstring for Passport"""
 
     @get('/admin/config.html')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_html(self, *args, **kwargs):
         params = {}
         self.render('config/index.html', **params)
 
     @get('/admin/config/add.html')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def add_html(self, *args, **kwargs):
         params = {
@@ -42,7 +42,7 @@ class ConfigPageHandler(CommonHandler):
         self.render('config/edit.html', **params)
 
     @get('/admin/config/edit.html')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def edit_html(self, *args, **kwargs):
         key = self.get_argument('key', None)
@@ -60,7 +60,7 @@ class ConfigPageHandler(CommonHandler):
 class ConfigHandler(CommonHandler):
     """docstring for Passport"""
     @post('/admin/config')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_post(self):
         title = self.get_argument('title', None)
@@ -87,7 +87,7 @@ class ConfigHandler(CommonHandler):
         return self.success()
 
     @put('/admin/config')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_put(self):
         title = self.get_argument('title', None)
@@ -112,19 +112,19 @@ class ConfigHandler(CommonHandler):
         return self.success(data = param)
 
     @get('/admin/config3')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_get3(self, *args, **kwargs):
         return self.success(data = ['config_get3'])
 
     @get('/admin/config2')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_get2(self, *args, **kwargs):
         return self.success(data = ['config_get2'])
 
     @get('/admin/config')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_get(self, *args, **kwargs):
         page = int(self.get_argument('page',1))
@@ -142,7 +142,7 @@ class ConfigHandler(CommonHandler):
         return self.success(data = index_list)
 
     @delete('/admin/config')
-    @tornado.web.authenticated
+    @admin_required_login
     @required_permissions()
     def config_delete(self):
         key = self.get_argument('key', None)

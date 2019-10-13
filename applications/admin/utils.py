@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8  -*-
 
+import urllib
 import functools
-from tornado.util import import_object
-from tornado.web import RequestHandler
 from typing import Callable
 from typing import Optional
 from typing import Awaitable
+from tornado.util import import_object
+from tornado.web import RequestHandler
 
 from trest.exception import HTTPError
-
+from trest.exception import JsonError
 from trest.utils.encrypter import RSAEncrypter
 
 
@@ -79,7 +80,7 @@ def admin_required_login(
                     else:
                         assert self.request.uri is not None
                         next_url = self.request.uri
-                    url += "?" + urlencode(dict(next=next_url))
+                    url += "?" + urllib.parse.urlencode(dict(redirect=next_url))
                     data = {'login_url':url, 'next_url': next_url,}
                 accept = self.request.headers.get('Accept', '')
                 if accept.startswith('application/json'):
