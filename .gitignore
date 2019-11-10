@@ -20,3 +20,10 @@ Pipfile.lock
 local.yaml
 .env
 statics/upload
+statics/upload/*
+statics/upload/*.*
+statics/upload/*/*.*
+statics/upload/*/*/*.*
+statics/upload/*/*/*/*.*
+
+package-lock.json

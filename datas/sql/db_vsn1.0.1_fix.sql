@@ -13,18 +13,18 @@ BEGIN
 DECLARE ret_value INTEGER;
 SET ret_value=0;
 SELECT `value` INTO ret_value
-FROM sys_sequence
+FROM `sequence`
 WHERE `key`=seq_name;
 RETURN ret_value;
 END;;
 
 CREATE DEFINER=`user_py_admin`@`%` FUNCTION `nextval` (`seq_name` VARCHAR(40), `incr` INT(11)) RETURNS INT(11) SQL SECURITY INVOKER
 BEGIN
-    UPDATE `sys_sequence` SET `value` = `value` + incr where `key`=seq_name;
+    UPDATE `sequence` SET `value` = `value` + incr where `key`=seq_name;
 
     set @val = currval(seq_name);
     if @val = 0 then
-        insert into sys_sequence (`key`, `value`) value (seq_name, incr);
+        insert into `sequence` (`key`, `value`) value (seq_name, incr);
         set @val = incr;
     end if;
     return @val;

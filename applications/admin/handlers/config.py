@@ -1,150 +1,87 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""URL处理器
-
-[description]
+"""Config控制器
 """
-
 from trest.router import get
 from trest.router import put
 from trest.router import post
 from trest.router import delete
 from trest.exception import JsonError
-from trest.config import settings
 
-from applications.admin.services.config import ConfigService
 from applications.admin.utils import required_permissions
 from applications.admin.utils import admin_required_login
-from applications.common.models.base import Config
+
+from applications.admin.services.config import ConfigService
 
 from .common import CommonHandler
 
 
-class ConfigPageHandler(CommonHandler):
-    """docstring for Passport"""
-
-    @get('/admin/config.html')
-    @admin_required_login
-    @required_permissions()
-    def config_html(self, *args, **kwargs):
-        params = {}
-        self.render('config/index.html', **params)
-
-    @get('/admin/config/add.html')
-    @admin_required_login
-    @required_permissions()
-    def add_html(self, *args, **kwargs):
-        params = {
-            'config':  Config(),
-            'data_info': {},
-            'method': 'post',
-        }
-        self.render('config/edit.html', **params)
-
-    @get('/admin/config/edit.html')
-    @admin_required_login
-    @required_permissions()
-    def edit_html(self, *args, **kwargs):
-        key = self.get_argument('key', None)
-        config = Config.Q.filter(Config.key==key).first()
-        if config is None:
-            return self.error('不存在的数据')
-        data_info = config.as_dict()
-        params = {
-            'config': config,
-            'data_info': data_info,
-            'method': 'put'
-        }
-        self.render('config/edit.html', **params)
-
 class ConfigHandler(CommonHandler):
-    """docstring for Passport"""
-    @post('/admin/config')
+
+    @post('config')
     @admin_required_login
     @required_permissions()
-    def config_post(self):
-        title = self.get_argument('title', None)
-        key = self.get_argument('key', None)
-        value = self.get_argument('value', None)
-        subtitle = self.get_argument('subtitle', None)
-        sort = self.get_argument('sort',None)
-        remark = self.get_argument('remark', None)
-        system = self.get_argument('system', 0)
-        status = self.get_argument('status',1)
-        if title is None or key is  None or value is None:
-            return self.error('参数不全', data=['post'])
-        params={
-            'title':title,
-            'key':key,
-            'value':value,
-            'subtitle':subtitle,
-            'sort':sort,
-            'remark':remark,
-            'system':system,
-            'status':status
-        }
-        ConfigService.insert_data(title, key,params)
+    def config_post(self, *args, **kwargs):
+        param = self.params()
+        ConfigService.insert(param)
         return self.success()
 
-    @put('/admin/config')
+    @get('config/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
-    def config_put(self):
+    def config_get(self, id):
+        """获取单个记录
+        """
+        obj = ConfigService.get(id)
+        data = obj.as_dict() if obj else {}
+        return self.success(data = data)
+
+    @get(['config','config/?(?P<category>[a-zA-Z0-9_]*)'])
+    @admin_required_login
+    @required_permissions()
+    def config_list_get(self, category = '', *args, **kwargs):
+        """列表、搜索记录
+        """
+        page = int(self.get_argument('page', 1))
+        per_page = int(self.get_argument('limit', 10))
         title = self.get_argument('title', None)
-        key = self.get_argument('key', None)
-        value = self.get_argument('value', None)
-        sort = self.get_argument('sort', None)
-        remark = self.get_argument('remark', None)
-        system = self.get_argument('system', 0)
-        status = self.get_argument('status',1)
-        if not title or not key or not value:
-            return self.error('参数不全', data=['put'])
-        param={
-            'key':key,
-            'title':title,
-            'value':value,
-            'sort':sort,
-            'remark':remark,
-            'system':system,
-            'status':status
+        status = self.get_argument('status', None)
+
+        param = {}
+        if category:
+            param['category'] = category
+        if title:
+            param['title'] = title
+        if status:
+            param['status'] = status
+
+        pagelist_obj = ConfigService.data_list(param, page, per_page)
+        items = []
+        for val in pagelist_obj.items:
+            data = val.as_dict()
+            items.append(data)
+        resp = {
+            'page':page,
+            'per_page':per_page,
+            'total':pagelist_obj.total,
+            'items':items,
         }
-        ConfigService.update_data(param)
+        return self.success(data = resp)
+
+    @put('config/(?P<id>[0-9]+)')
+    @admin_required_login
+    @required_permissions()
+    def config_put(self, id, *args, **kwargs):
+        param = self.params()
+        ConfigService.update(id, param)
         return self.success(data = param)
 
-    @get('/admin/config3')
+    @delete('config/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
-    def config_get3(self, *args, **kwargs):
-        return self.success(data = ['config_get3'])
-
-    @get('/admin/config2')
-    @admin_required_login
-    @required_permissions()
-    def config_get2(self, *args, **kwargs):
-        return self.success(data = ['config_get2'])
-
-    @get('/admin/config')
-    @admin_required_login
-    @required_permissions()
-    def config_get(self, *args, **kwargs):
-        page = int(self.get_argument('page',1))
-        limit = int(self.get_argument('limit',10))
+    def config_delete(self, id, *args, **kwargs):
         param = {
-            'key':self.get_argument('key',None)
+            'status':-1
         }
-        pagelist_obj = ConfigService.get_data(param, limit, page)
-        index_list = {
-            'page':page,
-            'per_page':limit,
-            'total':pagelist_obj.total,
-            'items':[item.as_dict() for item in pagelist_obj.items],
-        }
-        return self.success(data = index_list)
-
-    @delete('/admin/config')
-    @admin_required_login
-    @required_permissions()
-    def config_delete(self):
-        key = self.get_argument('key', None)
-        ConfigService.delete_data(key)
+        ConfigService.update(id, param)
         return self.success()

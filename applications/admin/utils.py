@@ -17,7 +17,7 @@ from trest.utils.encrypter import RSAEncrypter
 def required_permissions(*dargs, **dkargs):
     """权限控制装饰器
     """
-    AdminUser = import_object('applications.admin.models.AdminUser')
+    AdminUser = import_object('applications.common.models.admin_user.AdminUser')
     def wrapper(method):
         # @functools.wraps(method)
         def _wrapper(*args, **kargs):

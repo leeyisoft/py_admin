@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: db_py_admin
-# Generation Time: 2019-11-03 13:54:37 +0000
+# Generation Time: 2019-11-13 13:45:50 +0000
 # ************************************************************
 
 
@@ -21,12 +21,12 @@ SET NAMES utf8mb4;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-# Dump of table sys_address
+# Dump of table address
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_address`;
+DROP TABLE IF EXISTS `address`;
 
-CREATE TABLE `sys_address` (
+CREATE TABLE `address` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `region` varchar(8) NOT NULL DEFAULT '86' COMMENT '所属区域码 CN',
   `address` varchar(200) DEFAULT NULL COMMENT '详细地址 街道门牌号',
@@ -42,12 +42,12 @@ CREATE TABLE `sys_address` (
 
 
 
-# Dump of table sys_admin_role
+# Dump of table admin_role
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_admin_role`;
+DROP TABLE IF EXISTS `admin_role`;
 
-CREATE TABLE `sys_admin_role` (
+CREATE TABLE `admin_role` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `rolename` varchar(40) DEFAULT NULL COMMENT '角色名称',
   `permission` text COMMENT '角色权限（存储菜单uuid，以json格式存储）',
@@ -59,13 +59,13 @@ CREATE TABLE `sys_admin_role` (
   UNIQUE KEY `uk_rolename` (`rolename`)
 ) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户角色表';
 
-LOCK TABLES `sys_admin_role` WRITE;
-/*!40000 ALTER TABLE `sys_admin_role` DISABLE KEYS */;
+LOCK TABLES `admin_role` WRITE;
+/*!40000 ALTER TABLE `admin_role` DISABLE KEYS */;
 
-INSERT INTO `sys_admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `created_at`, `description`)
+INSERT INTO `admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `created_at`, `description`)
 VALUES
 	(1,'超级管理员','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"reviewl_list\",\"admin:loan_order:review_record\",\"admin:loan_order:order_general_info\",\"admin:loan_order:message_record\",\"admin:loan_order:callrecord\",\"admin:loan_order:book_address\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\",\"admin:loan_order:other_info\",\"admin:loan_order:loan_info\",\"admin:loan_order:loan_config_info\",\"all_application\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\",\"admin:loan_order:first_review\",\"admin:loan_order:first_review_list\",\"first_review\",\"admin:loan_order:second_review_list\",\"second_review\",\"admin:loan_order:final_review_list\",\"final_review\",\"admin:application:reviewHistoryCases\",\"admin:customer:index\",\"admin:customer:all\",\"admin:customer:customerAuthenticationa\",\"admin:finance:index\",\"admin:finance:deposits\",\"admin:finance:loanIssues\",\"admin:finance:balance\",\"admin:finance:offlineIssue\",\"admin:finance:balanceIssuesLog\",\"admin:report:index\",\"admin:report:financeReport\",\"admin:report:isssuesReport\",\"admin:report:depositsReport\",\"admin:report:financeInout\",\"admin:report:fundPeriodTable\",\"admin:report:financeTotalAssets\",\"admin:report:technicalService\",\"admin:report:operation\",\"admin:statistic:register\",\"admin:statistic:day_count\",\"admin:statistic:issue\",\"admin:statistic:again_loan\",\"admin:report:customerInformation\",\"admin:report:loanInfomation\",\"admin:statistic:conversion\",\"admin:report:loanOperation\",\"admin:report:loanRepayment\",\"admin:report:platformRate\",\"admin:report:processRejectRate\",\"admin:statistic:over_period\",\"admin:\",\"admin:report:collectionReport\",\"admin:collection_case_log:list\",\"admin:collection_case_log:add\",\"admin:collection_case_log:index\",\"admin:report:collectionEffect\",\"admin:report:collectionEfficiency\",\"admin:report:sendSmsDetail\",\"admin:report:snedSmsStatistics\",\"admin:report:rollover\",\"admin:report:recallAmount\",\"admin:report:application\",\"admin:statistic:deal\",\"admin:statistic:deal_efficiency\",\"admin:report:allReviewReport\",\"admin:statistic:trial\",\"admin:operation:approvalHistory\",\"admin:loan_order_log:index\",\"admin:loan_order_log:order_refuse_log\",\"admin:report:performanceReport\",\"admin:report:myCollectionPerformance\",\"admin:report:myApplicationPerformance\",\"admin:report:exportResult\",\"admin:operate:index\",\"admin:operation:accountRole\",\"admin:operation:accountManagement\",\"admin:operation:roleManagement\",\"admin:operation:applyConfiguration\",\"admin:operation:ruleManagement\",\"admin:blacklist:index\",\"admin:blacklist:add\",\"admin:blacklist:edit\",\"admin:blacklist:delete\",\"admin:operation:stepManagement\",\"admin:operation:labelManagement\",\"admin:page:index\",\"admin:operation:contract\",\"admin:operation:appNoticeManagement\",\"admin:operation:issueManagement\",\"admin:operation:amountControlManagement\",\"admin:operation:lendingFailureOrder\",\"admin:operation:batchIssue\",\"admin:operation:handleFailedIssue\",\"admin:operation:skypayCancel\",\"admin:operation:smsManagement\",\"admin:operation:smsSendTime\",\"admin:sms_template:index\",\"admin:operation:smsRecord\",\"admin:sms:batchSend\",\"admin:sms:index\",\"admin:sms:contact_phone\",\"admin:sms:add\",\"admin:operation:customerProduct\",\"admin:operation:customerGrade\",\"admin:operaion:customerGradeManagement\",\"admin:operation:productManagement\",\"admin:operation:productGrade\",\"admin:help:index\",\"admin:operation:bannerMangement\",\"admin:advertise:index\",\"admin:advertise:add\",\"admin:advertise:edit\",\"admin:advertise:delete\",\"admin:advertise_cat:index\",\"admin:advertise_cat:add\",\"admin:advertise_cat:edit\",\"admin:advertise_cat:delete\",\"admin:operation:task\",\"admin:operation:bankChannel\",\"admin:collection_category:index\",\"admin:collection_category:add\",\"admin:collection_category:edit\",\"admin:collection_category:delete\",\"admin:collection_case_log:index\",\"admin:system:function\",\"admin:system:setting\",\"admin:system:base\",\"admin:system:index\",\"admin:config:pagelist\",\"admin:config:delete_one\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:pagelist\",\"admin:menu:pagelist\",\"other\",\"collection\",\"admin:collection_case:index\",\"admin:collection_case:current\",\"admin:collection_case:overdue\",\"admin:collection_case:assign\",\"admin:collection_case:do_assign\",\"admin:collection_case:mine\",\"collector_collection_detail\",\"admin:collection_case:workbench\",\"admin:collection_call_record:index\",\"admin:collection_voice_record:index\",\"admin:collection_stage:index\",\"admin:collection_stage:add\",\"admin:collection_stage:edit\",\"admin:collection_stage:delete\",\"admin:collection_group:index\",\"admin:collection_group:add\",\"admin:collection_group:edit\",\"admin:collection_group:delete\",\"admin:collection_stage_group:index\",\"admin:collection_stage_group:add\",\"admin:collection_stage_group:edit\",\"admin:collection_stage_group:delete\",\"admin:company:index\",\"admin:company:add\",\"admin:company:edit\",\"admin:company:delete\",\"admin:collection_collector:index\",\"admin:collection_collector:add\",\"admin:collection_collector:edit\",\"admin:collection_collector:delete\"]',1,1,1555310106,''),
-	(2,'默认角色','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\"]',20,1,1555310106,''),
+	(2,'默认角色','[\"admin:dashboard\"]',20,1,1555310106,''),
 	(3,'company collector manage','[\"application\",\"loan_order_list\",\"product_valid_list\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"collection\",\"collection_voicerecord_list\"]',20,1,1556189858,'外包公司管理账号角色 基本的催收员权限 + 催收员管理权限'),
 	(4,'collector','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',1,1,1556189840,'普通催收角色'),
 	(5,'basic collector','',20,1,1556189847,'基本的催收员权限 管理催收员中 新建催收员的权限'),
@@ -100,16 +100,16 @@ VALUES
 	(60,'JKSky_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561531035,'JKSky_S0'),
 	(61,'JKSky_S1','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\"]',20,1,1561531051,'JKSky_S1');
 
-/*!40000 ALTER TABLE `sys_admin_role` ENABLE KEYS */;
+/*!40000 ALTER TABLE `admin_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_admin_user
+# Dump of table admin_user
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_admin_user`;
+DROP TABLE IF EXISTS `admin_user`;
 
-CREATE TABLE `sys_admin_user` (
+CREATE TABLE `admin_user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `role_id` bigint(20) DEFAULT NULL COMMENT '角色ID',
   `password` varchar(128) NOT NULL,
@@ -122,19 +122,19 @@ CREATE TABLE `sys_admin_user` (
   `last_login_at` bigint(13) DEFAULT NULL COMMENT '最后登录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  `lang` char(2) NOT NULL COMMENT '默认客户端语言',
+  `lang` varchar(20) NOT NULL DEFAULT '' COMMENT '默认客户端语言',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
 
-LOCK TABLES `sys_admin_user` WRITE;
-/*!40000 ALTER TABLE `sys_admin_user` DISABLE KEYS */;
+LOCK TABLES `admin_user` WRITE;
+/*!40000 ALTER TABLE `admin_user` DISABLE KEYS */;
 
-INSERT INTO `sys_admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
+INSERT INTO `admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1307,'127.0.0.1',1572780411398,1,0,'cd'),
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1312,'127.0.0.1',1573652514054,1,0,'cd'),
 	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2',NULL,NULL,'[]',0,'',NULL,0,1553759714,''),
 	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213',NULL,NULL,'[]',0,'',NULL,-1,1553761927,''),
 	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
@@ -143,7 +143,7 @@ VALUES
 	(8,2,'pbkdf2_sha256$100000$510hnENWgSjtwHx4$hz5p5I9ZnZUBmxzh1BRc08AnnVwCHhRAR1xNs6vpPoQ=','请问','1','1e','[]',0,'',NULL,-1,1554891553,''),
 	(9,1,'pbkdf2_sha256$100000$iBzcEO3OpRT3IppL$JizpIobnqCTRnlsOWYgRZIjbgThltzSJxOPJwHzVzSo=','test','13456987458','123@163.com','[]',0,'',NULL,-1,1555310050,''),
 	(10,1,'pbkdf2_sha256$100000$3I3OMYo133vvYOch$XpwYMbx7RNUmzQUxWYYhLINi8OY2iWtRoEOTXxIqT6k=','root','111','111','',2,'192.168.1.72',1555310969,1,1555310681,''),
-	(11,2,'pbkdf2_sha256$100000$3C6gzqbx9JSZoXOc$bNQb09eKO5nosrglBEPouehbNTlLVn6T6GUknA7Efug=sys_login_rsa_priv_key','test_role','13548795456','123456','',3,'192.168.1.72',1555311148,1,1555311094,''),
+	(11,2,'pbkdf2_sha256$100000$3C6gzqbx9JSZoXOc$bNQb09eKO5nosrglBEPouehbNTlLVn6T6GUknA7Efug=login_rsa_priv_key','test_role','13548795456','123456','',3,'192.168.1.72',1555311148,1,1555311094,''),
 	(12,1,'pbkdf2_sha256$100000$Nckhfnpbp6VPBEvl$If2B1yFZyQ8ZCm2eraaBG3EGnX6FyUhKJH0xwytK37U=','zzz','zzz','zzz','[]',1,'192.168.1.72',1555378164,-1,1555378091,''),
 	(13,10,'pbkdf2_sha256$100000$VmZhG85fQzaRLiV1$zNuAzlXsdF0+tnMx0Xvhtx6v+vuX//EnA4XqgS/Ev0w=','test123456789','13645612365','136@163.com','[\"application\",\"loan_order_list\",\"product_valid_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"force_pass_put\",\"system_close_put\"]',77,'192.168.1.72',1559802621,1,1555366432,''),
 	(16,17,'pbkdf2_sha256$100000$Cej23Di3lBYYSpF4$tgOFFUgJKi6q5Zslozw4UeOtjPH5FBxUpbdBd+ZlK5o=','test_A1','15526666661',NULL,'',5,'192.168.1.72',1561343830,1,1556189051,''),
@@ -187,28 +187,28 @@ VALUES
 	(58,17,'pbkdf2_sha256$100000$ssNBSwY0l3xP2xtu$ii2mh7jPM5R6/s412A5Ooy2N1+jOPDJlCxVBMtrZ3Cc=','editor','15527000001','leeyisoft@qq.com','\"[\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\"]\"',1,'127.0.0.1',1571494031149,1,1561531539,''),
 	(59,18,'pbkdf2_sha256$100000$P3HaQEC4RZBwr6L6$NcAQSWFfBzpjqW0eKVDLsVCpw/6CbskI+bKJMD1W5GQ=','test_A2_1','15527000002',NULL,'[]',0,'',NULL,-1,1561531591,'');
 
-/*!40000 ALTER TABLE `sys_admin_user` ENABLE KEYS */;
+/*!40000 ALTER TABLE `admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_admin_user_login_log
+# Dump of table admin_user_login_log
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_admin_user_login_log`;
+DROP TABLE IF EXISTS `admin_user_login_log`;
 
-CREATE TABLE `sys_admin_user_login_log` (
+CREATE TABLE `admin_user_login_log` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户唯一标识',
   `ip` varchar(40) DEFAULT NULL COMMENT '登录IP',
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
-LOCK TABLES `sys_admin_user_login_log` WRITE;
-/*!40000 ALTER TABLE `sys_admin_user_login_log` DISABLE KEYS */;
+LOCK TABLES `admin_user_login_log` WRITE;
+/*!40000 ALTER TABLE `admin_user_login_log` DISABLE KEYS */;
 
-INSERT INTO `sys_admin_user_login_log` (`id`, `user_id`, `ip`, `client`, `created_at`)
+INSERT INTO `admin_user_login_log` (`id`, `user_id`, `ip`, `client`, `created_at`)
 VALUES
 	(1,1,'127.0.0.1','web',1561539165),
 	(2,1,'127.0.0.1','web',1564577918),
@@ -290,18 +290,23 @@ VALUES
 	(78,1,'127.0.0.1','web',1572313927266),
 	(79,1,'127.0.0.1','web',1572487246897),
 	(80,1,'127.0.0.1','web',1572748378825),
-	(81,1,'127.0.0.1','web',1572748378825);
+	(81,1,'127.0.0.1','web',1572748378825),
+	(82,1,'127.0.0.1','web',0),
+	(83,1,'127.0.0.1','web',0),
+	(84,1,'127.0.0.1','web',0),
+	(85,1,'127.0.0.1','web',0),
+	(86,1,'127.0.0.1','web',0);
 
-/*!40000 ALTER TABLE `sys_admin_user_login_log` ENABLE KEYS */;
+/*!40000 ALTER TABLE `admin_user_login_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_advertising
+# Dump of table advertising
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_advertising`;
+DROP TABLE IF EXISTS `advertising`;
 
-CREATE TABLE `sys_advertising` (
+CREATE TABLE `advertising` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '标题',
   `description` varchar(255) DEFAULT NULL COMMENT '描述',
@@ -317,10 +322,10 @@ CREATE TABLE `sys_advertising` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
 
-LOCK TABLES `sys_advertising` WRITE;
-/*!40000 ALTER TABLE `sys_advertising` DISABLE KEYS */;
+LOCK TABLES `advertising` WRITE;
+/*!40000 ALTER TABLE `advertising` DISABLE KEYS */;
 
-INSERT INTO `sys_advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `category_id`, `status`)
+INSERT INTO `advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `category_id`, `status`)
 VALUES
 	(1,'banner1 cn 3333',NULL,1570521600000,1571817600000,0,1,'web,wechat,android,ios','upload/advertising/652c09da07addae0022f4921d647a102.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
 	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
@@ -329,16 +334,16 @@ VALUES
 	(5,'banner2 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
 	(6,'ad1 en',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,-1);
 
-/*!40000 ALTER TABLE `sys_advertising` ENABLE KEYS */;
+/*!40000 ALTER TABLE `advertising` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_advertising_category
+# Dump of table advertising_category
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_advertising_category`;
+DROP TABLE IF EXISTS `advertising_category`;
 
-CREATE TABLE `sys_advertising_category` (
+CREATE TABLE `advertising_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(40) DEFAULT NULL COMMENT '唯一标识',
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '分类名称',
@@ -347,26 +352,26 @@ CREATE TABLE `sys_advertising_category` (
   UNIQUE KEY `uk_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
 
-LOCK TABLES `sys_advertising_category` WRITE;
-/*!40000 ALTER TABLE `sys_advertising_category` DISABLE KEYS */;
+LOCK TABLES `advertising_category` WRITE;
+/*!40000 ALTER TABLE `advertising_category` DISABLE KEYS */;
 
-INSERT INTO `sys_advertising_category` (`id`, `name`, `title`, `status`)
+INSERT INTO `advertising_category` (`id`, `name`, `title`, `status`)
 VALUES
 	(1,'index_banner','主页顶部banner',1),
 	(2,'index_bottom','主页底部滚动广告',1),
 	(3,'index_banner2','首页第二横幅',1),
 	(4,NULL,'ABC',0);
 
-/*!40000 ALTER TABLE `sys_advertising_category` ENABLE KEYS */;
+/*!40000 ALTER TABLE `advertising_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_area_cn
+# Dump of table area_cn
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_area_cn`;
+DROP TABLE IF EXISTS `area_cn`;
 
-CREATE TABLE `sys_area_cn` (
+CREATE TABLE `area_cn` (
   `code` mediumint(6) NOT NULL DEFAULT '0' COMMENT '政区划代码',
   `parent_code` mediumint(6) NOT NULL DEFAULT '0' COMMENT '父节点code',
   `title` varchar(64) NOT NULL,
@@ -375,10 +380,10 @@ CREATE TABLE `sys_area_cn` (
   UNIQUE KEY `i_code` (`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='中国最新县及县以上行政区划代码（截止2014年10月31日）';
 
-LOCK TABLES `sys_area_cn` WRITE;
-/*!40000 ALTER TABLE `sys_area_cn` DISABLE KEYS */;
+LOCK TABLES `area_cn` WRITE;
+/*!40000 ALTER TABLE `area_cn` DISABLE KEYS */;
 
-INSERT INTO `sys_area_cn` (`code`, `parent_code`, `title`, `type`)
+INSERT INTO `area_cn` (`code`, `parent_code`, `title`, `type`)
 VALUES
 	(110000,0,'北京市',0),
 	(110100,110000,'北京市',1),
@@ -3893,16 +3898,16 @@ VALUES
 	(820000,0,'澳门特别行政区',0),
 	(130181,130100,'辛集市',2);
 
-/*!40000 ALTER TABLE `sys_area_cn` ENABLE KEYS */;
+/*!40000 ALTER TABLE `area_cn` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_article
+# Dump of table article
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_article`;
+DROP TABLE IF EXISTS `article`;
 
-CREATE TABLE `sys_article` (
+CREATE TABLE `article` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` bigint(20) DEFAULT NULL COMMENT '文章分类ID',
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
@@ -3922,90 +3927,53 @@ CREATE TABLE `sys_article` (
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
-LOCK TABLES `sys_article` WRITE;
-/*!40000 ALTER TABLE `sys_article` DISABLE KEYS */;
+LOCK TABLES `article` WRITE;
+/*!40000 ALTER TABLE `article` DISABLE KEYS */;
 
-INSERT INTO `sys_article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`, `source`, `external_url`, `thumb`, `keyword`, `description`, `publish_date`, `hits`, `content`, `ip`, `updated_at`, `created_at`, `status`)
+INSERT INTO `article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`, `source`, `external_url`, `thumb`, `keyword`, `description`, `publish_date`, `hits`, `content`, `ip`, `updated_at`, `created_at`, `status`)
 VALUES
-	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','','','abcd','aaa',1572451200000,123,'','',0,1572006527197,1);
+	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','https://www.w3school.com.cn/jsref/jsref_replace.asp','','abcd','aaa',1094400000,123,'<p>asdcc2222</p>\n<p>&nbsp;</p>','',1573356802870,1572006527197,1),
+	(3,1,'cn',0,'abcde3','leeyi','py_admin','','','','',2019,0,'<p>abcde3</p>',NULL,0,1573264561506,0);
 
-/*!40000 ALTER TABLE `sys_article` ENABLE KEYS */;
+/*!40000 ALTER TABLE `article` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_article_category
+# Dump of table article_category
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_article_category`;
+DROP TABLE IF EXISTS `article_category`;
 
-CREATE TABLE `sys_article_category` (
+CREATE TABLE `article_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `lang` varchar(10) DEFAULT 'cn' COMMENT '默认语言：cn zh-CN中文(简体) id d-ID 印度尼西亚语 en en-US 英语(美国) en-PH 英语(菲律宾)',
   `title` varchar(64) DEFAULT NULL COMMENT '分类名称',
   `name` varchar(40) DEFAULT NULL COMMENT '分类唯一标示',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
 
-LOCK TABLES `sys_article_category` WRITE;
-/*!40000 ALTER TABLE `sys_article_category` DISABLE KEYS */;
+LOCK TABLES `article_category` WRITE;
+/*!40000 ALTER TABLE `article_category` DISABLE KEYS */;
 
-INSERT INTO `sys_article_category` (`id`, `lang`, `title`, `name`)
+INSERT INTO `article_category` (`id`, `lang`, `title`, `name`, `status`)
 VALUES
-	(1,'cn','政策法规','regulation'),
-	(2,'cn','新闻活动','news');
+	(1,'cn','政策法规','regulation',1),
+	(2,'cn','新闻活动','news',1);
 
-/*!40000 ALTER TABLE `sys_article_category` ENABLE KEYS */;
+/*!40000 ALTER TABLE `article_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_blacklist
+# Dump of table company
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_blacklist`;
+DROP TABLE IF EXISTS `company`;
 
-CREATE TABLE `sys_blacklist` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `admin_id` bigint(20) unsigned DEFAULT NULL COMMENT '管理员id',
-  `type` enum('ktp','mobile','fullname','company_name','company_phone') DEFAULT NULL COMMENT '类型',
-  `value` varchar(100) NOT NULL COMMENT '值',
-  `reason` varchar(100) NOT NULL COMMENT '原因说明',
-  `created_at` bigint(13) unsigned DEFAULT NULL COMMENT '创建时间',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
-  `loan_order_id` bigint(20) DEFAULT NULL COMMENT '贷款编号',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
-
-LOCK TABLES `sys_blacklist` WRITE;
-/*!40000 ALTER TABLE `sys_blacklist` DISABLE KEYS */;
-
-INSERT INTO `sys_blacklist` (`id`, `admin_id`, `type`, `value`, `reason`, `created_at`, `status`, `loan_order_id`)
-VALUES
-	(2,1,'mobile','09458169167','',1556089909,0,NULL),
-	(3,1,'mobile','09458169191','',1556181583,0,1),
-	(4,1,'ktp','111111111111111','dfadfasdfasdfasadfs',1556264136,1,2147483647),
-	(5,1,'ktp','333','111',1556418118,1,3311),
-	(6,1,'ktp','','11111111',1557027264,1,2147483647),
-	(7,1,'ktp','333333333333','测试',1557277945,1,NULL),
-	(8,1,'ktp','534546546','test',1557314477,0,2),
-	(9,1,'ktp','1','111',1557916497,1,NULL),
-	(10,1,'ktp','12','qwe',1557917699,1,8),
-	(11,1,'ktp','123','1321',1557917792,1,8),
-	(12,1,'ktp','tets','stet',1558922565,1,0),
-	(13,1,'mobile','11111','33333',1559614102,0,65);
-
-/*!40000 ALTER TABLE `sys_blacklist` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table sys_company
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sys_company`;
-
-CREATE TABLE `sys_company` (
+CREATE TABLE `company` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `company_name` varchar(50) NOT NULL DEFAULT '' COMMENT '公司名',
   `description` varchar(100) NOT NULL DEFAULT '' COMMENT '公司简介',
@@ -4016,25 +3984,25 @@ CREATE TABLE `sys_company` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='公司表';
 
-LOCK TABLES `sys_company` WRITE;
-/*!40000 ALTER TABLE `sys_company` DISABLE KEYS */;
+LOCK TABLES `company` WRITE;
+/*!40000 ALTER TABLE `company` DISABLE KEYS */;
 
-INSERT INTO `sys_company` (`id`, `company_name`, `description`, `type`, `module`, `status`, `created_at`)
+INSERT INTO `company` (`id`, `company_name`, `description`, `type`, `module`, `status`, `created_at`)
 VALUES
 	(1,'my company','default company','inner','manage',1,1556001382),
 	(5,'JKSky_Credit','JKSky_Credit','outer','review',0,1556071101),
 	(7,'JKSky_Collection','JKSky_Collection','outer','collection',1,1556187512);
 
-/*!40000 ALTER TABLE `sys_company` ENABLE KEYS */;
+/*!40000 ALTER TABLE `company` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_config
+# Dump of table config
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_config`;
+DROP TABLE IF EXISTS `config`;
 
-CREATE TABLE `sys_config` (
+CREATE TABLE `config` (
   `tab` varchar(20) DEFAULT NULL COMMENT '配置选项，便于后台分类浏览',
   `key` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
   `value` varchar(2000) DEFAULT '',
@@ -4048,15 +4016,15 @@ CREATE TABLE `sys_config` (
   PRIMARY KEY (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 
-LOCK TABLES `sys_config` WRITE;
-/*!40000 ALTER TABLE `sys_config` DISABLE KEYS */;
+LOCK TABLES `config` WRITE;
+/*!40000 ALTER TABLE `config` DISABLE KEYS */;
 
-INSERT INTO `sys_config` (`tab`, `key`, `value`, `title`, `sort`, `remark`, `system`, `status`, `created_at`, `updated_at`)
+INSERT INTO `config` (`tab`, `key`, `value`, `title`, `sort`, `remark`, `system`, `status`, `created_at`, `updated_at`)
 VALUES
 	('sys','login_pwd_rsa_encrypt','1','登录密码使用RSA算法加密',1,'系统登录开启RSA加密',1,1,0,0),
-	('sys','sys_login_rsa_priv_key','-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQDxKL1RrEcd4szM8Df4HqsJdOvKrSQO7BBvBVsvXKfpWrM+8XGL\n1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr1dWoBVabqDFZgZ2awB7iTk4k\n/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO/xtHnso3I6penSvRawIDAQAB\nAoGAQKctalIHlumRAnh8aNa///8KoAGfIykCluEWuzHaCmO4nm1YhaaUyQadiW91\na6iM0YgL4e+7MhskaXnrurJKRAweJP49OHz2JbLwyE7N7FWlY++1RVwWE32645CT\nt8hkAyFBBBR0J1by8HdGnPa69sJ6wwBYoh3SeCM8R92cfsECQQD+TbbYV/lw9KQD\nju+18bWpAyQeMBdx11OfgN3fBkRwrl9M0DHzwFKwDY7zFxPuYKD5I39wNeSbYYHJ\n9my6/JybAkEA8sST9CmwLgCoRwciUdxH4hOW8uAdGC9T2VYSo/BbO/geF09c+Ggx\nSoyEFIoAUMDC53Yj4dXgks0gnwWygRyjcQJBAN/P59+qNbgLJ5qWHzTDYX05bX1A\nGDIyL7/Ou/bAXlXJscg55+y+VEfr9ubNZdZDpwj+C/fnBqcV/xOP1QwQrYcCQQC+\ncO0rxaQ6gjN//J20n9wYAowQnTTVqxLY1Ies6Tl40swwNwbUq0+3joFyZ0uWDZEX\n5/qAB7qzDo1/kgWU+TVRAkAwAdK+p5ippKmp2efsdqRjb/71n+EX9adpo/Wh5Ece\nVp+MQkKMwNsQCkEthc/jEv4eG/urmWkLxaISAJRNegN2\n-----END RSA PRIVATE KEY-----','登录RSA算法加密私钥',3,'',1,1,0,0),
+	('sys','login_rsa_priv_key','-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQDxKL1RrEcd4szM8Df4HqsJdOvKrSQO7BBvBVsvXKfpWrM+8XGL\n1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr1dWoBVabqDFZgZ2awB7iTk4k\n/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO/xtHnso3I6penSvRawIDAQAB\nAoGAQKctalIHlumRAnh8aNa///8KoAGfIykCluEWuzHaCmO4nm1YhaaUyQadiW91\na6iM0YgL4e+7MhskaXnrurJKRAweJP49OHz2JbLwyE7N7FWlY++1RVwWE32645CT\nt8hkAyFBBBR0J1by8HdGnPa69sJ6wwBYoh3SeCM8R92cfsECQQD+TbbYV/lw9KQD\nju+18bWpAyQeMBdx11OfgN3fBkRwrl9M0DHzwFKwDY7zFxPuYKD5I39wNeSbYYHJ\n9my6/JybAkEA8sST9CmwLgCoRwciUdxH4hOW8uAdGC9T2VYSo/BbO/geF09c+Ggx\nSoyEFIoAUMDC53Yj4dXgks0gnwWygRyjcQJBAN/P59+qNbgLJ5qWHzTDYX05bX1A\nGDIyL7/Ou/bAXlXJscg55+y+VEfr9ubNZdZDpwj+C/fnBqcV/xOP1QwQrYcCQQC+\ncO0rxaQ6gjN//J20n9wYAowQnTTVqxLY1Ies6Tl40swwNwbUq0+3joFyZ0uWDZEX\n5/qAB7qzDo1/kgWU+TVRAkAwAdK+p5ippKmp2efsdqRjb/71n+EX9adpo/Wh5Ece\nVp+MQkKMwNsQCkEthc/jEv4eG/urmWkLxaISAJRNegN2\n-----END RSA PRIVATE KEY-----','登录RSA算法加密私钥',3,'',1,1,0,0),
 	('sys','site_name','py_admin','前端站点名称',20,'ddd3',1,1,0,0),
-	('sys','sys_login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----','登录RSA算法加密公钥',2,'系统登录RSA加密公钥',1,1,0,0),
+	('sys','login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----','登录RSA算法加密公钥',2,'系统登录RSA加密公钥',1,1,0,0),
 	('sys','system.name','py_admin','系统名称',20,'',1,1,0,0),
 	('sys','system.version','1.0.1','软件版本',20,'',1,1,0,0),
 	('sys','site_url','http://127.0.0.1:8090','前台站点网址',20,'注意不要以 / 结尾',1,1,0,0),
@@ -4071,16 +4039,59 @@ VALUES
 	('sys','copyright','copyright 2019-2029','版权信息',1,'',1,1,1555126207,0),
 	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,0);
 
-/*!40000 ALTER TABLE `sys_config` ENABLE KEYS */;
+/*!40000 ALTER TABLE `config` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table sys_message
+# Dump of table goods
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_message`;
+DROP TABLE IF EXISTS `goods`;
 
-CREATE TABLE `sys_message` (
+CREATE TABLE `goods` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `category_id` bigint(20) NOT NULL COMMENT '分类',
+  `title` varchar(200) NOT NULL COMMENT '标题',
+  `album` json DEFAULT NULL COMMENT '相册，["image_url",...]',
+  `external_url` varchar(255) NOT NULL DEFAULT '' COMMENT '外链地址',
+  `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO关键词',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO描述',
+  `hits` bigint(20) DEFAULT '0' COMMENT '点击数量',
+  `importance` tinyint(4) DEFAULT '0' COMMENT '价值',
+  `market_price` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '市场价格，单位分',
+  `price` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '销售价格，单位分',
+  `inventory_quantity` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '库存数量',
+  `sales_quantity` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '销售数量',
+  `extra` json DEFAULT NULL COMMENT '额外信息，例如商品的尺寸、颜色、其他规格等',
+  `detail` longtext COMMENT '详情',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
+
+
+
+# Dump of table goods_category
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `goods_category`;
+
+CREATE TABLE `goods_category` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(64) DEFAULT NULL COMMENT '分类名称',
+  `name` varchar(40) DEFAULT NULL COMMENT '分类唯一标示',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品分类表';
+
+
+
+# Dump of table message
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `message`;
+
+CREATE TABLE `message` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `msgtype` varchar(20) DEFAULT NULL COMMENT '消息类型: 后台管理员消息 admin ； 前端贷款用户消息  user',
   `message` varchar(200) DEFAULT '' COMMENT '附加消息',
@@ -4094,12 +4105,12 @@ CREATE TABLE `sys_message` (
 
 
 
-# Dump of table sys_sequence
+# Dump of table sequence
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sys_sequence`;
+DROP TABLE IF EXISTS `sequence`;
 
-CREATE TABLE `sys_sequence` (
+CREATE TABLE `sequence` (
   `key` varchar(40) NOT NULL DEFAULT '',
   `value` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`key`)
@@ -4206,6 +4217,21 @@ CREATE TABLE `user_friend` (
 
 
 
+# Dump of table user_friend_group
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_friend_group`;
+
+CREATE TABLE `user_friend_group` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(40) NOT NULL DEFAULT '' COMMENT '分组名称',
+  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
+  `owner_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分组所属用户ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友分组表';
+
+
+
 # Dump of table user_friend_notice
 # ------------------------------------------------------------
 
@@ -4223,21 +4249,6 @@ CREATE TABLE `user_friend_notice` (
   `created_at` bigint(13) DEFAULT NULL COMMENT '创建记录UTC时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='添加好友状态通知，定时删除60天内的已读消息';
-
-
-
-# Dump of table user_friendgroup
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_friendgroup`;
-
-CREATE TABLE `user_friendgroup` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `groupname` varchar(40) NOT NULL DEFAULT '' COMMENT '分组名称',
-  `created_at` bigint(13) NOT NULL COMMENT '创建记录UTC时间',
-  `owner_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分组所属用户ID',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友分组表';
 
 
 

@@ -23,22 +23,24 @@ redisdb = redis.StrictRedis(
 def sys_config(key, field='value'):
     cache_key = '%s%s' % (settings.config_cache_prefix,key)
     cache_val = redisdb.get(cache_key)
-    # print('cache_key', cache_key)
+    print('cache_key', cache_key)
     if field=='delete_key_value':
         return redisdb.delete(cache_key)
     if cache_val:
-        # print('cache_val: ', cache_val)
-        return cache_val
+        print('cache_val: ', cache_val)
+    #     return cache_val
 
     db = mysqldb()
     value = ''
     try:
         if field=='value':
-            query = "select `value` from `sys_config` where `status`=1 and `key`='%s';" % key;
+            query = f"select `value` from `config` where `status`=1 and `key`='{key}';";
             value = db.execute(query).scalar()
+            # print("query ", query)
             value = value if value is not None else ''
         elif type(field)==list:
-            query = "select %s from `sys_config` where `status`=1 and `key`='%s';" % (','.join(field),key);
+            fields = ','.join(field)
+            query = f"select {fields} from `config` where `status`=1 and `key`='{key}';";
             # print('field', type(field), field)
             field = db.execute(query).fetchone()
             # print('field', type(field), field)
@@ -49,6 +51,7 @@ def sys_config(key, field='value'):
     finally:
         # 释放连接池
         db.remove()
+    print(cache_key, ' value ', value)
     redisdb.set(cache_key, value, 86400)
     return value
 

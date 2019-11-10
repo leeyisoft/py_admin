@@ -1,111 +1,105 @@
 #!/usr/bin/env python
-# -*- coding: utf-8  -*-
-"""
-处理配置管理
-"""
-from trest.exception import JsonError
-from applications.common.models.base import Config
+# -*- coding: utf-8 -*-
+from trest.utils import utime
+from trest.logger import SysLogger
 from trest.config import settings
-from applications.common.utils import sys_config
+from trest.exception import JsonError
+from applications.common.models.config import Config
+
 
 class ConfigService:
     @staticmethod
-    def get_data(param,limit, page):
+    def data_list(where, page, per_page):
+        """列表记录
+        Arguments:
+            where dict -- 查询条件
+            page int -- 当前页
+            per_page int -- 每页记录数
+
+        return:
+            Paginate 对象 | None
         """
-        获取配置数据列表
-        :param limit:
-        :param page:
-        :return:
-        """
-        query=Config.Q.order_by(Config.sort.desc())
-        if param['key']:
-            query=query.filter(Config.key==param['key'])
-        pagelist_obj = query.paginate(page=page, per_page=limit)
+        query = Config.Q
+
+        if 'status' in where.keys():
+            query = query.filter(Config.status == where['status'])
+        else:
+            query = query.filter(Config.status != -1)
+
+        pagelist_obj = query.paginate(page=page, per_page=per_page)
+
         if pagelist_obj is None:
             raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
-    def delete_data(key):
-        """
-        删除系统配置
-        :param key:
-        :return:
-        """
-        config = Config.Q.filter(Config.key == key).first()
-        if not config:
-            raise JsonError('配置不存在')
-        if config.system == 1:
-            raise JsonError('系统配置不可删除')
-        Config.Q.filter(Config.key == key).delete()
-        Config.session.commit()
-        # 同时删除对应缓存
-        sys_config(key, 'delete_key_value')
-        return True
+    def get(id):
+        """获取单条记录
 
-    @staticmethod
-    def check_key(key, old_key=None):
-        """
-        检查key是否已被占用
-        :param key:
-        :param old_key:
-        :return:
-        """
-        if old_key:
-            count = Config.Q.filter(Config.key != old_key).filter(Config.key == key).count()
-        else:
-            count = Config.Q.filter(Config.key == key).count()
-        if count > 0:
-            return True
-        return False
+        [description]
 
-    @staticmethod
-    def check_title(title, old_key=None):
-        """
-        检查title是否被占用
-        :param title:
-        :param old_key:
-        :return: boolean
-        """
-        if old_key:
-            count = Config.Q.filter(Config.key!=old_key).filter(Config.title==title).count()
-        else:
-            count = Config.Q.filter(Config.title == title).count()
-        if count > 0:
-            return True
-        return False
+        Arguments:
+            id int -- 主键
 
-    @staticmethod
-    def insert_data(title, key, param):
+        return:
+            Config Model 实例 | None
         """
-        保存配置信息
-        :param title:
-        :param key:
-        :param param:
-        :return:
-        """
-        if ConfigService.check_title(title):
-            raise JsonError('Title已被占用')
-
-        if ConfigService.check_key(key):
-            raise JsonError('KEY已被占用')
-
-        obj=Config(**param)
-        Config.session.add(obj)
-        Config.session.commit()
-        # 同时删除对应缓存
-        sys_config(key, 'delete_key_value')
+        if not id:
+            raise JsonError('ID不能为空')
+        obj = Config.Q.filter(Config.id == id).first()
         return obj
 
     @staticmethod
-    def update_data(param):
-        key = param.get('key', '')
-        if ConfigService.check_key(key) is False:
-            raise JsonError('不能修改key')
+    def update(id, param):
+        """更新记录
+
+        [description]
+
+        Arguments:
+            id int -- 主键
+            param dict -- [description]
+
+        return:
+            True | JsonError
+        """
+        param.pop('_xsrf', None)
+        param.pop('file', None)
+        param.pop('id', None)
+        param['updated_at'] = utime.timestamp(3)
+
+        if not id:
+            raise JsonError('ID 不能为空')
+
         try:
-            Config.Q.filter(Config.key==key).update(param)
+            Config.Q.filter(Config.id == id).update(param)
+            Config.session.commit()
+            return True
         except Exception as e:
-            raise e
-        else:
-            sys_config(key, 'delete_key_value')
-        return True
+            Config.session.rollback()
+            SysLogger.error(e)
+            raise JsonError('update error')
+
+    @staticmethod
+    def insert(param):
+        """插入
+
+        [description]
+
+        Arguments:
+            id int -- 主键
+            param dict -- [description]
+
+        return:
+            True | JsonError
+        """
+        param.pop('_xsrf', None)
+        param['created_at'] = utime.timestamp(3)
+        try:
+            data = Config(**param)
+            Config.session.add(data)
+            Config.session.commit()
+            return True
+        except Exception as e:
+            Config.session.rollback()
+            SysLogger.error(e)
+            raise JsonError('insert error')

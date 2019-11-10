@@ -103,7 +103,7 @@ class SetHandler(CommonHandler):
         params = {
             'member': member,
             'data_info': data_info,
-            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'public_key': sys_config('login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'active': {'set':'layui-this'},
         }
@@ -182,7 +182,7 @@ class ResetPasswordHandler(CommonHandler):
         rsa_encrypt = self.get_argument('rsa_encrypt', 0)
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-            private_key = sys_config('sys_login_rsa_priv_key')
+            private_key = sys_config('login_rsa_priv_key')
             nowpass = RSAEncrypter.decrypt(nowpass, private_key)
             password = RSAEncrypter.decrypt(password, private_key)
             repass = RSAEncrypter.decrypt(repass, private_key)

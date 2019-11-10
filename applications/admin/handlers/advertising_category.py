@@ -1,110 +1,90 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""广告位控制器
-
-[description]
+"""AdvertisingCategory控制器
 """
-
-import tornado
-
 from trest.router import get
 from trest.router import put
 from trest.router import post
 from trest.router import delete
 from trest.exception import JsonError
-from trest.config import settings
 
-from applications.admin.services.advertise_category import AdvertisingCategoryService
 from applications.admin.utils import required_permissions
 from applications.admin.utils import admin_required_login
+
+from applications.admin.services.advertising_category import AdvertisingCategoryService
 
 from .common import CommonHandler
 
 
-class AdvertiseCatHandler(CommonHandler):
+class AdvertisingCategoryHandler(CommonHandler):
 
-    @get('/admin/advertising_category')
+    @post('advertising_category')
     @admin_required_login
     @required_permissions()
-    def advertising_category_get(self):
+    def advertising_category_post(self, *args, **kwargs):
+        param = self.params()
+        AdvertisingCategoryService.insert(param)
+        return self.success()
+
+    @get('advertising_category/(?P<id>[0-9]+)')
+    @admin_required_login
+    @required_permissions()
+    def advertising_category_get(self, id):
+        """获取单个记录
         """
-        广告位分类
-        :return:
+        obj = AdvertisingCategoryService.get(id)
+        data = obj.as_dict() if obj else {}
+        return self.success(data = data)
+
+    @get('advertising_category')
+    @admin_required_login
+    @required_permissions()
+    def advertising_category_list_get(self, *args, **kwargs):
+        """列表、搜索记录
         """
-        limit = self.get_argument('limit', '10')
-        page = self.get_argument('page', '1')
+        page = int(self.get_argument('page', 1))
+        per_page = int(self.get_argument('limit', 10))
+        title = self.get_argument('title', None)
         status = self.get_argument('status', None)
 
-        param = {
-            'status': status,
-        }
-        pagelist_obj = AdvertisingCategoryService.data_list(param, page, limit)
-        res = {
-            'page': page,
-            'per_page': limit,
-            'total': pagelist_obj.total,
-            'items': [item.as_dict() for item in pagelist_obj.items],
-        }
-        return self.success(data=res)
+        param = {}
+        if title:
+            param['title'] = title
+        if status:
+            param['status'] = status
 
-    @post('/admin/advertising_category')
+        pagelist_obj = AdvertisingCategoryService.data_list(param, page, per_page)
+        items = []
+        for val in pagelist_obj.items:
+            data = val.as_dict()
+            items.append(data)
+        resp = {
+            'page':page,
+            'per_page':per_page,
+            'total':pagelist_obj.total,
+            'items':items,
+        }
+        return self.success(data = resp)
+
+    @put('advertising_category/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
-    def advertising_category_post(self):
-        """
-        新增广告位分类
-        """
-        name = self.get_argument('name', None)
-        title = self.get_argument('title', None)
-        status = self.get_argument('status', '1')
+    def advertising_category_put(self, id, *args, **kwargs):
+        param = self.params()
+        AdvertisingCategoryService.update(id, param)
+        return self.success(data = param)
 
-        if not name or not title or not status:
-            return self.error('参数错误')
-        param ={
-            'name': name,
-            'title': title,
-            'status': status,
-        }
-        AdvertisingCategoryService.add_data(param)
-        return self.success()
-
-    @put('/admin/advertising_category')
+    @delete('advertising_category/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
-    def advertising_category_put(self):
-        """
-        修改广告位分类
-        """
-        name = self.get_argument('name', None)
-        title = self.get_argument('title', None)
-        status = self.get_argument('status', '1')
-        cat_id = self.get_argument('cat_id', None)
-
-        if not cat_id:
-            return self.error('参数错误')
+    def advertising_category_delete(self, id, *args, **kwargs):
         param = {
-            'name': name,
-            'title': title,
-            'status': status,
+            'status':-1
         }
-        AdvertisingCategoryService.put_data(param, cat_id)
+        AdvertisingCategoryService.update(id, param)
         return self.success()
 
-    @delete('/admin/advertising_category')
-    @admin_required_login
-    @required_permissions()
-    def advertising_category_delete(self):
-        cat_id = self.get_argument('cat_id', None)
-        if not cat_id:
-            return self.error(msg='参数错误')
-        param = {
-            'status': -1
-        }
-        AdvertisingCategoryService.put_data(param, cat_id)
-        return self.success()
-
-
-    @get('/admin/advertising_category/valid')
+    @get('advertising_category/valid')
     @admin_required_login
     # @required_permissions()
     def advertising_category_valid_get(self):
@@ -114,4 +94,3 @@ class AdvertiseCatHandler(CommonHandler):
         """
         data = AdvertisingCategoryService.data_list_valid()
         return self.success(data=data)
-

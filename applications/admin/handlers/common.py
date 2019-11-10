@@ -4,15 +4,20 @@
 
 [description]
 """
+from trest.router import get
+from trest.router import put
+from trest.router import post
+from trest.router import delete
 from trest.exception import JsonError
+
 from trest.config import settings
 from trest.handler import Handler
 from trest.cache import cache
 
 from applications.common.utils import sys_config
-from applications.admin.services.user import AdminUserService
+from applications.admin.services.admin_user import AdminUserService
 
-from ..models import AdminUser
+from applications.common.models.admin_user import AdminUser
 
 
 class CommonHandler(Handler):

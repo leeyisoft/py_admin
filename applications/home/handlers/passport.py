@@ -33,7 +33,7 @@ class LoginHandler(CommonHandler):
             self.redirect(next)
 
         params = {
-            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'public_key': sys_config('login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'next': next,
             'message': '',
@@ -53,7 +53,7 @@ class LoginHandler(CommonHandler):
             return self.error(_('验证码错误'))
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-            private_key = sys_config('sys_login_rsa_priv_key')
+            private_key = sys_config('login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
 
         if not account:
@@ -88,7 +88,7 @@ class RegisterHandler(CommonHandler):
         referrer = self.get_argument('referrer', '')
         # print(aes_encrypt('de001cb8f0404944994e14f20bf76a02', prefix=''))
         params = {
-            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'public_key': sys_config('login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'next': next,
             'referrer_name': '',
@@ -131,7 +131,7 @@ class RegisterHandler(CommonHandler):
             return self.error('密码不能为空')
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-            private_key = sys_config('sys_login_rsa_priv_key')
+            private_key = sys_config('login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
             repass = RSAEncrypter.decrypt(repass, private_key)
 
@@ -184,7 +184,7 @@ class ForgetHandler(CommonHandler):
         token2 = self.get_secure_cookie(settings.token_key)
 
         params = {
-            'public_key': sys_config('sys_login_rsa_pub_key'),
+            'public_key': sys_config('login_rsa_pub_key'),
             'rsa_encrypt': sys_config('login_pwd_rsa_encrypt'),
             'token': token,
             'reset_pwd': '1',
@@ -234,7 +234,7 @@ class ForgetHandler(CommonHandler):
             return self.error('新密码不能为空')
 
         if settings.login_pwd_rsa_encrypt and int(rsa_encrypt)==1 and len(password)>10:
-            private_key = sys_config('sys_login_rsa_priv_key')
+            private_key = sys_config('login_rsa_priv_key')
             password = RSAEncrypter.decrypt(password, private_key)
             repass = RSAEncrypter.decrypt(repass, private_key)
 
