@@ -9,5 +9,5 @@ from trest.db import Model as Base
 class Sequence(Base):
     __tablename__ = 'sequence'
 
-    key = Column(String(40), primary_key=True, server_default=text(''))
-    value = Column(BIGINT(20), nullable=False, server_default=text('0'))
+    key = Column(String(40), primary_key=True, server_default=text("''"))
+    value = Column(BIGINT(20), nullable=False, server_default=text("'0'"))

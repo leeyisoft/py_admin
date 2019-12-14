@@ -27,6 +27,7 @@ class AdvertisingCategoryService:
             query = query.filter(AdvertisingCategory.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
+
         if pagelist_obj is None:
             raise JsonError('暂无数据')
         return pagelist_obj
@@ -61,9 +62,13 @@ class AdvertisingCategoryService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param.pop('file', None)
-        param.pop('id', None)
+        columns = [i for (i, _) in AdvertisingCategory.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+
+        if 'updated_at' in columns:
+            param['updated_at'] = utime.timestamp(3)
 
         if not id:
             raise JsonError('ID 不能为空')
@@ -90,7 +95,12 @@ class AdvertisingCategoryService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
+        columns = [i for (i, _) in AdvertisingCategory.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+        if 'created_at' in columns:
+            param['created_at'] = utime.timestamp(3)
         try:
             data = AdvertisingCategory(**param)
             AdvertisingCategory.session.add(data)

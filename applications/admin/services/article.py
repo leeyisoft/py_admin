@@ -76,11 +76,13 @@ class ArticleService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param.pop('file', None)
-        param.pop('id', None)
-        param['updated_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in Article.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
 
+        if 'updated_at' in columns:
+            param['updated_at'] = utime.timestamp(3)
         if not id:
             raise JsonError('ID 不能为空')
 
@@ -110,12 +112,16 @@ class ArticleService:
         return:
             True | JsonError
         """
+        columns = [i for (i, _) in Article.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+        if 'created_at' in columns:
+            param['created_at'] = utime.timestamp(3)
 
         category_id = param.get('category_id', 0)
         if not(int(category_id) > 0):
             raise JsonError('文章分类缺失')
-        param.pop('_xsrf', None)
-        param['created_at'] = utime.timestamp(3)
         try:
             data = Article(**param)
             Article.session.add(data)

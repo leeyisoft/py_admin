@@ -120,10 +120,13 @@ class {classname}Service:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param.pop('file', None)
-        param.pop('id', None)
-        param['updated_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in {classname}.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+
+        if 'updated_at' in columns:
+            param['updated_at'] = utime.timestamp(3)
 
         if not id:
             raise JsonError('ID 不能为空')
@@ -150,8 +153,12 @@ class {classname}Service:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param['created_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in {classname}.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+        if 'created_at' in columns:
+            param['created_at'] = utime.timestamp(3)
         try:
             data = {classname}(**param)
             {classname}.session.add(data)
@@ -337,6 +344,8 @@ if __name__ == "__main__":
     # print(dir(metadata))
     for table in metadata.sorted_tables:
         print(table.name)
+        # print("\n", table.columns)
+
         create_models([table.name])
-        # create_services([table.name])
+        create_services([table.name])
         # create_handlers([table.name])

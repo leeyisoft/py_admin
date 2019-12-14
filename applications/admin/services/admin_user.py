@@ -63,6 +63,14 @@ class AdminUserService:
         :param user_id:
         :return:
         """
+        columns = [i for (i, _) in AdminUser.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+
+        if 'updated_at' in columns:
+            param['updated_at'] = utime.timestamp(3)
+
         if 'username' in user.keys():
             if user['username']:
                 if AdminUserService.check_username(user['username'], user_id):
@@ -118,8 +126,13 @@ class AdminUserService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param['created_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in AdminUser.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+
+        if 'created_at' in columns:
+            param['created_at'] = utime.timestamp(3)
         try:
             data = AdminUser(**param)
             AdminUser.session.add(data)

@@ -50,6 +50,39 @@ class AdminUserLoginLogService:
         return obj
 
     @staticmethod
+    def update(id, param):
+        """更新记录
+
+        [description]
+
+        Arguments:
+            id int -- 主键
+            param dict -- [description]
+
+        return:
+            True | JsonError
+        """
+        columns = [i for (i, _) in AdminUserLoginLog.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+
+        if 'updated_at' in columns:
+            param['updated_at'] = utime.timestamp(3)
+
+        if not id:
+            raise JsonError('ID 不能为空')
+
+        try:
+            AdminUserLoginLog.Q.filter(AdminUserLoginLog.id == id).update(param)
+            AdminUserLoginLog.session.commit()
+            return True
+        except Exception as e:
+            AdminUserLoginLog.session.rollback()
+            SysLogger.error(e)
+            raise JsonError('update error')
+
+    @staticmethod
     def insert(param):
         """插入
 
@@ -62,8 +95,12 @@ class AdminUserLoginLogService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param['created_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in AdminUserLoginLog.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+        if 'created_at' in columns:
+            param['created_at'] = utime.timestamp(3)
         try:
             data = AdminUserLoginLog(**param)
             AdminUserLoginLog.session.add(data)

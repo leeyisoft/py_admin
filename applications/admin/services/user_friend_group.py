@@ -62,10 +62,13 @@ class UserFriendGroupService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param.pop('file', None)
-        param.pop('id', None)
-        param['updated_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in UserFriendGroup.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+
+        if 'updated_at' in columns:
+            param['updated_at'] = utime.timestamp(3)
 
         if not id:
             raise JsonError('ID 不能为空')
@@ -92,8 +95,12 @@ class UserFriendGroupService:
         return:
             True | JsonError
         """
-        param.pop('_xsrf', None)
-        param['created_at'] = utime.timestamp(3)
+        columns = [i for (i, _) in UserFriendGroup.__table__.columns.items()]
+        for key in param.keys():
+            if key not in columns:
+                param.pop(key, None)
+        if 'created_at' in columns:
+            param['created_at'] = utime.timestamp(3)
         try:
             data = UserFriendGroup(**param)
             UserFriendGroup.session.add(data)
