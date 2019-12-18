@@ -91,7 +91,7 @@ class ArticleService:
         if status != -1 and not(int(category_id) > 0):
             raise JsonError('文章分类缺失')
         try:
-            Article.Q.filter(Article.id == id).update(param)
+            Article.Update.filter(Article.id == id).update(param)
             Article.session.commit()
             return True
         except Exception as e:

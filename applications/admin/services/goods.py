@@ -74,7 +74,7 @@ class GoodsService:
             raise JsonError('ID 不能为空')
 
         try:
-            Goods.Q.filter(Goods.id == id).update(param)
+            Goods.Update.filter(Goods.id == id).update(param)
             Goods.session.commit()
             return True
         except Exception as e:

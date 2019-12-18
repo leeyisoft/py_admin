@@ -74,7 +74,7 @@ class AddressService:
             raise JsonError('ID 不能为空')
 
         try:
-            Address.Q.filter(Address.id == id).update(param)
+            Address.Update.filter(Address.id == id).update(param)
             Address.session.commit()
             return True
         except Exception as e:

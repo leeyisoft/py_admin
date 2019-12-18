@@ -74,7 +74,7 @@ class AdminRoleService:
             raise JsonError('ID 不能为空')
 
         try:
-            AdminRole.Q.filter(AdminRole.id == id).update(param)
+            AdminRole.Update.filter(AdminRole.id == id).update(param)
             AdminRole.session.commit()
             return True
         except Exception as e:

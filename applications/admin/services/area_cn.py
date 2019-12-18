@@ -74,7 +74,7 @@ class AreaCnService:
             raise JsonError('ID 不能为空')
 
         try:
-            AreaCn.Q.filter(AreaCn.id == id).update(param)
+            AreaCn.Update.filter(AreaCn.id == id).update(param)
             AreaCn.session.commit()
             return True
         except Exception as e:

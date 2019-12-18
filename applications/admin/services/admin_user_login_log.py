@@ -74,7 +74,7 @@ class AdminUserLoginLogService:
             raise JsonError('ID 不能为空')
 
         try:
-            AdminUserLoginLog.Q.filter(AdminUserLoginLog.id == id).update(param)
+            AdminUserLoginLog.Update.filter(AdminUserLoginLog.id == id).update(param)
             AdminUserLoginLog.session.commit()
             return True
         except Exception as e:

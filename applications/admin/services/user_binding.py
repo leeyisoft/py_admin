@@ -74,7 +74,7 @@ class UserBindingService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserBinding.Q.filter(UserBinding.id == id).update(param)
+            UserBinding.Update.filter(UserBinding.id == id).update(param)
             UserBinding.session.commit()
             return True
         except Exception as e:

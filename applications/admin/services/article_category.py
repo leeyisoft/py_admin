@@ -74,7 +74,7 @@ class ArticleCategoryService:
             raise JsonError('ID 不能为空')
 
         try:
-            ArticleCategory.Q.filter(ArticleCategory.id == id).update(param)
+            ArticleCategory.Update.filter(ArticleCategory.id == id).update(param)
             ArticleCategory.session.commit()
             return True
         except Exception as e:

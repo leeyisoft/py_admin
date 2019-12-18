@@ -74,7 +74,7 @@ class UserFriendNoticeService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserFriendNotice.Q.filter(UserFriendNotice.id == id).update(param)
+            UserFriendNotice.Update.filter(UserFriendNotice.id == id).update(param)
             UserFriendNotice.session.commit()
             return True
         except Exception as e:

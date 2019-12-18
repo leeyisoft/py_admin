@@ -5,9 +5,9 @@
 # https://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.7.18)
+# Host: 127.0.0.1 (MySQL 5.7.28-log)
 # Database: db_py_admin
-# Generation Time: 2019-11-13 13:45:50 +0000
+# Generation Time: 2019-12-15 02:57:47 +0000
 # ************************************************************
 
 
@@ -4102,19 +4102,6 @@ CREATE TABLE `message` (
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='系统消息，定时删除30天内的已读消息';
-
-
-
-# Dump of table sequence
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sequence`;
-
-CREATE TABLE `sequence` (
-  `key` varchar(40) NOT NULL DEFAULT '',
-  `value` bigint(20) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 

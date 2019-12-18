@@ -74,7 +74,7 @@ class UserFriendService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserFriend.Q.filter(UserFriend.id == id).update(param)
+            UserFriend.Update.filter(UserFriend.id == id).update(param)
             UserFriend.session.commit()
             return True
         except Exception as e:

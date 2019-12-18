@@ -74,7 +74,7 @@ class UserFriendGroupService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserFriendGroup.Q.filter(UserFriendGroup.id == id).update(param)
+            UserFriendGroup.Update.filter(UserFriendGroup.id == id).update(param)
             UserFriendGroup.session.commit()
             return True
         except Exception as e:

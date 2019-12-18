@@ -74,7 +74,7 @@ class UserCertificationService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserCertification.Q.filter(UserCertification.id == id).update(param)
+            UserCertification.Update.filter(UserCertification.id == id).update(param)
             UserCertification.session.commit()
             return True
         except Exception as e:

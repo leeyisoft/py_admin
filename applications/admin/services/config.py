@@ -74,7 +74,7 @@ class ConfigService:
             raise JsonError('ID 不能为空')
 
         try:
-            Config.Q.filter(Config.id == id).update(param)
+            Config.Update.filter(Config.id == id).update(param)
             Config.session.commit()
             return True
         except Exception as e:

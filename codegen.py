@@ -132,7 +132,7 @@ class {classname}Service:
             raise JsonError('ID 不能为空')
 
         try:
-            {classname}.Q.filter({classname}.id == id).update(param)
+            {classname}.Update.filter({classname}.id == id).update(param)
             {classname}.session.commit()
             return True
         except Exception as e:

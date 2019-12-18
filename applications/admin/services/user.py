@@ -74,7 +74,7 @@ class UserService:
             raise JsonError('ID 不能为空')
 
         try:
-            User.Q.filter(User.id == id).update(param)
+            User.Update.filter(User.id == id).update(param)
             User.session.commit()
             return True
         except Exception as e:

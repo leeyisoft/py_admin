@@ -74,7 +74,7 @@ class UserOperationLogService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserOperationLog.Q.filter(UserOperationLog.id == id).update(param)
+            UserOperationLog.Update.filter(UserOperationLog.id == id).update(param)
             UserOperationLog.session.commit()
             return True
         except Exception as e:

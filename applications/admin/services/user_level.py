@@ -74,7 +74,7 @@ class UserLevelService:
             raise JsonError('ID 不能为空')
 
         try:
-            UserLevel.Q.filter(UserLevel.id == id).update(param)
+            UserLevel.Update.filter(UserLevel.id == id).update(param)
             UserLevel.session.commit()
             return True
         except Exception as e:

@@ -94,9 +94,9 @@ DATABASE_CONNECTION :
             DRIVER : 'mysql+mysqldb'
             UID : root
             # 进过AES加密的密码，格式 aes::: + ciphertext
-            PASSWD : '123456'
+            PASSWD : 'eb27acWq#16E1'
             HOST : '127.0.0.1'
-            PORT : 3306
+            PORT : 33061
             DATABASE : 'db_py_admin'
             QUERY : {'charset' : 'utf8mb4'}
         -
@@ -104,9 +104,9 @@ DATABASE_CONNECTION :
             DRIVER : 'mysql+mysqldb'
             UID : root
             # 进过AES加密的密码，格式 aes::: + ciphertext
-            PASSWD : '123456'
+            PASSWD : 'eb27acWq#16E1'
             HOST : '127.0.0.1'
-            PORT : 3306
+            PORT : 33062
             DATABASE : 'db_py_admin'
             QUERY : {'charset' : 'utf8mb4'}
 

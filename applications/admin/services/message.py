@@ -74,7 +74,7 @@ class MessageService:
             raise JsonError('ID 不能为空')
 
         try:
-            Message.Q.filter(Message.id == id).update(param)
+            Message.Update.filter(Message.id == id).update(param)
             Message.session.commit()
             return True
         except Exception as e:

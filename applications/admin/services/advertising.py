@@ -74,7 +74,7 @@ class AdvertisingService:
             raise JsonError('ID 不能为空')
 
         try:
-            Advertising.Q.filter(Advertising.id == id).update(param)
+            Advertising.Update.filter(Advertising.id == id).update(param)
             Advertising.session.commit()
             return True
         except Exception as e:

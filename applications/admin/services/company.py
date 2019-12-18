@@ -74,7 +74,7 @@ class CompanyService:
             raise JsonError('ID 不能为空')
 
         try:
-            Company.Q.filter(Company.id == id).update(param)
+            Company.Update.filter(Company.id == id).update(param)
             Company.session.commit()
             return True
         except Exception as e:
