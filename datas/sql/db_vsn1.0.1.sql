@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.28-log)
 # Database: db_py_admin
-# Generation Time: 2019-12-15 02:57:47 +0000
+# Generation Time: 2019-12-21 07:14:36 +0000
 # ************************************************************
 
 
@@ -143,7 +143,7 @@ VALUES
 	(8,2,'pbkdf2_sha256$100000$510hnENWgSjtwHx4$hz5p5I9ZnZUBmxzh1BRc08AnnVwCHhRAR1xNs6vpPoQ=','请问','1','1e','[]',0,'',NULL,-1,1554891553,''),
 	(9,1,'pbkdf2_sha256$100000$iBzcEO3OpRT3IppL$JizpIobnqCTRnlsOWYgRZIjbgThltzSJxOPJwHzVzSo=','test','13456987458','123@163.com','[]',0,'',NULL,-1,1555310050,''),
 	(10,1,'pbkdf2_sha256$100000$3I3OMYo133vvYOch$XpwYMbx7RNUmzQUxWYYhLINi8OY2iWtRoEOTXxIqT6k=','root','111','111','',2,'192.168.1.72',1555310969,1,1555310681,''),
-	(11,2,'pbkdf2_sha256$100000$3C6gzqbx9JSZoXOc$bNQb09eKO5nosrglBEPouehbNTlLVn6T6GUknA7Efug=login_rsa_priv_key','test_role','13548795456','123456','',3,'192.168.1.72',1555311148,1,1555311094,''),
+	(11,2,'pbkdf2_sha256$100000$3C6gzqbx9JSZoXOc$bNQb09eKO5nosrglBEPouehbNTlLVn6T6GUknA7Efug=login_rsa_priv_key','test_role','13548795456','123456@qq.com','\"\"',3,'192.168.1.72',1555311148,1,1555311094,''),
 	(12,1,'pbkdf2_sha256$100000$Nckhfnpbp6VPBEvl$If2B1yFZyQ8ZCm2eraaBG3EGnX6FyUhKJH0xwytK37U=','zzz','zzz','zzz','[]',1,'192.168.1.72',1555378164,-1,1555378091,''),
 	(13,10,'pbkdf2_sha256$100000$VmZhG85fQzaRLiV1$zNuAzlXsdF0+tnMx0Xvhtx6v+vuX//EnA4XqgS/Ev0w=','test123456789','13645612365','136@163.com','[\"application\",\"loan_order_list\",\"product_valid_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"force_pass_put\",\"system_close_put\"]',77,'192.168.1.72',1559802621,1,1555366432,''),
 	(16,17,'pbkdf2_sha256$100000$Cej23Di3lBYYSpF4$tgOFFUgJKi6q5Zslozw4UeOtjPH5FBxUpbdBd+ZlK5o=','test_A1','15526666661',NULL,'',5,'192.168.1.72',1561343830,1,1556189051,''),
@@ -166,14 +166,14 @@ VALUES
 	(37,16,'pbkdf2_sha256$100000$WXHj6GzXflqrefV1$MqnmXjIT9PPITMypr+UCDM88znLrfl/NqeR9kHYIcFo=','testA2','18234849484','123','[null,null,null,null,null,null,null,null,null,null]',1,'127.0.0.1',1559735902,1,1559733961,''),
 	(38,2,'pbkdf2_sha256$100000$MPh5EBw4Xdx1LHis$dpKC+A/mB/Xu9004p5PZdvWt/OtbtSTHJU9bcV0HLUE=','testtt','1233','1234','[]',0,'',NULL,-1,1559734213,''),
 	(39,22,'pbkdf2_sha256$100000$6sWzCGyO3QiyKweB$INn9NloyJ1k0IHkYtoIQaA4cNZXeU8N/Is4soQjrTYA=','test_S2_1','15526666668',NULL,'',0,'',NULL,1,1559787103,''),
-	(40,6,'pbkdf2_sha256$100000$opgZPCI2sAApU9FQ$sMP4c56MLvJHP4AVlocYQKhv3FWexZn6W0AVvZel460=','xiexie','qwe','qweqw1','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\",\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\"]',2,'192.168.1.72',1559803413,1,1559787229,''),
+	(40,6,'pbkdf2_sha256$100000$opgZPCI2sAApU9FQ$sMP4c56MLvJHP4AVlocYQKhv3FWexZn6W0AVvZel460=','xiexie','qwe','qweqw1','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\",\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\"]',2,'192.168.1.72',1559803413,-1,1559787229,''),
 	(41,49,'pbkdf2_sha256$100000$uLsnwgZIpji2WaKW$sMPpkJxvRPNyzFkSovdWeX9Rcy9qcG0GTSuniBHsmCY=','r_test_admin','18273637463','1234@qq.com','[]',8,'192.168.1.105',1559791412,-1,1559789165,''),
 	(42,50,'pbkdf2_sha256$100000$SjNGF3BpPrx0WMfF$s/Tpzu7s1x5uta61INLOws3PDys3FjQ51LPgECYkyVA=','test_admin_0','1808880880','test0@qq.com','[]',1,'127.0.0.1',1559793093,-1,1559792338,''),
 	(43,51,'pbkdf2_sha256$100000$wLPHRB72Ykbypegr$3ZwARuXo49oKgrJju+nF9Puq5asl+8PToeIkuYJmh4A=','test_admin_1','1808880881','test1@qq.com','[]',4,'192.168.1.23',1561346312,-1,1559792472,''),
 	(44,50,'pbkdf2_sha256$100000$hBLf14HDpeVBNndZ$tJmYJ/9YoMP+Ow3K7Pz/qyK7oL4j2Dd1mTizJq2qAzM=','test_admin_0_1','1808881880','test01@qq.com','[]',7,'192.168.1.23',1559795863,-1,1559792700,''),
 	(45,2,'','robot','15512345678','www.robot@leying.com','[]',0,'',NULL,-1,1559814695,''),
-	(46,26,'pbkdf2_sha256$100000$TveCzGaMWJP2hfzN$J8qq3ACxqj9+T2OCNUyG6TEFwCNI4XhAdKTvCGMLWeI=','yunying','18800000001','www.yunying@leying.com','[\"review_task_list\",\"review_task_put\",\"review_task_del\",\"review_task_post\"]',5,'127.0.0.1',1561340092,1,1560140038,''),
-	(47,6,'pbkdf2_sha256$100000$0jzmJcl3g0Gj19pc$3eG334//3W2G1/esphBgZGk2tNTNZmL8/hofPlT7noo=','duke_1_1','15500000000','www.duke_1_1@163.com','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\"]',1,'127.0.0.1',1561514392,1,1561514204,''),
+	(46,26,'pbkdf2_sha256$100000$TveCzGaMWJP2hfzN$J8qq3ACxqj9+T2OCNUyG6TEFwCNI4XhAdKTvCGMLWeI=','yunying','18800000001','www.yunying@leying.com','[\"review_task_list\",\"review_task_put\",\"review_task_del\",\"review_task_post\"]',5,'127.0.0.1',1561340092,-1,1560140038,''),
+	(47,6,'pbkdf2_sha256$100000$0jzmJcl3g0Gj19pc$3eG334//3W2G1/esphBgZGk2tNTNZmL8/hofPlT7noo=','duke_1_1','15500000000','www.duke_1_1@163.com','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\"]',1,'127.0.0.1',1561514392,-1,1561514204,''),
 	(48,6,'pbkdf2_sha256$100000$XA3QLildUmBn4vRi$E7WBwTZx/fgEZ4NTFrzjQ46THn3keCVYZ84wQe9kIls=','duke_1_2','15500000001','duke_1_1@163.com','[\"first_review_list\",\"first_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514664,''),
 	(49,6,'pbkdf2_sha256$100000$Vx5BgqMznvfp7zMK$sm7Q8xpZ6FNAGO9FVgusxhjM+0Rql1Ng/1ZiiqcdXUg=','duke_1_3','15500000002','duke_1_3@163.com','[\"first_review_list\",\"first_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514734,''),
 	(50,7,'pbkdf2_sha256$100000$6iXSRQTXx0mz7JdV$9QBbkSQQkQJsgfOHCCTVeZdMsojfOtnpq1M8aNrV8Jc=','duke_2_1','15500000021','duke_2_1@163.com','[\"second_review_list\",\"second_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514798,''),
@@ -205,100 +205,6 @@ CREATE TABLE `admin_user_login_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
-LOCK TABLES `admin_user_login_log` WRITE;
-/*!40000 ALTER TABLE `admin_user_login_log` DISABLE KEYS */;
-
-INSERT INTO `admin_user_login_log` (`id`, `user_id`, `ip`, `client`, `created_at`)
-VALUES
-	(1,1,'127.0.0.1','web',1561539165),
-	(2,1,'127.0.0.1','web',1564577918),
-	(3,1,'127.0.0.1','web',1564757166),
-	(4,1,'127.0.0.1','web',1564887302),
-	(5,1,'127.0.0.1','web',1566490334),
-	(6,1,'127.0.0.1','web',1567086596),
-	(7,1,'127.0.0.1','web',1567086596),
-	(8,1,'127.0.0.1','web',1567086596),
-	(9,1,'127.0.0.1','web',1567087804),
-	(10,1,'127.0.0.1','web',1567241400),
-	(11,1,'127.0.0.1','web',1567333894),
-	(12,1,'127.0.0.1','web',1567347204228),
-	(13,1,'127.0.0.1','web',1567861754454),
-	(14,1,'127.0.0.1','web',1567923669798),
-	(15,1,'127.0.0.1','web',1567947623633),
-	(16,1,'127.0.0.1','web',1569339039068),
-	(17,1,'127.0.0.1','web',1569339105654),
-	(18,1,'127.0.0.1','web',1569426522601),
-	(19,1,'127.0.0.1','web',1570964794580),
-	(20,1,'127.0.0.1','web',1570979752945),
-	(21,1,'127.0.0.1','web',1570979989963),
-	(22,1,'127.0.0.1','web',1570980205007),
-	(23,1,'127.0.0.1','web',1570980361725),
-	(24,1,'127.0.0.1','web',1570980361725),
-	(25,1,'127.0.0.1','web',1570980361725),
-	(26,1,'127.0.0.1','web',1570980361725),
-	(27,1,'127.0.0.1','web',1570980361725),
-	(28,1,'127.0.0.1','web',1570980361725),
-	(29,1,'127.0.0.1','web',1570980361725),
-	(30,1,'127.0.0.1','web',1570980361725),
-	(31,1,'127.0.0.1','web',1570980361725),
-	(32,1,'127.0.0.1','web',1570980361725),
-	(33,1,'127.0.0.1','web',1570980361725),
-	(34,1,'127.0.0.1','web',1570981198929),
-	(35,1,'127.0.0.1','web',1571316759974),
-	(36,1,'127.0.0.1','web',1571405655910),
-	(37,1,'127.0.0.1','web',1571452621415),
-	(38,1,'127.0.0.1','web',1571452621415),
-	(39,1,'127.0.0.1','web',1571452621415),
-	(40,1,'127.0.0.1','web',1571452621415),
-	(41,1,'127.0.0.1','web',1571452621415),
-	(42,1,'127.0.0.1','web',1571456479309),
-	(43,1,'127.0.0.1','web',1571456545317),
-	(44,1,'127.0.0.1','web',1571456545317),
-	(45,1,'127.0.0.1','web',1571456620817),
-	(46,1,'127.0.0.1','web',1571456953368),
-	(47,1,'127.0.0.1','web',1571456989379),
-	(48,1,'127.0.0.1','web',1571457978089),
-	(49,1,'127.0.0.1','web',1571457978089),
-	(50,1,'127.0.0.1','web',1571457978089),
-	(51,1,'127.0.0.1','web',1571457978089),
-	(52,58,'127.0.0.1','web',1571493748698),
-	(53,1,'127.0.0.1','web',1571662412834),
-	(54,1,'127.0.0.1','web',1571662412834),
-	(55,1,'127.0.0.1','web',1571662412834),
-	(56,1,'127.0.0.1','web',1571662412834),
-	(57,1,'127.0.0.1','web',1571752111604),
-	(58,1,'127.0.0.1','web',1571757328367),
-	(59,1,'127.0.0.1','web',1572091841321),
-	(60,1,'127.0.0.1','web',1572091841321),
-	(61,1,'127.0.0.1','web',1572094998676),
-	(62,1,'127.0.0.1','web',1572095126197),
-	(63,1,'127.0.0.1','web',1572095126197),
-	(64,1,'127.0.0.1','web',1572095126197),
-	(65,1,'127.0.0.1','web',1572095389770),
-	(66,1,'127.0.0.1','web',1572095389770),
-	(67,1,'127.0.0.1','web',1572095604402),
-	(68,1,'127.0.0.1','web',1572095604402),
-	(69,1,'127.0.0.1','web',1572095604402),
-	(70,1,'127.0.0.1','web',1572095720365),
-	(71,1,'127.0.0.1','web',1572095807980),
-	(72,1,'127.0.0.1','web',1572095829964),
-	(73,1,'127.0.0.1','web',1572095829964),
-	(74,1,'127.0.0.1','web',1572095894020),
-	(75,1,'127.0.0.1','web',1572095906004),
-	(76,1,'127.0.0.1','web',1572095906004),
-	(77,1,'127.0.0.1','web',1572095906004),
-	(78,1,'127.0.0.1','web',1572313927266),
-	(79,1,'127.0.0.1','web',1572487246897),
-	(80,1,'127.0.0.1','web',1572748378825),
-	(81,1,'127.0.0.1','web',1572748378825),
-	(82,1,'127.0.0.1','web',0),
-	(83,1,'127.0.0.1','web',0),
-	(84,1,'127.0.0.1','web',0),
-	(85,1,'127.0.0.1','web',0),
-	(86,1,'127.0.0.1','web',0);
-
-/*!40000 ALTER TABLE `admin_user_login_log` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table advertising
@@ -314,7 +220,7 @@ CREATE TABLE `advertising` (
   `end_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
   `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 1 内部网页 2外部网页',
-  `client` varchar(40) NOT NULL DEFAULT '' COMMENT '客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ',
+  `client` varchar(200) NOT NULL DEFAULT '' COMMENT '客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ',
   `img` varchar(255) NOT NULL COMMENT '图片链接',
   `link` varchar(255) DEFAULT NULL COMMENT '跳转地址链接',
   `category_id` bigint(20) NOT NULL COMMENT '广告分类 投放位置',
@@ -327,7 +233,7 @@ LOCK TABLES `advertising` WRITE;
 
 INSERT INTO `advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `category_id`, `status`)
 VALUES
-	(1,'banner1 cn 3333',NULL,1570521600000,1571817600000,0,1,'web,wechat,android,ios','upload/advertising/652c09da07addae0022f4921d647a102.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
+	(1,'banner1 cn 3333','',1570521600000,1571817600000,0,1,'[\"web\",\"wechat\",\"android\",\"ios\"]','/static/upload/advertising/4be5f8fc390970ec7b7c8a35e75427eb.jpg','http://cashloan_api.leying.me/vsn1/payguide',1,1),
 	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
 	(3,'ad1 cn',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,1),
 	(4,'banner1 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
@@ -3927,7 +3833,7 @@ CREATE TABLE `article` (
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
 LOCK TABLES `article` WRITE;
 /*!40000 ALTER TABLE `article` DISABLE KEYS */;
@@ -3935,7 +3841,8 @@ LOCK TABLES `article` WRITE;
 INSERT INTO `article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`, `source`, `external_url`, `thumb`, `keyword`, `description`, `publish_date`, `hits`, `content`, `ip`, `updated_at`, `created_at`, `status`)
 VALUES
 	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','https://www.w3school.com.cn/jsref/jsref_replace.asp','','abcd','aaa',1094400000,123,'<p>asdcc2222</p>\n<p>&nbsp;</p>','',1573356802870,1572006527197,1),
-	(3,1,'cn',0,'abcde3','leeyi','py_admin','','','','',2019,0,'<p>abcde3</p>',NULL,0,1573264561506,0);
+	(3,1,'cn',0,'abcde3','leeyi','py_admin','','','','',1259251200000,0,'<p>abcde3</p>','',1576905998145,1573264561506,0),
+	(4,2,'cn',0,'ddd3','dd','dd','','/static/upload/article/thumb/5f1f379c05a6f10ab5b97015ab23bbc0.jpeg','ddd','dd',1576771200000,0,'<p>dd<img class=\"wscnph\" src=\"static/upload/article/news/4be5f8fc390970ec7b7c8a35e75427eb.jpg\" /><img class=\"wscnph\" src=\"static/upload/article/news/21f0d8f3820483adf5e60d670d8fff90.jpeg\" /></p>','',1576906386787,1576906220330,1);
 
 /*!40000 ALTER TABLE `article` ENABLE KEYS */;
 UNLOCK TABLES;

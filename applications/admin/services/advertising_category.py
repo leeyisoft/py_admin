@@ -7,9 +7,9 @@ from trest.exception import JsonError
 from applications.common.models.advertising_category import AdvertisingCategory
 
 
-class AdvertisingCategoryService:
+class AdvertisingCategoryService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -27,9 +27,6 @@ class AdvertisingCategoryService:
             query = query.filter(AdvertisingCategory.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
-
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -63,10 +60,7 @@ class AdvertisingCategoryService:
             True | JsonError
         """
         columns = [i for (i, _) in AdvertisingCategory.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
@@ -96,14 +90,12 @@ class AdvertisingCategoryService:
             True | JsonError
         """
         columns = [i for (i, _) in AdvertisingCategory.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = AdvertisingCategory(**param)
-            AdvertisingCategory.session.add(data)
+            obj = AdvertisingCategory(**param)
+            AdvertisingCategory.session.add(obj)
             AdvertisingCategory.session.commit()
             return True
         except Exception as e:
@@ -113,9 +105,11 @@ class AdvertisingCategoryService:
 
     @staticmethod
     def data_list_valid():
-        res_data = []
-        query = AdvertisingCategory.Q.filter(AdvertisingCategory.status==1).all()
-        AdvertisingCategory.session.commit()
-        for val in query:
-            res_data.append(val.as_dict())
-        return res_data
+        rows = AdvertisingCategory.Q.filter(AdvertisingCategory.status==1).all()
+        return rows
+
+    @staticmethod
+    def category_list(category_ids):
+        rows = AdvertisingCategory.Q.filter(AdvertisingCategory.id.in_(category_ids)).all()
+        return rows
+

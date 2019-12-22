@@ -32,9 +32,8 @@ class ArticleHandler(CommonHandler):
     def article_get(self, id):
         """获取单个记录
         """
-        obj = ArticleService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = ArticleService.get(id)
+        return self.success(data=resp_data)
 
     @put('article/(?P<id>[0-9]+)')
     @admin_required_login
@@ -42,7 +41,7 @@ class ArticleHandler(CommonHandler):
     def article_put(self, id, *args, **kwargs):
         param = self.params()
         ArticleService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('article/(?P<id>[0-9]+)')
     @admin_required_login
@@ -53,7 +52,6 @@ class ArticleHandler(CommonHandler):
         }
         ArticleService.update(id, param)
         return self.success()
-
 
 
 class ArticleListHandler(CommonHandler):
@@ -79,15 +77,5 @@ class ArticleListHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = ArticleService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = ArticleService.page_list(param, page, per_page)
+        return self.success(data=resp_data)

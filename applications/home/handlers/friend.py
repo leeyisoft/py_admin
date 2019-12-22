@@ -39,7 +39,7 @@ class GroupHandler(CommonHandler):
             groupname = self.get_argument('groupname', '')
 
             # raise NameError('test error')
-            Friendgroup.Q.filter(Friendgroup.id==groupid).filter(Friendgroup.owner_user_id==user_id).update({'groupname': groupname})
+            Friendgroup.Update.filter(Friendgroup.id==groupid).filter(Friendgroup.owner_user_id==user_id).update({'groupname': groupname})
             Friendgroup.session.commit()
         except Exception as e:
             SysLogger.error('delete group error: %s' % e)
@@ -54,9 +54,9 @@ class GroupHandler(CommonHandler):
             user_id = self.current_user.get('id')
             groupid = self.get_argument('groupid', 0)
             # raise NameError('test error')
-            Friendgroup.Q.filter(Friendgroup.id==groupid).filter(Friendgroup.owner_user_id==user_id).delete()
+            Friendgroup.Update.filter(Friendgroup.id==groupid).filter(Friendgroup.owner_user_id==user_id).delete()
 
-            MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.group_id==groupid).update({'group_id': 0})
+            MemberFriend.Update.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.group_id==groupid).update({'group_id': 0})
 
             Friendgroup.session.commit()
         except Exception as e:
@@ -79,7 +79,7 @@ class MoveHandler(CommonHandler):
                 'updated_at': utime.timestamp(3),
                 'status': 1,
             }
-            MemberFriend.Q.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.to_user_id==friend_id).update(data)
+            MemberFriend.Update.filter(MemberFriend.from_user_id==user_id).filter(MemberFriend.to_user_id==friend_id).update(data)
             MemberFriend.session.commit()
         except Exception as e:
             SysLogger.error('delete group error: %s' % e)
@@ -159,7 +159,7 @@ class ApplyAddFriendHandler(CommonHandler):
         elif friend.status==2:
             return self.error('拒绝请求')
         # end if
-        MemberFriend.Q.filter(MemberFriend.id==friend.id).update(params)
+        MemberFriend.Update.filter(MemberFriend.id==friend.id).update(params)
 
         # for notice
         query = MemberFriendNotice.Q.filter(MemberFriendNotice.status==0)
@@ -177,7 +177,7 @@ class ApplyAddFriendHandler(CommonHandler):
             notice = MemberFriendNotice(**params2)
             MemberFriendNotice.session.add(notice)
         else:
-            MemberFriendNotice.Q.filter(MemberFriendNotice.id==notice.id).update(params2)
+            MemberFriendNotice.Update.filter(MemberFriendNotice.id==notice.id).update(params2)
 
         MemberFriend.session.commit()
         return self.success()
@@ -210,7 +210,7 @@ class AddFriendHandler(CommonHandler):
             'updated_at': utime.timestamp(3),
             'status': status,
         }
-        MemberFriend.Q.filter(MemberFriend.id==friend_id).update(params)
+        MemberFriend.Update.filter(MemberFriend.id==friend_id).update(params)
 
         if action=='agree':
             query = MemberFriend.Q
@@ -223,7 +223,7 @@ class AddFriendHandler(CommonHandler):
                     'remark': '',
                     'status': status,
                 }
-                MemberFriend.Q.filter(MemberFriend.id==to_friend.id).update(params)
+                MemberFriend.Update.filter(MemberFriend.id==to_friend.id).update(params)
             else:
                 params = {
                     'from_user_id': friend.to_user_id,
@@ -246,7 +246,7 @@ class AddFriendHandler(CommonHandler):
             params2 = {
                 'status': status2,
             }
-            MemberFriendNotice.Q.filter(MemberFriendNotice.id==notice.id).update(params2)
+            MemberFriendNotice.Update.filter(MemberFriendNotice.id==notice.id).update(params2)
 
             params3 = {
                 'msgtype': 'system',

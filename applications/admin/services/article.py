@@ -8,9 +8,9 @@ from applications.common.models.article import Article
 from applications.common.models.article_category import ArticleCategory
 
 
-class ArticleService:
+class ArticleService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -42,8 +42,6 @@ class ArticleService:
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
 
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -77,10 +75,7 @@ class ArticleService:
             True | JsonError
         """
         columns = [i for (i, _) in Article.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
         if not id:
@@ -113,9 +108,7 @@ class ArticleService:
             True | JsonError
         """
         columns = [i for (i, _) in Article.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
 
@@ -123,8 +116,8 @@ class ArticleService:
         if not(int(category_id) > 0):
             raise JsonError('文章分类缺失')
         try:
-            data = Article(**param)
-            Article.session.add(data)
+            obj = Article(**param)
+            Article.session.add(obj)
             Article.session.commit()
             return True
         except Exception as e:

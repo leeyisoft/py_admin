@@ -32,11 +32,10 @@ class UserBindingHandler(CommonHandler):
     def user_binding_get(self, id):
         """获取单个记录
         """
-        obj = UserBindingService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = UserBindingService.get(id)
+        return self.success(data=resp_data)
 
-    @get(['user_binding','user_binding/?(?P<category>[a-zA-Z0-9_]*)'])
+    @get(['user_binding','user_binding/(?P<category>[a-zA-Z0-9_]*)'])
     @admin_required_login
     @required_permissions()
     def user_binding_list_get(self, category = '', *args, **kwargs):
@@ -55,18 +54,8 @@ class UserBindingHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = UserBindingService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = UserBindingService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('user_binding/(?P<id>[0-9]+)')
     @admin_required_login
@@ -74,7 +63,7 @@ class UserBindingHandler(CommonHandler):
     def user_binding_put(self, id, *args, **kwargs):
         param = self.params()
         UserBindingService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('user_binding/(?P<id>[0-9]+)')
     @admin_required_login

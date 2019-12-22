@@ -26,7 +26,7 @@ from applications.common.models.admin_user import AdminUser
 from applications.admin.services.admin_user import AdminUserService
 
 
-class AdminMenuService:
+class AdminMenuService(object):
     @staticmethod
     def info(name):
         item = {

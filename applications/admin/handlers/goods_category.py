@@ -32,11 +32,10 @@ class GoodsCategoryHandler(CommonHandler):
     def goods_category_get(self, id):
         """获取单个记录
         """
-        obj = GoodsCategoryService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = GoodsCategoryService.get(id)
+        return self.success(data=resp_data)
 
-    @get(['goods_category','goods_category/?(?P<category>[a-zA-Z0-9_]*)'])
+    @get(['goods_category','goods_category/(?P<category>[a-zA-Z0-9_]*)'])
     @admin_required_login
     @required_permissions()
     def goods_category_list_get(self, category = '', *args, **kwargs):
@@ -55,18 +54,8 @@ class GoodsCategoryHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = GoodsCategoryService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = GoodsCategoryService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('goods_category/(?P<id>[0-9]+)')
     @admin_required_login
@@ -74,7 +63,7 @@ class GoodsCategoryHandler(CommonHandler):
     def goods_category_put(self, id, *args, **kwargs):
         param = self.params()
         GoodsCategoryService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('goods_category/(?P<id>[0-9]+)')
     @admin_required_login

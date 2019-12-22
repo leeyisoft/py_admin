@@ -7,9 +7,9 @@ from trest.exception import JsonError
 from applications.common.models.admin_user_login_log import AdminUserLoginLog
 
 
-class AdminUserLoginLogService:
+class AdminUserLoginLogService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -27,9 +27,6 @@ class AdminUserLoginLogService:
             query = query.filter(AdminUserLoginLog.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
-
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -63,10 +60,7 @@ class AdminUserLoginLogService:
             True | JsonError
         """
         columns = [i for (i, _) in AdminUserLoginLog.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
@@ -96,14 +90,12 @@ class AdminUserLoginLogService:
             True | JsonError
         """
         columns = [i for (i, _) in AdminUserLoginLog.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = AdminUserLoginLog(**param)
-            AdminUserLoginLog.session.add(data)
+            obj = AdminUserLoginLog(**param)
+            AdminUserLoginLog.session.add(obj)
             AdminUserLoginLog.session.commit()
             return True
         except Exception as e:

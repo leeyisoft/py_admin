@@ -34,7 +34,7 @@ class ArticleCategoryHandler(CommonHandler):
         """
         obj = ArticleCategoryService.get(id)
         data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        return self.success(data=data)
 
     @put('article_category/(?P<id>[0-9]+)')
     @admin_required_login
@@ -42,7 +42,7 @@ class ArticleCategoryHandler(CommonHandler):
     def article_category_put(self, id, *args, **kwargs):
         param = self.params()
         ArticleCategoryService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('article_category/(?P<id>[0-9]+)')
     @admin_required_login

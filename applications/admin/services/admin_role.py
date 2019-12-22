@@ -5,11 +5,12 @@ from trest.logger import SysLogger
 from trest.config import settings
 from trest.exception import JsonError
 from applications.common.models.admin_role import AdminRole
+from applications.admin.filters.admin_role  import AdminRoleFilter
 
 
-class AdminRoleService:
+class AdminRoleService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -30,7 +31,7 @@ class AdminRoleService:
 
         if pagelist_obj is None:
             raise JsonError('暂无数据')
-        return pagelist_obj
+        return AdminRoleFilter.page_list(pagelist_obj, page, per_page)
 
     @staticmethod
     def get(id):
@@ -63,10 +64,7 @@ class AdminRoleService:
             True | JsonError
         """
         columns = [i for (i, _) in AdminRole.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
@@ -96,14 +94,12 @@ class AdminRoleService:
             True | JsonError
         """
         columns = [i for (i, _) in AdminRole.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = AdminRole(**param)
-            AdminRole.session.add(data)
+            obj = AdminRole(**param)
+            AdminRole.session.add(obj)
             AdminRole.session.commit()
             return True
         except Exception as e:
@@ -112,12 +108,8 @@ class AdminRoleService:
             raise JsonError('insert error')
 
     @staticmethod
-    def get_valid_role():
+    def valid_list():
         """获取有效的角色"""
-        data = []
-        role = AdminRole.Q.filter(AdminRole.status==1).all()
-        for val in role:
-            # val=val.as_dict()
-            # val.pop('permission')
-            data.append({'id': val.id, 'rolename': val.rolename})
-        return data
+        list_obj = AdminRole.Q.filter(AdminRole.status==1).all()
+        return AdminRoleFilter.valid_list(list_obj)
+

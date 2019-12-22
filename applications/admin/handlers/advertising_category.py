@@ -32,9 +32,8 @@ class AdvertisingCategoryHandler(CommonHandler):
     def advertising_category_get(self, id):
         """获取单个记录
         """
-        obj = AdvertisingCategoryService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = AdvertisingCategoryService.get(id)
+        return self.success(data=resp_data)
 
     @get('advertising_category')
     @admin_required_login
@@ -53,18 +52,8 @@ class AdvertisingCategoryHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = AdvertisingCategoryService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = AdvertisingCategoryService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('advertising_category/(?P<id>[0-9]+)')
     @admin_required_login
@@ -72,7 +61,7 @@ class AdvertisingCategoryHandler(CommonHandler):
     def advertising_category_put(self, id, *args, **kwargs):
         param = self.params()
         AdvertisingCategoryService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('advertising_category/(?P<id>[0-9]+)')
     @admin_required_login

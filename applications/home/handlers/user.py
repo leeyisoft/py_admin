@@ -160,7 +160,7 @@ class SetHandler(CommonHandler):
             )
             # print('query ', query )
             Member.session.execute(query)
-        Member.Q.filter(Member.id==user_id).update(params)
+        Member.Update.filter(Member.id==user_id).update(params)
         Member.session.commit()
 
         # 设置登录用户cookie信息
@@ -209,7 +209,7 @@ class ResetPasswordHandler(CommonHandler):
             'password': make_password(password),
             'status': 1,
         }
-        Member.Q.filter(Member.id==user_id).update(params)
+        Member.Update.filter(Member.id==user_id).update(params)
         Member.session.commit()
         return self.success(next=next)
 

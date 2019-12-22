@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from trest.utils import utime
-from trest.logger import SysLogger
 from trest.config import settings
+from trest.logger import SysLogger
 from trest.exception import JsonError
 from trest.utils.encrypter import RSAEncrypter
 from trest.utils.hasher import make_password
@@ -10,11 +10,12 @@ from applications.common.utils import sys_config
 from applications.common.models.admin_user import AdminUser
 from applications.common.models.admin_user_login_log import AdminUserLoginLog
 
+from applications.admin.filters.admin_user  import AdminUserFilter
 
 
-class AdminUserService:
+class AdminUserService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -35,7 +36,7 @@ class AdminUserService:
 
         if pagelist_obj is None:
             raise JsonError('暂无数据')
-        return pagelist_obj
+        return AdminUserFilter.page_list(pagelist_obj, page, per_page)
 
     @staticmethod
     def get(id):
@@ -55,7 +56,7 @@ class AdminUserService:
         return obj
 
     @staticmethod
-    def update(user_id, user, rsa_encrypt = 0):
+    def update(user_id, param, rsa_encrypt = 0):
         """
         保存用户数据
         :param user: 用户数据字典
@@ -64,54 +65,51 @@ class AdminUserService:
         :return:
         """
         columns = [i for (i, _) in AdminUser.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
-        if 'username' in user.keys():
-            if user['username']:
-                if AdminUserService.check_username(user['username'], user_id):
+        if 'username' in param.keys():
+            if param['username']:
+                if AdminUserService.check_username(param['username'], user_id):
                     raise JsonError('名称已被占用')
             else:
-                del user['username']
+                del param['username']
 
-        if 'password' in user.keys():
-            if user['password']:
-                if settings.login_pwd_rsa_encrypt and int(rsa_encrypt) == 1 and len(user['password']) > 4:
+        if 'password' in param.keys():
+            if param['password']:
+                if settings.login_pwd_rsa_encrypt and int(rsa_encrypt) == 1 and len(param['password']) > 4:
                     private_key = sys_config('login_rsa_priv_key')
-                    user['password'] = RSAEncrypter.decrypt(user['password'], private_key)
-                user['password'] = make_password(user['password'])
+                    param['password'] = RSAEncrypter.decrypt(param['password'], private_key)
+                param['password'] = make_password(param['password'])
             else:
-                del user['password']
+                del param['password']
 
-        if 'email' in user.keys():
-            if user['email']:
-                if AdminUserService.check_email(user['email'], user_id):
+        if 'email' in param.keys():
+            if param['email']:
+                if AdminUserService.check_email(param['email'], user_id):
                     raise JsonError('邮箱已被占用')
             else:
-                user['email'] = None
+                param['email'] = None
 
-        if 'mobile' in user.keys():
-            if user['mobile']:
-                if AdminUserService.check_mobile(user['mobile'], user_id):
+        if 'mobile' in param.keys():
+            if param['mobile']:
+                if AdminUserService.check_mobile(param['mobile'], user_id):
                     raise JsonError('电话号码已被占用')
             else:
-                user['mobile'] = None
+                param['mobile'] = None
 
         try:
             if user_id:
-                AdminUser.Q.filter(AdminUser.id == user_id).update(user)
+                AdminUser.Update.filter(AdminUser.id == user_id).update(param)
             else:
-                user = AdminUser(**user)
-                AdminUser.session.add(user)
+                obj = AdminUser(**param)
+                AdminUser.session.add(obj)
         except Exception as e:
             raise e
         else:
             AdminUser.session.commit()
-        return user
+        return True
 
     @staticmethod
     def insert(param):
@@ -127,15 +125,12 @@ class AdminUserService:
             True | JsonError
         """
         columns = [i for (i, _) in AdminUser.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = AdminUser(**param)
-            AdminUser.session.add(data)
+            obj = AdminUser(**param)
+            AdminUser.session.add(obj)
             AdminUser.session.commit()
             return True
         except Exception as e:
@@ -146,11 +141,11 @@ class AdminUserService:
     @staticmethod
     def is_super_role(uid, role_id=0):
         """"判断当前用户是否超级用户"""
-        if not (uid>0):
+        if not uid:
             raise JsonError('用户ID不能为空')
-        if not(role_id>0):
+        if not role_id:
             user = AdminUserService.get(uid)
-            role_id = user.role_id
+            role_id = user.role_id if user else 0
         return True if (int(uid) in settings.SUPER_ADMIN) or (int(role_id)==settings.SUPER_ROLE_ID) else False
 
     @staticmethod
@@ -168,7 +163,7 @@ class AdminUserService:
             'last_login_at': utime.timestamp(3),
             'last_login_ip': handler.request.remote_ip,
         }
-        AdminUser.Q.filter(AdminUser.id==user_id).update(params)
+        AdminUser.Update.filter(AdminUser.id==user_id).update(params)
 
         params = {
             'id': 0,
@@ -182,7 +177,7 @@ class AdminUserService:
         return True
 
     @staticmethod
-    def change_pwd(param,rsa_encrypt,admin_id):
+    def change_pwd(password, rsa_encrypt, admin_id):
         """
         修改密码
         :param password:
@@ -190,16 +185,19 @@ class AdminUserService:
         :param admin_id:
         :return:
         """
-        password=param['password']
-        if param['password'] is not None:
+        admin = AdminUser.Q.filter(AdminUser.id == admin_id).first()
+        if admin is None:
+            raise JsonError('参数无效')
+
+        if password :
             if int(rsa_encrypt) == 1 and len(param['password']) > 4:
                 private_key = sys_config('login_rsa_priv_key')
-                password = RSAEncrypter.decrypt(param['password'], private_key)
+                password = RSAEncrypter.decrypt(password, private_key)
             password= make_password(password)
         else:
             raise JsonError('参数无效')
 
-        AdminUser.Q.filter(AdminUser.id==admin_id)\
+        AdminUser.Update.filter(AdminUser.id==admin_id)\
             .update({'password':password})
         AdminUser.session.commit()
         return True
@@ -216,9 +214,7 @@ class AdminUserService:
             count = AdminUser.Q.filter(AdminUser.id != user_id).filter(AdminUser.username == username).count()
         else:
             count = AdminUser.Q.filter(AdminUser.username == username).count()
-        if count > 0:
-            return True
-        return False
+        return True if count > 0 else False
 
     @staticmethod
     def check_email(email, user_id):
@@ -232,9 +228,7 @@ class AdminUserService:
             count = AdminUser.Q.filter(AdminUser.id != user_id).filter(AdminUser.email == email).count()
         else:
             count = AdminUser.Q.filter(AdminUser.email == email).count()
-        if count > 0:
-            return True
-        return False
+        return True if count > 0 else False
 
     @staticmethod
     def check_mobile(mobile, user_id):
@@ -248,6 +242,32 @@ class AdminUserService:
             count = AdminUser.Q.filter(AdminUser.id != user_id).filter(AdminUser.mobile == mobile).count()
         else:
             count = AdminUser.Q.filter(AdminUser.mobile == mobile).count()
-        if count > 0:
-            return True
-        return False
+        return True if count > 0 else False
+
+    @staticmethod
+    def admin_init(xsrf_token):
+        rsa_encrypt = sys_config('login_pwd_rsa_encrypt')
+        public_key = sys_config('login_rsa_pub_key')
+
+        return {
+            'rsa_encrypt': int(rsa_encrypt),
+            'public_key': public_key,
+            'xsrf_token': xsrf_token,
+        }
+
+    @staticmethod
+    def unlock_user(user_id, password):
+        is_rsa = sys_config('login_pwd_rsa_encrypt')
+        if  int(is_rsa) == 1:
+            private_key = sys_config('login_rsa_priv_key')
+            try:
+                password = RSAEncrypter.decrypt(password, private_key)
+            except Exception as e:
+                raise JsonError(msg='签名失败', code=11)
+        user = AdminUser.Q.filter(AdminUser.id == user_id).first()
+        if user is None:
+            raise JsonError('用户信息出错')
+
+        if check_password(password, user.password) == False:
+            raise JsonError('密码错误')
+        return True

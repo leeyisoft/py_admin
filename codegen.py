@@ -54,6 +54,7 @@ from trest.db import Model as Base
         # 关闭文件
         fout.close()
 
+
 class ServiceGenerator:
     template = '''\
 #!/usr/bin/env python
@@ -65,9 +66,9 @@ from trest.exception import JsonError
 from applications.common.models.{classname_underline} import {classname}
 
 
-class {classname}Service:
+class {classname}Service(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -121,9 +122,7 @@ class {classname}Service:
             True | JsonError
         """
         columns = [i for (i, _) in {classname}.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {{k:v for k,v in param.items() if k in columns}}
 
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
@@ -154,14 +153,12 @@ class {classname}Service:
             True | JsonError
         """
         columns = [i for (i, _) in {classname}.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {{k:v for k,v in param.items() if k in columns}}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = {classname}(**param)
-            {classname}.session.add(data)
+            obj = {classname}(**param)
+            {classname}.session.add(obj)
             {classname}.session.commit()
             return True
         except Exception as e:
@@ -222,9 +219,8 @@ class {classname}Handler(CommonHandler):
     def {classname_underline}_get(self, id):
         """获取单个记录
         """
-        obj = {classname}Service.get(id)
-        data = obj.as_dict() if obj else {{}}
-        return self.success(data = data)
+        resp_data = {classname}Service.get(id)
+        return self.success(data=resp_data)
 
     @get(['{classname_underline}','{classname_underline}/(?P<category>[a-zA-Z0-9_]*)'])
     @admin_required_login
@@ -245,18 +241,8 @@ class {classname}Handler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = {classname}Service.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {{
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }}
-        return self.success(data = resp)
+        resp_data = {classname}Service.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('{classname_underline}/(?P<id>[0-9]+)')
     @admin_required_login
@@ -264,7 +250,7 @@ class {classname}Handler(CommonHandler):
     def {classname_underline}_put(self, id, *args, **kwargs):
         param = self.params()
         {classname}Service.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('{classname_underline}/(?P<id>[0-9]+)')
     @admin_required_login
@@ -290,6 +276,7 @@ class {classname}Handler(CommonHandler):
         fout.write(output)
         # 关闭文件
         fout.close()
+
 
 def get_metadata(tables):
     # Use reflection to fill in the metadata
@@ -344,8 +331,6 @@ if __name__ == "__main__":
     # print(dir(metadata))
     for table in metadata.sorted_tables:
         print(table.name)
-        # print("\n", table.columns)
-
-        create_models([table.name])
-        create_services([table.name])
+        # create_models([table.name])
+        # create_services([table.name])
         # create_handlers([table.name])

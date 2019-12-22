@@ -7,7 +7,7 @@ from trest.exception import JsonError
 from applications.common.models.article_category import ArticleCategory
 
 
-class ArticleCategoryService:
+class ArticleCategoryService(object):
     @staticmethod
     def data_list(where, page, per_page):
         """列表记录
@@ -27,9 +27,6 @@ class ArticleCategoryService:
             query = query.filter(ArticleCategory.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
-
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -63,10 +60,7 @@ class ArticleCategoryService:
             True | JsonError
         """
         columns = [i for (i, _) in ArticleCategory.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
@@ -96,14 +90,12 @@ class ArticleCategoryService:
             True | JsonError
         """
         columns = [i for (i, _) in ArticleCategory.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = ArticleCategory(**param)
-            ArticleCategory.session.add(data)
+            obj = ArticleCategory(**param)
+            ArticleCategory.session.add(obj)
             ArticleCategory.session.commit()
             return True
         except Exception as e:

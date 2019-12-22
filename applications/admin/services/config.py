@@ -7,9 +7,9 @@ from trest.exception import JsonError
 from applications.common.models.config import Config
 
 
-class ConfigService:
+class ConfigService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -27,9 +27,6 @@ class ConfigService:
             query = query.filter(Config.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
-
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -63,10 +60,7 @@ class ConfigService:
             True | JsonError
         """
         columns = [i for (i, _) in Config.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
-
+        param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
@@ -96,14 +90,12 @@ class ConfigService:
             True | JsonError
         """
         columns = [i for (i, _) in Config.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = Config(**param)
-            Config.session.add(data)
+            obj = Config(**param)
+            Config.session.add(obj)
             Config.session.commit()
             return True
         except Exception as e:

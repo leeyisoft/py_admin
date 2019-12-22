@@ -7,9 +7,9 @@ from trest.exception import JsonError
 from applications.common.models.address import Address
 
 
-class AddressService:
+class AddressService(object):
     @staticmethod
-    def data_list(where, page, per_page):
+    def page_list(where, page, per_page):
         """列表记录
         Arguments:
             where dict -- 查询条件
@@ -27,9 +27,6 @@ class AddressService:
             query = query.filter(Address.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
-
-        if pagelist_obj is None:
-            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -63,9 +60,7 @@ class AddressService:
             True | JsonError
         """
         columns = [i for (i, _) in Address.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
 
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
@@ -96,14 +91,12 @@ class AddressService:
             True | JsonError
         """
         columns = [i for (i, _) in Address.__table__.columns.items()]
-        for key in param.keys():
-            if key not in columns:
-                param.pop(key, None)
+        param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            data = Address(**param)
-            Address.session.add(data)
+            obj = Address(**param)
+            Address.session.add(obj)
             Address.session.commit()
             return True
         except Exception as e:

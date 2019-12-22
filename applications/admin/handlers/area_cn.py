@@ -32,11 +32,10 @@ class AreaCnHandler(CommonHandler):
     def area_cn_get(self, id):
         """获取单个记录
         """
-        obj = AreaCnService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = AreaCnService.get(id)
+        return self.success(data=resp_data)
 
-    @get(['area_cn','area_cn/?(?P<category>[a-zA-Z0-9_]*)'])
+    @get(['area_cn','area_cn/(?P<category>[a-zA-Z0-9_]*)'])
     @admin_required_login
     @required_permissions()
     def area_cn_list_get(self, category = '', *args, **kwargs):
@@ -55,18 +54,8 @@ class AreaCnHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = AreaCnService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = AreaCnService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('area_cn/(?P<id>[0-9]+)')
     @admin_required_login
@@ -74,7 +63,7 @@ class AreaCnHandler(CommonHandler):
     def area_cn_put(self, id, *args, **kwargs):
         param = self.params()
         AreaCnService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('area_cn/(?P<id>[0-9]+)')
     @admin_required_login

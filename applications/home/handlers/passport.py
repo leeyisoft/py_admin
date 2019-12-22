@@ -258,7 +258,7 @@ class ForgetHandler(CommonHandler):
         params = {
             'password': make_password(password),
         }
-        Member.Q.filter(Member.id==user_id).update(params)
+        Member.Update.filter(Member.id==user_id).update(params)
         Member.session.commit()
 
         params = {

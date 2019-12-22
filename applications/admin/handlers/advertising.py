@@ -13,9 +13,6 @@ from applications.admin.utils import admin_required_login
 
 from applications.admin.services.advertising import AdvertisingService
 
-from applications.common.models.advertising_category import AdvertisingCategory
-
-
 from .common import CommonHandler
 
 
@@ -35,9 +32,8 @@ class AdvertisingHandler(CommonHandler):
     def advertising_get(self, id):
         """获取单个记录
         """
-        obj = AdvertisingService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = AdvertisingService.get(id)
+        return self.success(data=resp_data)
 
     @get(['advertising','advertising/(?P<category>[a-zA-Z0-9_]*)'])
     @admin_required_login
@@ -57,23 +53,8 @@ class AdvertisingHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = AdvertisingService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            category_info = AdvertisingCategory.Q.filter(AdvertisingCategory.id == data['category_id']).first()
-            if category_info is not None:
-                data['category'] = category_info.as_dict()['name']
-            else:
-                data['category'] = ''
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = AdvertisingService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('advertising/(?P<id>[0-9]+)')
     @admin_required_login
@@ -81,7 +62,7 @@ class AdvertisingHandler(CommonHandler):
     def advertising_put(self, id, *args, **kwargs):
         param = self.params()
         AdvertisingService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('advertising/(?P<id>[0-9]+)')
     @admin_required_login

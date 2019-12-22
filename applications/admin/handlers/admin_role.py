@@ -32,14 +32,13 @@ class AdminRoleHandler(CommonHandler):
     def admin_role_get(self, id):
         """获取单个记录
         """
-        obj = AdminRoleService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = AdminRoleService.get(id)
+        return self.success(data=resp_data)
 
-    @get(['admin_role','admin_role/?(?P<category>[a-zA-Z0-9_]*)'])
+    @get('admin_role')
     @admin_required_login
     @required_permissions()
-    def admin_role_list_get(self, category = '', *args, **kwargs):
+    def admin_role_list_get(self, *args, **kwargs):
         """列表、搜索记录
         """
         page = int(self.get_argument('page', 1))
@@ -48,29 +47,13 @@ class AdminRoleHandler(CommonHandler):
         status = self.get_argument('status', None)
 
         param = {}
-        if category:
-            param['category'] = category
         if title:
             param['title'] = title
         if status:
             param['status'] = status
 
-        pagelist_obj = AdminRoleService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            if not data['permission'] or data['permission']=='':
-                data['permission'] = []
-            else:
-                data['permission'] = data['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = AdminRoleService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('admin_role/(?P<id>[0-9]+)')
     @admin_required_login
@@ -78,14 +61,14 @@ class AdminRoleHandler(CommonHandler):
     def admin_role_put(self, id, *args, **kwargs):
         param = self.params()
         AdminRoleService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('admin_role/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
     def admin_role_delete(self, id, *args, **kwargs):
         param = {
-            'status':-1
+            'status': -1
         }
         AdminRoleService.update(id, param)
         return self.success()
@@ -93,13 +76,5 @@ class AdminRoleHandler(CommonHandler):
     @get('valid_role')
     def valid_role_get(self):
         """获取有效的角色"""
-        data = AdminRoleService.get_valid_role()
-        return self.success(data=data)
-
-    # @get('/admin/permission')
-    # @admin_required_login
-    # def permission_list(self):
-    #     """权限菜单列表"""
-    #     # menu_list = AdminMenuService.children(status=1)
-    #     menu_list = []
-    #     return self.success(msg='成功xx',data=menu_list)
+        resp_data = AdminRoleService.valid_list()
+        return self.success(data=resp_data)

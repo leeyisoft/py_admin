@@ -32,11 +32,10 @@ class MessageHandler(CommonHandler):
     def message_get(self, id):
         """获取单个记录
         """
-        obj = MessageService.get(id)
-        data = obj.as_dict() if obj else {}
-        return self.success(data = data)
+        resp_data = MessageService.get(id)
+        return self.success(data=resp_data)
 
-    @get(['message','message/?(?P<category>[a-zA-Z0-9_]*)'])
+    @get(['message','message/(?P<category>[a-zA-Z0-9_]*)'])
     @admin_required_login
     @required_permissions()
     def message_list_get(self, category = '', *args, **kwargs):
@@ -55,18 +54,8 @@ class MessageHandler(CommonHandler):
         if status:
             param['status'] = status
 
-        pagelist_obj = MessageService.data_list(param, page, per_page)
-        items = []
-        for val in pagelist_obj.items:
-            data = val.as_dict()
-            items.append(data)
-        resp = {
-            'page':page,
-            'per_page':per_page,
-            'total':pagelist_obj.total,
-            'items':items,
-        }
-        return self.success(data = resp)
+        resp_data = MessageService.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 
     @put('message/(?P<id>[0-9]+)')
     @admin_required_login
@@ -74,7 +63,7 @@ class MessageHandler(CommonHandler):
     def message_put(self, id, *args, **kwargs):
         param = self.params()
         MessageService.update(id, param)
-        return self.success(data = param)
+        return self.success(data=param)
 
     @delete('message/(?P<id>[0-9]+)')
     @admin_required_login
