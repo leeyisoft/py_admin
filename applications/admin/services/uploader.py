@@ -19,6 +19,7 @@ class UploaderService(object):
             'article/regulation',
             'article/news',
             'product',
+            'friendlink',
         )
         if action not in action_set:
             raise JsonError('不支持的action')

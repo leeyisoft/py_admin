@@ -4,10 +4,10 @@ from trest.utils import utime
 from trest.logger import SysLogger
 from trest.config import settings
 from trest.exception import JsonError
-from applications.common.models.company import Company
+from applications.common.models.friendlink import Friendlink
 
 
-class CompanyService(object):
+class FriendlinkService(object):
     @staticmethod
     def page_list(where, page, per_page):
         """列表记录
@@ -19,14 +19,20 @@ class CompanyService(object):
         return:
             Paginate 对象 | None
         """
-        query = Company.Q
+        query = Friendlink.Q
+
+        if 'title' in where.keys():
+            query = query.filter(Friendlink.title == where['title'])
 
         if 'status' in where.keys():
-            query = query.filter(Company.status == where['status'])
+            query = query.filter(Friendlink.status == where['status'])
         else:
-            query = query.filter(Company.status != -1)
+            query = query.filter(Friendlink.status != -1)
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
+
+        if pagelist_obj is None:
+            raise JsonError('暂无数据')
         return pagelist_obj
 
     @staticmethod
@@ -39,11 +45,11 @@ class CompanyService(object):
             id int -- 主键
 
         return:
-            Company Model 实例 | None
+            Friendlink Model 实例 | None
         """
         if not id:
             raise JsonError('ID不能为空')
-        obj = Company.Q.filter(Company.id == id).first()
+        obj = Friendlink.Q.filter(Friendlink.id == id).first()
         return obj
 
     @staticmethod
@@ -59,8 +65,9 @@ class CompanyService(object):
         return:
             True | JsonError
         """
-        columns = [i for (i, _) in Company.__table__.columns.items()]
+        columns = [i for (i, _) in Friendlink.__table__.columns.items()]
         param = {k:v for k,v in param.items() if k in columns}
+
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
@@ -68,11 +75,11 @@ class CompanyService(object):
             raise JsonError('ID 不能为空')
 
         try:
-            Company.Update.filter(Company.id == id).update(param)
-            Company.session.commit()
+            Friendlink.Update.filter(Friendlink.id == id).update(param)
+            Friendlink.session.commit()
             return True
         except Exception as e:
-            Company.session.rollback()
+            Friendlink.session.rollback()
             SysLogger.error(e)
             raise JsonError('update error')
 
@@ -89,16 +96,16 @@ class CompanyService(object):
         return:
             True | JsonError
         """
-        columns = [i for (i, _) in Company.__table__.columns.items()]
+        columns = [i for (i, _) in Friendlink.__table__.columns.items()]
         param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
         try:
-            obj = Company(**param)
-            Company.session.add(obj)
-            Company.session.commit()
+            obj = Friendlink(**param)
+            Friendlink.session.add(obj)
+            Friendlink.session.commit()
             return True
         except Exception as e:
-            Company.session.rollback()
+            Friendlink.session.rollback()
             SysLogger.error(e)
             raise JsonError('insert error')

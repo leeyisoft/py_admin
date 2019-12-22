@@ -236,6 +236,17 @@
                 "component": "role",
                 "path": "/admin/role",
                 "children": []
+            },
+            {
+                "hidden": 0,
+                "status": 1,
+                "system": 1,
+                "name": "admin:friendlink:index",
+                "title": "友情链接",
+                "icon": "friendlink",
+                "component": "friendlink",
+                "path": "/admin/friendlink",
+                "children": []
             }
         ],
         "open": true

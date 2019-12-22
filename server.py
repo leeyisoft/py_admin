@@ -3,7 +3,6 @@
 import os
 import sys
 import resource
-resource.setrlimit(resource.RLIMIT_NOFILE, (10240, 9223372036854775807))
 
 from tornado.options import define
 

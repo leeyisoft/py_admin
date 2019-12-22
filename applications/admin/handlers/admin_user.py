@@ -67,19 +67,19 @@ class AdminUserHandler(CommonHandler):
         """
         page = int(self.get_argument('page', 1))
         per_page = int(self.get_argument('limit', 10))
-        title = self.get_argument('title', None)
+        username = self.get_argument('username', None)
         status = self.get_argument('status', None)
         mobile = self.get_argument('mobile', None)
         username = self.get_argument('username', None)
         role_id = self.get_argument('role_id', None)
 
         param = {}
-        if title:
-            param['title'] = title
-        if status:
-            param['status'] = status
         if mobile:
             param['mobile'] = mobile
+        if username:
+            param['username'] = username
+        if status:
+            param['status'] = status
         if username:
             param['username'] = username
         if role_id:
@@ -176,5 +176,5 @@ class AdminChangePwdHandler(CommonHandler):
         if password is None or rsa_encrypt is None or admin_id is None:
             raise JsonError('参数必须')
 
-        AdminUserService.change_pwd(user, rsa_encrypt, admin_id)
+        AdminUserService.change_pwd(password, rsa_encrypt, admin_id)
         return self.success()

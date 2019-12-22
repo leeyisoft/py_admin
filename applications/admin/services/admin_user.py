@@ -27,6 +27,12 @@ class AdminUserService(object):
         """
         query = AdminUser.Q
 
+        if 'mobile' in where.keys():
+            query = query.filter(AdminUser.mobile == where['mobile'])
+        if 'username' in where.keys():
+            query = query.filter(AdminUser.username == where['username'])
+        if 'role_id' in where.keys():
+            query = query.filter(AdminUser.role_id == where['role_id'])
         if 'status' in where.keys():
             query = query.filter(AdminUser.status == where['status'])
         else:
@@ -190,7 +196,7 @@ class AdminUserService(object):
             raise JsonError('参数无效')
 
         if password :
-            if int(rsa_encrypt) == 1 and len(param['password']) > 4:
+            if int(rsa_encrypt) == 1 and password:
                 private_key = sys_config('login_rsa_priv_key')
                 password = RSAEncrypter.decrypt(password, private_key)
             password= make_password(password)

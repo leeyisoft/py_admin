@@ -169,13 +169,13 @@ class {classname}Service(object):
 
     def render(self, classname):
         fname = func.hump2underline(classname)
+        outfile = f'{ROOT_PATH}/applications/admin/services/{fname}.py'
+        if os.path.exists(outfile):
+            return
         output = self.template.format(
             classname_underline=fname,
             classname=classname
         )
-        # print(output, file=outfile)
-        fname = func.hump2underline(classname)
-        outfile = f'{ROOT_PATH}/applications/admin/services/{fname}.py'
         fout = open(outfile, 'w', encoding='utf8')
         # 写入文件内容
         fout.write(output)
@@ -265,12 +265,13 @@ class {classname}Handler(CommonHandler):
 
     def render(self, classname):
         fname = func.hump2underline(classname)
+        outfile = f'{ROOT_PATH}/applications/admin/handlers/{fname}.py'
+        if os.path.exists(outfile):
+            return
         output = self.template.format(
             classname_underline=fname,
             classname=classname
         )
-        # print(output, file=outfile)
-        outfile = f'{ROOT_PATH}/applications/admin/handlers/{fname}.py'
         fout = open(outfile, 'w', encoding='utf8')
         # 写入文件内容
         fout.write(output)
@@ -292,6 +293,9 @@ def get_metadata(tables):
 
 def create_models(tables = None):
     try:
+        outfile = f'{ROOT_PATH}/applications/common/models/{tables[0]}.py'
+        if os.path.exists(outfile):
+            return
         metadata = get_metadata(tables)
 
         noindexes = True
@@ -301,7 +305,6 @@ def create_models(tables = None):
         noclasses = False
         nocomments = False
         # Write the generated model code to the specified file or standard output
-        outfile = f'{ROOT_PATH}/applications/common/models/{tables[0]}.py'
         generator = ModelGenerator(metadata, noindexes, noconstraints, nojoined, noinflect, noclasses, nocomments=nocomments)
         # print('generator ', type(generator), generator)
         generator.render(outfile)
@@ -331,6 +334,6 @@ if __name__ == "__main__":
     # print(dir(metadata))
     for table in metadata.sorted_tables:
         print(table.name)
-        # create_models([table.name])
-        # create_services([table.name])
-        # create_handlers([table.name])
+        create_models([table.name])
+        create_services([table.name])
+        create_handlers([table.name])

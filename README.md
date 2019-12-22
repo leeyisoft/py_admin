@@ -37,6 +37,8 @@ source /etc/profile
 
 
 # 项目启动
+
+## 原生开发启动
 ```
 git clone https://gitee.com/leeyi/py_admin.git py_admin && cd py_admin
 

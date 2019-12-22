@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.28-log)
 # Database: db_py_admin
-# Generation Time: 2019-12-21 07:14:36 +0000
+# Generation Time: 2019-12-28 04:17:39 +0000
 # ************************************************************
 
 
@@ -57,7 +57,7 @@ CREATE TABLE `admin_role` (
   `description` varchar(100) NOT NULL COMMENT '描述',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_rolename` (`rolename`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户角色表';
 
 LOCK TABLES `admin_role` WRITE;
 /*!40000 ALTER TABLE `admin_role` DISABLE KEYS */;
@@ -66,39 +66,7 @@ INSERT INTO `admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `cre
 VALUES
 	(1,'超级管理员','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"reviewl_list\",\"admin:loan_order:review_record\",\"admin:loan_order:order_general_info\",\"admin:loan_order:message_record\",\"admin:loan_order:callrecord\",\"admin:loan_order:book_address\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\",\"admin:loan_order:other_info\",\"admin:loan_order:loan_info\",\"admin:loan_order:loan_config_info\",\"all_application\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\",\"admin:loan_order:first_review\",\"admin:loan_order:first_review_list\",\"first_review\",\"admin:loan_order:second_review_list\",\"second_review\",\"admin:loan_order:final_review_list\",\"final_review\",\"admin:application:reviewHistoryCases\",\"admin:customer:index\",\"admin:customer:all\",\"admin:customer:customerAuthenticationa\",\"admin:finance:index\",\"admin:finance:deposits\",\"admin:finance:loanIssues\",\"admin:finance:balance\",\"admin:finance:offlineIssue\",\"admin:finance:balanceIssuesLog\",\"admin:report:index\",\"admin:report:financeReport\",\"admin:report:isssuesReport\",\"admin:report:depositsReport\",\"admin:report:financeInout\",\"admin:report:fundPeriodTable\",\"admin:report:financeTotalAssets\",\"admin:report:technicalService\",\"admin:report:operation\",\"admin:statistic:register\",\"admin:statistic:day_count\",\"admin:statistic:issue\",\"admin:statistic:again_loan\",\"admin:report:customerInformation\",\"admin:report:loanInfomation\",\"admin:statistic:conversion\",\"admin:report:loanOperation\",\"admin:report:loanRepayment\",\"admin:report:platformRate\",\"admin:report:processRejectRate\",\"admin:statistic:over_period\",\"admin:\",\"admin:report:collectionReport\",\"admin:collection_case_log:list\",\"admin:collection_case_log:add\",\"admin:collection_case_log:index\",\"admin:report:collectionEffect\",\"admin:report:collectionEfficiency\",\"admin:report:sendSmsDetail\",\"admin:report:snedSmsStatistics\",\"admin:report:rollover\",\"admin:report:recallAmount\",\"admin:report:application\",\"admin:statistic:deal\",\"admin:statistic:deal_efficiency\",\"admin:report:allReviewReport\",\"admin:statistic:trial\",\"admin:operation:approvalHistory\",\"admin:loan_order_log:index\",\"admin:loan_order_log:order_refuse_log\",\"admin:report:performanceReport\",\"admin:report:myCollectionPerformance\",\"admin:report:myApplicationPerformance\",\"admin:report:exportResult\",\"admin:operate:index\",\"admin:operation:accountRole\",\"admin:operation:accountManagement\",\"admin:operation:roleManagement\",\"admin:operation:applyConfiguration\",\"admin:operation:ruleManagement\",\"admin:blacklist:index\",\"admin:blacklist:add\",\"admin:blacklist:edit\",\"admin:blacklist:delete\",\"admin:operation:stepManagement\",\"admin:operation:labelManagement\",\"admin:page:index\",\"admin:operation:contract\",\"admin:operation:appNoticeManagement\",\"admin:operation:issueManagement\",\"admin:operation:amountControlManagement\",\"admin:operation:lendingFailureOrder\",\"admin:operation:batchIssue\",\"admin:operation:handleFailedIssue\",\"admin:operation:skypayCancel\",\"admin:operation:smsManagement\",\"admin:operation:smsSendTime\",\"admin:sms_template:index\",\"admin:operation:smsRecord\",\"admin:sms:batchSend\",\"admin:sms:index\",\"admin:sms:contact_phone\",\"admin:sms:add\",\"admin:operation:customerProduct\",\"admin:operation:customerGrade\",\"admin:operaion:customerGradeManagement\",\"admin:operation:productManagement\",\"admin:operation:productGrade\",\"admin:help:index\",\"admin:operation:bannerMangement\",\"admin:advertise:index\",\"admin:advertise:add\",\"admin:advertise:edit\",\"admin:advertise:delete\",\"admin:advertise_cat:index\",\"admin:advertise_cat:add\",\"admin:advertise_cat:edit\",\"admin:advertise_cat:delete\",\"admin:operation:task\",\"admin:operation:bankChannel\",\"admin:collection_category:index\",\"admin:collection_category:add\",\"admin:collection_category:edit\",\"admin:collection_category:delete\",\"admin:collection_case_log:index\",\"admin:system:function\",\"admin:system:setting\",\"admin:system:base\",\"admin:system:index\",\"admin:config:pagelist\",\"admin:config:delete_one\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:pagelist\",\"admin:menu:pagelist\",\"other\",\"collection\",\"admin:collection_case:index\",\"admin:collection_case:current\",\"admin:collection_case:overdue\",\"admin:collection_case:assign\",\"admin:collection_case:do_assign\",\"admin:collection_case:mine\",\"collector_collection_detail\",\"admin:collection_case:workbench\",\"admin:collection_call_record:index\",\"admin:collection_voice_record:index\",\"admin:collection_stage:index\",\"admin:collection_stage:add\",\"admin:collection_stage:edit\",\"admin:collection_stage:delete\",\"admin:collection_group:index\",\"admin:collection_group:add\",\"admin:collection_group:edit\",\"admin:collection_group:delete\",\"admin:collection_stage_group:index\",\"admin:collection_stage_group:add\",\"admin:collection_stage_group:edit\",\"admin:collection_stage_group:delete\",\"admin:company:index\",\"admin:company:add\",\"admin:company:edit\",\"admin:company:delete\",\"admin:collection_collector:index\",\"admin:collection_collector:add\",\"admin:collection_collector:edit\",\"admin:collection_collector:delete\"]',1,1,1555310106,''),
 	(2,'默认角色','[\"admin:dashboard\"]',20,1,1555310106,''),
-	(3,'company collector manage','[\"application\",\"loan_order_list\",\"product_valid_list\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"collection\",\"collection_voicerecord_list\"]',20,1,1556189858,'外包公司管理账号角色 基本的催收员权限 + 催收员管理权限'),
-	(4,'collector','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',1,1,1556189840,'普通催收角色'),
-	(5,'basic collector','',20,1,1556189847,'基本的催收员权限 管理催收员中 新建催收员的权限'),
-	(6,'first reviewer','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1561518147,'初审角色'),
-	(7,'second reviewer','[\"application\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1556189696,'复审角色'),
-	(8,'final reviewer','[\"application\",\"mine_case_menu\",\"final_review_list\",\"final_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\",\"404\",\"loan_order_detail_get\",\"review_task_pass_post\"]',20,1,1561518147,'终审角色'),
-	(16,'COLLECTION_A3','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556181211,'COLLECTION_A3'),
-	(17,'COLLECTION_A1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556181547,'COLLECTION_A1'),
-	(18,'COLLECTION_A2','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188425,''),
-	(19,'CS','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,-1,1556188439,'测试'),
-	(20,'COLLECTION_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188449,''),
-	(21,'COLLECTION_S1','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188466,''),
-	(22,'COLLECTION_S2','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1556188478,''),
-	(25,'finance','',20,1,1556189668,'财务角色'),
-	(26,'operation','[\"operation\"]',20,1,1556189677,'运营角色'),
-	(27,'risk','',20,1,1556189685,'风控角色'),
-	(29,'collection manager','',20,1,1556189709,'催收经理角色'),
-	(30,'marketing manager','',20,1,1556189733,'市场经理角色'),
-	(34,'customer service','',20,1,1556189876,'customer service'),
-	(35,'review manager','',20,1,1556189884,'review manager'),
-	(36,'Mkt','',20,1,1556189892,'Mkt'),
-	(37,'AccountManager','',20,1,1556189910,'AccountManager'),
-	(50,'test_admin_0','[]',20,-1,1559791773,''),
-	(51,'test_admin_1','[\"application\",\"loan_order_list\",\"product_valid_list\",\"loan_order_assignment_list\",\"assign_post\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"second_review_list\",\"second_review_put\",\"final_review_list\",\"final_review_put\",\"history_review_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"force_pass_put\",\"system_close_put\",\"customer\",\"index\",\"change_status_put\",\"valid_role_get\",\"loan_user_del\",\"user_sms_list\",\"customerAuthentication\",\"verify_list\",\"404\"]',20,-1,1559791847,''),
-	(53,'Assistant Admin',NULL,20,1,1561517918,'次级管理员'),
-	(54,'Resignation',NULL,20,1,1561517985,'Resignation'),
-	(55,'collector_os',NULL,20,1,1561518044,'外包催收角色'),
-	(56,'OLE',NULL,20,1,1561518078,'OLE'),
-	(57,'57channel provider','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\",\"admin:menu:index\",\"admin:menu:edit\",\"admin:menu:export\"]',20,1,1561518147,'渠道方角色'),
-	(58,'AdminOfficer','[]',20,-1,1561518147,'AdminOfficer'),
-	(59,'COLLECTION_S3','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561530972,'COLLECTION_S3'),
-	(60,'JKSky_S0','[\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"collection\",\"collection_mine_list\",\"sms_post\",\"collection_workbench_list\",\"collection_log_post\",\"collection_callrecord_list\",\"collection_voicerecord_list\",\"404\"]',20,1,1561531035,'JKSky_S0'),
-	(61,'JKSky_S1','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\"]',20,1,1561531051,'JKSky_S1');
+	(3,'test','[\"application\",\"loan_order_list\",\"product_valid_list\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"collection\",\"collection_voicerecord_list\"]',20,1,1556189858,'');
 
 /*!40000 ALTER TABLE `admin_role` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -127,14 +95,14 @@ CREATE TABLE `admin_user` (
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
 
 LOCK TABLES `admin_user` WRITE;
 /*!40000 ALTER TABLE `admin_user` DISABLE KEYS */;
 
 INSERT INTO `admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1312,'127.0.0.1',1573652514054,1,0,'cd'),
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1314,'127.0.0.1',1577500325566,1,0,'cd'),
 	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2',NULL,NULL,'[]',0,'',NULL,0,1553759714,''),
 	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213',NULL,NULL,'[]',0,'',NULL,-1,1553761927,''),
 	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
@@ -142,50 +110,7 @@ VALUES
 	(6,3,'pbkdf2_sha256$100000$kiQ1wKJLc2NdErll$LtHhdCNjL1u7ijB0vkercWTYvuIza1KLu0QPhiCS+3U=','1113150','21312','31','[]',0,'',NULL,-1,1553764672,''),
 	(8,2,'pbkdf2_sha256$100000$510hnENWgSjtwHx4$hz5p5I9ZnZUBmxzh1BRc08AnnVwCHhRAR1xNs6vpPoQ=','请问','1','1e','[]',0,'',NULL,-1,1554891553,''),
 	(9,1,'pbkdf2_sha256$100000$iBzcEO3OpRT3IppL$JizpIobnqCTRnlsOWYgRZIjbgThltzSJxOPJwHzVzSo=','test','13456987458','123@163.com','[]',0,'',NULL,-1,1555310050,''),
-	(10,1,'pbkdf2_sha256$100000$3I3OMYo133vvYOch$XpwYMbx7RNUmzQUxWYYhLINi8OY2iWtRoEOTXxIqT6k=','root','111','111','',2,'192.168.1.72',1555310969,1,1555310681,''),
-	(11,2,'pbkdf2_sha256$100000$3C6gzqbx9JSZoXOc$bNQb09eKO5nosrglBEPouehbNTlLVn6T6GUknA7Efug=login_rsa_priv_key','test_role','13548795456','123456@qq.com','\"\"',3,'192.168.1.72',1555311148,1,1555311094,''),
-	(12,1,'pbkdf2_sha256$100000$Nckhfnpbp6VPBEvl$If2B1yFZyQ8ZCm2eraaBG3EGnX6FyUhKJH0xwytK37U=','zzz','zzz','zzz','[]',1,'192.168.1.72',1555378164,-1,1555378091,''),
-	(13,10,'pbkdf2_sha256$100000$VmZhG85fQzaRLiV1$zNuAzlXsdF0+tnMx0Xvhtx6v+vuX//EnA4XqgS/Ev0w=','test123456789','13645612365','136@163.com','[\"application\",\"loan_order_list\",\"product_valid_list\",\"orderNumber\",\"loan_review_task_pass\",\"tag_options_get\",\"collection_log_get\",\"record_put\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"force_pass_put\",\"system_close_put\"]',77,'192.168.1.72',1559802621,1,1555366432,''),
-	(16,17,'pbkdf2_sha256$100000$Cej23Di3lBYYSpF4$tgOFFUgJKi6q5Zslozw4UeOtjPH5FBxUpbdBd+ZlK5o=','test_A1','15526666661',NULL,'',5,'192.168.1.72',1561343830,1,1556189051,''),
-	(17,18,'pbkdf2_sha256$100000$cPbzCkHREtnvfSIa$1UGfYthtm1dZ25T+SI/SOYdv04N+ZvY0tmm0lR95jVs=','test_A2','15526666662',NULL,'\"[]\"',91,'192.168.1.72',1559802503,1,1556189086,''),
-	(18,16,'pbkdf2_sha256$100000$Ol1jQy3Xkt5bhqYs$5EOYGwBZui2nHfAY0cJ+7g6rZI2YmuMWYoq/9ObvSiI=','test_A3','15526666663',NULL,'',63,'192.168.1.72',1559802516,1,1556189101,''),
-	(19,20,'pbkdf2_sha256$100000$jrihkQ8DBPkX21Kc$vrKiXKjQKgXZ0ZfICeDoXTEv3R1o2VJUI/wXvfnOUIE=','test_S0','15526666664',NULL,'',3,'192.168.1.72',1561343857,1,1556189126,''),
-	(20,21,'pbkdf2_sha256$100000$Ol1jQy3Xkt5bhqYs$5EOYGwBZui2nHfAY0cJ+7g6rZI2YmuMWYoq/9ObvSiI=','test_S1','15526666665',NULL,'',15,'192.168.1.23',1559544368,1,1556189139,''),
-	(21,22,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','test_S2','15526666666',NULL,'',1,'192.168.1.23',1556424749,1,1556189150,''),
-	(22,17,'pbkdf2_sha256$100000$9gxLVrF7SruWZ6sv$g4C8VLfY7w0jcuWuvbBT6xmV2OMF64wJLG0tj7buX90=','请问请问','213213','213213','[]',0,'',NULL,-1,1556190201,''),
-	(23,19,'pbkdf2_sha256$100000$5czFJr1JOMLZ0G1D$Y5nmEH9m0WNDR9E3EvZr02RcBz+KgkpYEN198U++gvU=','谢先生','18819742762',NULL,'[]',0,'',NULL,-1,1556243798,''),
-	(24,21,'pbkdf2_sha256$100000$Ol1jQy3Xkt5bhqYs$5EOYGwBZui2nHfAY0cJ+7g6rZI2YmuMWYoq/9ObvSiI=','test_S1_1','15526666667',NULL,'',14,'192.168.1.105',1559734879,1,1556243878,''),
-	(27,23,'pbkdf2_sha256$100000$PVYLNFOefsEUFMiA$xeM7RaLaUcM+2bD1TTKIlI8M3VNtbB+joeGvw+qJh18=','first','23545674771','123456@163.com','',23,'192.168.1.26',1556621227,1,1556598632,''),
-	(28,28,'pbkdf2_sha256$100000$Ma9ARZowZMsQKeX7$/nNx3FMdjGU+/qQt1GccGX6q0fIavwi+w6m4xEyhLOM=','second','123456789','123456789@163.com','[]',2,'192.168.1.26',1556614485,1,1556614211,''),
-	(29,7,'pbkdf2_sha256$100000$qNPP3M4TsG9cL5XJ$HuXuwcqq7qLdC+ceHB+an4H6Sx1GCF4P8qFoXkgN30o=','admin_user_1','110',NULL,'[]',10,'127.0.0.1',1560918574,-1,1556614211,''),
-	(30,6,'pbkdf2_sha256$100000$nEUQKcgDXSvvXOP0$tw3Rld5eF/RSIj89c5q9PnRFBC9IG5/vCotR7h9TILc=','duke_1','18000000000','qqq@163.com','[]',59,'127.0.0.1',1561102674,1,1558091711,''),
-	(31,7,'pbkdf2_sha256$100000$nEUQKcgDXSvvXOP0$tw3Rld5eF/RSIj89c5q9PnRFBC9IG5/vCotR7h9TILc=','duke_2','18000000001','qqq1@163.com','[\"admin:loan_order:second_review_list\",\"second_review\"]',15,'127.0.0.1',1561102747,1,1558091765,''),
-	(32,8,'pbkdf2_sha256$100000$nEUQKcgDXSvvXOP0$tw3Rld5eF/RSIj89c5q9PnRFBC9IG5/vCotR7h9TILc=','duke_3','18000000002','qqq2@163.com','[\"admin:loan_order:second_review_list\",\"second_review\"]',7,'127.0.0.1',1561102793,1,1558091791,''),
-	(35,6,'pbkdf2_sha256$100000$azyWDapaO6hOfFgb$RFVBlG4X03gk36h09+HdXiC8e7N/gKsfCO/TUhgxpw0=','test_t','1928393823','12312','[]',1,'192.168.1.105',1559554718,-1,1559554642,''),
-	(36,1,'pbkdf2_sha256$100000$YIMRqzS1ywa8kL9S$bA8xoLB+aroxmKDiR1UL+Kn4SU1tNS77sNmJreFajsY=','666666','18881818','1215615656','[]',0,'',NULL,-1,1559733678,''),
-	(37,16,'pbkdf2_sha256$100000$WXHj6GzXflqrefV1$MqnmXjIT9PPITMypr+UCDM88znLrfl/NqeR9kHYIcFo=','testA2','18234849484','123','[null,null,null,null,null,null,null,null,null,null]',1,'127.0.0.1',1559735902,1,1559733961,''),
-	(38,2,'pbkdf2_sha256$100000$MPh5EBw4Xdx1LHis$dpKC+A/mB/Xu9004p5PZdvWt/OtbtSTHJU9bcV0HLUE=','testtt','1233','1234','[]',0,'',NULL,-1,1559734213,''),
-	(39,22,'pbkdf2_sha256$100000$6sWzCGyO3QiyKweB$INn9NloyJ1k0IHkYtoIQaA4cNZXeU8N/Is4soQjrTYA=','test_S2_1','15526666668',NULL,'',0,'',NULL,1,1559787103,''),
-	(40,6,'pbkdf2_sha256$100000$opgZPCI2sAApU9FQ$sMP4c56MLvJHP4AVlocYQKhv3FWexZn6W0AVvZel460=','xiexie','qwe','qweqw1','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\",\"orderNumber\",\"tag_options_get\",\"collection_log_get\",\"change_name_put\",\"review_record_post\",\"loan_config_info_get\",\"revert_put\",\"system_close_put\"]',2,'192.168.1.72',1559803413,-1,1559787229,''),
-	(41,49,'pbkdf2_sha256$100000$uLsnwgZIpji2WaKW$sMPpkJxvRPNyzFkSovdWeX9Rcy9qcG0GTSuniBHsmCY=','r_test_admin','18273637463','1234@qq.com','[]',8,'192.168.1.105',1559791412,-1,1559789165,''),
-	(42,50,'pbkdf2_sha256$100000$SjNGF3BpPrx0WMfF$s/Tpzu7s1x5uta61INLOws3PDys3FjQ51LPgECYkyVA=','test_admin_0','1808880880','test0@qq.com','[]',1,'127.0.0.1',1559793093,-1,1559792338,''),
-	(43,51,'pbkdf2_sha256$100000$wLPHRB72Ykbypegr$3ZwARuXo49oKgrJju+nF9Puq5asl+8PToeIkuYJmh4A=','test_admin_1','1808880881','test1@qq.com','[]',4,'192.168.1.23',1561346312,-1,1559792472,''),
-	(44,50,'pbkdf2_sha256$100000$hBLf14HDpeVBNndZ$tJmYJ/9YoMP+Ow3K7Pz/qyK7oL4j2Dd1mTizJq2qAzM=','test_admin_0_1','1808881880','test01@qq.com','[]',7,'192.168.1.23',1559795863,-1,1559792700,''),
-	(45,2,'','robot','15512345678','www.robot@leying.com','[]',0,'',NULL,-1,1559814695,''),
-	(46,26,'pbkdf2_sha256$100000$TveCzGaMWJP2hfzN$J8qq3ACxqj9+T2OCNUyG6TEFwCNI4XhAdKTvCGMLWeI=','yunying','18800000001','www.yunying@leying.com','[\"review_task_list\",\"review_task_put\",\"review_task_del\",\"review_task_post\"]',5,'127.0.0.1',1561340092,-1,1560140038,''),
-	(47,6,'pbkdf2_sha256$100000$0jzmJcl3g0Gj19pc$3eG334//3W2G1/esphBgZGk2tNTNZmL8/hofPlT7noo=','duke_1_1','15500000000','www.duke_1_1@163.com','[\"application\",\"mine_case_menu\",\"first_review_list\",\"first_review_put\",\"history_review_list\"]',1,'127.0.0.1',1561514392,-1,1561514204,''),
-	(48,6,'pbkdf2_sha256$100000$XA3QLildUmBn4vRi$E7WBwTZx/fgEZ4NTFrzjQ46THn3keCVYZ84wQe9kIls=','duke_1_2','15500000001','duke_1_1@163.com','[\"first_review_list\",\"first_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514664,''),
-	(49,6,'pbkdf2_sha256$100000$Vx5BgqMznvfp7zMK$sm7Q8xpZ6FNAGO9FVgusxhjM+0Rql1Ng/1ZiiqcdXUg=','duke_1_3','15500000002','duke_1_3@163.com','[\"first_review_list\",\"first_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514734,''),
-	(50,7,'pbkdf2_sha256$100000$6iXSRQTXx0mz7JdV$9QBbkSQQkQJsgfOHCCTVeZdMsojfOtnpq1M8aNrV8Jc=','duke_2_1','15500000021','duke_2_1@163.com','[\"second_review_list\",\"second_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514798,''),
-	(51,7,'pbkdf2_sha256$100000$RWRFU8dCvuoKGEmQ$6h91yLdtAL1v4mR47uE2Jnh1J8QZrJtrSR+ivJq6DLg=','duke_2_2','15500000022','duke_2_2@163.com','[\"second_review_list\",\"second_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514892,''),
-	(52,7,'pbkdf2_sha256$100000$FOxTk0aBXBRVoZ59$8W9oUM2W/FvqAyz1D9HrUVsIpcwrq/NJSgep3QObClA=','duke_2_3','15500000023','duke_2_3@163.com','[\"second_review_list\",\"second_review_put\",\"history_review_list\"]',0,'',NULL,1,1561514918,''),
-	(53,8,'pbkdf2_sha256$100000$F2p3VziBLcEp2Vn9$JIcTmlLBatmuPlDs73nUsUmoTraUWRMiNeLQRmCPYz4=','duke_3_2','15500000032','duke_3_2@163.com','[\"final_review_list\",\"final_review_put\",\"history_review_list\"]',1,'127.0.0.1',1561515548,1,1561515079,''),
-	(54,6,'pbkdf2_sha256$100000$CXiaRbGvtwd7rIUX$AxgfoK3Q7wvCanxsjBTnSLZu7HTldNr29rhjiltddKY=','duke_3_1','15500000031','duke_3_1@163.com','[\"final_review_list\",\"final_review_put\",\"history_review_list\"]',0,'',NULL,1,1561515184,''),
-	(55,8,'pbkdf2_sha256$100000$Qtjtucs8yR88P4Lw$3UpnO5PT8OQB+jSKUNkaWSfiGVlW+bXFCKJSUbYq6kw=','duke_3_3','15500000033','duke_3_3@163.com','[\"final_review_list\",\"final_review_put\",\"history_review_list\",\"404\"]',0,'',NULL,1,1561515272,''),
-	(56,60,'pbkdf2_sha256$100000$r45QyLGTlKKxGKlr$5oRc/fXtqMWFXhYr0raEgNhKfAYt4MsHAp37RcGOELs=','test_S0_jk','15526666669',NULL,'',0,'',NULL,1,1561531445,''),
-	(57,61,'pbkdf2_sha256$100000$ZbADIk4AQ2gcODR2$BtzGIvJBXfJvBfPpx+k2U9k2Dz+JeKAsfhi8Zp1AIHs=','test_S1_jk','15527000000',NULL,'',0,'',NULL,1,1561531495,''),
-	(58,17,'pbkdf2_sha256$100000$ssNBSwY0l3xP2xtu$ii2mh7jPM5R6/s412A5Ooy2N1+jOPDJlCxVBMtrZ3Cc=','editor','15527000001','leeyisoft@qq.com','\"[\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\"]\"',1,'127.0.0.1',1571494031149,1,1561531539,''),
-	(59,18,'pbkdf2_sha256$100000$P3HaQEC4RZBwr6L6$NcAQSWFfBzpjqW0eKVDLsVCpw/6CbskI+bKJMD1W5GQ=','test_A2_1','15527000002',NULL,'[]',0,'',NULL,-1,1561531591,'');
+	(10,1,'pbkdf2_sha256$100000$3I3OMYo133vvYOch$XpwYMbx7RNUmzQUxWYYhLINi8OY2iWtRoEOTXxIqT6k=','root','111','111','\"[\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\",\\\"admin:menu:index\\\",\\\"admin:menu:add\\\",\\\"admin:menu:edit\\\",\\\"admin:menu:del\\\",\\\"admin:menu:status\\\",\\\"admin:menu:sort\\\",\\\"admin:menu:quick\\\",\\\"admin:menu:export\\\",\\\"admin:admin:index\\\",\\\"admin:user:adduser\\\",\\\"admin:user:edituser\\\",\\\"admin:user:deluser\\\",\\\"admin:user:status2\\\",\\\"admin:user:info\\\",\\\"admin:role:index\\\",\\\"admin:member\\\",\\\"admin:user:index\\\",\\\"admin:member:add\\\",\\\"admin:member:edit\\\",\\\"admin:member:del\\\",\\\"admin:member:status\\\",\\\"admin:member:pop\\\",\\\"admin:member:authorize\\\",\\\"admin:content:index\\\",\\\"admin:advertising_category:index\\\",\\\"admin:advertising:index\\\",\\\"admin:article:index\\\",\\\"admin:article:news\\\",\\\"admin:article:regulation\\\",\\\"admin:article:product\\\",\\\"admin:company:team\\\"]\"',2,'192.168.1.72',1555310969,1,1555310681,'');
 
 /*!40000 ALTER TABLE `admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -203,7 +128,7 @@ CREATE TABLE `admin_user_login_log` (
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
 
 
@@ -233,7 +158,7 @@ LOCK TABLES `advertising` WRITE;
 
 INSERT INTO `advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `category_id`, `status`)
 VALUES
-	(1,'banner1 cn 3333','',1570521600000,1571817600000,0,1,'[\"web\",\"wechat\",\"android\",\"ios\"]','/static/upload/advertising/4be5f8fc390970ec7b7c8a35e75427eb.jpg','http://cashloan_api.leying.me/vsn1/payguide',1,1),
+	(1,'banner1 cn 3333','',1570521600000,1571817600000,0,1,'[\"[\\\"[\\\\\\\"web\\\\\\\"\\\"\",\"\\\"\\\\\\\"wechat\\\\\\\"\\\"\",\"\\\"\\\\\\\"android\\\\\\\"\\\"\",\"\\\"\\\\\\\"ios\\\\\\\"]\\\"]\"]','/static/upload/advertising/8328126a8b75c6826cea6332e174a42a.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
 	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
 	(3,'ad1 cn',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,1),
 	(4,'banner1 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
@@ -256,7 +181,7 @@ CREATE TABLE `advertising_category` (
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
 
 LOCK TABLES `advertising_category` WRITE;
 /*!40000 ALTER TABLE `advertising_category` DISABLE KEYS */;
@@ -266,7 +191,8 @@ VALUES
 	(1,'index_banner','主页顶部banner',1),
 	(2,'index_bottom','主页底部滚动广告',1),
 	(3,'index_banner2','首页第二横幅',1),
-	(4,NULL,'ABC',0);
+	(4,'team','关于-核心团队',1),
+	(5,'ddd','ddd',0);
 
 /*!40000 ALTER TABLE `advertising_category` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3833,7 +3759,7 @@ CREATE TABLE `article` (
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
 LOCK TABLES `article` WRITE;
 /*!40000 ALTER TABLE `article` DISABLE KEYS */;
@@ -3842,7 +3768,8 @@ INSERT INTO `article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`
 VALUES
 	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','https://www.w3school.com.cn/jsref/jsref_replace.asp','','abcd','aaa',1094400000,123,'<p>asdcc2222</p>\n<p>&nbsp;</p>','',1573356802870,1572006527197,1),
 	(3,1,'cn',0,'abcde3','leeyi','py_admin','','','','',1259251200000,0,'<p>abcde3</p>','',1576905998145,1573264561506,0),
-	(4,2,'cn',0,'ddd3','dd','dd','','/static/upload/article/thumb/5f1f379c05a6f10ab5b97015ab23bbc0.jpeg','ddd','dd',1576771200000,0,'<p>dd<img class=\"wscnph\" src=\"static/upload/article/news/4be5f8fc390970ec7b7c8a35e75427eb.jpg\" /><img class=\"wscnph\" src=\"static/upload/article/news/21f0d8f3820483adf5e60d670d8fff90.jpeg\" /></p>','',1576906386787,1576906220330,1);
+	(4,2,'cn',0,'ddd3','dd','dd','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','ddd','dd',1576771200000,0,'<p>dddddd</p>\n<p><img class=\"wscnph\" src=\"static/upload/article/news/a14e34250ff65e876aad29ba183208d8.jpg\" /><img class=\"wscnph\" src=\"static/upload/article/news/21f0d8f3820483adf5e60d670d8fff90.jpeg\" /></p>','',1576993053728,1576906220330,1),
+	(5,2,'cn',0,'D大调','等等','等等','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','D大调','D大调',1576944000000,0,'<p>顶顶顶D大调</p>',NULL,0,1576913242307,1);
 
 /*!40000 ALTER TABLE `article` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3872,35 +3799,6 @@ VALUES
 	(2,'cn','新闻活动','news',1);
 
 /*!40000 ALTER TABLE `article_category` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-# Dump of table company
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `company`;
-
-CREATE TABLE `company` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `company_name` varchar(50) NOT NULL DEFAULT '' COMMENT '公司名',
-  `description` varchar(100) NOT NULL DEFAULT '' COMMENT '公司简介',
-  `type` enum('outer','inner') DEFAULT NULL COMMENT '类型：（outer外部委派；inner内部）',
-  `module` enum('review','collection','manage','service') DEFAULT NULL COMMENT '业务：（review 审批；collection 催收；manage管理；service客服）',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用； 删除 -1)',
-  `created_at` bigint(13) DEFAULT NULL COMMENT '创建Unix时间戳毫秒单位',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='公司表';
-
-LOCK TABLES `company` WRITE;
-/*!40000 ALTER TABLE `company` DISABLE KEYS */;
-
-INSERT INTO `company` (`id`, `company_name`, `description`, `type`, `module`, `status`, `created_at`)
-VALUES
-	(1,'my company','default company','inner','manage',1,1556001382),
-	(5,'JKSky_Credit','JKSky_Credit','outer','review',0,1556071101),
-	(7,'JKSky_Collection','JKSky_Collection','outer','collection',1,1556187512);
-
-/*!40000 ALTER TABLE `company` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -3948,6 +3846,26 @@ VALUES
 
 /*!40000 ALTER TABLE `config` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table friendlink
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `friendlink`;
+
+CREATE TABLE `friendlink` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(80) NOT NULL DEFAULT '' COMMENT '链接标题',
+  `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '链接图标',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '链接地址',
+  `target` enum('_blank','_self','') NOT NULL DEFAULT '' COMMENT '链接跳转方式',
+  `sort` bigint(20) NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
+  `updated_at` bigint(13) NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
+  `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='友情链接记录';
+
 
 
 # Dump of table goods

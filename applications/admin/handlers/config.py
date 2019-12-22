@@ -26,51 +26,50 @@ class ConfigHandler(CommonHandler):
         ConfigService.insert(param)
         return self.success()
 
-    @get('config/(?P<id>[0-9]+)')
+    @get('config/(?P<key>[a-zA-Z0-9_]+)')
     @admin_required_login
     @required_permissions()
-    def config_get(self, id):
+    def config_get(self, key):
         """获取单个记录
         """
-        resp_data = ConfigService.get(id)
+        resp_data = ConfigService.get(key)
         return self.success(data=resp_data)
 
-    @get(['config','config/(?P<category>[a-zA-Z0-9_]*)'])
+    @get('config')
     @admin_required_login
     @required_permissions()
-    def config_list_get(self, category = '', *args, **kwargs):
+    def config_list_get(self, *args, **kwargs):
         """列表、搜索记录
         """
         page = int(self.get_argument('page', 1))
         per_page = int(self.get_argument('limit', 10))
-        title = self.get_argument('title', None)
+        key = self.get_argument('key', None)
         status = self.get_argument('status', None)
 
         param = {}
-        if category:
-            param['category'] = category
-        if title:
-            param['title'] = title
+
+        if key:
+            param['key'] = key
         if status:
             param['status'] = status
 
         resp_data = ConfigService.page_list(param, page, per_page)
         return self.success(data=resp_data)
 
-    @put('config/(?P<id>[0-9]+)')
+    @put('config/(?P<key>[a-zA-Z0-9_]+)')
     @admin_required_login
     @required_permissions()
-    def config_put(self, id, *args, **kwargs):
+    def config_put(self, key, *args, **kwargs):
         param = self.params()
-        ConfigService.update(id, param)
+        ConfigService.update(key, param)
         return self.success(data=param)
 
-    @delete('config/(?P<id>[0-9]+)')
+    @delete('config/(?P<key>[a-zA-Z0-9_]+)')
     @admin_required_login
     @required_permissions()
-    def config_delete(self, id, *args, **kwargs):
+    def config_delete(self, key, *args, **kwargs):
         param = {
             'status':-1
         }
-        ConfigService.update(id, param)
+        ConfigService.update(key, param)
         return self.success()

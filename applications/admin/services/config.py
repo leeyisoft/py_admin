@@ -21,6 +21,10 @@ class ConfigService(object):
         """
         query = Config.Q
 
+        if 'key' in where.keys():
+            query = query.filter(Config.key == where['key'])
+        if 'tab' in where.keys():
+            query = query.filter(Config.tab == where['tab'])
         if 'status' in where.keys():
             query = query.filter(Config.status == where['status'])
         else:
@@ -30,30 +34,30 @@ class ConfigService(object):
         return pagelist_obj
 
     @staticmethod
-    def get(id):
+    def get(key):
         """获取单条记录
 
         [description]
 
         Arguments:
-            id int -- 主键
+            key string -- 主键
 
         return:
             Config Model 实例 | None
         """
-        if not id:
-            raise JsonError('ID不能为空')
-        obj = Config.Q.filter(Config.id == id).first()
+        if not key:
+            raise JsonError('key不能为空')
+        obj = Config.Q.filter(Config.key == key).first()
         return obj
 
     @staticmethod
-    def update(id, param):
+    def update(key, param):
         """更新记录
 
         [description]
 
         Arguments:
-            id int -- 主键
+            key string -- 主键
             param dict -- [description]
 
         return:
@@ -64,11 +68,11 @@ class ConfigService(object):
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
-        if not id:
-            raise JsonError('ID 不能为空')
+        if not key:
+            raise JsonError('key 不能为空')
 
         try:
-            Config.Update.filter(Config.id == id).update(param)
+            Config.Update.filter(Config.key == key).update(param)
             Config.session.commit()
             return True
         except Exception as e:
