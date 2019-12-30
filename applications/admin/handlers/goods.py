@@ -35,28 +35,6 @@ class GoodsHandler(CommonHandler):
         resp_data = GoodsService.get(id)
         return self.success(data=resp_data)
 
-    @get(['goods','goods/(?P<category>[a-zA-Z0-9_]*)'])
-    @admin_required_login
-    @required_permissions()
-    def goods_list_get(self, category = '', *args, **kwargs):
-        """列表、搜索记录
-        """
-        page = int(self.get_argument('page', 1))
-        per_page = int(self.get_argument('limit', 10))
-        title = self.get_argument('title', None)
-        status = self.get_argument('status', None)
-
-        param = {}
-        if category:
-            param['category'] = category
-        if title:
-            param['title'] = title
-        if status:
-            param['status'] = status
-
-        resp_data = GoodsService.page_list(param, page, per_page)
-        return self.success(data=resp_data)
-
     @put('goods/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
@@ -74,3 +52,30 @@ class GoodsHandler(CommonHandler):
         }
         GoodsService.update(id, param)
         return self.success()
+
+
+class GoodsListHandler(CommonHandler):
+    @get(['goods','goods/(?P<category>[a-zA-Z0-9_]*)'])
+    @admin_required_login
+    @required_permissions()
+    def goods_list_get(self, category = '', *args, **kwargs):
+        """列表、搜索记录
+        """
+        page = int(self.get_argument('page', 1))
+        per_page = int(self.get_argument('limit', 10))
+        id = self.get_argument('id', None)
+        title = self.get_argument('title', None)
+        status = self.get_argument('status', None)
+
+        param = {}
+        if category:
+            param['category'] = category
+        if id:
+            param['id'] = id
+        if title:
+            param['title'] = title
+        if status:
+            param['status'] = status
+
+        resp_data = GoodsService.page_list(param, page, per_page)
+        return self.success(data=resp_data)

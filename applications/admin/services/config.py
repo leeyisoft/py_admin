@@ -30,6 +30,7 @@ class ConfigService(object):
         else:
             query = query.filter(Config.status != -1)
 
+        query = query.order_by(Config.sort.desc())
         pagelist_obj = query.paginate(page=page, per_page=per_page)
         return pagelist_obj
 

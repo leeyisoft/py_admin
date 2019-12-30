@@ -398,20 +398,20 @@
                 "hidden": 0,
                 "status": 1,
                 "system": 1,
-                "name": "admin:article:product",
+                "name": "admin:goods",
                 "title": "产品展示",
                 "icon": "product-hunt",
-                "path": "/admin/article/index.html",
+                "path": "/admin/goods",
                 "children": []
             },
             {
                 "hidden": 0,
                 "status": 1,
                 "system": 1,
-                "name": "admin:company:team",
+                "name": "admin:team",
                 "title": "工作团队",
                 "icon": "user-friends",
-                "path": "/admin/company/team.html",
+                "path": "/admin/advertising/team",
                 "children": []
             }
         ],

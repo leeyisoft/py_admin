@@ -66,6 +66,7 @@ class ArticleListHandler(CommonHandler):
         id = self.get_argument('id', None)
         title = self.get_argument('title', None)
         status = self.get_argument('status', None)
+        category_id = self.get_argument('category_id', None)
 
         param = {}
         if category:
@@ -76,6 +77,8 @@ class ArticleListHandler(CommonHandler):
             param['title'] = title
         if status:
             param['status'] = status
+        if category_id:
+            param['category_id'] = category_id
 
         resp_data = ArticleService.page_list(param, page, per_page)
         return self.success(data=resp_data)

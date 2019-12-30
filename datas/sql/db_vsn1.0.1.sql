@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.28-log)
 # Database: db_py_admin
-# Generation Time: 2019-12-28 04:17:39 +0000
+# Generation Time: 2019-12-30 03:56:13 +0000
 # ************************************************************
 
 
@@ -64,9 +64,9 @@ LOCK TABLES `admin_role` WRITE;
 
 INSERT INTO `admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `created_at`, `description`)
 VALUES
-	(1,'超级管理员','[\"admin:loan_order:index:top0\",\"admin:loan_order:index\",\"admin.loan_order.detail\",\"reviewl_list\",\"admin:loan_order:review_record\",\"admin:loan_order:order_general_info\",\"admin:loan_order:message_record\",\"admin:loan_order:callrecord\",\"admin:loan_order:book_address\",\"admin:loan_order:location_record\",\"admin:loan_order:loan_review_task_list\",\"admin:loan_order:other_info\",\"admin:loan_order:loan_info\",\"admin:loan_order:loan_config_info\",\"all_application\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\",\"admin:loan_order:first_review\",\"admin:loan_order:first_review_list\",\"first_review\",\"admin:loan_order:second_review_list\",\"second_review\",\"admin:loan_order:final_review_list\",\"final_review\",\"admin:application:reviewHistoryCases\",\"admin:customer:index\",\"admin:customer:all\",\"admin:customer:customerAuthenticationa\",\"admin:finance:index\",\"admin:finance:deposits\",\"admin:finance:loanIssues\",\"admin:finance:balance\",\"admin:finance:offlineIssue\",\"admin:finance:balanceIssuesLog\",\"admin:report:index\",\"admin:report:financeReport\",\"admin:report:isssuesReport\",\"admin:report:depositsReport\",\"admin:report:financeInout\",\"admin:report:fundPeriodTable\",\"admin:report:financeTotalAssets\",\"admin:report:technicalService\",\"admin:report:operation\",\"admin:statistic:register\",\"admin:statistic:day_count\",\"admin:statistic:issue\",\"admin:statistic:again_loan\",\"admin:report:customerInformation\",\"admin:report:loanInfomation\",\"admin:statistic:conversion\",\"admin:report:loanOperation\",\"admin:report:loanRepayment\",\"admin:report:platformRate\",\"admin:report:processRejectRate\",\"admin:statistic:over_period\",\"admin:\",\"admin:report:collectionReport\",\"admin:collection_case_log:list\",\"admin:collection_case_log:add\",\"admin:collection_case_log:index\",\"admin:report:collectionEffect\",\"admin:report:collectionEfficiency\",\"admin:report:sendSmsDetail\",\"admin:report:snedSmsStatistics\",\"admin:report:rollover\",\"admin:report:recallAmount\",\"admin:report:application\",\"admin:statistic:deal\",\"admin:statistic:deal_efficiency\",\"admin:report:allReviewReport\",\"admin:statistic:trial\",\"admin:operation:approvalHistory\",\"admin:loan_order_log:index\",\"admin:loan_order_log:order_refuse_log\",\"admin:report:performanceReport\",\"admin:report:myCollectionPerformance\",\"admin:report:myApplicationPerformance\",\"admin:report:exportResult\",\"admin:operate:index\",\"admin:operation:accountRole\",\"admin:operation:accountManagement\",\"admin:operation:roleManagement\",\"admin:operation:applyConfiguration\",\"admin:operation:ruleManagement\",\"admin:blacklist:index\",\"admin:blacklist:add\",\"admin:blacklist:edit\",\"admin:blacklist:delete\",\"admin:operation:stepManagement\",\"admin:operation:labelManagement\",\"admin:page:index\",\"admin:operation:contract\",\"admin:operation:appNoticeManagement\",\"admin:operation:issueManagement\",\"admin:operation:amountControlManagement\",\"admin:operation:lendingFailureOrder\",\"admin:operation:batchIssue\",\"admin:operation:handleFailedIssue\",\"admin:operation:skypayCancel\",\"admin:operation:smsManagement\",\"admin:operation:smsSendTime\",\"admin:sms_template:index\",\"admin:operation:smsRecord\",\"admin:sms:batchSend\",\"admin:sms:index\",\"admin:sms:contact_phone\",\"admin:sms:add\",\"admin:operation:customerProduct\",\"admin:operation:customerGrade\",\"admin:operaion:customerGradeManagement\",\"admin:operation:productManagement\",\"admin:operation:productGrade\",\"admin:help:index\",\"admin:operation:bannerMangement\",\"admin:advertise:index\",\"admin:advertise:add\",\"admin:advertise:edit\",\"admin:advertise:delete\",\"admin:advertise_cat:index\",\"admin:advertise_cat:add\",\"admin:advertise_cat:edit\",\"admin:advertise_cat:delete\",\"admin:operation:task\",\"admin:operation:bankChannel\",\"admin:collection_category:index\",\"admin:collection_category:add\",\"admin:collection_category:edit\",\"admin:collection_category:delete\",\"admin:collection_case_log:index\",\"admin:system:function\",\"admin:system:setting\",\"admin:system:base\",\"admin:system:index\",\"admin:config:pagelist\",\"admin:config:delete_one\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:pagelist\",\"admin:menu:pagelist\",\"other\",\"collection\",\"admin:collection_case:index\",\"admin:collection_case:current\",\"admin:collection_case:overdue\",\"admin:collection_case:assign\",\"admin:collection_case:do_assign\",\"admin:collection_case:mine\",\"collector_collection_detail\",\"admin:collection_case:workbench\",\"admin:collection_call_record:index\",\"admin:collection_voice_record:index\",\"admin:collection_stage:index\",\"admin:collection_stage:add\",\"admin:collection_stage:edit\",\"admin:collection_stage:delete\",\"admin:collection_group:index\",\"admin:collection_group:add\",\"admin:collection_group:edit\",\"admin:collection_group:delete\",\"admin:collection_stage_group:index\",\"admin:collection_stage_group:add\",\"admin:collection_stage_group:edit\",\"admin:collection_stage_group:delete\",\"admin:company:index\",\"admin:company:add\",\"admin:company:edit\",\"admin:company:delete\",\"admin:collection_collector:index\",\"admin:collection_collector:add\",\"admin:collection_collector:edit\",\"admin:collection_collector:delete\"]',1,1,1555310106,''),
-	(2,'默认角色','[\"admin:dashboard\"]',20,1,1555310106,''),
-	(3,'test','[\"application\",\"loan_order_list\",\"product_valid_list\",\"mine_case_menu\",\"second_review_list\",\"second_review_put\",\"collection\",\"collection_voicerecord_list\"]',20,1,1556189858,'');
+	(1,'超级管理员','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\"]',23,1,1555310106,''),
+	(2,'默认角色','[\"admin:dashboard\"]',22,1,1555310106,''),
+	(3,'test2','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\",\"admin:menu:index\",\"admin:menu:add\",\"admin:menu:edit\",\"admin:menu:del\",\"admin:menu:status\",\"admin:menu:sort\",\"admin:menu:quick\",\"admin:menu:export\",\"admin:admin:index\",\"admin:user:adduser\",\"admin:user:edituser\",\"admin:user:deluser\",\"admin:user:status2\",\"admin:user:info\",\"admin:role:index\",\"admin:friendlink:index\"]',20,1,1556189858,'');
 
 /*!40000 ALTER TABLE `admin_role` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -102,15 +102,15 @@ LOCK TABLES `admin_user` WRITE;
 
 INSERT INTO `admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1314,'127.0.0.1',1577500325566,1,0,'cd'),
-	(2,2,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2',NULL,NULL,'[]',0,'',NULL,0,1553759714,''),
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1316,'127.0.0.1',1577673546279,1,0,'cd'),
+	(2,1,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2','b','a','\"\"',0,'',NULL,-1,1553759714,''),
 	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213',NULL,NULL,'[]',0,'',NULL,-1,1553761927,''),
 	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
-	(5,3,'pbkdf2_sha256$100000$AsufhuaOblLpLO9f$Y6f8c+z5dFWWcLGBudin9chVYoD+Aecvqt6+Fkj1WXk=','2yy0','yyy','yyy','[]',0,'',NULL,-1,1553764642,''),
+	(5,3,'pbkdf2_sha256$100000$AsufhuaOblLpLO9f$Y6f8c+z5dFWWcLGBudin9chVYoD+Aecvqt6+Fkj1WXk=','2yy0','yyy','yyy','[]',0,'',NULL,1,1553764642,''),
 	(6,3,'pbkdf2_sha256$100000$kiQ1wKJLc2NdErll$LtHhdCNjL1u7ijB0vkercWTYvuIza1KLu0QPhiCS+3U=','1113150','21312','31','[]',0,'',NULL,-1,1553764672,''),
 	(8,2,'pbkdf2_sha256$100000$510hnENWgSjtwHx4$hz5p5I9ZnZUBmxzh1BRc08AnnVwCHhRAR1xNs6vpPoQ=','请问','1','1e','[]',0,'',NULL,-1,1554891553,''),
 	(9,1,'pbkdf2_sha256$100000$iBzcEO3OpRT3IppL$JizpIobnqCTRnlsOWYgRZIjbgThltzSJxOPJwHzVzSo=','test','13456987458','123@163.com','[]',0,'',NULL,-1,1555310050,''),
-	(10,1,'pbkdf2_sha256$100000$3I3OMYo133vvYOch$XpwYMbx7RNUmzQUxWYYhLINi8OY2iWtRoEOTXxIqT6k=','root','111','111','\"[\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\",\\\"admin:menu:index\\\",\\\"admin:menu:add\\\",\\\"admin:menu:edit\\\",\\\"admin:menu:del\\\",\\\"admin:menu:status\\\",\\\"admin:menu:sort\\\",\\\"admin:menu:quick\\\",\\\"admin:menu:export\\\",\\\"admin:admin:index\\\",\\\"admin:user:adduser\\\",\\\"admin:user:edituser\\\",\\\"admin:user:deluser\\\",\\\"admin:user:status2\\\",\\\"admin:user:info\\\",\\\"admin:role:index\\\",\\\"admin:member\\\",\\\"admin:user:index\\\",\\\"admin:member:add\\\",\\\"admin:member:edit\\\",\\\"admin:member:del\\\",\\\"admin:member:status\\\",\\\"admin:member:pop\\\",\\\"admin:member:authorize\\\",\\\"admin:content:index\\\",\\\"admin:advertising_category:index\\\",\\\"admin:advertising:index\\\",\\\"admin:article:index\\\",\\\"admin:article:news\\\",\\\"admin:article:regulation\\\",\\\"admin:article:product\\\",\\\"admin:company:team\\\"]\"',2,'192.168.1.72',1555310969,1,1555310681,'');
+	(10,1,'pbkdf2_sha256$100000$hxvXkdPubzOuQwEL$eB7NtWey2YOoSQtVrrxxqhSuEd1/+NGJnIaQyjJmrOU=','root','1113','1113','\"[\\\"admin:dashboard\\\",\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\",\\\"admin:menu:index\\\",\\\"admin:menu:add\\\",\\\"admin:menu:edit\\\",\\\"admin:menu:del\\\",\\\"admin:menu:status\\\",\\\"admin:menu:sort\\\",\\\"admin:menu:quick\\\",\\\"admin:menu:export\\\",\\\"admin:admin:index\\\",\\\"admin:user:adduser\\\",\\\"admin:user:edituser\\\",\\\"admin:user:deluser\\\",\\\"admin:user:status2\\\",\\\"admin:user:info\\\",\\\"admin:role:index\\\",\\\"admin:friendlink:index\\\",\\\"admin:member\\\",\\\"admin:user:index\\\",\\\"admin:member:add\\\",\\\"admin:member:edit\\\",\\\"admin:member:del\\\",\\\"admin:member:status\\\",\\\"admin:member:pop\\\",\\\"admin:member:authorize\\\",\\\"admin:content:index\\\",\\\"admin:advertising_category:index\\\",\\\"admin:advertising:index\\\",\\\"admin:article:index\\\",\\\"admin:article:news\\\",\\\"admin:article:regulation\\\",\\\"admin:article:product\\\",\\\"admin:company:team\\\"]\"',3,'127.0.0.1',1577644874775,1,1555310681,'');
 
 /*!40000 ALTER TABLE `admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -128,8 +128,19 @@ CREATE TABLE `admin_user_login_log` (
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
+LOCK TABLES `admin_user_login_log` WRITE;
+/*!40000 ALTER TABLE `admin_user_login_log` DISABLE KEYS */;
+
+INSERT INTO `admin_user_login_log` (`id`, `user_id`, `ip`, `client`, `created_at`)
+VALUES
+	(1,1,'127.0.0.1','web',0),
+	(2,10,'127.0.0.1','web',0),
+	(3,1,'127.0.0.1','web',0);
+
+/*!40000 ALTER TABLE `admin_user_login_log` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table advertising
@@ -140,30 +151,34 @@ DROP TABLE IF EXISTS `advertising`;
 CREATE TABLE `advertising` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '标题',
-  `description` varchar(255) DEFAULT NULL COMMENT '描述',
-  `start_at` bigint(13) DEFAULT NULL COMMENT '投放开始Unix时间戳毫秒单位',
+  `description` varchar(255) DEFAULT '' COMMENT '描述',
+  `start_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放开始Unix时间戳毫秒单位',
   `end_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
-  `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 1 内部网页 2外部网页',
   `client` varchar(200) NOT NULL DEFAULT '' COMMENT '客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ',
   `img` varchar(255) NOT NULL COMMENT '图片链接',
-  `link` varchar(255) DEFAULT NULL COMMENT '跳转地址链接',
+  `link` varchar(255) NOT NULL DEFAULT '' COMMENT '跳转地址链接',
+  `sort` bigint(20) unsigned NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
   `category_id` bigint(20) NOT NULL COMMENT '广告分类 投放位置',
   `status` tinyint(1) DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
+  `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
 
 LOCK TABLES `advertising` WRITE;
 /*!40000 ALTER TABLE `advertising` DISABLE KEYS */;
 
-INSERT INTO `advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `created_at`, `type`, `client`, `img`, `link`, `category_id`, `status`)
+INSERT INTO `advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `type`, `client`, `img`, `link`, `sort`, `category_id`, `status`, `created_at`)
 VALUES
-	(1,'banner1 cn 3333','',1570521600000,1571817600000,0,1,'[\"[\\\"[\\\\\\\"web\\\\\\\"\\\"\",\"\\\"\\\\\\\"wechat\\\\\\\"\\\"\",\"\\\"\\\\\\\"android\\\\\\\"\\\"\",\"\\\"\\\\\\\"ios\\\\\\\"]\\\"]\"]','/static/upload/advertising/8328126a8b75c6826cea6332e174a42a.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
-	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
-	(3,'ad1 cn',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,1),
-	(4,'banner1 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
-	(5,'banner2 en',NULL,0,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',1,1),
-	(6,'ad1 en',NULL,0,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',2,-1);
+	(1,'banner1 cn 2','',1575964800,1579852800,1,'','/static/upload/advertising/8328126a8b75c6826cea6332e174a42a.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
+	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
+	(3,'ad1 cn',NULL,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',20,2,1,0),
+	(4,'banner1 en',NULL,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
+	(5,'banner2 en',NULL,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
+	(6,'ad1 en',NULL,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',20,2,-1,0),
+	(7,'产品总监','产品总监desc',0,0,1,'','/static/upload/advertising/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#',20,4,1,1577674142277),
+	(8,'技术总监','技术总监desc',0,0,1,'','/static/upload/advertising/21f0d8f3820483adf5e60d670d8fff90.jpeg','#',20,4,1,1577677777310),
+	(9,'运营总监','运营desc',0,0,1,'','','#',20,0,1,0);
 
 /*!40000 ALTER TABLE `advertising` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -192,7 +207,7 @@ VALUES
 	(2,'index_bottom','主页底部滚动广告',1),
 	(3,'index_banner2','首页第二横幅',1),
 	(4,'team','关于-核心团队',1),
-	(5,'ddd','ddd',0);
+	(5,'ddd3','ddd3',1);
 
 /*!40000 ALTER TABLE `advertising_category` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3759,17 +3774,18 @@ CREATE TABLE `article` (
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
 LOCK TABLES `article` WRITE;
 /*!40000 ALTER TABLE `article` DISABLE KEYS */;
 
 INSERT INTO `article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`, `source`, `external_url`, `thumb`, `keyword`, `description`, `publish_date`, `hits`, `content`, `ip`, `updated_at`, `created_at`, `status`)
 VALUES
-	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','https://www.w3school.com.cn/jsref/jsref_replace.asp','','abcd','aaa',1094400000,123,'<p>asdcc2222</p>\n<p>&nbsp;</p>','',1573356802870,1572006527197,1),
+	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','https://www.w3school.com.cn/jsref/jsref_replace.asp','','abcd','aaa',1577808000000,123,'<p>asdcc2222</p>\n<p>&nbsp;</p>','',1577645992891,1572006527197,1),
 	(3,1,'cn',0,'abcde3','leeyi','py_admin','','','','',1259251200000,0,'<p>abcde3</p>','',1576905998145,1573264561506,0),
-	(4,2,'cn',0,'ddd3','dd','dd','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','ddd','dd',1576771200000,0,'<p>dddddd</p>\n<p><img class=\"wscnph\" src=\"static/upload/article/news/a14e34250ff65e876aad29ba183208d8.jpg\" /><img class=\"wscnph\" src=\"static/upload/article/news/21f0d8f3820483adf5e60d670d8fff90.jpeg\" /></p>','',1576993053728,1576906220330,1),
-	(5,2,'cn',0,'D大调','等等','等等','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','D大调','D大调',1576944000000,0,'<p>顶顶顶D大调</p>',NULL,0,1576913242307,1);
+	(4,2,'cn',0,'ddd3','dd','dd','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','ddd','dd',1576771200000,0,'<p>dddddd</p>\n<p><img class=\"wscnph\" src=\"static/upload/article/news/a14e34250ff65e876aad29ba183208d8.jpg\" /><img class=\"wscnph\" src=\"static/upload/article/news/21f0d8f3820483adf5e60d670d8fff90.jpeg\" /></p>','',1577645717337,1576906220330,-1),
+	(5,2,'cn',0,'D大调','等等','等等','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','D大调','D大调',1576944000000,0,'<p>顶顶顶D大调</p>',NULL,0,1576913242307,1),
+	(6,2,'cn',0,'t6','ddd','ddd','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','dd','dd',1577721600000,0,'<p>dd</p>',NULL,0,1577645936470,1);
 
 /*!40000 ALTER TABLE `article` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3841,8 +3857,8 @@ VALUES
 	('company','company_wechat','','公司微信',1,'',1,1,1555126015,0),
 	('company','company_hotline','400-820-8840','公司热线',1,'',1,1,1555126057,0),
 	('company','company_email','leeyisoft@qq.com','公司邮箱',1,'',1,1,1555126096,0),
-	('sys','copyright','copyright 2019-2029','版权信息',1,'',1,1,1555126207,0),
-	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,0);
+	('sys','copyright','copyright 2019-2021','版权信息',2,'dddd',1,1,1555126207,1577641306453),
+	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,1577641208452);
 
 /*!40000 ALTER TABLE `config` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3866,8 +3882,6 @@ CREATE TABLE `friendlink` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='友情链接记录';
 
-
-
 # Dump of table goods
 # ------------------------------------------------------------
 
@@ -3877,6 +3891,7 @@ CREATE TABLE `goods` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `category_id` bigint(20) NOT NULL COMMENT '分类',
   `title` varchar(200) NOT NULL COMMENT '标题',
+  `thumb` varchar(255) NOT NULL DEFAULT '' COMMENT '缩略图',
   `album` json DEFAULT NULL COMMENT '相册，["image_url",...]',
   `external_url` varchar(255) NOT NULL DEFAULT '' COMMENT '外链地址',
   `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO关键词',
@@ -3895,7 +3910,6 @@ CREATE TABLE `goods` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
 
 
-
 # Dump of table goods_category
 # ------------------------------------------------------------
 
@@ -3903,13 +3917,22 @@ DROP TABLE IF EXISTS `goods_category`;
 
 CREATE TABLE `goods_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(64) DEFAULT NULL COMMENT '分类名称',
-  `name` varchar(40) DEFAULT NULL COMMENT '分类唯一标示',
+  `name` varchar(40) DEFAULT NULL COMMENT '唯一标识',
+  `title` varchar(80) NOT NULL DEFAULT '' COMMENT '分类名称',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品分类表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品分类';
 
+LOCK TABLES `goods_category` WRITE;
+/*!40000 ALTER TABLE `goods_category` DISABLE KEYS */;
 
+INSERT INTO `goods_category` (`id`, `name`, `title`, `status`)
+VALUES
+    (1,'default','默认分类',1);
+
+/*!40000 ALTER TABLE `goods_category` ENABLE KEYS */;
+UNLOCK TABLES;
 
 # Dump of table message
 # ------------------------------------------------------------

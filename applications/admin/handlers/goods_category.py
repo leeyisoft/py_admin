@@ -35,10 +35,10 @@ class GoodsCategoryHandler(CommonHandler):
         resp_data = GoodsCategoryService.get(id)
         return self.success(data=resp_data)
 
-    @get(['goods_category','goods_category/(?P<category>[a-zA-Z0-9_]*)'])
+    @get('goods_category')
     @admin_required_login
     @required_permissions()
-    def goods_category_list_get(self, category = '', *args, **kwargs):
+    def goods_category_list_get(self, *args, **kwargs):
         """列表、搜索记录
         """
         page = int(self.get_argument('page', 1))
@@ -47,8 +47,7 @@ class GoodsCategoryHandler(CommonHandler):
         status = self.get_argument('status', None)
 
         param = {}
-        if category:
-            param['category'] = category
+
         if title:
             param['title'] = title
         if status:
@@ -74,3 +73,14 @@ class GoodsCategoryHandler(CommonHandler):
         }
         GoodsCategoryService.update(id, param)
         return self.success()
+
+    @get('goods_category/valid')
+    @admin_required_login
+    # @required_permissions()
+    def goods_category_valid_get(self):
+        """
+        有效的分类列表
+        :return:
+        """
+        data = GoodsCategoryService.data_list_valid()
+        return self.success(data=data)

@@ -5,6 +5,7 @@ from trest.logger import SysLogger
 from trest.config import settings
 from trest.exception import JsonError
 from applications.common.models.advertising import Advertising
+from applications.common.models.advertising_category import AdvertisingCategory
 
 from applications.admin.filters.advertising  import AdvertisingFilter
 from applications.admin.services.advertising_category import AdvertisingCategoryService
@@ -22,13 +23,27 @@ class AdvertisingService(object):
         return:
             Paginate 对象 | None
         """
+        if 'category' in where.keys():
+            where['category_id'] = AdvertisingCategory.session.query(AdvertisingCategory.id) \
+            .filter(AdvertisingCategory.name == where['category']).scalar()
+
         query = Advertising.Q
+
+        if 'category_id' in where.keys():
+            query = query.filter(Advertising.category_id == where['category_id'])
+
+        if 'id' in where.keys():
+            query = query.filter(Advertising.id == where['id'])
+
+        if 'title' in where.keys():
+            query = query.filter(Advertising.title == where['title'])
 
         if 'status' in where.keys():
             query = query.filter(Advertising.status == where['status'])
         else:
             query = query.filter(Advertising.status != -1)
 
+        query = query.order_by(Advertising.sort.desc())
         pagelist_obj = query.paginate(page=page, per_page=per_page)
 
         if pagelist_obj is None:
@@ -76,6 +91,14 @@ class AdvertisingService(object):
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
 
+        if 'start_at' in param.keys():
+            param['start_at'] = param['start_at'] if param['start_at'] else 0
+        if 'end_at' in param.keys():
+            param['end_at'] = param['end_at'] if param['end_at'] else 0
+
+        description = param.get('description', '')
+        if len(description) > 255:
+            raise JsonError('Data too long for \'description\'')
         if not id:
             raise JsonError('ID 不能为空')
 
@@ -105,6 +128,10 @@ class AdvertisingService(object):
         param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
+
+        description = param.get('description', '')
+        if len(description) > 255:
+            raise JsonError('Data too long for \'description\'')
         try:
             obj = Advertising(**param)
             Advertising.session.add(obj)

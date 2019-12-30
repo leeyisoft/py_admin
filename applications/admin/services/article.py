@@ -78,13 +78,19 @@ class ArticleService(object):
         param = {k:v for k,v in param.items() if k in columns}
         if 'updated_at' in columns:
             param['updated_at'] = utime.timestamp(3)
+
+        description = param.get('description', '')
+        if len(description) > 255:
+            raise JsonError('Data too long for \'description\'')
+
         if not id:
             raise JsonError('ID 不能为空')
 
         status = param.get('status', None)
         category_id = param.get('category_id', 0)
-        if status != -1 and not(int(category_id) > 0):
+        if not category_id:
             raise JsonError('文章分类缺失')
+
         try:
             Article.Update.filter(Article.id == id).update(param)
             Article.session.commit()
@@ -113,8 +119,13 @@ class ArticleService(object):
             param['created_at'] = utime.timestamp(3)
 
         category_id = param.get('category_id', 0)
-        if not(int(category_id) > 0):
+        if not category_id:
             raise JsonError('文章分类缺失')
+
+        description = param.get('description', '')
+        if len(description) > 255:
+            raise JsonError('Data too long for \'description\'')
+
         try:
             obj = Article(**param)
             Article.session.add(obj)

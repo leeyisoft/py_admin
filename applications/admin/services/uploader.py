@@ -14,12 +14,13 @@ class UploaderService(object):
     def upload(current_uid, ip, action, imgfile, path):
         action_set = (
             'advertising',
-            'avatar',
             'article/thumb',
             'article/regulation',
             'article/news',
-            'product',
+            'avatar',
             'friendlink',
+            'goods/thumb',
+            'product',
         )
         if action not in action_set:
             raise JsonError('不支持的action')

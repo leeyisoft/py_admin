@@ -107,7 +107,6 @@ class ArticleCategoryService(object):
     def data_list_valid():
         res_data = []
         query = ArticleCategory.Q.filter(ArticleCategory.status==1).all()
-        ArticleCategory.session.commit()
         for val in query:
             res_data.append(val.as_dict())
         return res_data

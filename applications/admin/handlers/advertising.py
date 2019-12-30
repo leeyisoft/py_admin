@@ -43,15 +43,21 @@ class AdvertisingHandler(CommonHandler):
         """
         page = int(self.get_argument('page', 1))
         per_page = int(self.get_argument('limit', 10))
+        id = self.get_argument('id', None)
         title = self.get_argument('title', None)
         status = self.get_argument('status', None)
+        category_id = self.get_argument('category_id', None)
         param = {}
         if category:
             param['category'] = category
+        if id:
+            param['id'] = id
         if title:
             param['title'] = title
         if status:
             param['status'] = status
+        if category_id:
+            param['category_id'] = category_id
 
         resp_data = AdvertisingService.page_list(param, page, per_page)
         return self.success(data=resp_data)

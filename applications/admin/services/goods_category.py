@@ -102,3 +102,16 @@ class GoodsCategoryService(object):
             GoodsCategory.session.rollback()
             SysLogger.error(e)
             raise JsonError('insert error')
+
+    @staticmethod
+    def data_list_valid():
+        res_data = []
+        query = GoodsCategory.Q.filter(GoodsCategory.status==1).all()
+        for val in query:
+            res_data.append(val.as_dict())
+        return res_data
+
+    @staticmethod
+    def category_list(category_ids):
+        rows = GoodsCategory.Q.filter(GoodsCategory.id.in_(category_ids)).all()
+        return rows

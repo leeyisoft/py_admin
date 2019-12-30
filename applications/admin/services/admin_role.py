@@ -27,6 +27,7 @@ class AdminRoleService(object):
         else:
             query = query.filter(AdminRole.status != -1)
 
+        query = query.order_by(AdminRole.sort.desc())
         pagelist_obj = query.paginate(page=page, per_page=per_page)
 
         if pagelist_obj is None:

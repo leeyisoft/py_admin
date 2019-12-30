@@ -4,12 +4,14 @@
 """
 
 
-class AdvertisingFilter(object):
+class GoodsFilter(object):
     @staticmethod
     def page_list(pagelist_obj, page, per_page, category_map):
         items = []
         for item in pagelist_obj.items:
             data = item.as_dict()
+            data['market_price'] = "{:.2f} 元".format(int(data['market_price'])/100)
+            data['price'] = "{:.2f} 元".format(int(data['price'])/100)
             data['category'] = ''
             if data['category_id'] in category_map.keys():
                 data['category_name'] = category_map[data['category_id']].name

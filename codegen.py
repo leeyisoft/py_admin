@@ -80,6 +80,10 @@ class {classname}Service(object):
         """
         query = {classname}.Q
 
+        if 'id' in where.keys():
+            query = query.filter({classname}.id == where['id'])
+        if 'title' in where.keys():
+            query = query.filter({classname}.title == where['title'])
         if 'status' in where.keys():
             query = query.filter({classname}.status == where['status'])
         else:
@@ -222,28 +226,6 @@ class {classname}Handler(CommonHandler):
         resp_data = {classname}Service.get(id)
         return self.success(data=resp_data)
 
-    @get(['{classname_underline}','{classname_underline}/(?P<category>[a-zA-Z0-9_]*)'])
-    @admin_required_login
-    @required_permissions()
-    def {classname_underline}_list_get(self, category = '', *args, **kwargs):
-        """列表、搜索记录
-        """
-        page = int(self.get_argument('page', 1))
-        per_page = int(self.get_argument('limit', 10))
-        title = self.get_argument('title', None)
-        status = self.get_argument('status', None)
-
-        param = {{}}
-        if category:
-            param['category'] = category
-        if title:
-            param['title'] = title
-        if status:
-            param['status'] = status
-
-        resp_data = {classname}Service.page_list(param, page, per_page)
-        return self.success(data=resp_data)
-
     @put('{classname_underline}/(?P<id>[0-9]+)')
     @admin_required_login
     @required_permissions()
@@ -261,6 +243,33 @@ class {classname}Handler(CommonHandler):
         }}
         {classname}Service.update(id, param)
         return self.success()
+
+
+class {classname}ListHandler(CommonHandler):
+    @get(['{classname_underline}','{classname_underline}/(?P<category>[a-zA-Z0-9_]*)'])
+    @admin_required_login
+    @required_permissions()
+    def {classname_underline}_list_get(self, category = '', *args, **kwargs):
+        """列表、搜索记录
+        """
+        page = int(self.get_argument('page', 1))
+        per_page = int(self.get_argument('limit', 10))
+        id = self.get_argument('id', None)
+        title = self.get_argument('title', None)
+        status = self.get_argument('status', None)
+
+        param = {{}}
+        if category:
+            param['category'] = category
+        if id:
+            param['id'] = id
+        if title:
+            param['title'] = title
+        if status:
+            param['status'] = status
+
+        resp_data = {classname}Service.page_list(param, page, per_page)
+        return self.success(data=resp_data)
 '''
 
     def render(self, classname):
@@ -294,8 +303,8 @@ def get_metadata(tables):
 def create_models(tables = None):
     try:
         outfile = f'{ROOT_PATH}/applications/common/models/{tables[0]}.py'
-        if os.path.exists(outfile):
-            return
+        # if os.path.exists(outfile):
+        #     return
         metadata = get_metadata(tables)
 
         noindexes = True

@@ -12,6 +12,7 @@ class Goods(Base):
     id = Column(BIGINT(20), primary_key=True, comment='主键')
     category_id = Column(BIGINT(20), nullable=False, comment='分类')
     title = Column(String(200), nullable=False, comment='标题')
+    thumb = Column(String(255), nullable=False, server_default=text("''"), comment='缩略图')
     album = Column(JSON, comment='相册，["image_url",...]')
     external_url = Column(String(255), nullable=False, server_default=text("''"), comment='外链地址')
     keyword = Column(String(255), nullable=False, server_default=text("''"), comment='SEO关键词')
