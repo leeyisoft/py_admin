@@ -1,0 +1,169 @@
+{% extends "common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!-- contact -->
+    <div class="contact">
+        <div class="container">
+            <div class="contact-grids">
+                <div class="col-md-7">
+                    <div class="contact-info">
+                        <h2>{{ contact.title }}</h2>
+                    </div>
+                    <div class="contact-infom">
+                        <h4>{{ contact.subtitle }}</h4>
+                        <p>{{ contact.value }}</p>
+                    </div>
+                </div>
+                <div class="col-md-5 contact-para">
+                    <h5>Contact Form</h5>
+                    <form action="/company/contact/" method="post" class="contact_form">
+                        {{ csrf_input }}
+                        <div class="grid-contact">
+                            <div class="col-md-6 contact-grid">
+                                <p>姓名</p>
+                                <input type="text" name="real_name" value="" onfocus="this.value='';" onblur="if (this.value == '') {this.value ='';}" datatype="s2-18" errormsg="至少2个字符,最多18个字符！" />
+                            </div>
+                            <div class="col-md-6 contact-grid">
+                                <p>电话</p>
+                                <input type="text" name="phone" value="" onfocus="this.value='';" onblur="if (this.value == '') {this.value ='';}" datatype="phone|m" errormsg="电话号码格式有误" />
+                                </div>
+                            <div class="clearfix"> </div>
+                        </div>
+                        <p class="your-para">留言</p>
+                        <textarea cols="77" rows="6" name="message" id="message" value="" onfocus="this.value='';" onblur="if (this.value == '') {this.value = '';}" datatype="s2-320" errormsg="至少2个字符,最多320个字符！"></textarea>
+                        <div class="grid-contact">
+                            <div class="send col-md-4">
+                                <input type="submit" value="Send">
+                            </div>
+                            <div class="col-md-8">
+                                <p id="tips" class="Validform_checktip" style="margin-top: 44px;"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            <div class="contact-map">
+                <h5>地理位置</h5>
+                <div class="map" id="map" style="width: 100%; height: 500px;"></div>
+                <script src="http://webapi.amap.com/maps?v=1.3&key=a7095e355049fcb58e5392406b1f2670"></script>
+                <script type="text/javascript">
+                    var lnt_lat = [110.016084,29.137814]
+                    var marker, map = new AMap.Map("map", {
+                        resizeEnable: true,
+                        center: lnt_lat,
+                        zoom: 15
+                    });
+                    addMarker()
+                    updateMarker()
+                    function addMarker() {
+                        if (marker) {
+                            return;
+                        }
+                        marker = new AMap.Marker({
+                            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                            position: lnt_lat
+                        });
+                        marker.setMap(map);
+                    }
+                    function updateMarker() {
+                        // 自定义点标记内容
+                        var markerContent = document.createElement("div");
+
+                        // 点标记中的图标
+                        var markerImg = document.createElement("img");
+                        markerImg.className = "markerlnglat";
+                        markerImg.src = "http://webapi.amap.com/theme/v1.3/markers/n/mark_r.png";
+                        markerContent.appendChild(markerImg);
+                        // 点标记中的文本
+                        var markerSpan = document.createElement("span");
+                        markerSpan.className = 'marker';
+                        markerSpan.innerHTML = "{{ site_name }}";
+                        markerContent.appendChild(markerSpan);
+                        marker.setContent(markerContent); //更新点标记内容
+                        marker.setPosition(lnt_lat); //更新点标记位置
+                    }
+                </script>
+                <style type="text/css">
+                    .amap-marker-content {width: 320px;}
+                </style>
+            </div>
+        </div>
+    </div>
+    <!-- //contact -->
+{% endblock %}
+
+{% block footer %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript" src="/static/{{ app_name }}/js/validform/Validform_v5.3.2_min.js"></script>
+<link rel="stylesheet" href="/static/{{ app_name }}/js/validform/style.css">
+
+<script type="text/javascript">
+    // using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+$(function(){
+
+    $(".contact_form").Validform({
+        tiptype:function(msg,o,cssctl){
+            var objtip=$("#tips");
+            cssctl(objtip,o.type);
+            objtip.text(msg);
+        },
+        datatype:{
+            "phone":/^((\+?86)|(\(\+86\)))?\d{3,4}-\d{7,8}(-\d{3,4})?$/
+        },
+        ajaxPost:true,
+        callback:function(res){
+            if (res.responseJSON && res.responseJSON.msg) {
+                res = res.responseJSON
+            }
+            console.log('callback', res)
+            if( 0==res.code ) {
+                $("#tips").removeClass('Validform_loading').removeClass('Validform_wrong').addClass('Validform_right').html(res.msg);
+                $("#message").val('')
+            } else if(res.msg){
+                $("#tips").removeClass('Validform_loading').removeClass('Validform_right').addClass('Validform_wrong').html(res.msg);
+            } else {
+                $("#tips").removeClass('Validform_loading').removeClass('Validform_right').addClass('Validform_wrong').html('未知错误');
+            }
+
+            // setTimeout(function(){
+            //     window.location.href = "/company/contact/";
+            // },3000);
+        }
+
+    });
+
+});
+
+
+
+</script>
+{% endblock %}

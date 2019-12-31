@@ -1,0 +1,91 @@
+{% extends "common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!-- script-for sticky-nav -->
+    <script>
+    $(document).ready(function() {
+         var navoffeset=$(".top-nav").offset().top;
+         $(window).scroll(function(){
+            var scrollpos=$(window).scrollTop();
+            if(scrollpos >=navoffeset){
+                $(".top-nav").addClass("fixed");
+            }else{
+                $(".top-nav").removeClass("fixed");
+            }
+         });
+
+    });
+    </script>
+    <!-- /script-for sticky-nav -->
+    <!--navigation-->
+    <div class="about-top">
+        <div class="about-info">
+            <h2>About</h2>
+        </div>
+        <!-- banner-bottom -->
+        <div class="about-grid-top">
+            <!-- container -->
+            <div class="container">
+                <div class="col-md-6 about-left">
+                    <h3>{{ about_us_a.title }}</h3>
+                    <h4>{{ about_us_a.subtitle }}</h4>
+                    <p>{{ about_us_a.value|safe }}</p>
+                </div>
+                <div class="col-md-6 about-right">
+                {% if new_right.thumb %}
+                    <img src="{{ ad_thumb_prefix }}/{{ new_right.thumb }});" alt="" />
+                {% else %}
+                    <img src="/static/home/images/6.jpg" alt="" />
+                {% endif %}
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <!-- about-bottom -->
+        <div class="about-bottom">
+            <!-- container -->
+            <div class="container">
+                <div class="col-md-12 about-bottom-left">
+                    <h3>{{ about_us_b.title }}</h3>
+                    <h4>{{ about_us_b.subtitle }}</h4>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ about_us_b.value|safe }}</p>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            <!-- //container -->
+        </div>
+        <!-- //about-bottom -->
+        <!-- about-team -->
+        <div class="about-team">
+                <!-- container -->
+                <div class="container">
+                    <h4>工作团队</h4>
+                    <div class="team-grids" style="margin-top: 0;">
+                        {% for item in teams %}
+                        <div class="col-md-12 team-grid" style="margin-top: 2.0em;">
+                            <img src="{{ static_url(item.avatar) }}" alt="{{ item.title }}" style="width: 200px; float: left; margin-right: 1em;" onerror="this.src='{{ static_url('image/default_avatar.jpg') }}';">
+                            <h6>{{ item.name }} | {{ item.title }}</h6>
+                            <p>{{ item.description }}</p>
+                        </div>
+                        {% endfor %}
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <!-- //container -->
+        </div>
+        <!-- //about-team -->
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!-- container-wrap -->
+    <div class="container">
+        {% include "common/breadcrumb.htm" %}
+        <div class="col-sm-12 row" id="masonry">
+        {% for new in pagelist_obj.items %}
+        <div class="col-sm-6 col-md-4 box">
+            <div class="thumbnail">
+                {% if new.thumb %}
+                <img src="{{ static_url(new.thumb) }}" alt="{{ new.description }}">
+                {% else %}
+
+                <img alt="313x200" style="height: 200px; width: 100%; display: block;" src="{{static_url('image/313_200.png')}}" data-holder-rendered="true">
+                {% endif %}
+                <div class="caption">
+                    <h3 title="{{ new.title }}">{{  new.title|truncate(40)  }}</h3>
+                    <p title="{{ new.description }}">{{ new.description|truncate(240) }}</p>
+                    <p title="{{ new.title }}">
+                        <a href="/product/{{ new.id }}" class="btn btn-primary btn-lg" role="button" style="float: right;">详情</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+        <nav aria-label="..." style="width: 100%; text-align: center; margin: auto;">
+            <ul class="pagination">
+                {% if pagelist_obj.has_prev %}
+                <li class="active">
+                    <a href="?page={{ pagelist_obj.prev_num }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                </li>
+                {% endif %}
+
+                {% for page in range(1, pagelist_obj.pages+1) %}
+                    {% if page==cur_page %}
+                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(cur_page)</span></a></li>
+                    {% else %}
+                    <li><a href="?page={{ page }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagelist_obj.has_next %}
+                <li class="active">
+                    <a href="?page={{ pagelist_obj.next_num }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <!-- //container-wrap -->
+{% endblock %}
+
+{% block footer %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
+{% endblock %}
+
+{% block javascript %}
+<style type="text/css">
+
+.row {
+    padding-left:32px;
+    margin:auto;
+}
+.row .box {
+  margin: auto auto 20px auto;
+  width: 31%;
+  padding-left: auto;
+  padding-right: auto;
+}
+
+</style>
+<script type="text/javascript" src="/static/{{ app_name }}/js/masonry-docs.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    // 瀑布流代码
+    var $container = $('#masonry');
+    $container.imagesLoaded(function() {
+        $container.masonry({
+                itemSelector: '.box',
+                gutter: 10,
+                isAnimated: true,
+            });
+     });
+});
+</script>
+{% endblock %}

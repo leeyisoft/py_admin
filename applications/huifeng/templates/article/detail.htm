@@ -1,0 +1,36 @@
+{% extends "common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!-- container-wrap -->
+    <div class="container">
+        <div class="row-fluid">
+            <div class="span12">
+                {% include "common/breadcrumb.htm" %}
+                <div class="blog-post" style="margin-bottom: 32px;">
+                    <h2 class="blog-post-title">{{arc.title}}</h2>
+                    <h5 class="blog-post-meta" style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin: 20px auto;">
+                        作者：{{ arc.author }} | 发布时间： {{ arc.publish_date }} | 来源：{{ arc.source }}
+                        <br/>
+                    </h5>
+                    <p>
+                        {{ arc.content|safe}}
+                    </p>
+                </div><!-- /.blog-post -->
+            </div>
+        </div>
+    </div>
+    <!-- //container-wrap -->
+{% endblock %}
+
+{% block footer %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
+{% endblock %}

@@ -66,9 +66,5 @@ class CommonHandler(Handler):
             role_id = self.current_user.get('role_id', 0)
         return AdminUserService.is_super_role(user_id, role_id) if user_id>0 else False
 
-
     def get_login_url(self):
         return '/#/login'
-
-    def get_template_path(self):
-        return 'applications/admin/templates'

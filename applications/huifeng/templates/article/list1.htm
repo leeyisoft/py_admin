@@ -1,0 +1,71 @@
+{% extends "common/base.htm" %}
+
+{% block title %} {{ flatpage.title }} - {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+    {% include "common/banner.htm" %}
+
+    {% include "common/top_nav.htm" %}
+    <!-- container-wrap -->
+    <div class="container">
+        {% include "common/breadcrumb.htm" %}
+
+        {% for new in pagelist_obj.items %}
+        <div class="new-grids">
+            <div class="date" title="{{new.publish_date}}">
+                <p>{{ dateformat(new.publish_date, '%d') }}</p>
+                <span>{{ dateformat(new.publish_date, '%Y/%m') }}</span>
+            </div>
+            <div class="new-grid-right" style="width: 88%;">
+                <h5>
+                    <a href="/article/{{ new.id }}" title="{{ new.title }}">
+                        {{ new.title|truncate(64) }}
+                    </a>
+                </h5>
+                <p>{{ new.description|truncate(200) }}</p>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+        {% endfor %}
+        <nav aria-label="..." style="width: 100%; text-align: center; margin: auto;">
+            <ul class="pagination">
+                {% if pagelist_obj.has_prev %}
+                <li class="active">
+                    <a href="?page={{ pagelist_obj.prev_num }}" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                </li>
+                {% endif %}
+
+                {% for page in range(1, pagelist_obj.pages+1) %}
+                    {% if page==cur_page %}
+                    <li class="active"><a href="?page={{ page }}">{{ page }} <span class="sr-only">(cur_page)</span></a></li>
+                    {% else %}
+                    <li><a href="?page={{ page }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagelist_obj.has_next %}
+                <li class="active">
+                    <a href="?page={{ pagelist_obj.next_num }}" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" aria-label="Nexts"><span aria-hidden="true">下一页</span></a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <!-- //container-wrap -->
+{% endblock %}
+
+{% block footer %}
+{% include "common/footer.htm" %}
+{% include "common/copyright.htm" %}
+{% endblock %}

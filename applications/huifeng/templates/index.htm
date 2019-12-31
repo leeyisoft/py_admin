@@ -1,0 +1,163 @@
+{% extends "common/base.htm" %}
+
+{% block title %} 首页 - {{site_name}} {% end %}
+{% block style %}
+<style type="text/css">
+
+</style>
+{% end %}
+{% block header %}
+{% include "common/header.htm" %}
+{% end %}
+
+
+{% block body %}
+
+
+  <!-- content -->
+  <div class="content">
+    <div class="title">
+      {%raw index_welcome['value']%}
+    </div>
+    <div class="layui-carousel imgbox"  id="index_banner">
+      <div carousel-item  class="imgH">
+        {%for banner in index_banner %}
+        <div><a href="{{banner.link}}" title="{{banner.title}}" target="_blank">
+          <img style="width: 100%; height: 500px;" src="{{banner.img}}">
+        </a></div>
+        {% end %}
+      </div>
+    </div>
+    <div class="prod-show">
+      <div class="layui-fluid">
+        <div class="row layui-col-space12 layui-clear">
+          {%for square in index_square %}
+          <div class="layui-col-xs6 layui-col-sm6 layui-col-md3">
+            <div class="img-txt">
+              {% if square.img %}
+              <img style="width: 100%;" src="{{square.img}}" alt="{{square.title}}">
+              {% end %}
+              <h3>{{square.title}}</h3>
+            </div>
+          </div>
+          {% end %}
+        </div>
+      </div>
+    </div>
+    <div class="prod-descr">
+      <div class="layui-fluid">
+        <div class="layui-row">
+          <div class="item layui-clear">
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+              <img src="../res/static/images/sy_img5.jpg" class="left-img">
+            </div>
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+              <div class="text">
+                <h3>优秀包装设计美学</h3>
+                <p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>
+                <a href="details.html">查看更多 ></a>
+              </div>
+            </div>
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md8 bot-img-box">
+              <div class="bot-img">
+                <img src="../res/static/images/sy_img6.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-row">
+          <div class="item layui-clear">
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+              <img src="../res/static/images/sy_img7.jpg" class="left-img">
+            </div>
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+              <div class="text">
+                <h3>上等材质制作包装</h3>
+                <p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>
+                <a href="details.html">查看更多 ></a>
+              </div>
+            </div>
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md8 bot-img-box">
+              <div class="bot-img">
+                <img src="../res/static/images/sy_img8.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-row">
+          <div class="item layui-clear">
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+              <img src="../res/static/images/sy_img9.jpg" class="left-img">
+            </div>
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+              <div class="text">
+                <h3>高级设备流水制作</h3>
+                <p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>
+                <a href="details.html">查看更多 ></a>
+              </div>
+            </div>
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md8 bot-img-box">
+              <div class="bot-img">
+                <img src="../res/static/images/sy_img610.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Partner">
+      <div class="title">
+        <h3>合作伙伴</h3>
+        <h4>cooperative partner</h4>
+      </div>
+      <div class="cont-box">
+        <div class="layui-fluid">
+          <div class="row layui-col-space20">
+            {% for fl in friendlinks%}
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md2">
+              <a href="{{fl.url}}" target="{{fl.target}}" title="{{fl.title}}">
+                <img src="{{fl.logo}}" width="180">
+                {{ fl.title }}
+            </a>
+            </div>
+            {% end %}
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md2">
+              <h2>LOGO</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end-content -->
+
+{% end %}
+
+{% block footer %}
+    {% include "common/footer.htm" %}
+{% end %}
+
+{% block javascript %}
+<script type="text/javascript">
+  layui.use(['carousel','jquery','element'],function(){
+    var carousel = layui.carousel,$ = layui.$
+    //建造实例
+    carousel.render({
+      elem: '#index_banner'
+      ,width: '100%' //设置容器宽度
+      ,arrow: 'always'
+      ,height:'auto'
+      //,anim: 'updown' //切换动画方式
+    })
+    $('.app-header-menuicon').on('click',function(){
+      $('.header-down-nav').toggleClass('down-nav')
+    })
+    var imgH = $('.imgbox div.layui-this').outerHeight();
+    $('.imgH').css('height',imgH+'px')
+    window.onresize = function () {
+      var imgH = $('.imgbox div.layui-this').outerHeight();
+      $('.imgH').css('height',imgH+'px')
+    }
+  })
+  </script>
+{% end %}
