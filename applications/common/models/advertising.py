@@ -16,7 +16,7 @@ class Advertising(Base):
     end_at = Column(BIGINT(13), nullable=False, server_default=text("'0'"), comment='投放结束Unix时间戳毫秒单位0 为无限')
     type = Column(TINYINT(1), nullable=False, server_default=text("'1'"), comment='广告类型 1 内部网页 2外部网页')
     client = Column(String(200), nullable=False, server_default=text("''"), comment='客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ')
-    img = Column(String(255), nullable=False, comment='图片链接')
+    img = Column(String(255), server_default=text("''"), comment='图片链接')
     link = Column(String(255), nullable=False, server_default=text("''"), comment='跳转地址链接')
     sort = Column(BIGINT(20), nullable=False, server_default=text("'20'"), comment='排序 降序排序，大的值在前面')
     category_id = Column(BIGINT(20), nullable=False, comment='广告分类 投放位置')

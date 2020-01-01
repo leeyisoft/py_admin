@@ -66,6 +66,7 @@ class GoodsListHandler(CommonHandler):
         id = self.get_argument('id', None)
         title = self.get_argument('title', None)
         status = self.get_argument('status', None)
+        recommended = self.get_argument('recommended', None)
 
         param = {}
         if category:
@@ -74,8 +75,11 @@ class GoodsListHandler(CommonHandler):
             param['id'] = id
         if title:
             param['title'] = title
-        if status:
+
+        if status is not None:
             param['status'] = status
+        if recommended is not None:
+            param['recommended'] = recommended
 
         resp_data = GoodsService.page_list(param, page, per_page)
         return self.success(data=resp_data)

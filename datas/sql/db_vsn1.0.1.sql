@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.28-log)
 # Database: db_py_admin
-# Generation Time: 2019-12-30 03:56:13 +0000
+# Generation Time: 2020-01-01 03:44:07 +0000
 # ************************************************************
 
 
@@ -57,7 +57,7 @@ CREATE TABLE `admin_role` (
   `description` varchar(100) NOT NULL COMMENT '描述',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_rolename` (`rolename`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户角色表';
 
 LOCK TABLES `admin_role` WRITE;
 /*!40000 ALTER TABLE `admin_role` DISABLE KEYS */;
@@ -65,8 +65,7 @@ LOCK TABLES `admin_role` WRITE;
 INSERT INTO `admin_role` (`id`, `rolename`, `permission`, `sort`, `status`, `created_at`, `description`)
 VALUES
 	(1,'超级管理员','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\"]',23,1,1555310106,''),
-	(2,'默认角色','[\"admin:dashboard\"]',22,1,1555310106,''),
-	(3,'test2','[\"admin:system\",\"admin:config:index\",\"admin:config:add\",\"admin:config:edit\",\"admin:config:del\",\"admin:config:status\",\"admin:config:sort\",\"admin:menu:index\",\"admin:menu:add\",\"admin:menu:edit\",\"admin:menu:del\",\"admin:menu:status\",\"admin:menu:sort\",\"admin:menu:quick\",\"admin:menu:export\",\"admin:admin:index\",\"admin:user:adduser\",\"admin:user:edituser\",\"admin:user:deluser\",\"admin:user:status2\",\"admin:user:info\",\"admin:role:index\",\"admin:friendlink:index\"]',20,1,1556189858,'');
+	(2,'默认角色','[\"admin:dashboard\"]',22,1,1555310106,'');
 
 /*!40000 ALTER TABLE `admin_role` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -95,22 +94,15 @@ CREATE TABLE `admin_user` (
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
 
 LOCK TABLES `admin_user` WRITE;
 /*!40000 ALTER TABLE `admin_user` DISABLE KEYS */;
 
 INSERT INTO `admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1316,'127.0.0.1',1577673546279,1,0,'cd'),
-	(2,1,'pbkdf2_sha256$100000$dn6Q3MQCWGynv4Dw$HdcTywwEehAPxWf1orFnCLfW5yj85z24HFfJsOZG7XY=','admin2','b','a','\"\"',0,'',NULL,-1,1553759714,''),
-	(3,6,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin213',NULL,NULL,'[]',0,'',NULL,-1,1553761927,''),
-	(4,3,'pbkdf2_sha256$100000$PhONfMCKRoswc3zO$BXtIX6yRwJr74QfDSYEoJol65ozBXvwyXbf847ZpWl4=','2231241','2134','12421','[]',0,'',NULL,-1,1553764465,''),
-	(5,3,'pbkdf2_sha256$100000$AsufhuaOblLpLO9f$Y6f8c+z5dFWWcLGBudin9chVYoD+Aecvqt6+Fkj1WXk=','2yy0','yyy','yyy','[]',0,'',NULL,1,1553764642,''),
-	(6,3,'pbkdf2_sha256$100000$kiQ1wKJLc2NdErll$LtHhdCNjL1u7ijB0vkercWTYvuIza1KLu0QPhiCS+3U=','1113150','21312','31','[]',0,'',NULL,-1,1553764672,''),
-	(8,2,'pbkdf2_sha256$100000$510hnENWgSjtwHx4$hz5p5I9ZnZUBmxzh1BRc08AnnVwCHhRAR1xNs6vpPoQ=','请问','1','1e','[]',0,'',NULL,-1,1554891553,''),
-	(9,1,'pbkdf2_sha256$100000$iBzcEO3OpRT3IppL$JizpIobnqCTRnlsOWYgRZIjbgThltzSJxOPJwHzVzSo=','test','13456987458','123@163.com','[]',0,'',NULL,-1,1555310050,''),
-	(10,1,'pbkdf2_sha256$100000$hxvXkdPubzOuQwEL$eB7NtWey2YOoSQtVrrxxqhSuEd1/+NGJnIaQyjJmrOU=','root','1113','1113','\"[\\\"admin:dashboard\\\",\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\",\\\"admin:menu:index\\\",\\\"admin:menu:add\\\",\\\"admin:menu:edit\\\",\\\"admin:menu:del\\\",\\\"admin:menu:status\\\",\\\"admin:menu:sort\\\",\\\"admin:menu:quick\\\",\\\"admin:menu:export\\\",\\\"admin:admin:index\\\",\\\"admin:user:adduser\\\",\\\"admin:user:edituser\\\",\\\"admin:user:deluser\\\",\\\"admin:user:status2\\\",\\\"admin:user:info\\\",\\\"admin:role:index\\\",\\\"admin:friendlink:index\\\",\\\"admin:member\\\",\\\"admin:user:index\\\",\\\"admin:member:add\\\",\\\"admin:member:edit\\\",\\\"admin:member:del\\\",\\\"admin:member:status\\\",\\\"admin:member:pop\\\",\\\"admin:member:authorize\\\",\\\"admin:content:index\\\",\\\"admin:advertising_category:index\\\",\\\"admin:advertising:index\\\",\\\"admin:article:index\\\",\\\"admin:article:news\\\",\\\"admin:article:regulation\\\",\\\"admin:article:product\\\",\\\"admin:company:team\\\"]\"',3,'127.0.0.1',1577644874775,1,1555310681,'');
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1318,'127.0.0.1',1577839173902,1,0,'cd'),
+	(2,1,'pbkdf2_sha256$100000$CtBuDPTkXcdLlPh5$x3dPYZaGQJADRnnFSgaK/E/mSIzboLqZJ3t/QEd6KtE=','root','1113','1113','\"[\\\"admin:dashboard\\\",\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\",\\\"admin:menu:index\\\",\\\"admin:menu:add\\\",\\\"admin:menu:edit\\\",\\\"admin:menu:del\\\",\\\"admin:menu:status\\\",\\\"admin:menu:sort\\\",\\\"admin:menu:quick\\\",\\\"admin:menu:export\\\",\\\"admin:admin:index\\\",\\\"admin:user:adduser\\\",\\\"admin:user:edituser\\\",\\\"admin:user:deluser\\\",\\\"admin:user:status2\\\",\\\"admin:user:info\\\",\\\"admin:role:index\\\",\\\"admin:friendlink:index\\\",\\\"admin:member\\\",\\\"admin:user:index\\\",\\\"admin:member:add\\\",\\\"admin:member:edit\\\",\\\"admin:member:del\\\",\\\"admin:member:status\\\",\\\"admin:member:pop\\\",\\\"admin:member:authorize\\\",\\\"admin:content:index\\\",\\\"admin:advertising_category:index\\\",\\\"admin:advertising:index\\\",\\\"admin:article:index\\\",\\\"admin:article:news\\\",\\\"admin:article:regulation\\\",\\\"admin:article:product\\\",\\\"admin:company:team\\\"]\"',3,'127.0.0.1',1577644874775,1,1555310681,'');
 
 /*!40000 ALTER TABLE `admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -128,19 +120,8 @@ CREATE TABLE `admin_user_login_log` (
   `client` varchar(20) DEFAULT NULL COMMENT '客户端：web wechat android ios ',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='后台用户登录日志';
 
-LOCK TABLES `admin_user_login_log` WRITE;
-/*!40000 ALTER TABLE `admin_user_login_log` DISABLE KEYS */;
-
-INSERT INTO `admin_user_login_log` (`id`, `user_id`, `ip`, `client`, `created_at`)
-VALUES
-	(1,1,'127.0.0.1','web',0),
-	(2,10,'127.0.0.1','web',0),
-	(3,1,'127.0.0.1','web',0);
-
-/*!40000 ALTER TABLE `admin_user_login_log` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table advertising
@@ -156,29 +137,28 @@ CREATE TABLE `advertising` (
   `end_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 1 内部网页 2外部网页',
   `client` varchar(200) NOT NULL DEFAULT '' COMMENT '客户端：web wechat android ios 同时支持多个的话，用半角逗号分隔 ',
-  `img` varchar(255) NOT NULL COMMENT '图片链接',
+  `img` varchar(255) DEFAULT '' COMMENT '图片链接',
   `link` varchar(255) NOT NULL DEFAULT '' COMMENT '跳转地址链接',
   `sort` bigint(20) unsigned NOT NULL DEFAULT '20' COMMENT '排序 降序排序，大的值在前面',
   `category_id` bigint(20) NOT NULL COMMENT '广告分类 投放位置',
   `status` tinyint(1) DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
 
 LOCK TABLES `advertising` WRITE;
 /*!40000 ALTER TABLE `advertising` DISABLE KEYS */;
 
 INSERT INTO `advertising` (`id`, `title`, `description`, `start_at`, `end_at`, `type`, `client`, `img`, `link`, `sort`, `category_id`, `status`, `created_at`)
 VALUES
-	(1,'banner1 cn 2','',1575964800,1579852800,1,'','/static/upload/advertising/8328126a8b75c6826cea6332e174a42a.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
-	(2,'banner2 cn 333a',NULL,1570003200000,1575014400000,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
-	(3,'ad1 cn',NULL,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',20,2,1,0),
-	(4,'banner1 en',NULL,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/280515be558df9a73d04c986e98271e5.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
-	(5,'banner2 en',NULL,0,0,1,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/e961ca13968794f3985a3d30d65e366d.png','http://cashloan_api.leying.me/vsn1/payguide',20,1,1,0),
-	(6,'ad1 en',NULL,0,0,2,'web,wechat,android,ios','http://cashloan-ly.oss-ap-southeast-1.aliyuncs.com/advertise/0753f2328f5f596b64c13d8ef60c6fd4.png','http://cashloan_api.leying.me/vsn1/payguide',20,2,-1,0),
-	(7,'产品总监','产品总监desc',0,0,1,'','/static/upload/advertising/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#',20,4,1,1577674142277),
-	(8,'技术总监','技术总监desc',0,0,1,'','/static/upload/advertising/21f0d8f3820483adf5e60d670d8fff90.jpeg','#',20,4,1,1577677777310),
-	(9,'运营总监','运营desc',0,0,1,'','','#',20,0,1,0);
+	(1,'banner1 cn 2','',1577750428800,1654041628800,1,'','/static/upload/adad/28967ab70f7943a50889e8e67160b26c.jpg','#',120,1,1,0),
+	(7,'产品总监','产品总监desc',0,0,1,'','/static/upload/adad/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#',20,4,1,1577674142277),
+	(8,'技术总监','技术总监desc',0,0,2,'','/static/upload/adad/21f0d8f3820483adf5e60d670d8fff90.jpeg','#',21,4,1,1577677777310),
+	(9,'运营总监','运营desc',0,0,1,'','/static/upload/adad/cc42199b38ff65f969b558ba0575c963.jpg','#',19,4,1,0),
+	(11,'农产品种植','',0,0,1,'','/static/upload/adad/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#',20,2,1,0),
+	(12,'农产品收割','',0,0,1,'','/static/upload/adad/21f0d8f3820483adf5e60d670d8fff90.jpeg','#',20,2,1,0),
+	(13,'农产品加工','',0,0,1,'','/static/upload/adad/f3b8e07aa223369127373ec243dff35d.jpg','#',20,2,1,0),
+	(14,'农产品包装','',0,0,1,'','/static/upload/adad/87e7dce16d0f872ace113a6f98d5421f.jpg','#',20,2,1,0);
 
 /*!40000 ALTER TABLE `advertising` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -204,10 +184,10 @@ LOCK TABLES `advertising_category` WRITE;
 INSERT INTO `advertising_category` (`id`, `name`, `title`, `status`)
 VALUES
 	(1,'index_banner','主页顶部banner',1),
-	(2,'index_bottom','主页底部滚动广告',1),
-	(3,'index_banner2','首页第二横幅',1),
+	(2,'index_square','主页banner下面的方块广告',1),
+	(3,'xxx','XXXX',0),
 	(4,'team','关于-核心团队',1),
-	(5,'ddd3','ddd3',1);
+	(5,'xx','xxx',0);
 
 /*!40000 ALTER TABLE `advertising_category` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3774,21 +3754,8 @@ CREATE TABLE `article` (
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章管理';
 
-LOCK TABLES `article` WRITE;
-/*!40000 ALTER TABLE `article` DISABLE KEYS */;
-
-INSERT INTO `article` (`id`, `category_id`, `lang`, `user_id`, `title`, `author`, `source`, `external_url`, `thumb`, `keyword`, `description`, `publish_date`, `hits`, `content`, `ip`, `updated_at`, `created_at`, `status`)
-VALUES
-	(2,1,'cn',0,'abc title id 2','leeyi23','pyadmin','https://www.w3school.com.cn/jsref/jsref_replace.asp','','abcd','aaa',1577808000000,123,'<p>asdcc2222</p>\n<p>&nbsp;</p>','',1577645992891,1572006527197,1),
-	(3,1,'cn',0,'abcde3','leeyi','py_admin','','','','',1259251200000,0,'<p>abcde3</p>','',1576905998145,1573264561506,0),
-	(4,2,'cn',0,'ddd3','dd','dd','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','ddd','dd',1576771200000,0,'<p>dddddd</p>\n<p><img class=\"wscnph\" src=\"static/upload/article/news/a14e34250ff65e876aad29ba183208d8.jpg\" /><img class=\"wscnph\" src=\"static/upload/article/news/21f0d8f3820483adf5e60d670d8fff90.jpeg\" /></p>','',1577645717337,1576906220330,-1),
-	(5,2,'cn',0,'D大调','等等','等等','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','D大调','D大调',1576944000000,0,'<p>顶顶顶D大调</p>',NULL,0,1576913242307,1),
-	(6,2,'cn',0,'t6','ddd','ddd','','/static/upload/article/thumb/4be5f8fc390970ec7b7c8a35e75427eb.jpg','dd','dd',1577721600000,0,'<p>dd</p>',NULL,0,1577645936470,1);
-
-/*!40000 ALTER TABLE `article` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table article_category
@@ -3857,8 +3824,10 @@ VALUES
 	('company','company_wechat','','公司微信',1,'',1,1,1555126015,0),
 	('company','company_hotline','400-820-8840','公司热线',1,'',1,1,1555126057,0),
 	('company','company_email','leeyisoft@qq.com','公司邮箱',1,'',1,1,1555126096,0),
-	('sys','copyright','copyright 2019-2021','版权信息',2,'dddd',1,1,1555126207,1577641306453),
-	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,1577641208452);
+	('sys','copyright','湘ICP备19027067号  Copyright © 2020 - 2025 All Rights 永顺县辉凤电子商务有限公司','版权信息',2,'',1,1,1555126207,1577802962561),
+	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,1577641208452),
+	('company','footer_address','<h4>湖南省湘西州永顺县</h4>\n<p>\n车坪乡里仁村三组\n<span>翻水岗</span>\n</p>','公司地址',1,'网页底部公司联系地址',1,1,1577769500530,0),
+	('company','index_welcome','      <h5>欢迎您的到来</h5>\n      <h3>好礼品我们造,用心做好产品</h3>\n      <h4>We build good products and make good products.</h4>','首页欢迎标语',20,'',1,1,0,0);
 
 /*!40000 ALTER TABLE `config` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3880,7 +3849,20 @@ CREATE TABLE `friendlink` (
   `updated_at` bigint(13) NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='友情链接记录';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='友情链接记录';
+
+LOCK TABLES `friendlink` WRITE;
+/*!40000 ALTER TABLE `friendlink` DISABLE KEYS */;
+
+INSERT INTO `friendlink` (`id`, `title`, `logo`, `url`, `target`, `sort`, `status`, `updated_at`, `created_at`)
+VALUES
+	(1,'ddd3','/static/upload/friendlink/4be5f8fc390970ec7b7c8a35e75427eb.jpg','aweqw3','_blank',20,1,1577639259433,1577602784481),
+	(2,'ddd2','/static/upload/friendlink/8cd1881feaf14c874ec9b04301cd487c.png','dddd','_self',33,1,1577604164422,1577604155057),
+	(3,'ddd4','/static/upload/friendlink/5f1f379c05a6f10ab5b97015ab23bbc0.jpeg','ddd4','_blank',51,1,1577640335812,1577604564098);
+
+/*!40000 ALTER TABLE `friendlink` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 # Dump of table goods
 # ------------------------------------------------------------
@@ -3891,8 +3873,8 @@ CREATE TABLE `goods` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `category_id` bigint(20) NOT NULL COMMENT '分类',
   `title` varchar(200) NOT NULL COMMENT '标题',
-  `thumb` varchar(255) NOT NULL DEFAULT '' COMMENT '缩略图',
-  `album` json DEFAULT NULL COMMENT '相册，["image_url",...]',
+  `thumb` json NOT NULL COMMENT '缩略图，格式：{left: '''', right: ''''} ',
+  `album` json DEFAULT NULL COMMENT '相册，格式：["image_url",...]',
   `external_url` varchar(255) NOT NULL DEFAULT '' COMMENT '外链地址',
   `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO关键词',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'SEO描述',
@@ -3904,10 +3886,28 @@ CREATE TABLE `goods` (
   `sales_quantity` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '销售数量',
   `extra` json DEFAULT NULL COMMENT '额外信息，例如商品的尺寸、颜色、其他规格等',
   `detail` longtext COMMENT '详情',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
+  `recommended` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '被推荐的',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
+  PRIMARY KEY (`id`),
+  KEY `i_Status_Recommended_Importance` (`status`,`recommended`,`importance`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
+
+LOCK TABLES `goods` WRITE;
+/*!40000 ALTER TABLE `goods` DISABLE KEYS */;
+
+INSERT INTO `goods` (`id`, `category_id`, `title`, `thumb`, `album`, `external_url`, `keyword`, `description`, `hits`, `importance`, `market_price`, `price`, `inventory_quantity`, `sales_quantity`, `extra`, `detail`, `recommended`, `status`, `created_at`)
+VALUES
+	(1,1,'上等材质制作包装','{\"left\": \"/static/upload/goods/thumb/210e0ce790ee7d2e8c7f1bc68ad46e4e.jpg\", \"right\": \"/static/upload/goods/thumb/917e9480a3ec9a378ad6f91b31f264c0.jpg\"}','\"\"','ddddd','D大调','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,5,1234,1234,3123,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577700738587),
+	(2,1,'dddd','{}','\"\"','','D大调','等等',0,3,12341234,3333333,333,0,'\"\"','<p>等等</p>',0,-1,1577716732973),
+	(3,1,'优秀包装设计美学','{\"left\": \"/static/upload/goods/thumb/d292fd930887d6504eb8ddef57becea9.jpg\", \"right\": \"/static/upload/goods/thumb/cb61913dd596cfde41d6206a3ea1a90a.jpg\"}','\"\"','','','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,5,123433,63433,333,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577803509437),
+	(4,1,'高级设备流水制作','{\"left\": \"/static/upload/goods/thumb/be37fde332484c65c5a1698aff2ae720.jpg\", \"right\": \"/static/upload/goods/thumb/4a402b258e1f03f8cacc297eede1d5b7.jpg\"}','\"\"','','高级设备流水制作','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,4,1231233,123333,3123,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577810465312),
+	(5,1,'dddd','{\"left\": \"/static/upload/goods/thumb/4a402b258e1f03f8cacc297eede1d5b7.jpg\"}','\"\"','','','',0,4,333312,12343,312,0,'\"\"','<p>dddd</p>',0,1,1577810618818),
+	(6,1,'精美的商品包装','{\"left\": \"/static/upload/goods/thumb/8bfbb65aab41fa245237b2107aba0f98.jpg\", \"right\": \"/static/upload/goods/thumb/b6e64fa05ad337f6fda1c4207254f21b.jpg\"}','\"\"','','','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,3,3123412,234123,1234,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577810911344),
+	(7,1,'顶顶顶顶','{\"left\": \"\", \"right\": \"\"}','\"\"','','','',0,1,12341234,1234123,123,0,'\"\"','<p>等等</p>',0,0,1577839338261);
+
+/*!40000 ALTER TABLE `goods` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table goods_category
@@ -3922,17 +3922,18 @@ CREATE TABLE `goods_category` (
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品分类';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='商品分类';
 
 LOCK TABLES `goods_category` WRITE;
 /*!40000 ALTER TABLE `goods_category` DISABLE KEYS */;
 
 INSERT INTO `goods_category` (`id`, `name`, `title`, `status`)
 VALUES
-    (1,'default','默认分类',1);
+	(1,'default','默认分类',1);
 
 /*!40000 ALTER TABLE `goods_category` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 # Dump of table message
 # ------------------------------------------------------------
@@ -3982,17 +3983,8 @@ CREATE TABLE `user` (
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-
-INSERT INTO `user` (`id`, `level_id`, `password`, `username`, `mobile`, `email`, `experience`, `sex`, `avatar`, `sign`, `login_count`, `last_login_ip`, `last_login_at`, `ref_user_id`, `status`, `deleted`, `created_at`, `reg_ip`, `reg_client`)
-VALUES
-	(1,0,'',NULL,NULL,NULL,0,'hide','','',0,'',NULL,NULL,1,0,NULL,NULL,NULL);
-
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table user_binding

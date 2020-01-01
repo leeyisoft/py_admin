@@ -364,7 +364,7 @@
                 "children": []
             },
             {
-                "hidden": 0,
+                "hidden": 1,
                 "status": 1,
                 "system": 1,
                 "name": "admin:article:index",

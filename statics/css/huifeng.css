@@ -58,12 +58,12 @@ body{font: 12px/1.5 PingFangSC-Regular,Tahoma,'Microsoft Yahei',sans-serif;}
 .content .prod-show{padding:100px 0; max-width: 1200px; margin:0 auto;}
 .content .prod-show .img-txt h3{line-height: 70px; background: #f9f9f9; font-size: 18px; color: #666666; text-align: center;}
 .content .prod-descr{max-width: 1200px; margin:0 auto;}
-.content .prod-descr .item{position: relative; padding-bottom: 160px; margin-bottom: 240px;}
+.content .prod-descr .item{position: relative; padding-bottom: 160px; margin-bottom: 80px;}
 .content .prod-descr .item .bot-img-box{position:absolute; right: 0px; bottom: 0px;}
 .content .prod-descr .item img{width: 100%;}
 .content .prod-descr .item .text{padding:0 70px 0 80px; color: #363636;}
 .content .prod-descr .item .text h3{font-size: 40px; padding:20px 0;}
-.content .prod-descr .item .text p{font-size: 22px; line-height: 40px; padding-bottom: 20px;}
+.content .prod-descr .item .text p{font-size: 22px; line-height: 40px;}
 .content .prod-descr .item .text a{font-size: 18px; color: #ab8e75;}
 .content .Partner{height: 680px; background: url(../images/sy_imgbg.jpg) no-repeat center center; background-size:100% 100%;}
 .content .Partner .title{color: #000; padding:100px 0;}
@@ -164,28 +164,28 @@ body{font: 12px/1.5 PingFangSC-Regular,Tahoma,'Microsoft Yahei',sans-serif;}
   .case-content .banner{margin:30px auto;}
   .case-content .banner .img-text h3{color: #a1a1a1; font-size: 20px;}
   .content .prod-descr .item{
-    position: relative; 
+    position: relative;
     padding-bottom: 0;
     margin-bottom: 100px;
   }
   .content .prod-descr .item .bot-img-box{
-    position:relative; 
+    position:relative;
     margin-top: 20px;
   }
   .content .prod-descr .item .text{
     padding:0 30px;
   }
   .content .prod-descr .item .text h3{
-    font-size: 26px; 
+    font-size: 26px;
     padding:30px 0;
   }
   .content .prod-descr .item .text p{
-    font-size: 22px; 
-    line-height: 40px; 
+    font-size: 22px;
+    line-height: 40px;
     padding-bottom: 20px;
   }
   .content .prod-descr .item .text a{
-    font-size: 18px; 
+    font-size: 18px;
     color: #ab8e75;
   }
   .about-content .about-big-img .text{
@@ -220,10 +220,10 @@ body{font: 12px/1.5 PingFangSC-Regular,Tahoma,'Microsoft Yahei',sans-serif;}
 
 }
 /*@media only screen and (max-width: 992px){
- 
+
 }*/
 /*@media only screen and (max-width: 810px){
-  
+
 
 }*/
 @media only screen and (max-width: 780px){

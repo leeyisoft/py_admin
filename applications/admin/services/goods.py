@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from tornado.escape import json_encode
+from tornado.escape import json_decode
 from trest.utils import utime
 from trest.logger import SysLogger
 from trest.config import settings
@@ -31,6 +33,8 @@ class GoodsService(object):
             query = query.filter(Goods.status == where['status'])
         else:
             query = query.filter(Goods.status != -1)
+        if 'recommended' in where.keys():
+            query = query.filter(Goods.recommended == where['recommended'])
 
         pagelist_obj = query.paginate(page=page, per_page=per_page)
 
@@ -81,6 +85,11 @@ class GoodsService(object):
         if not id:
             raise JsonError('ID 不能为空')
 
+        if 'thumb' in param.keys():
+            try:
+                param['thumb'] = json_decode(param['thumb'])
+            except Exception as e:
+                param['thumb'] = {}
         try:
             Goods.Update.filter(Goods.id == id).update(param)
             Goods.session.commit()
@@ -107,6 +116,16 @@ class GoodsService(object):
         param = {k:v for k,v in param.items() if k in columns}
         if 'created_at' in columns:
             param['created_at'] = utime.timestamp(3)
+
+        if 'thumb' in param.keys():
+            try:
+                param['thumb'] = json_decode(param['thumb'])
+            except Exception as e:
+                param['thumb'] = {}
+                raise e
+        else:
+            param['thumb'] = {}
+
         try:
             obj = Goods(**param)
             Goods.session.add(obj)

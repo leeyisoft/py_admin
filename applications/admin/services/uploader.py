@@ -13,7 +13,7 @@ class UploaderService(object):
     @staticmethod
     def upload(current_uid, ip, action, imgfile, path):
         action_set = (
-            'advertising',
+            'adad',
             'article/thumb',
             'article/regulation',
             'article/news',

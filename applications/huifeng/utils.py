@@ -13,6 +13,7 @@ def tpl_params():
     working_time = sys_config('working_time', ['title', 'value'])
     company_hotline = sys_config('company_hotline', ['title', 'value'])
     company_email = sys_config('company_email', ['title', 'value'])
+    copyright = sys_config('copyright', ['title', 'value'])
     site_name = sys_config('site_name')
 
     params = {
@@ -21,5 +22,6 @@ def tpl_params():
         'company_hotline': company_hotline,
         'company_email': company_email,
         'site_name': site_name,
+        'copyright': copyright,
     }
     return params

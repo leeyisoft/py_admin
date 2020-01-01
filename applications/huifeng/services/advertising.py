@@ -15,14 +15,13 @@ from applications.admin.services.advertising_category import AdvertisingCategory
 class AdvertisingService(object):
     @staticmethod
     def list_for_category(category, limit):
-        """列表记录
+        """
         Arguments:
-            where dict -- 查询条件
-            page int -- 当前页
-            per_page int -- 每页记录数
+            category string -- category 唯一标识
+            limit int -- 查询记录数
 
         return:
-            Paginate 对象 | None
+            list
         """
         category_id = AdvertisingCategory.session.query(AdvertisingCategory.id) \
             .filter(AdvertisingCategory.name == category).scalar()
