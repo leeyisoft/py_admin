@@ -42,7 +42,7 @@ source /etc/profile
 ```
 git clone https://gitee.com/leeyi/py_admin.git py_admin && cd py_admin
 
-pipenv install --skip-lock
+pipenv install --skip-lock --pypi-mirror=http://mirrors.cloud.aliyuncs.com/pypi/simple
 // or
 pipenv install --dev --skip-lock
 

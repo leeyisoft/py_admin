@@ -12,6 +12,7 @@ oss2 = "*"
 PyJWT = "*"
 sqlalchemy-utils = "*"
 sqlacodegen = "*"
+Pillow = "*"
 
 [requires]
 python_version = "3.7"
