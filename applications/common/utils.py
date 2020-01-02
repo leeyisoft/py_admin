@@ -6,29 +6,20 @@ import random
 
 from trest.config import settings
 from trest.db.dbalchemy import Connector
+from trest.cache import cache
 
 
 def mysqldb(dbt='master'):
     sess = Connector.get_session()
     return sess.get(dbt, False)
 
-redisdb = redis.StrictRedis(
-    host=settings.redis.get('host', settings.local_ip),
-    port=settings.redis.get('port', 6379),
-    password=settings.redis.get('password', ''),
-    charset=settings.redis.get('charset', 'utf-8'),
-    db=settings.redis.get('db', 0),
-    decode_responses=True)
-
 def sys_config(key, field='value'):
     cache_key = '%s%s' % (settings.config_cache_prefix,key)
-    cache_val = redisdb.get(cache_key)
-    print('cache_key', cache_key)
+    cache_val = cache.get(cache_key)
     if field=='delete_key_value':
-        return redisdb.delete(cache_key)
+        return cache.delete(cache_key)
     if cache_val:
-        print('cache_val: ', cache_val)
-    #     return cache_val
+        return cache_val
 
     db = mysqldb()
     value = ''
@@ -51,8 +42,7 @@ def sys_config(key, field='value'):
     finally:
         # 释放连接池
         db.remove()
-    print(cache_key, ' value ', value)
-    redisdb.set(cache_key, value, 86400)
+    cache.set(cache_key, value, 86400)
     return value
 
 _letter_cases = "abcdefghjkmnpqrstuvwxy"  # 小写字母，去除可能干扰的i，l，o，z

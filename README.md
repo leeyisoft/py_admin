@@ -47,7 +47,7 @@ pipenv install --skip-lock
 pipenv install --dev --skip-lock
 
 // 配置本地开发环境变量，然后启动
-cp applications/configs/dev.yaml applications/configs/local.yaml
+cp configs/dev.yaml configs/product.yaml
 echo '# TREST_ENV is not one of the local, dev, test, or product
 TREST_ENV : local' > .env
 

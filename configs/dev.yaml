@@ -10,6 +10,7 @@ xheaders : true
 arbitrary_ip : 0.0.0.0
 port : 5080
 local_ip : 127.0.0.1
+# 是否开启国际化
 translation : true
 time_zone : Asia/Shanghai
 language_code : zh-hans
@@ -20,7 +21,6 @@ admin_session_key : de0b3fb0c2f44563944a8cccca7f225a
 front_session_key : 171630947de24c969c28b2d178c4e0fe
 valid_code_key : ab1195c6f0084b4f8b007d3aa7628a38
 token_key : f30a2331813f46d0adc2bcf26fcbbbf4
-
 
 INSTALLED_APPS :
     - admin
@@ -40,9 +40,6 @@ SUPER_ADMIN :
     - 1 # admin uid
     - 2 #
 
-# 是否开启国际化
-translation : true
-
 PASSWORD_HASHERS :
     # 第一个元素为默认加密方式
     - 'trest.utils.hasher.PBKDF2PasswordHasher'
@@ -54,15 +51,6 @@ MIDDLEWARE_CLASSES :
     - 'trest.middleware.dbalchemy.DBAlchemyMiddleware'
     - 'trest.middleware.AccessLogMiddleware'
     - 'trest.middleware.PushToMQMiddleware'
-
-session :
-    cache_alias : default_redis
-    name : nkzpg9NKBpKS2iaK
-    cookie_domain :
-    cookie_path : /
-    expires : 86400
-    secret : fLjUfxqXtfNoIldA0A0J
-    version : v0.1.0
 
 # sqlalchemy配置，列出部分，可自行根据sqlalchemy文档增加配置项
 # 该配置项对所有连接全局共享
@@ -113,6 +101,10 @@ DATABASE_CONNECTION :
 ###########
 # 缓存配置 #
 ###########
+
+# default rediscache 其中之一
+default_cache: 'default'
+
 CACHES :
     'default':
         'BACKEND': 'trest.cache.backends.localcache.LocMemCache'
@@ -121,7 +113,7 @@ CACHES :
             'MAX_ENTRIES': 10000
             'CULL_FREQUENCY': 3
 
-    'default_redis':
+    'rediscache':
         'BACKEND': 'trest.cache.backends.rediscache.RedisCache'
         'LOCATION': '127.0.0.1:6379'
         'OPTIONS':
@@ -218,10 +210,3 @@ email :
     smtp_sever :
     smtp_port :
     auth_code :
-
-redis :
-    'host': '127.0.0.1'
-    'port': 6379
-    'password': 'abc123456'
-    'charset': 'utf-8'
-    'db': 3
