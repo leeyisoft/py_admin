@@ -7,19 +7,24 @@
     </li>
   </ul>
   <h1 class="logo">
-    <a href="#">logo</a>
+    {% if site_logo %}
+    <img alt="{{site_name}}" src="/static/image/logo.png?vsn=1.1">
+    {% else %}
+    LOGO
+    {% end %}
   </h1>
   <div class="nav"  style="visibility: visible">
-    <a href="/" class="active">首页</a>
-    <a href="case.html">案例</a>
-    <a href="service.html">服务</a>
-    <a href="about.html">关于</a>
+    <a href="/"{% if request.path=='/' %} class="active"{% end %}>首页</a>
+    <a href="/case.html"{% if request.path.startswith('/case') %} class="active"{% end %}>案例</a>
+    <a href="/service.html"{% if request.path.startswith('/service') %} class="active"{% end %}>服务</a>
+    <a href="/about.html"{% if request.path.startswith('/about') %} class="active"{% end %}>关于</a>
   </div>
   <ul class="layui-nav header-down-nav">
-    <li class="layui-nav-item"><a href="/" class="active">首页</a></li>
-    <li class="layui-nav-item"><a href="case.html">案例</a></li>
-    <li class="layui-nav-item"><a href="service.html">服务</a></li>
-    <li class="layui-nav-item"><a href="about.html">关于</a></li>
+    <li class="layui-nav-item"><a href="/"{% if request.path=='/' %} class="active"{% end %}>首页</a></li>
+    <li class="layui-nav-item"><a href="/case.html"{% if request.path.startswith('/case') %} class="active"{% end %}>案例</a></li>
+    <li class="layui-nav-item"><a href="/service.html"{% if request.path.startswith('/service') %} class="active"{% end %}>服务</a></li>
+    <li class="layui-nav-item"><a href="/about.html"{% if request.path.startswith('/about') %} class="active"{% end %}>关于</a></li>
+
   </ul>
 </div>
 </div>

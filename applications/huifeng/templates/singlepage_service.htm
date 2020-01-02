@@ -1,0 +1,110 @@
+{% extends "common/base.htm" %}
+
+{% block title %} 案例 - {{site_name}} {% end %}
+{% block style %}
+<style type="text/css">
+
+</style>
+{% end %}
+{% block header %}
+{% include "common/header.htm" %}
+{% end %}
+
+{% block body %}
+  <!-- service-content -->
+  <div class="service-content">
+
+    {% if service_banner and service_banner.img %}
+    <div class="service-big-img" style="background: url({{service_banner.img}}) center center;">
+    {% else %}
+    <div class="service-big-img">
+    {% end %}
+
+      <div class="service-img-text">
+        <h3>{{service_banner.title}}</h3>
+        <h4>{{service_banner.description}}</h4>
+      </div>
+    </div>
+
+    <div class="content-introduction">
+      <div class="layui-fluid">
+        <div class="layui-row">
+          <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
+            <div class="text">
+              <h2>{{service_services.title}}</h2>
+              <div class="line"></div>
+              <p>{{service_services.description}}</p>
+            </div>
+          </div>
+          <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
+            {% if service_services and service_services.img %}
+            <img style="float: right; max-width: 500px;" src="{{service_services.img}}">
+            {% else %}
+            <img style="float: right; max-width: 500px;" src="/static/image/gy_img1.jpg">
+            {% end %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-process-box">
+      <div class="service-process">
+        <div class="layui-fluid">
+            <h3 class="title">成品流程</h3>
+            <div class="process-centent">
+              <div class="layui-row layui-col-space15">
+                {% set fl_num = 1%}
+                {%for i,fl in enumerate(service_flow)%}
+                <div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+                    <div class="item">
+                      <h4>{{ '%02d' % (i+1) }}</h4>
+                      <h5>{{fl.title}}</h5>
+                      <p>{{fl.description}}</p>
+                    </div>
+                </div>
+                {%end%}
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-contact">
+      <div class="service-contact-box">
+        <div class="layui-fluid">
+          <div class="layui-row">
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md7">
+              <img src="{{service_contact_us.img}}" style="max-width: 770px;">
+            </div>
+             <div class="layui-col-xs12 layui-col-sm5  layui-col-md4 fr">
+                <div class="cantact-info">
+                  <h3>{{service_contact_us.title}}</h3>
+                  <div class="item">
+                    {%raw service_contact_us.description%}
+                  </div>
+                </div>
+
+            </div >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- service-content -->
+{% end %}
+
+{% block footer %}
+    {% include "common/footer.htm" %}
+{% end %}
+
+{% block javascript %}
+<script type="text/javascript">
+layui.use('jquery',function(){
+  var $ = layui.$;
+  //建造实例
+  $('.app-header-menuicon').on('click',function(){
+    $('.header-down-nav').toggleClass('down-nav')
+  })
+});
+</script>
+  {% end %}

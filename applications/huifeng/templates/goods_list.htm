@@ -1,0 +1,109 @@
+{% extends "common/base.htm" %}
+
+{% block title %} 案例 - {{site_name}} {% end %}
+{% block style %}
+<style type="text/css">
+
+</style>
+{% end %}
+{% block header %}
+{% include "common/header.htm" %}
+{% end %}
+
+{% block body %}
+  <!-- case-content -->
+  <div class="case-content">
+    <div class="imgtext-flow">
+      <div class="layui-fluid pb50">
+        <div class="layui-row item-list-box layui-clear" id="item-list-box" style="margin:0">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end case-content -->
+{% end %}
+
+{% block footer %}
+    {% include "common/footer.htm" %}
+{% end %}
+
+{% block javascript %}
+  <!-- 模版引擎导入 -->
+
+  <script id="zonesTpl" type="text/html">
+    <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+      <div class="item" title="<% d.title %>">
+          <a href="/case/<% d.id %>">
+            <img src="<% d.thumb %>" alt="<% d.title %>" style="max-width: 580px; ">
+          </a>
+          <div class="item-text">
+            <h3><% d.title %></h3>
+            <span>市场价 <% d.market_price %> / </span>
+            <span>销量 <% d.sales_quantity %></span>
+
+            <span style="float: right;">
+              <span>售价 <% d.price %> / </span>
+              <span>库存 <% d.inventory_quantity %></span>
+              <a href="<% d.external_url %>" target="_blank">去购买</a>
+            </span>
+          </div>
+      </div>
+    </div>
+
+  </script>
+
+<script type="text/javascript">
+layui.config({
+  base: '/static/js/' //你存放新模块的目录，注意，不是layui的模块目录
+}).use(['common','flow','laytpl','element'],function(){
+  var common = layui.common,flow = layui.flow,laytpl = layui.laytpl,element = layui.element,$ = layui.$;
+
+  // 模版引擎导入
+  laytpl.config({
+    open: '<%',
+    close: '%>'
+  });
+
+    flow.load({
+      elem: '#item-list-box'
+      ,isAuto :  false
+      ,isLazyimg: true
+      ,mb:100
+      ,done: function(page, next) { //到达临界点（默认滚动触发），触发下一页
+        var lis = [];
+         var getTpl = zonesTpl.innerHTML;
+
+          var lis = [];
+          //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+          $.get('/goods?page='+page, function(res){
+            //假设你的列表返回在data集合中
+            layui.each(res.data.items, function(index, item) {
+              item['created_at'] = parseTime(item['created_at'])
+              laytpl(getTpl).render(item,function(html){
+                  lis.push(html);
+              });
+            });
+            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+            var pages = res.data.total / res.data.per_page + 1
+            next(lis.join(''), page < pages);
+            element.init()
+          })
+      }
+    })
+  // window.onload = function(){
+  //   common.waterfall();
+  // }
+  $('.app-header-menuicon').on('click',function(){
+    $('.header-down-nav').toggleClass('down-nav')
+  })
+  $('.case-content .banner .img-text').on('click',function(){
+    if($(this).hasClass('active')){
+      $(this).removeClass('active').siblings('.img-text').addClass('active')
+    }else{
+      $(this).addClass('active').siblings('.img-text').removeClass('active')
+    }
+  })
+});
+</script>
+{% end %}

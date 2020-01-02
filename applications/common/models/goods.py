@@ -28,3 +28,4 @@ class Goods(Base):
     recommended = Column(TINYINT(1), nullable=False, server_default=text("'0'"), comment='被推荐的')
     status = Column(TINYINT(1), nullable=False, server_default=text("'1'"), comment='状态:( 0 禁用；1 启用, 默认1 删除 -1)')
     created_at = Column(BIGINT(13), nullable=False, server_default=text("'0'"), comment='创建记录Unix时间戳毫秒单位')
+    updated_at = Column(BIGINT(13), nullable=False, server_default=text("'0'"))

@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.28-log)
 # Database: db_py_admin
-# Generation Time: 2020-01-01 03:44:07 +0000
+# Generation Time: 2020-01-02 08:39:39 +0000
 # ************************************************************
 
 
@@ -94,15 +94,14 @@ CREATE TABLE `admin_user` (
   UNIQUE KEY `uk_username` (`username`),
   UNIQUE KEY `uk_email` (`email`),
   UNIQUE KEY `uk_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='后台管用户表';
 
 LOCK TABLES `admin_user` WRITE;
 /*!40000 ALTER TABLE `admin_user` DISABLE KEYS */;
 
 INSERT INTO `admin_user` (`id`, `role_id`, `password`, `username`, `mobile`, `email`, `permission`, `login_count`, `last_login_ip`, `last_login_at`, `status`, `created_at`, `lang`)
 VALUES
-	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1318,'127.0.0.1',1577839173902,1,0,'cd'),
-	(2,1,'pbkdf2_sha256$100000$CtBuDPTkXcdLlPh5$x3dPYZaGQJADRnnFSgaK/E/mSIzboLqZJ3t/QEd6KtE=','root','1113','1113','\"[\\\"admin:dashboard\\\",\\\"admin:system\\\",\\\"admin:config:index\\\",\\\"admin:config:add\\\",\\\"admin:config:edit\\\",\\\"admin:config:del\\\",\\\"admin:config:status\\\",\\\"admin:config:sort\\\",\\\"admin:menu:index\\\",\\\"admin:menu:add\\\",\\\"admin:menu:edit\\\",\\\"admin:menu:del\\\",\\\"admin:menu:status\\\",\\\"admin:menu:sort\\\",\\\"admin:menu:quick\\\",\\\"admin:menu:export\\\",\\\"admin:admin:index\\\",\\\"admin:user:adduser\\\",\\\"admin:user:edituser\\\",\\\"admin:user:deluser\\\",\\\"admin:user:status2\\\",\\\"admin:user:info\\\",\\\"admin:role:index\\\",\\\"admin:friendlink:index\\\",\\\"admin:member\\\",\\\"admin:user:index\\\",\\\"admin:member:add\\\",\\\"admin:member:edit\\\",\\\"admin:member:del\\\",\\\"admin:member:status\\\",\\\"admin:member:pop\\\",\\\"admin:member:authorize\\\",\\\"admin:content:index\\\",\\\"admin:advertising_category:index\\\",\\\"admin:advertising:index\\\",\\\"admin:article:index\\\",\\\"admin:article:news\\\",\\\"admin:article:regulation\\\",\\\"admin:article:product\\\",\\\"admin:company:team\\\"]\"',3,'127.0.0.1',1577644874775,1,1555310681,'');
+	(1,0,'pbkdf2_sha256$100000$lTbYoXJUOk8dylGe$/cnEo7M9IiwGs9P0vDYUR9Q6++m8uDRTt1fwz10CZeo=','admin',NULL,NULL,'[\"admin:loan_order:index\",\"admin:loan_order_assignment:case\",\"admin:loan_order_assignment:assign\"]',1320,'127.0.0.1',1577954243254,1,0,'cd');
 
 /*!40000 ALTER TABLE `admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -132,7 +131,7 @@ DROP TABLE IF EXISTS `advertising`;
 CREATE TABLE `advertising` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(80) NOT NULL DEFAULT '' COMMENT '标题',
-  `description` varchar(255) DEFAULT '' COMMENT '描述',
+  `description` varchar(1200) DEFAULT '' COMMENT '描述',
   `start_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放开始Unix时间戳毫秒单位',
   `end_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '投放结束Unix时间戳毫秒单位0 为无限',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告类型 1 内部网页 2外部网页',
@@ -144,7 +143,7 @@ CREATE TABLE `advertising` (
   `status` tinyint(1) DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `created_at` bigint(13) unsigned NOT NULL COMMENT '创建记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COMMENT='广告列表';
 
 LOCK TABLES `advertising` WRITE;
 /*!40000 ALTER TABLE `advertising` DISABLE KEYS */;
@@ -158,7 +157,17 @@ VALUES
 	(11,'农产品种植','',0,0,1,'','/static/upload/adad/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#',20,2,1,0),
 	(12,'农产品收割','',0,0,1,'','/static/upload/adad/21f0d8f3820483adf5e60d670d8fff90.jpeg','#',20,2,1,0),
 	(13,'农产品加工','',0,0,1,'','/static/upload/adad/f3b8e07aa223369127373ec243dff35d.jpg','#',20,2,1,0),
-	(14,'农产品包装','',0,0,1,'','/static/upload/adad/87e7dce16d0f872ace113a6f98d5421f.jpg','#',20,2,1,0);
+	(14,'农产品包装','',0,0,1,'','/static/upload/adad/87e7dce16d0f872ace113a6f98d5421f.jpg','#',20,2,1,0),
+	(15,'销售总监','',0,0,1,'','/static/upload/adad/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#',3,4,1,1577884783440),
+	(16,'我们的信念','身处在前端社区的繁荣之下，我们都在有意或无意地追逐。而 layui偏偏回望当初，奔赴在返璞归真的漫漫征途，自信并勇敢着，追寻于 原生态的书写指令，试图以最简单的方式诠释高效。',0,0,1,'','','#',30,5,1,1577886244263),
+	(17,'关于我们','如果眼下还是一团零星之火，那运筹帷幄之后，迎面东风，就是一场烈焰燎原吧，那必定会是一番尽情的燃烧。待，秋风萧瑟时，散作满天星辰，你看那四季轮回，正是 layui 不灭的执念。如果眼下还是一团零星之火，那运筹帷幄之后，迎面东风，就是一场烈焰燎原吧，那必定会是一番尽情的燃烧。待，秋风萧瑟时，散作满天星辰，你看那四季轮回，正是 layui 不灭的执念。',0,0,1,'','/static/upload/adad/21f0d8f3820483adf5e60d670d8fff90.jpeg','#',32,3,1,1577886571869),
+	(18,'用心服务','用真诚的心对待每一位客户，用勤劳的心对待每一项本职工作，用换位的心完成每一次服务。用真诚的心对待每一位客户，用勤劳的心对待每一项本职工作，用换位的心完成每一次服务。用真诚的心对待每一位客户，用勤劳的心对待每一项本职工作，用换位的心完成每一次服务。',0,0,1,'','','#',1,6,1,1577891431977),
+	(19,'我们的服务','拥有双面的不仅是人生，还有 layui。一面极简，一面丰盈。极简是视觉所见的外在，是开发所念的简易。丰盈是倾情雕琢的内在，是信手拈来的承诺。一切本应如此，简而全，双重体验。拥有双面的不仅是人生，还有 layui。一面极简，一面丰盈。极简是视觉所见的外在，是开发所念的简易。丰盈是倾情雕琢的内在，是信手拈来的承诺。一切本应如此，简而全，双重体验。',0,0,1,'','','#',1,7,1,1577893158676),
+	(20,'需求沟通','和客户沟通需求，更好的了解客户的产品需求，对之后产品成型有更大的帮助。',0,0,1,'','','#',12,8,1,1577893364165),
+	(21,'设计打版','和客户沟通需求，更好的了解客户的产品需求，对之后产品成型有更大的帮助。',0,0,1,'','','#',11,8,1,1577893392816),
+	(22,'成品制作','和客户沟通需求，更好的了解客户的产品需求，对之后产品成型有更大的帮助。',0,0,1,'','','#',10,8,1,1577893459362),
+	(23,'售后服务','和客户沟通需求，更好的了解客户的产品需求，对之后产品成型有更大的帮助。',0,0,1,'','','#',9,8,1,1577893486506),
+	(24,'联系我们','<p><i class=\"layui-icon layui-icon-location\"></i>地址:<span>湖南省湘西州永顺县车坪乡里仁村三组翻水岗</span></p>\n<p><i class=\"layui-icon layui-icon-dialogue\"></i>电话:<span>400-000-888</span></p>\n<p><i class=\"layui-icon layui-icon-layouts\"></i>邮箱:<span>leeyisoft@qq.com</span></p>',0,0,1,'','/static/upload/adad/d274cbd4b5cd47ec2d8cf08829296d9a.png','#',1,9,1,1577894598251);
 
 /*!40000 ALTER TABLE `advertising` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -176,7 +185,7 @@ CREATE TABLE `advertising_category` (
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='广告分类';
 
 LOCK TABLES `advertising_category` WRITE;
 /*!40000 ALTER TABLE `advertising_category` DISABLE KEYS */;
@@ -185,9 +194,13 @@ INSERT INTO `advertising_category` (`id`, `name`, `title`, `status`)
 VALUES
 	(1,'index_banner','主页顶部banner',1),
 	(2,'index_square','主页banner下面的方块广告',1),
-	(3,'xxx','XXXX',0),
+	(3,'about_us','关于-关于我们',1),
 	(4,'team','关于-核心团队',1),
-	(5,'xx','xxx',0);
+	(5,'about_banner','关于-我们的信念',1),
+	(6,'service_banner','服务-服务banner',1),
+	(7,'service_services','服务-我们的服务',1),
+	(8,'service_flow','服务-成品流程',1),
+	(9,'service_contact_us','服务-联系我们',1);
 
 /*!40000 ALTER TABLE `advertising_category` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3815,18 +3828,15 @@ VALUES
 	('sys','login_rsa_pub_key','-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxKL1RrEcd4szM8Df4HqsJdOvK\nrSQO7BBvBVsvXKfpWrM+8XGL1SP7nsQd6alhntotPSDezaHnFvhnP/sr8bwzzorr\n1dWoBVabqDFZgZ2awB7iTk4k/3RN1TEPoD08kaJQ0xBHZ14395q8bVh22Uh10eCO\n/xtHnso3I6penSvRawIDAQAB\n-----END PUBLIC KEY-----','登录RSA算法加密公钥',2,'系统登录RSA加密公钥',1,1,0,0),
 	('sys','system.name','py_admin','系统名称',20,'',1,1,0,0),
 	('sys','system.version','1.0.1','软件版本',20,'',1,1,0,0),
-	('sys','site_url','http://127.0.0.1:8090','前台站点网址',20,'注意不要以 / 结尾',1,1,0,0),
+	('sys','site_url','http://www.39good.com','前台站点网址',20,'注意不要以 / 结尾',1,1,0,0),
 	('sys','test_verify_switch','0','测试验证码开关',20,'',0,0,0,0),
 	('company','working_time','9:30-19:00','工作时间',1,'',1,1,1554860991,0),
-	('sys','default_sms_platform','com.253','默认短信平台',1,'253云通讯-国际短信接口说明_JSON_v1.0.1_2017.04.24',1,1,1554285572,0),
-	('sys','if_send_sms','0','是否发送短信',20,'测试环境，千万别修改为1',1,1,0,0),
-	('company','company_profile','company_profile','公司简介',1,'',1,1,1555125964,0),
+	('sys','site_logo','','站点logo',19,'例如 /static/image/logo.png',0,1,0,0),
 	('company','company_wechat','','公司微信',1,'',1,1,1555126015,0),
 	('company','company_hotline','400-820-8840','公司热线',1,'',1,1,1555126057,0),
 	('company','company_email','leeyisoft@qq.com','公司邮箱',1,'',1,1,1555126096,0),
 	('sys','copyright','湘ICP备19027067号  Copyright © 2020 - 2025 All Rights 永顺县辉凤电子商务有限公司','版权信息',2,'',1,1,1555126207,1577802962561),
 	('sys','consult_tel','12345678','帮助热线',20,'',1,1,0,1577641208452),
-	('company','footer_address','<h4>湖南省湘西州永顺县</h4>\n<p>\n车坪乡里仁村三组\n<span>翻水岗</span>\n</p>','公司地址',1,'网页底部公司联系地址',1,1,1577769500530,0),
 	('company','index_welcome','      <h5>欢迎您的到来</h5>\n      <h3>好礼品我们造,用心做好产品</h3>\n      <h4>We build good products and make good products.</h4>','首页欢迎标语',20,'',1,1,0,0);
 
 /*!40000 ALTER TABLE `config` ENABLE KEYS */;
@@ -3856,9 +3866,9 @@ LOCK TABLES `friendlink` WRITE;
 
 INSERT INTO `friendlink` (`id`, `title`, `logo`, `url`, `target`, `sort`, `status`, `updated_at`, `created_at`)
 VALUES
-	(1,'ddd3','/static/upload/friendlink/4be5f8fc390970ec7b7c8a35e75427eb.jpg','aweqw3','_blank',20,1,1577639259433,1577602784481),
-	(2,'ddd2','/static/upload/friendlink/8cd1881feaf14c874ec9b04301cd487c.png','dddd','_self',33,1,1577604164422,1577604155057),
-	(3,'ddd4','/static/upload/friendlink/5f1f379c05a6f10ab5b97015ab23bbc0.jpeg','ddd4','_blank',51,1,1577640335812,1577604564098);
+	(1,'友情链接1','/static/upload/friendlink/4be5f8fc390970ec7b7c8a35e75427eb.jpg','#','_blank',20,1,1577639259433,1577602784481),
+	(2,'友情链接2','/static/upload/friendlink/8cd1881feaf14c874ec9b04301cd487c.png','#','_self',33,1,1577604164422,1577604155057),
+	(3,'友情链接3','/static/upload/friendlink/5f1f379c05a6f10ab5b97015ab23bbc0.jpeg','#','_blank',51,1,1577640335812,1577604564098);
 
 /*!40000 ALTER TABLE `friendlink` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -3889,6 +3899,7 @@ CREATE TABLE `goods` (
   `recommended` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '被推荐的',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:( 0 禁用；1 启用, 默认1 删除 -1)',
   `created_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '创建记录Unix时间戳毫秒单位',
+  `updated_at` bigint(13) unsigned NOT NULL DEFAULT '0' COMMENT '更新记录Unix时间戳毫秒单位',
   PRIMARY KEY (`id`),
   KEY `i_Status_Recommended_Importance` (`status`,`recommended`,`importance`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
@@ -3896,15 +3907,15 @@ CREATE TABLE `goods` (
 LOCK TABLES `goods` WRITE;
 /*!40000 ALTER TABLE `goods` DISABLE KEYS */;
 
-INSERT INTO `goods` (`id`, `category_id`, `title`, `thumb`, `album`, `external_url`, `keyword`, `description`, `hits`, `importance`, `market_price`, `price`, `inventory_quantity`, `sales_quantity`, `extra`, `detail`, `recommended`, `status`, `created_at`)
+INSERT INTO `goods` (`id`, `category_id`, `title`, `thumb`, `album`, `external_url`, `keyword`, `description`, `hits`, `importance`, `market_price`, `price`, `inventory_quantity`, `sales_quantity`, `extra`, `detail`, `recommended`, `status`, `created_at`, `updated_at`)
 VALUES
-	(1,1,'上等材质制作包装','{\"left\": \"/static/upload/goods/thumb/210e0ce790ee7d2e8c7f1bc68ad46e4e.jpg\", \"right\": \"/static/upload/goods/thumb/917e9480a3ec9a378ad6f91b31f264c0.jpg\"}','\"\"','ddddd','D大调','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,5,1234,1234,3123,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577700738587),
-	(2,1,'dddd','{}','\"\"','','D大调','等等',0,3,12341234,3333333,333,0,'\"\"','<p>等等</p>',0,-1,1577716732973),
-	(3,1,'优秀包装设计美学','{\"left\": \"/static/upload/goods/thumb/d292fd930887d6504eb8ddef57becea9.jpg\", \"right\": \"/static/upload/goods/thumb/cb61913dd596cfde41d6206a3ea1a90a.jpg\"}','\"\"','','','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,5,123433,63433,333,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577803509437),
-	(4,1,'高级设备流水制作','{\"left\": \"/static/upload/goods/thumb/be37fde332484c65c5a1698aff2ae720.jpg\", \"right\": \"/static/upload/goods/thumb/4a402b258e1f03f8cacc297eede1d5b7.jpg\"}','\"\"','','高级设备流水制作','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,4,1231233,123333,3123,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577810465312),
-	(5,1,'dddd','{\"left\": \"/static/upload/goods/thumb/4a402b258e1f03f8cacc297eede1d5b7.jpg\"}','\"\"','','','',0,4,333312,12343,312,0,'\"\"','<p>dddd</p>',0,1,1577810618818),
-	(6,1,'精美的商品包装','{\"left\": \"/static/upload/goods/thumb/8bfbb65aab41fa245237b2107aba0f98.jpg\", \"right\": \"/static/upload/goods/thumb/b6e64fa05ad337f6fda1c4207254f21b.jpg\"}','\"\"','','','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,3,3123412,234123,1234,0,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577810911344),
-	(7,1,'顶顶顶顶','{\"left\": \"\", \"right\": \"\"}','\"\"','','','',0,1,12341234,1234123,123,0,'\"\"','<p>等等</p>',0,0,1577839338261);
+	(1,1,'美食特产湖南湘西腊肉农家自制烟熏腊肉','{\"left\": \"/static/upload/goods/thumb/210e0ce790ee7d2e8c7f1bc68ad46e4e.jpg\", \"right\": \"/static/upload/goods/thumb/917e9480a3ec9a378ad6f91b31f264c0.jpg\"}','\"\"','ddddd','D大调','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',16,5,1234,1234,3123,310,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577700738587,1577881051814),
+	(2,1,'dddd','{}','\"\"','','D大调','等等',0,3,12341234,3333333,333,0,'\"\"','<p>等等</p>',0,0,1577716732973,0),
+	(3,1,'优秀包装设计美学','{\"left\": \"/static/upload/goods/thumb/d292fd930887d6504eb8ddef57becea9.jpg\", \"right\": \"/static/upload/goods/thumb/cb61913dd596cfde41d6206a3ea1a90a.jpg\"}','\"\"','','','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',0,5,123433,63433,333,312,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577803509437,0),
+	(4,1,'高级设备流水制作','{\"left\": \"/static/upload/goods/thumb/be37fde332484c65c5a1698aff2ae720.jpg\", \"right\": \"/static/upload/goods/thumb/4a402b258e1f03f8cacc297eede1d5b7.jpg\"}','\"\"','','高级设备流水制作','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',7,4,1231233,123333,3123,312,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577810465312,0),
+	(5,1,'湘西腊肉58元一斤2斤包邮','{\"left\": \"/static/upload/goods/thumb/b08b23db1a3658d6830e4cab6b1d7535.jpg\", \"right\": \"/static/upload/goods/thumb/ba3ca5d635dd755a3d20ef697b246321.jpg\"}','\"\"','','','五花东西很好，价美物廉，谢谢掌柜的！说实在，这是我~购物来让我最满意的一次购物。无论是掌柜的态度还是对物品，我都非常满意的。肥瘦相间，很好吃，不咸，味道好香。',35,5,8800,5000,1000,312,'\"\"','<p>五花东西很好，价美物廉，谢谢掌柜的！说实在，这是我~购物来让我最满意的一次购物。无论是掌柜的态度还是对物品，我都非常满意的。肥瘦相间，很好吃，不咸，味道好香。</p>\n<p>&nbsp;</p>',1,1,1577810618818,1577881288906),
+	(6,1,'精美的商品包装','{\"left\": \"/static/upload/goods/thumb/8bfbb65aab41fa245237b2107aba0f98.jpg\", \"right\": \"/static/upload/goods/thumb/b6e64fa05ad337f6fda1c4207254f21b.jpg\"}','\"\"','https://element.eleme.cn/#/zh-CN/component/form','','本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。',1,3,3123412,234123,1234,123,'\"\"','<p>本公司专门为您打造定制的商品包装。本公司专门为您打造定制的商品包装。</p>',1,1,1577810911344,0),
+	(7,1,'顶顶顶顶','{\"left\": \"\", \"right\": \"\"}','\"\"','','','',0,1,12341234,1234123,123,33,'\"\"','<p>等等</p>',0,0,1577839338261,0);
 
 /*!40000 ALTER TABLE `goods` ENABLE KEYS */;
 UNLOCK TABLES;

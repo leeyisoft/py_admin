@@ -3,17 +3,13 @@
 {% block title %} 首页 - {{site_name}} {% end %}
 {% block style %}
 <style type="text/css">
-
 </style>
 {% end %}
 {% block header %}
 {% include "common/header.htm" %}
 {% end %}
 
-
 {% block body %}
-
-
   <!-- content -->
   <div class="content">
     <div class="title">
@@ -49,14 +45,17 @@
         {%for gd in index_goods %}
         <div class="layui-row">
           <div class="item layui-clear">
-            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
-              <img src="{{gd.thumb['left']}}" class="left-img" style="max-width: 580px; max-height: 580px;">
+            <div class="layui-col-xs12 layui-col-sm5 layui-col-md5">
+              <div style="width: 480px !important; height: 480px !important;display: block !important;">
+                <a href="/case/{{gd.id}}">
+                  <img src="{{gd.thumb['left']}}" class="left-img" style="max-width: 480px; max-height: 480px;">
+                </a>
+              </div>
             </div>
-            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+            <div class="layui-col-xs12 layui-col-sm7 layui-col-md7">
               <div class="text">
                 <h3>{{gd.title}}</h3>
-                <p>{{gd.description}}</p>
-                <a href="/case/{{gd.id}}">查看更多 ></a>
+                <p>{{gd.description}} <a href="/case/{{gd.id}}">查看更多 ></a></p>
               </div>
             </div>
             <div class="layui-col-xs12 layui-col-sm12 layui-col-md8 bot-img-box">
@@ -94,7 +93,6 @@
     </div>
   </div>
   <!-- end-content -->
-
 {% end %}
 
 {% block footer %}

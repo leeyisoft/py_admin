@@ -92,9 +92,9 @@ class AdvertisingService(object):
             param['updated_at'] = utime.timestamp(3)
 
         if 'start_at' in param.keys():
-            param['start_at'] = param['start_at'] if param['start_at'] else 0
+            param['start_at'] = param['start_at'] if param['start_at'].isnumeric() else 0
         if 'end_at' in param.keys():
-            param['end_at'] = param['end_at'] if param['end_at'] else 0
+            param['end_at'] = param['end_at'] if param['end_at'].isnumeric() else 0
 
         description = param.get('description', '')
         if len(description) > 255:
@@ -132,6 +132,11 @@ class AdvertisingService(object):
         description = param.get('description', '')
         if len(description) > 255:
             raise JsonError('Data too long for \'description\'')
+
+        if 'start_at' in param.keys():
+            param['start_at'] = param['start_at'] if param['start_at'].isnumeric() else 0
+        if 'end_at' in param.keys():
+            param['end_at'] = param['end_at'] if param['end_at'].isnumeric() else 0
         try:
             obj = Advertising(**param)
             Advertising.session.add(obj)

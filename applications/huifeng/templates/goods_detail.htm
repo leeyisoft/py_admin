@@ -1,0 +1,49 @@
+{% extends "common/base.htm" %}
+
+{% block title %} 案例 - {{site_name}} {% end %}
+{% block style %}
+<style type="text/css">
+
+</style>
+{% end %}
+{% block header %}
+{% include "common/header.htm" %}
+{% end %}
+
+{% block body %}
+  <!-- details-content -->
+  <div class="details-content">
+    <div class="title">
+        <h3>{{ goods.title }}</h3>
+        <h4>
+            <span class="time">{{ utime.ts_to_str(goods.updated_at/1000, '%Y-%m-%d', to_tz=None) }} ，</span>
+            <span class="child-title">浏览： {{ goods.hits }} ，</span>
+            <span class="child-title">库存： {{ goods.inventory_quantity }} ，</span>
+            <span class="child-title">销量： {{ goods.sales_quantity }} ，</span>
+            <span class="child-title">市场价： {{ goods.market_price/100 }} 元，</span>
+            <span class="child-title">销售价： {{ goods.price/100 }} 元，</span>
+            <a href="{{goods.external_url}}" target="_blank" style="float: right;">去购买</a>
+          </h4>
+    </div>
+    <div class="img-box">
+      {% raw goods.detail %}
+    </div>
+  </div>
+  <!-- details-content -->
+{% end %}
+
+{% block footer %}
+    {% include "common/footer.htm" %}
+{% end %}
+
+{% block javascript %}
+<script type="text/javascript">
+layui.use('jquery',function(){
+  var $ = layui.$;
+  //建造实例
+  $('.app-header-menuicon').on('click',function(){
+    $('.header-down-nav').toggleClass('down-nav')
+  })
+});
+</script>
+{% end %}

@@ -1,0 +1,89 @@
+{% extends "common/base.htm" %}
+
+{% block title %} 案例 - {{site_name}} {% end %}
+{% block style %}
+<style type="text/css">
+
+</style>
+{% end %}
+{% block header %}
+{% include "common/header.htm" %}
+{% end %}
+
+{% block body %}
+  <!-- about-content -->
+  <div class="about-content">
+    {% if about_banner and about_banner.img %}
+    <div class="about-big-img" style="background: url({{about_banner.img}}) center center;">
+    {% else %}
+    <div class="about-big-img">
+    {% end %}
+      <div class="text_box">
+        <div class="text">
+          <h3>{{about_banner.title}}</h3>
+          <p>{{about_banner.description}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="about-info">
+      <div class="img-texts">
+        <div class="item">
+          <div class="layui-fluid">
+            <div class="layui-row">
+              <div class="layui-col-xs12 layui-col-sm12 layui-col-md6 img-center">
+            {% if about_us and about_us.img %}
+            <img src="{{about_us.img}}">
+            {% else %}
+            <img src="/static/image/gy_img1.jpg">
+            {% end %}
+              </div>
+              <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
+                <div class="text">
+                  <h5>About us</h5>
+                  <h4>{{about_us.title}}</h4>
+                  <p>{{about_us.description}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="coreTeam_box">
+        <div class="writebg"></div>
+        <div class="coreTeam">
+          <div class="layui-fluid">
+            <h3>核心团队</h3>
+            <div class="layui-row layui-col-space15">
+                {%for p in team%}
+                  <div class="layui-col-xs12 layui-col-sm4 layui-col-md4">
+                    <div class="imgTxt">
+                      <img src="{{p.img}}" alt="{{p.description}}">
+                      <h6>{{p.title}}</h6>
+                    </div>
+                  </div>
+                  {%end%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- about-content -->
+{% end %}
+
+{% block footer %}
+    {% include "common/footer.htm" %}
+{% end %}
+
+{% block javascript %}
+<script type="text/javascript">
+layui.use('jquery',function(){
+  var $ = layui.$;
+  //建造实例
+  $('.app-header-menuicon').on('click',function(){
+    $('.header-down-nav').toggleClass('down-nav')
+  })
+});
+</script>
+  {% end %}

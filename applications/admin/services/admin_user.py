@@ -176,6 +176,7 @@ class AdminUserService(object):
             'user_id': user.id,
             'client': 'web',
             'ip': handler.request.remote_ip,
+            'created_at': utime.timestamp(3),
         }
         log = AdminUserLoginLog(**params)
         AdminUserLoginLog.session.add(log)
