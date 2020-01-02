@@ -9,8 +9,8 @@ logs/*.log
 node_modules
 .idea
 *.php
-upload/avator
-applications/statics/upload/avator
+upload/*/*.*
+applications/statics/upload/*/*.*
 *.pdf
 remove_bocai_tb.sql
 applications/statics/upload
