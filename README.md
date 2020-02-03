@@ -27,16 +27,26 @@ raise JsonError('msg', 1, [1,2,3])
 * 操作数据库的ORM框架为 SQLAlchemy（SQLAlchemy包括用于SQLite，Postgresql，MySQL，Oracle，MS-SQL，Firebird，Sybase等的语言），如果要用其他数据库，本软件应该要做少许的调整
 * 引入 pipenv https://github.com/pypa/pipenv/blob/master/docs/advanced.rst
 
-## 设置全局变量
-
-
-```
-echo -e '\nexport PIPENV_VENV_IN_PROJECT=1' >> /etc/profile
-source /etc/profile
-```
-
-
 # 项目启动
+特别注意： 启动docker环境的时候不需要生产.env文件
+
+## docker环境
+```
+git clone https://gitee.com/leeyi/py_admin.git py_admin && cd py_admin
+// 删除docker
+docker rm -f pya_db_master pya_db_slave pya_up_db pya_redis pya_py_admin
+
+docker-compose -f docker-local.yml up
+
+// 后台运行
+docker-compose -f docker-local.yml up -d
+
+// Run a command in a running container
+docker exec -it pya_py_admin bash
+
+// Fetch the logs of a container
+docker logs -f -t pya_py_admin
+```
 
 ## 原生开发启动
 ```
@@ -48,8 +58,9 @@ pipenv install --dev --skip-lock
 
 // 配置本地开发环境变量，然后启动
 cp configs/dev.yaml configs/product.yaml
-echo '# TREST_ENV is not one of the local, dev, test, or product
-TREST_ENV : local' > .env
+echo '# RUNTIME_ENV is not one of the local, dev, test, or product
+# the colon must have Spaces around it
+RUNTIME_ENV : product' > .env
 
 // 开启虚拟环境
 pipenv shell

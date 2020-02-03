@@ -1,0 +1,5 @@
+[mysqld]
+server-id = 2
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+general_log = on
+general_log_file=/tmp/query.log

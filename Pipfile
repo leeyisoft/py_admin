@@ -10,9 +10,8 @@ trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "master
 qrcode = "*"
 oss2 = "*"
 PyJWT = "*"
-sqlalchemy-utils = "*"
 sqlacodegen = "*"
 Pillow = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

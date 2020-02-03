@@ -1,0 +1,132 @@
+version: '3'
+services:
+    pya_db_master:
+        image: mysql:5.7
+        container_name: pya_db_master
+        restart: always
+        environment:
+            MYSQL_DATABASE: db_py_admin
+            MYSQL_USER: user_py_admin
+            MYSQL_PASSWORD: eb27acWqa16E1
+            MYSQL_ROOT_PASSWORD: eb27acWqa16E1
+            TZ: Asia/Shanghai
+            RUNTIME_ENV: local
+        networks:
+            - shared
+        ports:
+            - "0.0.0.0:33061:3306"
+        volumes:
+            - ./docker/local/db_master.cnf:/etc/mysql/conf.d/master.cnf
+            - ./docker/local/db_init_master.sql:/docker-entrypoint-initdb.d/init_master.sql
+            - ./datas/sql/db_vsn1.0.1.sql:/docker-entrypoint-initdb.d/init_db_py_admin.sql
+            - ./datas/sql/db_vsn1.0.1_fix.sql:/docker-entrypoint-initdb.d/init_db_py_admin_fix.sql
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "10"
+
+    pya_db_slave:
+        image: mysql:5.7
+        container_name: pya_db_slave
+        restart: always
+        environment:
+            MYSQL_DATABASE: db_py_admin
+            MYSQL_USER: user_py_admin_slave
+            MYSQL_PASSWORD: eb27acWqa16E1
+            MYSQL_ROOT_PASSWORD: eb27acWqa16E1
+            TZ: Asia/Shanghai
+            RUNTIME_ENV: dev
+        depends_on:
+            - pya_db_master
+        networks:
+            - shared
+        ports:
+            - "0.0.0.0:33062:3306"
+        volumes:
+            - ./docker/local/db_slave.cnf:/etc/mysql/conf.d/slave.cnf
+            - ./docker/local/db_init_slave.sql:/docker-entrypoint-initdb.d/init_slave.sql
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "10"
+
+    pya_redis:
+        image: redis
+        command: ["redis-server", "/etc/redis.conf"]
+        container_name: pya_redis
+        restart: always
+        ports:
+            - "0.0.0.0:6379:6379"
+        networks:
+            - shared
+        environment:
+            TZ: Asia/Shanghai
+            RUNTIME_ENV: dev
+        volumes:
+            - ./docker/local/redis.conf:/etc/redis.conf
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "10"
+
+    pya_up_db:
+        image: mysql:5.7
+        container_name: pya_up_db
+        volumes:
+            - ./docker/local/wait-for-it.sh:/wait-for-it.sh
+            - ./datas/sql/up.sql:/docker-entrypoint-initdb.d/up.sql
+        depends_on:
+            - pya_db_master
+        networks:
+            - shared
+        command: ['/wait-for-it.sh', 'pya_db_master:3306', '--',  'mysql -f -u root -p eb27acWqa16E1 -h pya_db_master --default-character-set=utf8mb4 db_py_admin < /docker-entrypoint-initdb.d/up.sql']
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "10"
+
+    pya_py_admin:
+        image: leeyi/py_admin:v1.0.1
+        container_name: pya_py_admin
+        restart: always
+        security_opt:
+            - seccomp:unconfined
+        ulimits:
+          core: -1
+          nofile:
+            soft: 65536
+            hard: 65536
+          memlock:
+            soft: -1
+            hard: -1
+        environment:
+            TZ: Asia/Shanghai
+            RUNTIME_ENV: local
+        ports:
+            - "0.0.0.0:5080:5080"
+        depends_on:
+            - pya_db_master
+            - pya_db_slave
+            - pya_redis
+        volumes:
+            - ./:/data/py_admin
+        shm_size: 1G
+        cap_add:
+            - SYS_PTRACE
+        command: ['python3', '/data/py_admin/server.py']
+        networks:
+            - shared
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "10"
+
+networks:
+    shared:
+      external:
+          name: shared
