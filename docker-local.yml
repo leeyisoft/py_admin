@@ -90,7 +90,7 @@ services:
                 max-file: "10"
 
     pya_py_admin:
-        image: leeyi/py_admin:v1.0.1
+        image: leeyi/py_admin:1.0.1
         container_name: pya_py_admin
         restart: always
         security_opt:
