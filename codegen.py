@@ -171,23 +171,33 @@ class {classname}Service(object):
             raise JsonError('insert error')
 '''
 
-    def render(self, classname):
+    def render(self, classname, appname = 'admin'):
         fname = func.hump2underline(classname)
-        outfile = f'{ROOT_PATH}/applications/admin/services/{fname}.py'
-        if os.path.exists(outfile):
+        app = f'{ROOT_PATH}/applications/{appname}'
+        app_s = f'{app}/services'
+        sfile = f'{app_s}/{fname}.py'
+        if os.path.exists(sfile):
             return
+        if not os.path.exists(app):
+            os.mkdir(app)
+        if not os.path.exists(app_s):
+            os.mkdir(app_s)
+
+        fout = open(sfile, 'w', encoding='utf8')
+
         output = self.template.format(
             classname_underline=fname,
+            appname=appname,
             classname=classname
         )
-        fout = open(outfile, 'w', encoding='utf8')
+
         # 写入文件内容
         fout.write(output)
         # 关闭文件
         fout.close()
 
 
-class HandlerGenerator:
+class AdminHandlerGenerator:
     template = '''\
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -288,6 +298,112 @@ class {classname}ListHandler(CommonHandler):
         fout.close()
 
 
+class HandlerGenerator:
+    template = '''\
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""{classname}控制器
+"""
+import tornado
+
+from trest.router import get
+from trest.router import put
+from trest.router import post
+from trest.router import delete
+from trest.exception import JsonError
+
+
+from applications.{appname}.services.{classname_underline} import {classname}Service
+
+from .common import CommonHandler
+
+
+class {classname}Handler(CommonHandler):
+
+    @post('{classname_underline}')
+    @tornado.web.authenticated
+    def {classname_underline}_post(self, *args, **kwargs):
+        param = self.params()
+        {classname}Service.insert(param)
+        return self.success()
+
+    @get('{classname_underline}/(?P<id>[0-9]+)')
+    @tornado.web.authenticated
+    def {classname_underline}_get(self, id):
+        """获取单个记录
+        """
+        resp_data = {classname}Service.get(id)
+        return self.success(data=resp_data)
+
+    @put('{classname_underline}/(?P<id>[0-9]+)')
+    @tornado.web.authenticated
+    def {classname_underline}_put(self, id, *args, **kwargs):
+        param = self.params()
+        {classname}Service.update(id, param)
+        return self.success(data=param)
+
+    @delete('{classname_underline}/(?P<id>[0-9]+)')
+    @tornado.web.authenticated
+    def {classname_underline}_delete(self, id, *args, **kwargs):
+        param = {{
+            'status':-1
+        }}
+        {classname}Service.update(id, param)
+        return self.success()
+
+
+class {classname}ListHandler(CommonHandler):
+    @get(['{classname_underline}','{classname_underline}/(?P<category>[a-zA-Z0-9_]*)'])
+    @tornado.web.authenticated
+    def {classname_underline}_list_get(self, category = '', *args, **kwargs):
+        """列表、搜索记录
+        """
+        page = int(self.get_argument('page', 1))
+        per_page = int(self.get_argument('limit', 10))
+        id = self.get_argument('id', None)
+        title = self.get_argument('title', None)
+        status = self.get_argument('status', None)
+
+        param = {{}}
+        if category:
+            param['category'] = category
+        if id:
+            param['id'] = id
+        if title:
+            param['title'] = title
+        if status:
+            param['status'] = status
+
+        resp_data = {classname}Service.page_list(param, page, per_page)
+        return self.success(data=resp_data)
+'''
+
+    def render(self, classname, appname):
+        fname = func.hump2underline(classname)
+        app = f'{ROOT_PATH}/applications/{appname}'
+        app_s = f'{app}/handlers'
+        sfile = f'{app_s}/{fname}.py'
+        if os.path.exists(sfile):
+            return
+        if not os.path.exists(app):
+            os.mkdir(app)
+        if not os.path.exists(app_s):
+            os.mkdir(app_s)
+
+        fout = open(sfile, 'w', encoding='utf8')
+
+        output = self.template.format(
+            classname_underline=fname,
+            appname=appname,
+            classname=classname
+        )
+
+        # 写入文件内容
+        fout.write(output)
+        # 关闭文件
+        fout.close()
+
+
 def get_metadata(tables):
     # Use reflection to fill in the metadata
     engines = DBConfigParser.parser_engines()
@@ -320,29 +436,52 @@ def create_models(tables = None):
     except Exception as e:
         raise
 
-def create_services(tables):
+def create_services(tables, appname = 'admin'):
     try:
         generator = ServiceGenerator()
         for t in tables:
-            generator.render(func.underline2hump(t, True))
+            generator.render(func.underline2hump(t, True), appname)
     except Exception as e:
         raise
 
-def create_handlers(tables):
+def create_handlers(tables, appname = 'admin'):
     try:
-        generator = HandlerGenerator()
+        generator = AdminHandlerGenerator() if appname == 'admin' else HandlerGenerator()
         for t in tables:
-            generator.render(func.underline2hump(t, True))
+            generator.render(func.underline2hump(t, True), appname)
     except Exception as e:
         raise
 
 
 if __name__ == "__main__":
+    appname = 'ishici'
 
-    metadata = get_metadata(None)
-    # print(dir(metadata))
-    for table in metadata.sorted_tables:
-        print(table.name)
-        create_models([table.name])
-        create_services([table.name])
-        create_handlers([table.name])
+    # 创建命令行解析器句柄，并自定义描述信息
+    parser = argparse.ArgumentParser(description="test the argparse package")
+
+    # 定义可选参数appname
+    parser.add_argument("--appname", "-a", help="appname must is a string")
+    # 定义可选参数module
+    parser.add_argument("--module", "-m", help="multiple modules are separated by commas")
+
+    args = parser.parse_args()  # 返回一个命名空间
+    param = vars(args)
+    appname = param['appname']
+
+    if appname == 'admin':
+        metadata = get_metadata(None)
+        # print(dir(metadata))
+        for table in metadata.sorted_tables:
+            create_models([table.name])
+            create_services([table.name], appname)
+            create_handlers([table.name], appname)
+    else:
+        modules = [m.strip() for m in param['module'].split(',') if m]
+        create_services(modules, appname)
+        create_handlers(modules, appname)
+        try:
+            [create_models([m]) for m in modules]
+        except Exception as e:
+            pass
+
+    print(f'create {appname} app, {modules} module success')
