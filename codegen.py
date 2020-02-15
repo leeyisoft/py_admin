@@ -282,9 +282,9 @@ class {classname}ListHandler(CommonHandler):
         return self.success(data=resp_data)
 '''
 
-    def render(self, classname):
+    def render(self, classname, appname = 'admin'):
         fname = func.hump2underline(classname)
-        outfile = f'{ROOT_PATH}/applications/admin/handlers/{fname}.py'
+        outfile = f'{ROOT_PATH}/applications/{appname}/handlers/{fname}.py'
         if os.path.exists(outfile):
             return
         output = self.template.format(
@@ -467,6 +467,7 @@ if __name__ == "__main__":
     args = parser.parse_args()  # 返回一个命名空间
     param = vars(args)
     appname = param['appname']
+    modules = []
 
     if appname == 'admin':
         metadata = get_metadata(None)
