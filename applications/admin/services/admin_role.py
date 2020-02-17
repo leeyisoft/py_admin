@@ -5,7 +5,7 @@ from trest.logger import SysLogger
 from trest.config import settings
 from trest.exception import JsonError
 from applications.common.models.admin_role import AdminRole
-from applications.admin.filters.admin_role  import AdminRoleFilter
+from applications.admin.assemblers.admin_role  import AdminRoleAssembler
 
 
 class AdminRoleService(object):
@@ -32,7 +32,7 @@ class AdminRoleService(object):
 
         if pagelist_obj is None:
             raise JsonError('暂无数据')
-        return AdminRoleFilter.page_list(pagelist_obj, page, per_page)
+        return AdminRoleAssembler.page_list(pagelist_obj, page, per_page)
 
     @staticmethod
     def get(id):
@@ -112,5 +112,5 @@ class AdminRoleService(object):
     def valid_list():
         """获取有效的角色"""
         list_obj = AdminRole.Q.filter(AdminRole.status==1).all()
-        return AdminRoleFilter.valid_list(list_obj)
+        return AdminRoleAssembler.valid_list(list_obj)
 

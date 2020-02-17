@@ -4,7 +4,7 @@
 """
 
 
-class GoodsFilter(object):
+class GoodsAssembler(object):
     @staticmethod
     def page_list(pagelist_obj, page, per_page):
         items = []

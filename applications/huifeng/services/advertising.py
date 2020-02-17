@@ -8,7 +8,7 @@ from trest.exception import JsonError
 from applications.common.models.advertising import Advertising
 from applications.common.models.advertising_category import AdvertisingCategory
 
-from applications.admin.filters.advertising  import AdvertisingFilter
+from applications.admin.assemblers.advertising  import AdvertisingAssembler
 from applications.admin.services.advertising_category import AdvertisingCategoryService
 
 

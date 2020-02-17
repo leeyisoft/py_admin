@@ -8,7 +8,7 @@ from trest.config import settings
 from trest.exception import JsonError
 from applications.common.models.goods import Goods
 from applications.admin.services.goods_category import GoodsCategoryService
-from applications.admin.filters.goods  import GoodsFilter
+from applications.admin.assemblers.goods  import GoodsAssembler
 
 
 class GoodsService(object):
@@ -45,7 +45,7 @@ class GoodsService(object):
         category_list = GoodsCategoryService.category_list(category_ids)
         for category in category_list:
             category_map[category.id] = category
-        return GoodsFilter.page_list(pagelist_obj, page, per_page, category_map)
+        return GoodsAssembler.page_list(pagelist_obj, page, per_page, category_map)
 
     @staticmethod
     def get(id):

@@ -10,7 +10,7 @@ from applications.common.utils import sys_config
 from applications.common.models.admin_user import AdminUser
 from applications.common.models.admin_user_login_log import AdminUserLoginLog
 
-from applications.admin.filters.admin_user  import AdminUserFilter
+from applications.admin.assemblers.admin_user  import AdminUserAssembler
 
 
 class AdminUserService(object):
@@ -42,7 +42,7 @@ class AdminUserService(object):
 
         if pagelist_obj is None:
             raise JsonError('暂无数据')
-        return AdminUserFilter.page_list(pagelist_obj, page, per_page)
+        return AdminUserAssembler.page_list(pagelist_obj, page, per_page)
 
     @staticmethod
     def get(id):

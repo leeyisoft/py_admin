@@ -8,7 +8,7 @@ from trest.exception import JsonError
 from applications.common.models.goods import Goods
 from applications.common.models.goods_category import GoodsCategory
 
-from ..filters.goods  import GoodsFilter
+from ..assemblers.goods  import GoodsAssembler
 
 
 class GoodsService(object):
@@ -41,7 +41,7 @@ class GoodsService(object):
         if pagelist_obj is None:
             raise JsonError('暂无数据')
 
-        return GoodsFilter.page_list(pagelist_obj, page, per_page)
+        return GoodsAssembler.page_list(pagelist_obj, page, per_page)
 
     @staticmethod
     def get(id):

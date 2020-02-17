@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""AdminUser 响应过滤器
+"""AdminRole 响应过滤器
 """
 
 
-class AdminUserFilter(object):
+class AdminRoleAssembler(object):
     @staticmethod
     def page_list(pagelist_obj, page, per_page):
         items = []
         for item in pagelist_obj.items:
             data = item.as_dict()
             if not data['permission'] or data['permission']=='':
-                data['permission']=[]
+                data['permission'] = []
             else:
-                data['permission']=data['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
+                data['permission'] = data['permission'].replace('\\','').replace('[','').replace(']','').replace('"','').split(',')
             items.append(data)
         return {
             'page':page,
@@ -22,3 +22,9 @@ class AdminUserFilter(object):
             'items':items,
         }
 
+    @staticmethod
+    def valid_list(items):
+        data = []
+        for item in items:
+            data.append({'id': item.id, 'rolename': item.rolename})
+        return data

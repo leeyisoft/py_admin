@@ -7,7 +7,7 @@ from trest.exception import JsonError
 from applications.common.models.advertising import Advertising
 from applications.common.models.advertising_category import AdvertisingCategory
 
-from applications.admin.filters.advertising  import AdvertisingFilter
+from applications.admin.assemblers.advertising  import AdvertisingAssembler
 from applications.admin.services.advertising_category import AdvertisingCategoryService
 
 
@@ -53,7 +53,7 @@ class AdvertisingService(object):
         category_list = AdvertisingCategoryService.category_list(category_ids)
         for category in category_list:
             category_map[category.id] = category
-        return AdvertisingFilter.page_list(pagelist_obj, page, per_page, category_map)
+        return AdvertisingAssembler.page_list(pagelist_obj, page, per_page, category_map)
 
     @staticmethod
     def get(id):

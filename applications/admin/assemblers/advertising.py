@@ -4,7 +4,7 @@
 """
 
 
-class AdvertisingFilter(object):
+class AdvertisingAssembler(object):
     @staticmethod
     def page_list(pagelist_obj, page, per_page, category_map):
         items = []
