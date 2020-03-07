@@ -72,14 +72,28 @@ exit
 ```
 pipenv install -e git+https://gitee.com/leeyi/trest.git@master#egg=trest
 
+# 多项目共享一个 venv 节省磁盘空间的方法
+“ .venv 有84M之多”，在生产环境 CentOS7 中要部署多套代码，它都是一样的，多项目共享一个 venv 节省磁盘空间的方法
+
+在第一个项目 pipenv install 命令之后，执行下面命令
+```
+mv .venv /root/.local/share/venv_py_admin
+ln -s /root/.local/share/venv_py_admin .venv
+```
+之后其他项目 clone 下来之后，只要做软连接就行了
+
 # DB
-参见 datas/mysql 目录
+参见 datas/sql 目录
 
 ## db other
 ```
 show processlist;
 
 set global validate_password_policy=0;
+
+// for mysql8
+set global validate_password.policy=0;
+
 create database db_py_admin default charset utf8 COLLATE utf8_general_ci;
 CREATE USER user_py_admin IDENTIFIED BY 'eb27acWq#16E1';
 GRANT ALL ON db_py_admin.* TO 'user_py_admin'@'%';
@@ -102,11 +116,13 @@ mysqldump --opt -d db_py_admin -u root -p > datas/db.sql
 * 其他特性继承自 tornado
 
 # 目录说明
+详细说明在[TRest项目的软件架构说明](https://gitee.com/leeyi/trest)
 ```
 git clone ...
 cd py_admin
 
 tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
+
 ```
 
 ### 使用 OpenSSL 生成公钥私钥
